@@ -1,0 +1,9 @@
+administrador:
+  nombre: administrador
+  permisos: ["*"]
+cajero:
+  nombre: cajero
+  permisos: ["caja.vender", "caja.abrir", "inventario.ver"]
+supervisor:
+  nombre: supervisor
+  permisos: ["caja.*", "inventario.*"]

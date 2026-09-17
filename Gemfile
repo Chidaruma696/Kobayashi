@@ -18,7 +18,7 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -61,3 +61,6 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# json 3.x cambió la firma de JSON.parse y rompe ActiveSupport::JSON.decode en Rails 8.1
+gem "json", "~> 2.13"

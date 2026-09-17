@@ -1,0 +1,22 @@
+<div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow">
+  <h1 class="mb-6 text-2xl font-bold">Kobayashi</h1>
+  <% if flash[:alert] %>
+    <p class="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700"><%= flash[:alert] %></p>
+  <% end %>
+  <% if flash[:notice] %>
+    <p class="mb-4 rounded bg-green-50 px-3 py-2 text-sm text-green-700"><%= flash[:notice] %></p>
+  <% end %>
+  <%= form_with url: entrar_path, class: "space-y-4" do |f| %>
+    <div>
+      <%= f.label :usuario, "Usuario", class: "block text-sm font-medium" %>
+      <%= f.text_field :usuario, autofocus: true, autocomplete: "username", autocapitalize: "none",
+                       class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    </div>
+    <div>
+      <%= f.label :password, "Contraseña", class: "block text-sm font-medium" %>
+      <%= f.password_field :password, autocomplete: "current-password",
+                           class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    </div>
+    <%= f.submit "Entrar", class: "w-full rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+  <% end %>
+</div>
