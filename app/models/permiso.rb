@@ -16,7 +16,9 @@ module Permiso
     "salidas.surtir" => "Surtir salidas a ruta o tienda",
     "salidas.verificar" => "Verificar la carga antes de salir",
     "salidas.recibir" => "Recibir salidas en tienda",
-    "conteos.hacer" => "Hacer conteos físicos",
+    "conteos.hacer" => "Hacer conteos físicos y cargar faltantes",
+    "conteos.cargos" => "Cobrar o perdonar cargos",
+    "reportes.ver" => "Ver el tablero y los reportes",
     "admin.catalogo" => "Administrar productos y códigos",
     "admin.usuarios" => "Administrar usuarios, roles y sucursales"
   }.freeze

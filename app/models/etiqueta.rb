@@ -78,6 +78,13 @@ class Etiqueta < ApplicationRecord
     end
   end
 
+  # Hojas vivas de esta etiqueta: ella misma si es paquete o caja de proveedor; si no, todo lo de abajo.
+  def hojas_vivas
+    hijas_vivas = hijas.vivas.to_a
+    return [ self ] if hijas_vivas.empty? && !tarima?
+    hijas_vivas.flat_map(&:hojas_vivas)
+  end
+
   # Va en una salida enviada y todavía no la recibieron: no se vende ni se vuelve a mandar.
   def en_transito?
     SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, estado: "pendiente", salidas: { estado: "enviada" }).exists?

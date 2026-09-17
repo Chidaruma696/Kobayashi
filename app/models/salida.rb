@@ -180,11 +180,8 @@ class Salida < ApplicationRecord
     Pedido.where(id: PedidoLinea.where(id: etiquetas.select(:pedido_linea_id)).select(:pedido_id))
   end
 
-  # Hojas de una etiqueta: ella misma si es paquete o caja de proveedor; si no, todo lo de abajo.
   def self.hojas_de(etiqueta)
-    hijas = etiqueta.hijas.vivas.to_a
-    return [ etiqueta ] if hijas.empty? && !etiqueta.tarima?
-    hijas.flat_map { |h| hojas_de(h) }
+    etiqueta.hojas_vivas
   end
 
   def to_s

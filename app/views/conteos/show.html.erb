@@ -1,0 +1,55 @@
+<% c = @conteo %>
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Conteo <%= c.folio %> · <%= c.sucursal %></h1>
+  <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= c.estado %></span>
+</div>
+<p class="mb-4 text-sm text-slate-600">Supervisor <%= c.usuario %> · responsable <%= c.responsable %> · <%= l c.created_at, format: :short %><%= " · cerrado #{l c.cerrado_en, format: :short}" if c.cerrado_en %></p>
+<% if c.abierto? %>
+  <div class="mb-4 grid gap-4 md:grid-cols-2">
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Escanear</h2>
+      <%= form_with url: escanear_conteo_path(c), class: "flex gap-2" do |f| %>
+        <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: "Etiqueta (paquete, caja o tarima)", class: "flex-1 rounded border border-slate-300 px-3 py-2 font-mono" %>
+        <%= f.submit "Contar", class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+      <% end %>
+      <p class="mt-2 text-sm text-slate-600">Sin escanear todavía: <%= @no_vistas.size %> etiquetas vivas.</p>
+    </div>
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Contar a mano (lo que no lleva etiqueta)</h2>
+      <%= form_with url: manual_conteo_path(c), class: "flex gap-2" do |f| %>
+        <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "flex-1 rounded border border-slate-300 px-2 py-2" %>
+        <%= f.number_field :cantidad, step: "0.001", min: 0, required: true, class: "w-28 rounded border border-slate-300 px-2 py-2 font-mono" %>
+        <%= f.submit "Guardar", class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+      <% end %>
+      <%= button_to "Cerrar conteo", cerrar_conteo_path(c), class: "mt-4 rounded bg-red-700 px-4 py-2 text-white", form: { data: { turbo_confirm: "El conteo manda: se ajusta el inventario, las etiquetas no vistas se dan de baja y el faltante se carga a #{c.responsable}. ¿Cerrar?" } } %>
+    </div>
+  </div>
+<% else %>
+  <div class="mb-4 grid gap-4 sm:grid-cols-2">
+    <div class="rounded bg-white p-4 shadow-sm"><div class="text-xs uppercase text-slate-500">Faltante</div><div class="font-mono text-2xl text-red-700"><%= pesos(c.faltante_centavos) %></div></div>
+    <div class="rounded bg-white p-4 shadow-sm"><div class="text-xs uppercase text-slate-500">Sobrante</div><div class="font-mono text-2xl text-green-700"><%= pesos(c.sobrante_centavos) %></div></div>
+  </div>
+<% end %>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Sistema</th><th class="px-3 py-2 text-right">Escaneado</th><th class="px-3 py-2 text-right">A mano</th><th class="px-3 py-2 text-right">Contado</th><th class="px-3 py-2 text-right">Diferencia</th><th class="px-3 py-2 text-right">$</th></tr></thead>
+  <tbody>
+    <% @lineas.each do |l| %>
+      <% dif = c.abierto? ? l.contado - l.sistema : l.diferencia %>
+      <tr class="border-t border-slate-100 <%= 'bg-red-50' if dif.negative? %> <%= 'bg-green-50' if dif.positive? %>">
+        <td class="px-3 py-2"><%= l.producto.nombre %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.sistema, precision: l.producto.decimales) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.escaneado, precision: l.producto.decimales) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.manual, precision: l.producto.decimales) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.contado, precision: l.producto.decimales) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(dif, precision: l.producto.decimales) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= pesos(l.diferencia_centavos) if l.diferencia_centavos %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if c.abierto? && @no_vistas.any? %>
+  <h2 class="mb-2 mt-6 font-semibold">Etiquetas que aún no aparecen</h2>
+  <ul class="grid gap-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
+    <% @no_vistas.each do |e| %><li class="rounded bg-white px-3 py-1 shadow-sm"><span class="font-mono text-xs"><%= e.codigo %></span> · <%= e.producto.nombre %> · <%= cantidad(e.cantidad, e.producto) %></li><% end %>
+  </ul>
+<% end %>

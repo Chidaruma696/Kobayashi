@@ -64,3 +64,6 @@ end
 
 # json 3.x cambió la firma de JSON.parse y rompe ActiveSupport::JSON.decode en Rails 8.1
 gem "json", "~> 2.13"
+
+# Ruby 3.4 ya no trae csv de serie; lo usa el reporte de ventas
+gem "csv"

@@ -11,6 +11,8 @@ class Usuario < ApplicationRecord
                       format: { with: /\A[a-z0-9._-]+\z/, message: "solo minúsculas, números, punto y guion" }
   validates :pin, length: { in: 4..8 }, format: { with: /\A\d+\z/, message: "solo dígitos" }, allow_nil: true
 
+  has_many :cargos, dependent: :restrict_with_error
+
   scope :activos, -> { where(activo: true) }
 
   def puede?(clave)

@@ -51,6 +51,19 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :conteos, only: %i[index new create show] do
+    member do
+      post :escanear
+      post :manual
+      post :cerrar
+    end
+  end
+  resources :cargos, only: %i[index] do
+    member { post :resolver }
+  end
+  get "tablero", to: "tablero#index", as: :tablero
+  get "tablero/ventas", to: "tablero#ventas", as: :ventas_tablero
+
   resources :producciones, only: %i[index new create show] do
     member { post :cerrar }
   end

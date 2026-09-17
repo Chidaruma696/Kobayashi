@@ -1,0 +1,13 @@
+<h1 class="mb-4 text-2xl font-bold">Nuevo conteo · <%= sucursal_actual %></h1>
+<% if @abierto %>
+  <p class="rounded bg-amber-50 p-3 text-sm">Ya hay un conteo abierto: <%= link_to @abierto.folio, conteo_path(@abierto), class: "font-mono text-blue-700" %>. Ciérralo antes de abrir otro.</p>
+<% else %>
+  <%= form_with url: conteos_path, class: "max-w-lg space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+    <div>
+      <%= f.label :responsable_id, "Responsable de la caja (a quien se carga el faltante)", class: "block text-sm font-medium" %>
+      <%= f.collection_select :responsable_id, @responsables, :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    </div>
+    <p class="text-sm text-slate-600">Al abrir se toma la existencia del sistema. Escanea todo lo que haya; lo que no lleve etiqueta se teclea. Al cerrar, el conteo manda: el inventario se ajusta, las etiquetas que no aparecieron se dan de baja y el faltante se carga al responsable.</p>
+    <%= f.submit "Abrir conteo", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+  <% end %>
+<% end %>

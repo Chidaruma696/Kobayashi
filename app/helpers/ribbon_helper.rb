@@ -36,6 +36,19 @@ module RibbonHelper
       ] },
       { nombre: "Recibir", botones: [ Boton.new("Por recibir", :recibir_salidas_path, "salidas.recibir", "📥") ] }
     ] },
+    { id: :conteos, nombre: "Conteos", grupos: [
+      { nombre: "Contar", botones: [
+        Boton.new("Nuevo conteo", :new_conteo_path, "conteos.hacer", "🔍"),
+        Boton.new("Conteos", :conteos_path, "conteos.hacer", "☰")
+      ] },
+      { nombre: "Cargos", botones: [ Boton.new("Cargos", :cargos_path, "conteos.cargos", "⚖") ] }
+    ] },
+    { id: :tablero, nombre: "Tablero", grupos: [
+      { nombre: "Ver", botones: [
+        Boton.new("Tablero", :tablero_path, "reportes.ver", "▣"),
+        Boton.new("Ventas por producto", :ventas_tablero_path, "reportes.ver", "📈")
+      ] }
+    ] },
     { id: :inventario, nombre: "Inventario", grupos: [
       { nombre: "Consultar", botones: [
         Boton.new("Existencias", :inventario_path, "inventario.ver", "≡"),

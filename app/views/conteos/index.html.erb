@@ -1,0 +1,19 @@
+<h1 class="mb-4 text-2xl font-bold">Conteos · <%= sucursal_actual %></h1>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Supervisor</th><th class="px-3 py-2">Responsable</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2 text-right">Faltante</th><th class="px-3 py-2 text-right">Sobrante</th><th></th></tr></thead>
+  <tbody>
+    <% @conteos.each do |c| %>
+      <tr class="border-t border-slate-100">
+        <td class="px-3 py-2 font-mono"><%= c.folio %></td>
+        <td class="px-3 py-2"><%= l c.created_at, format: :short %></td>
+        <td class="px-3 py-2"><%= c.usuario %></td>
+        <td class="px-3 py-2"><%= c.responsable %></td>
+        <td class="px-3 py-2"><%= c.estado %></td>
+        <td class="px-3 py-2 text-right font-mono text-red-700"><%= pesos(c.faltante_centavos) if c.faltante_centavos %></td>
+        <td class="px-3 py-2 text-right font-mono text-green-700"><%= pesos(c.sobrante_centavos) if c.sobrante_centavos %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Abrir", conteo_path(c), class: "text-blue-700" %></td>
+      </tr>
+    <% end %>
+    <% if @conteos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-slate-500">Sin conteos.</td></tr><% end %>
+  </tbody>
+</table>

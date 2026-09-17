@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_010001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_020001) do
+  create_table "cargos", force: :cascade do |t|
+    t.integer "conteo_id", null: false
+    t.datetime "created_at", null: false
+    t.text "detalle"
+    t.string "estado", default: "pendiente", null: false
+    t.integer "monto_centavos", null: false
+    t.datetime "resuelto_en"
+    t.integer "resuelto_por_id"
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["conteo_id"], name: "index_cargos_on_conteo_id"
+    t.index ["resuelto_por_id"], name: "index_cargos_on_resuelto_por_id"
+    t.index ["usuario_id"], name: "index_cargos_on_usuario_id"
+    t.check_constraint "estado IN ('pendiente', 'cobrado', 'perdonado')", name: "cargos_estado"
+    t.check_constraint "monto_centavos > 0", name: "cargos_monto"
+  end
+
   create_table "codigos_barras", force: :cascade do |t|
     t.string "codigo", null: false
     t.datetime "created_at", null: false
@@ -26,6 +43,51 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_010001) do
     t.integer "ultimo", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["clave"], name: "index_contadores_on_clave", unique: true
+  end
+
+  create_table "conteo_etiquetas", force: :cascade do |t|
+    t.integer "conteo_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "etiqueta_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conteo_id", "etiqueta_id"], name: "index_conteo_etiquetas_on_conteo_id_and_etiqueta_id", unique: true
+    t.index ["conteo_id"], name: "index_conteo_etiquetas_on_conteo_id"
+    t.index ["etiqueta_id"], name: "index_conteo_etiquetas_on_etiqueta_id"
+  end
+
+  create_table "conteo_lineas", force: :cascade do |t|
+    t.integer "conteo_id", null: false
+    t.datetime "created_at", null: false
+    t.decimal "diferencia", precision: 12, scale: 3
+    t.integer "diferencia_centavos"
+    t.decimal "escaneado", precision: 12, scale: 3, default: "0.0", null: false
+    t.decimal "manual", precision: 12, scale: 3, default: "0.0", null: false
+    t.integer "producto_id", null: false
+    t.decimal "sistema", precision: 12, scale: 3, default: "0.0", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conteo_id", "producto_id"], name: "index_conteo_lineas_on_conteo_id_and_producto_id", unique: true
+    t.index ["conteo_id"], name: "index_conteo_lineas_on_conteo_id"
+    t.index ["producto_id"], name: "index_conteo_lineas_on_producto_id"
+  end
+
+  create_table "conteos", force: :cascade do |t|
+    t.datetime "cerrado_en"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "abierto", null: false
+    t.integer "faltante_centavos"
+    t.string "folio", null: false
+    t.text "notas"
+    t.integer "responsable_id", null: false
+    t.integer "sobrante_centavos"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["folio"], name: "index_conteos_on_folio", unique: true
+    t.index ["responsable_id"], name: "index_conteos_on_responsable_id"
+    t.index ["sucursal_id", "estado"], name: "index_conteos_on_sucursal_id_and_estado"
+    t.index ["sucursal_id"], name: "index_conteos_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_conteos_on_usuario_id"
+    t.check_constraint "estado IN ('abierto', 'cerrado')", name: "conteos_estado"
   end
 
   create_table "cortes", force: :cascade do |t|
@@ -387,7 +449,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_010001) do
     t.check_constraint "total_centavos >= 0", name: "ventas_total"
   end
 
+  add_foreign_key "cargos", "conteos"
+  add_foreign_key "cargos", "usuarios"
+  add_foreign_key "cargos", "usuarios", column: "resuelto_por_id"
   add_foreign_key "codigos_barras", "productos"
+  add_foreign_key "conteo_etiquetas", "conteos"
+  add_foreign_key "conteo_etiquetas", "etiquetas"
+  add_foreign_key "conteo_lineas", "conteos"
+  add_foreign_key "conteo_lineas", "productos"
+  add_foreign_key "conteos", "sucursales"
+  add_foreign_key "conteos", "usuarios"
+  add_foreign_key "conteos", "usuarios", column: "responsable_id"
   add_foreign_key "cortes", "sucursales"
   add_foreign_key "cortes", "usuarios"
   add_foreign_key "cortes", "usuarios", column: "cerrado_por_id"

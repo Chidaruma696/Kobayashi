@@ -1,0 +1,12 @@
+<h1 class="mb-2 text-2xl font-bold">Ventas por producto · <%= @todas ? "todas las sucursales" : @sucursal %></h1>
+<%= render "filtro" %>
+<p class="mb-2 text-sm"><%= link_to "Descargar CSV", ventas_tablero_path(format: :csv, desde: @desde, hasta: @hasta, sucursal_id: params[:sucursal_id]), class: "text-blue-700 underline" %></p>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Clave</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Importe</th><th class="px-3 py-2 text-right">Líneas</th></tr></thead>
+  <tbody>
+    <% @filas.each do |clave, nombre, unidad, cant, importe, n| %>
+      <tr class="border-t border-slate-100"><td class="px-3 py-2 font-mono"><%= clave %></td><td class="px-3 py-2"><%= nombre %></td><td class="px-3 py-2 text-right font-mono"><%= number_with_precision(cant, precision: unidad == "kg" ? 3 : 0) %> <%= unidad %></td><td class="px-3 py-2 text-right font-mono"><%= pesos(importe) %></td><td class="px-3 py-2 text-right"><%= n %></td></tr>
+    <% end %>
+    <% if @filas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-slate-500">Sin ventas en el rango.</td></tr><% end %>
+  </tbody>
+</table>
