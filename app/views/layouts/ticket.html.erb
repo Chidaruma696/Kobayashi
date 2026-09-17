@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @venta.folio %></title>
+    <style>
+      @page { size: 80mm auto; margin: 2mm; }
+      body { margin: 0; font-family: monospace; font-size: 11pt; }
+      .ticket { width: 72mm; padding: 2mm; }
+      .centro { text-align: center; }
+      table { width: 100%; border-collapse: collapse; }
+      td { padding: 1px 0; vertical-align: top; }
+      .der { text-align: right; white-space: nowrap; }
+      .linea { border-top: 1px dashed #000; margin: 4px 0; }
+      .total { font-size: 14pt; font-weight: bold; }
+      svg { width: 100%; height: auto; }
+      @media screen { body { background: #ddd; padding: 20px; } .ticket { background: white; box-shadow: 0 0 4px #999; } .acciones { margin-top: 12px; font-family: sans-serif; } }
+      @media print { .acciones { display: none; } }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+    <div class="acciones">
+      <button onclick="window.print()">Imprimir</button>
+      <a href="<%= caja_path %>">Nueva venta</a>
+    </div>
+    <% if params[:imprimir] %><script>window.addEventListener("load", () => window.print());</script><% end %>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+<div class="ticket">
+  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %></div>
+  <div class="linea"></div>
+  <table>
+    <% @venta.lineas.each do |l| %>
+      <tr><td colspan="2"><%= l.producto.nombre %></td></tr>
+      <tr><td><%= cantidad(l.cantidad, l.producto) %> × <%= pesos(l.precio_centavos) %><%= " *" if l.precio_centavos < l.catalogo_centavos %></td><td class="der"><%= pesos(l.importe_centavos) %></td></tr>
+    <% end %>
+  </table>
+  <div class="linea"></div>
+  <table>
+    <tr><td class="total">TOTAL</td><td class="der total"><%= pesos(@venta.total_centavos) %></td></tr>
+    <% @venta.pagos.each do |p| %><tr><td><%= p.forma.capitalize %></td><td class="der"><%= pesos(p.monto_centavos) %></td></tr><% end %>
+    <tr><td>Cambio</td><td class="der"><%= pesos(@venta.cambio_centavos) %></td></tr>
+  </table>
+  <% if @venta.estado == "devuelta" %><div class="centro"><strong>DEVUELTA</strong></div><% end %>
+  <div class="linea"></div>
+  <div class="centro">Devoluciones solo con este ticket</div>
+  <%= ean13_svg(@venta.codigo, alto: 34, modulo: 2) %>
+  <div class="centro">¡Gracias!</div>
+</div>

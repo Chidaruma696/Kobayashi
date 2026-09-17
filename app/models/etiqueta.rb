@@ -15,6 +15,7 @@ class Etiqueta < ApplicationRecord
   belongs_to :autorizado_por, class_name: "Usuario", optional: true
   has_many :hijas, class_name: "Etiqueta", foreign_key: :padre_id, dependent: :restrict_with_error, inverse_of: :padre
   has_many :movimientos, dependent: :restrict_with_error
+  has_many :venta_lineas, dependent: :restrict_with_error
 
   before_validation :asignar_codigo, on: :create
 

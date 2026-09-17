@@ -5,6 +5,20 @@ Rails.application.routes.draw do
   post "entrar", to: "sesiones#create"
   delete "salir", to: "sesiones#destroy", as: :salir
 
+  scope "caja", controller: "caja", as: "caja" do
+    get "/", action: :index
+    get "escanear", action: :escanear
+    post "cobrar", action: :cobrar
+    get "ventas", action: :ventas
+    get "ventas/:id/ticket", action: :ticket, as: :ticket
+    get "corte", action: :corte
+    post "corte/abrir", action: :abrir, as: :abrir
+    post "corte/cerrar", action: :cerrar, as: :cerrar
+    post "corte/retirar", action: :retirar, as: :retirar
+    get "devolucion", action: :devolucion
+    post "devolucion", action: :devolver, as: :devolver
+  end
+
   get "inventario", to: "inventario#index", as: :inventario
   get "inventario/kardex", to: "inventario#kardex", as: :kardex_inventario
   get "inventario/movimiento/nuevo", to: "inventario#nuevo_movimiento", as: :nuevo_movimiento_inventario

@@ -7,6 +7,14 @@ module RibbonHelper
     { id: :inicio, nombre: "Inicio", grupos: [
       { nombre: "General", botones: [ Boton.new("Inicio", :root_path, nil, "⌂") ] }
     ] },
+    { id: :caja, nombre: "Caja", grupos: [
+      { nombre: "Vender", botones: [
+        Boton.new("Vender", :caja_path, "caja.vender", "🛒"),
+        Boton.new("Ventas", :caja_ventas_path, "caja.vender", "🧾"),
+        Boton.new("Devolución", :caja_devolucion_path, "caja.devolver", "↩")
+      ] },
+      { nombre: "Corte", botones: [ Boton.new("Corte", :caja_corte_path, "caja.abrir", "💵") ] }
+    ] },
     { id: :pedidos, nombre: "Pedidos", grupos: [
       { nombre: "Pedir", botones: [ Boton.new("Nuevo pedido", :new_pedido_path, "pedidos.solicitar", "＋") ] },
       { nombre: "Surtir", botones: [ Boton.new("Cola", :pedidos_path, "pedidos.surtir", "☰") ] }

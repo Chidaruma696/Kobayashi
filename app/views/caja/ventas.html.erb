@@ -1,0 +1,19 @@
+<h1 class="mb-4 text-2xl font-bold">Ventas · <%= sucursal_actual %></h1>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Hora</th><th class="px-3 py-2">Cajero</th><th class="px-3 py-2">Líneas</th><th class="px-3 py-2 text-right">Total</th><th class="px-3 py-2">Pago</th><th class="px-3 py-2">Estado</th><th></th></tr></thead>
+  <tbody>
+    <% @ventas.each do |v| %>
+      <tr class="border-t border-slate-100">
+        <td class="px-3 py-2 font-mono"><%= v.folio %></td>
+        <td class="px-3 py-2 whitespace-nowrap"><%= l v.created_at, format: :short %></td>
+        <td class="px-3 py-2"><%= v.usuario %></td>
+        <td class="px-3 py-2 text-slate-600"><%= v.lineas.map { |l| "#{l.producto.nombre} #{number_with_precision(l.cantidad, precision: l.producto.decimales)}" }.join(", ") %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= pesos(v.total_centavos) %></td>
+        <td class="px-3 py-2"><%= v.pagos.map(&:forma).uniq.join("+") %></td>
+        <td class="px-3 py-2"><%= v.estado %></td>
+        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "ticket", caja_ticket_path(v), target: "_blank", class: "text-blue-700" %> · <%= link_to "devolver", caja_devolucion_path(codigo: v.folio), class: "text-blue-700" %></td>
+      </tr>
+    <% end %>
+    <% if @ventas.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-slate-500">Sin ventas.</td></tr><% end %>
+  </tbody>
+</table>

@@ -1,0 +1,56 @@
+<h1 class="mb-4 text-2xl font-bold">Corte de caja · <%= sucursal_actual %></h1>
+<% if @corte.nil? %>
+  <%= render "sin_caja" %>
+<% else %>
+  <div class="grid gap-4 sm:grid-cols-4">
+    <% [ [ "Fondo", @corte.fondo_centavos ], [ "Ventas", @corte.total_ventas_centavos ], [ "Efectivo de ventas", @corte.efectivo_ventas_centavos ], [ "Devoluciones", -@corte.devoluciones_centavos ], [ "Retiros", -@corte.retiros_centavos ], [ "En gaveta", @corte.efectivo_esperado_centavos ] ].each do |nombre, monto| %>
+      <div class="rounded bg-white p-4 shadow-sm"><div class="text-xs uppercase text-slate-500"><%= nombre %></div><div class="font-mono text-2xl"><%= pesos(monto) %></div></div>
+    <% end %>
+  </div>
+  <p class="mt-2 text-sm text-slate-600">Corte <%= @corte.folio %> abierto por <%= @corte.usuario %> el <%= l @corte.abierto_en, format: :short %> · <%= @corte.ventas.count %> ventas</p>
+  <div class="mt-6 grid gap-6 md:grid-cols-2">
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Retiro a caja fuerte</h2>
+      <%= form_with url: caja_retirar_path, class: "space-y-2 text-sm" do |f| %>
+        <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: "Monto", required: true, class: "w-full rounded border border-slate-300 px-3 py-2 font-mono" %>
+        <%= f.text_field :motivo, placeholder: "Motivo", required: true, class: "w-full rounded border border-slate-300 px-3 py-2" %>
+        <% unless puede?("caja.retirar") %><%= f.password_field :pin, placeholder: "PIN de quien autoriza", inputmode: "numeric", autocomplete: "off", class: "w-40 rounded border border-slate-300 px-3 py-2" %><% end %>
+        <%= f.submit "Retirar", class: "rounded bg-slate-900 px-4 py-2 text-white" %>
+      <% end %>
+      <% if @corte.retiros.any? %>
+        <ul class="mt-3 text-sm">
+          <% @corte.retiros.includes(:usuario, :autorizado_por).each do |r| %>
+            <li class="border-t border-slate-100 py-1"><%= l r.created_at, format: :short %> · <span class="font-mono"><%= pesos(r.monto_centavos) %></span> · <%= r.motivo %> · autorizó <%= r.autorizado_por %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Cerrar corte</h2>
+      <p class="mb-2 text-sm text-slate-600">Cuenta el efectivo de la gaveta (con el fondo) y escríbelo. El sistema guarda lo esperado y la diferencia.</p>
+      <%= form_with url: caja_cerrar_path, class: "flex items-end gap-3 text-sm", data: { turbo_confirm: "¿Cerrar el corte #{@corte.folio}?" } do |f| %>
+        <div><%= f.label :contado, "Efectivo contado", class: "block" %><%= f.number_field :contado, step: "0.01", min: 0, required: true, class: "rounded border border-slate-300 px-3 py-2 font-mono" %></div>
+        <%= f.submit "Cerrar corte", class: "rounded bg-red-700 px-4 py-2 text-white" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<% if @cortes.any? %>
+  <h2 class="mb-2 mt-8 font-semibold">Cortes cerrados</h2>
+  <table class="w-full border-collapse bg-white text-sm shadow-sm">
+    <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Abierto</th><th class="px-3 py-2">Cerrado</th><th class="px-3 py-2">Cajero</th><th class="px-3 py-2 text-right">Esperado</th><th class="px-3 py-2 text-right">Contado</th><th class="px-3 py-2 text-right">Diferencia</th></tr></thead>
+    <tbody>
+      <% @cortes.each do |c| %>
+        <tr class="border-t border-slate-100">
+          <td class="px-3 py-2 font-mono"><%= c.folio %></td>
+          <td class="px-3 py-2"><%= l c.abierto_en, format: :short %></td>
+          <td class="px-3 py-2"><%= l(c.cerrado_en, format: :short) if c.cerrado_en %></td>
+          <td class="px-3 py-2"><%= c.usuario %></td>
+          <td class="px-3 py-2 text-right font-mono"><%= pesos(c.esperado_centavos) %></td>
+          <td class="px-3 py-2 text-right font-mono"><%= pesos(c.contado_centavos) %></td>
+          <td class="px-3 py-2 text-right font-mono <%= c.diferencia_centavos.to_i.negative? ? 'text-red-700' : 'text-green-700' %>"><%= pesos(c.diferencia_centavos) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

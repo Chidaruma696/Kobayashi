@@ -1,0 +1,124 @@
+require "test_helper"
+
+class CajaTest < ActiveSupport::TestCase
+  setup do
+    @tienda = sucursales(:tienda)
+    @cajera = usuarios(:cajera)
+    @pechuga = productos(:pechuga)
+    @catsup = productos(:catsup)
+    Inventario.mover!(sucursal: @tienda, producto: @pechuga, tipo: "entrada", cantidad: 10, usuario: @cajera)
+    Inventario.mover!(sucursal: @tienda, producto: @catsup, tipo: "entrada", cantidad: 5, usuario: @cajera)
+    @etiqueta = Etiqueta.create!(tipo: "paquete", producto: @pechuga, cantidad: "1.250", sucursal: @tienda, usuario: @cajera,
+                                 autorizado_por: usuarios(:admin), justificacion: "prueba")
+  end
+
+  def cobrar(lineas, pagos = nil, **extra)
+    Caja.cobrar!(sucursal: @tienda, usuario: @cajera, lineas: lineas, clave: SecureRandom.uuid,
+                 pagos: pagos || [ { forma: "efectivo", monto_centavos: 1_000_000 } ], **extra)
+  end
+
+  test "cobra una etiqueta y un producto tecleado, descuenta inventario y da cambio" do
+    venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t1",
+                         lineas: [ { etiqueta_id: @etiqueta.id }, { producto_id: @catsup.id, cantidad: 2 } ],
+                         pagos: [ { forma: "efectivo", monto_centavos: 30_000 } ])
+    # 1.250 × 129.00 = 161.25 ; 2 × 42.00 = 84.00 → 245.25
+    assert_equal 24_525, venta.total_centavos
+    assert_equal 5_475, venta.cambio_centavos
+    assert_match(/\AB-\d{5}\z/, venta.folio)
+    assert Barcode.valido?(venta.codigo)
+    assert venta.codigo.start_with?("09")
+    assert_equal "vendida", @etiqueta.reload.estado
+    assert_equal BigDecimal("8.75"), Existencia.de(@tienda, @pechuga)
+    assert_equal BigDecimal("3"), Existencia.de(@tienda, @catsup)
+    assert_equal 2, Movimiento.where(referencia: venta).count
+    # la misma clave no cobra dos veces
+    assert_equal venta, Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t1", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ], pagos: [])
+  end
+
+  test "pagos mixtos: lo que no es efectivo no puede pasarse del total y el cambio sale del efectivo" do
+    venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t2", lineas: [ { producto_id: @catsup.id, cantidad: 3 } ],
+                         pagos: [ { forma: "transferencia", monto_centavos: 10_000 }, { forma: "efectivo", monto_centavos: 5_000 } ])
+    assert_equal 12_600, venta.total_centavos
+    assert_equal 2_400, venta.cambio_centavos
+    assert_raises(Caja::Error) do
+      Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t3", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ],
+                   pagos: [ { forma: "transferencia", monto_centavos: 10_000 } ])
+    end
+    assert_raises(Caja::Error) do
+      Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t4", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ],
+                   pagos: [ { forma: "efectivo", monto_centavos: 100 } ])
+    end
+  end
+
+  test "no vende sin existencia, sin caja abierta, etiquetas ajenas o muertas, ni piezas fraccionadas" do
+    e = assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 6 } ]) }
+    assert_match "No se vende lo que no hay", e.message
+    assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: "1.5" } ]) }
+    Etiqueta.where(id: @etiqueta.id).update_all(estado: "baja")
+    assert_raises(Caja::Error) { cobrar([ { etiqueta_id: @etiqueta.id } ]) }
+    ajena = Etiqueta.create!(tipo: "paquete", producto: @pechuga, cantidad: 1, sucursal: sucursales(:matriz), usuario: @cajera, autorizado_por: usuarios(:admin), justificacion: "x")
+    assert_raises(Caja::Error) { cobrar([ { etiqueta_id: ajena.id } ]) }
+    cortes(:tienda_abierto).update!(estado: "cerrado")
+    e = assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 1 } ]) }
+    assert_match "no hay caja abierta", e.message
+    assert_equal 0, Venta.count
+  end
+
+  test "bajar el precio exige autorización y nunca baja de la mitad" do
+    linea = { producto_id: @catsup.id, cantidad: 1, precio_centavos: 3_000 }
+    assert_raises(Caja::Error) { cobrar([ linea ], [ { forma: "efectivo", monto_centavos: 3_000 } ]) }
+    venta = cobrar([ linea ], [ { forma: "efectivo", monto_centavos: 3_000 } ], autorizador: usuarios(:supervisora))
+    assert_equal usuarios(:supervisora), venta.lineas.first.autorizado_por
+    assert_equal 4_200, venta.lineas.first.catalogo_centavos
+    assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 1, precio_centavos: 2_000 } ], [ { forma: "efectivo", monto_centavos: 2_000 } ], autorizador: usuarios(:supervisora)) }
+  end
+
+  test "el corte cuadra: fondo + efectivo de ventas − devoluciones − retiros, y bloquea al pasar el límite" do
+    corte = cortes(:tienda_abierto)
+    venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t5", lineas: [ { etiqueta_id: @etiqueta.id } ],
+                         pagos: [ { forma: "efectivo", monto_centavos: 20_000 } ])
+    assert_equal 50_000 + 16_125, corte.efectivo_esperado_centavos
+    corte.retirar!(monto_centavos: 10_000, motivo: "caja fuerte", usuario: @cajera, autorizado_por: usuarios(:supervisora))
+    assert_equal 56_125, corte.efectivo_esperado_centavos
+    assert_raises(ArgumentError) { corte.retirar!(monto_centavos: 100_000, motivo: "x", usuario: @cajera, autorizado_por: usuarios(:supervisora)) }
+
+    dev = Caja.devolver!(venta: venta, lineas: [ { venta_linea_id: venta.lineas.first.id, cantidad: "1.250" } ], motivo: "no le gustó", usuario: @cajera)
+    assert_equal 16_125, dev.total_centavos
+    assert_equal "devuelta", venta.reload.estado
+    assert_equal "viva", @etiqueta.reload.estado
+    assert_equal BigDecimal("10"), Existencia.de(@tienda, @pechuga)
+    assert_equal 40_000, corte.efectivo_esperado_centavos
+    assert_raises(Caja::Error) { Caja.devolver!(venta: venta, lineas: [ { venta_linea_id: venta.lineas.first.id, cantidad: 1 } ], motivo: "otra vez", usuario: @cajera) }
+
+    @tienda.update!(limite_efectivo_centavos: 45_000)
+    Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t6", lineas: [ { producto_id: @catsup.id, cantidad: 2 } ], pagos: [ { forma: "efectivo", monto_centavos: 8_400 } ])
+    e = assert_raises(Caja::Error) { Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t7", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ], pagos: [ { forma: "efectivo", monto_centavos: 4_200 } ]) }
+    assert_match "retiro", e.message
+
+    corte.cerrar!(contado_centavos: 48_000, usuario: @cajera)
+    assert_equal 48_400, corte.esperado_centavos
+    assert_equal(-400, corte.diferencia_centavos)
+    nuevo = Corte.abrir!(sucursal: @tienda, usuario: @cajera, fondo_centavos: 30_000)
+    assert_raises(ArgumentError) { Corte.abrir!(sucursal: @tienda, usuario: @cajera, fondo_centavos: 1) }
+    assert_equal 30_000, nuevo.efectivo_esperado_centavos
+  end
+
+  test "devolución parcial deja la venta cobrada y respeta lo pendiente" do
+    venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t8", lineas: [ { producto_id: @catsup.id, cantidad: 3 } ], pagos: [ { forma: "efectivo", monto_centavos: 12_600 } ])
+    linea = venta.lineas.first
+    Caja.devolver!(venta: venta, lineas: [ { venta_linea_id: linea.id, cantidad: 1 } ], motivo: "abollada", usuario: @cajera)
+    assert venta.reload.cobrada?
+    assert_equal BigDecimal("2"), linea.cantidad_pendiente
+    assert_raises(Caja::Error) { Caja.devolver!(venta: venta, lineas: [ { venta_linea_id: linea.id, cantidad: 3 } ], motivo: "x", usuario: @cajera) }
+    assert_equal Venta.buscar(venta.codigo), venta
+    assert_equal Venta.buscar(" #{venta.folio.downcase} "), venta
+  end
+
+  test "dinero: formato y redondeo" do
+    assert_equal "$1,234.50", Dinero.pesos(123_450)
+    assert_equal "−$0.05", Dinero.pesos(-5)
+    assert_equal 12_900, Dinero.centavos("129.00")
+    assert_equal 16_125, Dinero.importe("1.250", 12_900)
+    assert_equal 4_302, Dinero.importe("0.3335", 12_900)
+  end
+end
