@@ -77,5 +77,14 @@ Rails.application.routes.draw do
     member { post :baja }
   end
 
+  namespace :admin do
+    resources :productos, except: %i[show destroy] do
+      resources :codigos, only: %i[create destroy], controller: "codigos_barras"
+    end
+    resources :usuarios, except: %i[show destroy]
+    resources :roles, except: %i[show destroy]
+    resources :sucursales, except: %i[show destroy]
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

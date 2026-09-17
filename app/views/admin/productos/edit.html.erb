@@ -1,0 +1,16 @@
+<h1 class="mb-4 text-2xl font-bold"><%= @producto.nombre %></h1>
+<div class="grid gap-6 lg:grid-cols-2">
+  <%= render "form" %>
+  <div class="rounded bg-white p-6 shadow-sm">
+    <h2 class="mb-2 font-semibold">Códigos del proveedor</h2>
+    <ul class="mb-3 text-sm">
+      <% @producto.codigos_barras.each do |c| %>
+        <li class="flex items-center justify-between border-t border-slate-100 py-1"><span class="font-mono"><%= c.codigo %></span> <%= button_to "quitar", admin_producto_codigo_path(@producto, c), method: :delete, class: "text-red-700" %></li>
+      <% end %>
+    </ul>
+    <%= form_with url: admin_producto_codigos_path(@producto), class: "flex gap-2" do |f| %>
+      <%= f.text_field :codigo, placeholder: "escanea o teclea el código", autocomplete: "off", class: "flex-1 rounded border border-slate-300 px-3 py-2 font-mono" %>
+      <%= f.submit "Agregar", class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+    <% end %>
+  </div>
+</div>

@@ -57,6 +57,14 @@ module RibbonHelper
       { nombre: "Capturar", botones: [
         Boton.new("Entrada / ajuste", :nuevo_movimiento_inventario_path, "inventario.ajustar", "✎")
       ] }
+    ] },
+    { id: :admin, nombre: "Admin", grupos: [
+      { nombre: "Catálogo", botones: [ Boton.new("Productos", :admin_productos_path, "admin.catalogo", "🥩") ] },
+      { nombre: "Gente", botones: [
+        Boton.new("Usuarios", :admin_usuarios_path, "admin.usuarios", "👤"),
+        Boton.new("Roles", :admin_roles_path, "admin.usuarios", "🔑"),
+        Boton.new("Sucursales", :admin_sucursales_path, "admin.usuarios", "🏬")
+      ] }
     ] }
   ].freeze
 

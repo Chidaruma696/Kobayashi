@@ -1,0 +1,28 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Productos</h1>
+  <div class="flex gap-3">
+    <%= form_with url: admin_productos_path, method: :get, class: "flex gap-2" do |f| %>
+      <%= f.text_field :q, value: params[:q], placeholder: "buscar", class: "rounded border border-slate-300 px-3 py-1" %>
+      <%= f.submit "Buscar", class: "rounded border border-slate-300 px-3 py-1" %>
+    <% end %>
+    <%= link_to "Nuevo producto", new_admin_producto_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+  </div>
+</div>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Clave</th><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Línea</th><th class="px-3 py-2">Unidad</th><th class="px-3 py-2 text-right">Precio</th><th class="px-3 py-2">PLU</th><th class="px-3 py-2">Códigos</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <tbody>
+    <% @productos.each do |p| %>
+      <tr class="border-t border-slate-100 <%= 'text-slate-400' unless p.activo %>">
+        <td class="px-3 py-2 font-mono"><%= p.clave %></td>
+        <td class="px-3 py-2"><%= p.nombre %></td>
+        <td class="px-3 py-2"><%= p.linea %></td>
+        <td class="px-3 py-2"><%= p.unidad %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= pesos(p.precio_centavos) %></td>
+        <td class="px-3 py-2 font-mono"><%= p.plu %></td>
+        <td class="px-3 py-2"><%= p.codigos_barras.size %></td>
+        <td class="px-3 py-2"><%= p.activo ? "sí" : "no" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_producto_path(p), class: "text-blue-700" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

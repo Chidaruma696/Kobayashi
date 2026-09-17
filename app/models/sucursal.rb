@@ -26,6 +26,10 @@ class Sucursal < ApplicationRecord
     tipo == "matriz"
   end
 
+  def limite_efectivo
+    BigDecimal(limite_efectivo_centavos) / 100
+  end
+
   def to_s
     nombre
   end

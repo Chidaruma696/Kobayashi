@@ -1,0 +1,14 @@
+<%= form_with model: [ :admin, @usuario ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
+  <%= render "admin/campo", f: f, campo: :usuario, etiqueta: "Usuario (minúsculas)", tipo: :text_field, opciones: { autocapitalize: "none" } %>
+  <div class="grid grid-cols-2 gap-4">
+    <div><%= f.label :rol_id, "Rol", class: "block text-sm font-medium" %><%= f.collection_select :rol_id, Rol.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :sucursal_id, "Sucursal", class: "block text-sm font-medium" %><%= f.collection_select :sucursal_id, Sucursal.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  </div>
+  <div class="grid grid-cols-2 gap-4">
+    <%= render "admin/campo", f: f, campo: :password, etiqueta: @usuario.new_record? ? "Contraseña" : "Nueva contraseña (vacío = igual)", tipo: :password_field, opciones: { autocomplete: "new-password" } %>
+    <%= render "admin/campo", f: f, campo: :pin, etiqueta: @usuario.new_record? ? "PIN (4 a 8 dígitos)" : "Nuevo PIN (vacío = igual)", tipo: :password_field, opciones: { inputmode: "numeric", autocomplete: "off" } %>
+  </div>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
+  <%= f.submit @usuario.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>
