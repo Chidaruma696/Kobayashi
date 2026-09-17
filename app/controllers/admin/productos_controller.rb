@@ -22,7 +22,10 @@ module Admin
 
     def update
       @producto.assign_attributes(permitidos)
-      guardar(@producto, admin_productos_path, "Producto guardado")
+      Producto.transaction do
+        params.fetch(:precios, {}).each { |sucursal_id, pesos| @producto.fijar_precio!(Sucursal.find(sucursal_id), pesos) } if @producto.valid?
+        guardar(@producto, admin_productos_path, "Producto guardado")
+      end
     end
 
     private

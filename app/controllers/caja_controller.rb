@@ -22,7 +22,7 @@ class CajaController < ApplicationController
     end
     p = r.producto
     render json: { etiqueta_id: r.etiqueta&.id, codigo: r.etiqueta&.codigo, producto_id: p.id, nombre: p.nombre, unidad: p.unidad,
-                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: p.precio_centavos }
+                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: p.precio_centavos_en(sucursal_actual) }
   end
 
   def cobrar

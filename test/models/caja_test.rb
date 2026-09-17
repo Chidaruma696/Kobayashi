@@ -114,6 +114,15 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal Venta.buscar(" #{venta.folio.downcase} "), venta
   end
 
+  test "el precio de la sucursal manda sobre el general, y el piso se mide contra él" do
+    @catsup.fijar_precio!(@tienda, "50.00")
+    venta = cobrar([ { producto_id: @catsup.id, cantidad: 1 } ])
+    assert_equal 5_000, venta.lineas.first.catalogo_centavos
+    assert_equal 4_200, @catsup.precio_centavos_en(sucursales(:matriz))
+    @catsup.fijar_precio!(@tienda, "")
+    assert_equal 4_200, @catsup.reload.precio_centavos_en(@tienda)
+  end
+
   test "dinero: formato y redondeo" do
     assert_equal "$1,234.50", Dinero.pesos(123_450)
     assert_equal "−$0.05", Dinero.pesos(-5)

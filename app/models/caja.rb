@@ -82,7 +82,7 @@ module Caja
       raise Error, "#{producto.nombre}: cantidad inválida" unless cantidad.positive?
       raise Error, "#{producto.nombre} va por piezas enteras" if !producto.kg? && cantidad != cantidad.floor
     end
-    catalogo = producto.precio_centavos
+    catalogo = producto.precio_centavos_en(sucursal)
     precio = l[:precio_centavos].present? ? l[:precio_centavos].to_i : catalogo
     autoriza = nil
     if precio < catalogo

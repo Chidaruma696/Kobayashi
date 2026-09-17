@@ -19,6 +19,11 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_equal false, p.reload.activo
     post admin_productos_path, params: { producto: { clave: "", nombre: "", unidad: "kg" } }
     assert_response :unprocessable_entity
+    patch admin_producto_path(p), params: { producto: { clave: "ALA", nombre: "Ala", unidad: "kg", precio: "75.50", activo: "1" }, precios: { sucursales(:tienda).id => "80", sucursales(:matriz).id => "" } }
+    assert_equal 8_000, p.reload.precio_centavos_en(sucursales(:tienda))
+    assert_equal 7_550, p.precio_centavos_en(sucursales(:matriz))
+    get edit_admin_producto_path(p)
+    assert_select "input[name='precios[#{sucursales(:tienda).id}]'][value='80.0']"
   end
 
   test "usuarios y roles: crear con PIN, cambiar rol, permisos con comodín" do

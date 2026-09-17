@@ -6,6 +6,7 @@ class Producto < ApplicationRecord
   has_many :existencias, dependent: :restrict_with_error
   has_many :etiquetas, dependent: :restrict_with_error
   has_many :pedido_lineas, dependent: :restrict_with_error
+  has_many :precios_sucursal, class_name: "PrecioSucursal", dependent: :destroy
 
   before_validation :asignar_plu, on: :create
 
@@ -28,6 +29,20 @@ class Producto < ApplicationRecord
 
   def precio=(pesos)
     self.precio_centavos = (BigDecimal(pesos.to_s) * 100).round.to_i
+  end
+
+  # Precio que rige en una sucursal: el suyo si lo tiene, si no el general.
+  def precio_centavos_en(sucursal)
+    precios_sucursal.find { |ps| ps.sucursal_id == sucursal.id }&.precio_centavos || precio_centavos
+  end
+
+  # Fija (o quita, con nil) el precio de una sucursal.
+  def fijar_precio!(sucursal, pesos)
+    if pesos.blank?
+      precios_sucursal.where(sucursal: sucursal).destroy_all
+    else
+      precios_sucursal.find_or_initialize_by(sucursal: sucursal).update!(precio_centavos: Dinero.centavos(pesos))
+    end
   end
 
   # Decimales con los que se captura la cantidad: kilos a 3, piezas enteras.

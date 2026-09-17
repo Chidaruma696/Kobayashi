@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_020001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
   create_table "cargos", force: :cascade do |t|
     t.integer "conteo_id", null: false
     t.datetime "created_at", null: false
@@ -259,6 +259,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_020001) do
     t.check_constraint "estado IN ('solicitado', 'surtiendo', 'cerrado', 'cancelado')", name: "pedidos_estado"
   end
 
+  create_table "precios_sucursal", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "precio_centavos", null: false
+    t.integer "producto_id", null: false
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id", "sucursal_id"], name: "index_precios_sucursal_on_producto_id_and_sucursal_id", unique: true
+    t.index ["producto_id"], name: "index_precios_sucursal_on_producto_id"
+    t.index ["sucursal_id"], name: "index_precios_sucursal_on_sucursal_id"
+    t.check_constraint "precio_centavos >= 0", name: "precios_sucursal_no_negativo"
+  end
+
   create_table "producciones", force: :cascade do |t|
     t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, null: false
@@ -488,6 +500,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_020001) do
   add_foreign_key "pedidos", "sucursales", column: "sucursal_destino_id"
   add_foreign_key "pedidos", "sucursales", column: "sucursal_origen_id"
   add_foreign_key "pedidos", "usuarios"
+  add_foreign_key "precios_sucursal", "productos"
+  add_foreign_key "precios_sucursal", "sucursales"
   add_foreign_key "producciones", "pedidos"
   add_foreign_key "producciones", "productos"
   add_foreign_key "producciones", "sucursales"

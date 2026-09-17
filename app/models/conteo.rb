@@ -79,7 +79,7 @@ class Conteo < ApplicationRecord
         sistema = Existencia.de(sucursal, l.producto)
         contado = l.escaneado + l.manual
         diferencia = contado - sistema
-        centavos = Dinero.importe(diferencia.abs, l.producto.precio_centavos)
+        centavos = Dinero.importe(diferencia.abs, l.producto.precio_centavos_en(sucursal))
         l.update!(sistema: sistema, diferencia: diferencia, diferencia_centavos: diferencia.negative? ? -centavos : centavos)
         next if diferencia.zero?
         Inventario.mover!(sucursal: sucursal, producto: l.producto, tipo: diferencia.negative? ? "ajuste_salida" : "ajuste_entrada",
