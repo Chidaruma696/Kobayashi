@@ -1,0 +1,29 @@
+<h1 class="mb-4 text-2xl font-bold">Nuevo pedido a la matriz</h1>
+<%= form_with model: @pedido, url: pedidos_path, data: { controller: "lineas" }, class: "max-w-2xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <% if sucursal_actual.matriz? %>
+    <div>
+      <%= f.label :sucursal_destino_id, "Para la tienda", class: "block text-sm font-medium" %>
+      <%= f.collection_select :sucursal_destino_id, @destinos, :id, :nombre, {}, class: "mt-1 rounded border border-slate-300 px-3 py-2" %>
+    </div>
+  <% else %>
+    <p class="text-sm text-slate-600">Para <strong><%= sucursal_actual %></strong></p>
+  <% end %>
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-slate-500"><th class="py-1">Producto</th><th class="py-1 w-40">Cantidad</th><th></th></tr></thead>
+    <tbody data-lineas-target="cuerpo">
+      <%= f.fields_for :lineas do |l| %>
+        <tr data-lineas-target="fila">
+          <td class="py-1 pr-2"><%= l.collection_select :producto_id, Producto.activos.order(:nombre), :id, ->(p) { "#{p.nombre} (#{p.unidad})" }, { include_blank: "—" }, class: "w-full rounded border border-slate-300 px-2 py-1" %></td>
+          <td class="py-1 pr-2"><%= l.number_field :cantidad, step: "0.001", min: "0.001", class: "w-full rounded border border-slate-300 px-2 py-1 font-mono" %></td>
+          <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700">✕</button></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button type="button" data-action="lineas#agregar" class="rounded border border-slate-300 px-3 py-1 text-sm">+ renglón</button>
+  <div>
+    <%= f.label :notas, "Notas", class: "block text-sm font-medium" %>
+    <%= f.text_area :notas, rows: 2, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+  </div>
+  <%= f.submit "Enviar pedido", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+<% end %>

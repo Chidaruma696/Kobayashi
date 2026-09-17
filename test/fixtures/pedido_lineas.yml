@@ -1,0 +1,8 @@
+pechuga_5:
+  pedido: abierto
+  producto: pechuga
+  cantidad: 5.000
+catsup_10:
+  pedido: abierto
+  producto: catsup
+  cantidad: 10

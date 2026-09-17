@@ -4,3 +4,8 @@
   <p class="text-sm text-slate-600">Última: <span class="font-mono"><%= @etiqueta.codigo %></span> · <%= @etiqueta.producto.nombre %> · <%= number_with_precision(@etiqueta.cantidad, precision: @etiqueta.producto.decimales) %> <%= @etiqueta.producto.unidad %>
     <%= link_to "Imprimir", etiqueta_path(@etiqueta, imprimir: 1), target: "_blank", class: "ml-2 rounded bg-slate-900 px-3 py-1 text-white" %></p>
 <% end %>
+<% if @etiqueta.pedido_linea %>
+  <%= turbo_stream.update "lleva", number_with_precision(@etiqueta.pedido_linea.cantidad_surtida, precision: @etiqueta.producto.decimales) %>
+<% elsif @etiqueta.produccion %>
+  <%= turbo_stream.update "lleva", number_with_precision(@etiqueta.produccion.disponible, precision: 3) %>
+<% end %>

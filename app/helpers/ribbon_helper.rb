@@ -7,7 +7,15 @@ module RibbonHelper
     { id: :inicio, nombre: "Inicio", grupos: [
       { nombre: "General", botones: [ Boton.new("Inicio", :root_path, nil, "⌂") ] }
     ] },
+    { id: :pedidos, nombre: "Pedidos", grupos: [
+      { nombre: "Pedir", botones: [ Boton.new("Nuevo pedido", :new_pedido_path, "pedidos.solicitar", "＋") ] },
+      { nombre: "Surtir", botones: [ Boton.new("Cola", :pedidos_path, "pedidos.surtir", "☰") ] }
+    ] },
     { id: :etiquetas, nombre: "Etiquetas", grupos: [
+      { nombre: "Producir", botones: [
+        Boton.new("Producción", :new_produccion_path, "produccion.abrir", "⚒"),
+        Boton.new("Abiertas", :producciones_path, "produccion.abrir", "▤")
+      ] },
       { nombre: "Etiquetar", botones: [
         Boton.new("Etiquetar", :new_etiqueta_path, "etiquetas.crear", "🏷"),
         Boton.new("Vivas", :etiquetas_path, "etiquetas.crear", "▦")

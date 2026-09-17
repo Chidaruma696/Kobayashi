@@ -11,24 +11,34 @@ class EtiquetasController < ApplicationController
   end
 
   def new
+    cargar_contexto
     @productos = Producto.activos.order(:nombre)
-    @producto = @productos.find_by(id: params[:producto_id]) || @productos.first
+    @producto = @linea&.producto || @productos.find_by(id: params[:producto_id]) || @productos.first
     @recientes = Etiqueta.where(sucursal: sucursal_actual, usuario: usuario_actual).includes(:producto).recientes.limit(15)
   end
 
   def create
+    cargar_contexto
     producto = Producto.activos.find(params[:producto_id])
     tipo = params[:tipo] == "caja" ? "caja" : "paquete"
-    @etiqueta = Etiqueta.create!(tipo: tipo, producto: producto, cantidad: params[:cantidad],
-                                 sucursal: sucursal_actual, usuario: usuario_actual)
+    linea = @linea || @produccion&.pedido&.linea_de(producto)
+    autoriza = nil
+    if linea.nil? && @produccion.nil?
+      autoriza = autorizador("etiquetas.libre", params[:pin])
+      raise ArgumentError, "para etiquetar hace falta un pedido, una producción o una autorización con motivo" if autoriza.nil? || params[:justificacion].blank?
+    end
+    @etiqueta = Etiqueta.create!(tipo: tipo, producto: producto, cantidad: params[:cantidad], sucursal: sucursal_actual,
+                                 usuario: usuario_actual, pedido_linea: linea, produccion: @produccion,
+                                 autorizado_por: autoriza, justificacion: params[:justificacion].presence)
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to new_etiqueta_path(producto_id: producto.id), notice: "Etiqueta #{@etiqueta.codigo} creada" }
+      format.html { redirect_to new_etiqueta_path(contexto_params.merge(producto_id: producto.id)), notice: "Etiqueta #{@etiqueta.codigo} creada" }
     end
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::RecordInvalid, ArgumentError => e
+    mensaje = e.respond_to?(:record) ? e.record.errors.full_messages.join(", ") : e.message
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.update("aviso", partial: "aviso", locals: { texto: e.message }), status: :unprocessable_entity }
-      format.html { redirect_to new_etiqueta_path(producto_id: params[:producto_id]), alert: e.message }
+      format.turbo_stream { render turbo_stream: turbo_stream.update("aviso", partial: "aviso", locals: { texto: mensaje }), status: :unprocessable_entity }
+      format.html { redirect_to new_etiqueta_path(contexto_params.merge(producto_id: params[:producto_id])), alert: mensaje }
     end
   end
 
@@ -65,6 +75,17 @@ class EtiquetasController < ApplicationController
   end
 
   private
+
+  # Renglón de pedido o producción abierta de esta sucursal desde los que se etiqueta.
+  def cargar_contexto
+    @linea = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] })
+                        .includes(:producto, :pedido).find_by(id: params[:pedido_linea_id])
+    @produccion = Produccion.abiertas.where(sucursal: sucursal_actual).includes(:producto, :pedido).find_by(id: params[:produccion_id])
+  end
+
+  def contexto_params
+    { pedido_linea_id: @linea&.id, produccion_id: @produccion&.id }.compact
+  end
 
   def agrupar
     hijas = Etiqueta.where(sucursal: sucursal_actual, id: Array(params[:ids])).to_a

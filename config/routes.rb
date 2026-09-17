@@ -10,6 +10,21 @@ Rails.application.routes.draw do
   get "inventario/movimiento/nuevo", to: "inventario#nuevo_movimiento", as: :nuevo_movimiento_inventario
   post "inventario/movimiento", to: "inventario#crear_movimiento", as: :movimientos_inventario
 
+  resources :pedidos, only: %i[index new create show] do
+    member { post :cancelar }
+    resources :lineas, only: [], controller: "pedido_lineas" do
+      member do
+        post :surtido
+        post :no_surtir
+        post :reabrir
+      end
+    end
+  end
+
+  resources :producciones, only: %i[index new create show] do
+    member { post :cerrar }
+  end
+
   resources :etiquetas, only: %i[index new create show] do
     collection do
       get :buscar

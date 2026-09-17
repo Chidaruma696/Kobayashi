@@ -3,10 +3,16 @@ class Etiqueta < ApplicationRecord
   ESTADOS = %w[viva vendida baja].freeze
   INTENTOS_CODIGO = 10
 
+  # Las cajas y tarimas creadas al agrupar heredan el contexto de sus hijas.
+  attr_accessor :agrupando
+
   belongs_to :producto, optional: true
   belongs_to :sucursal
   belongs_to :usuario
   belongs_to :padre, class_name: "Etiqueta", optional: true
+  belongs_to :pedido_linea, optional: true
+  belongs_to :produccion, optional: true
+  belongs_to :autorizado_por, class_name: "Usuario", optional: true
   has_many :hijas, class_name: "Etiqueta", foreign_key: :padre_id, dependent: :restrict_with_error, inverse_of: :padre
   has_many :movimientos, dependent: :restrict_with_error
 
@@ -17,9 +23,14 @@ class Etiqueta < ApplicationRecord
   validates :codigo, presence: true, uniqueness: true, length: { is: 13 }
   validates :cantidad, numericality: { greater_than_or_equal_to: 0 }
   validate :contenido_coherente
+  validate :contexto_obligatorio, on: :create
+  validate :cabe_en_la_produccion, on: :create
+  after_save :recalcular_renglon
 
   scope :vivas, -> { where(estado: "viva") }
   scope :sueltas, -> { where(padre_id: nil) }
+  # Lo que cuenta como mercancía: paquetes y cajas sin hijas (cajas de proveedor). Nunca tarimas.
+  scope :hojas, -> { where(tipo: "paquete").or(where(tipo: "caja").where.not("EXISTS (SELECT 1 FROM etiquetas h WHERE h.padre_id = etiquetas.id)")) }
   scope :recientes, -> { order(created_at: :desc) }
 
   def paquete? = tipo == "paquete"
@@ -79,7 +90,7 @@ class Etiqueta < ApplicationRecord
     raise ArgumentError, "las etiquetas son de sucursales distintas" if sucursales.size > 1
     productos = hijas.map(&:producto_id).uniq
     transaction do
-      grupo = create!(tipo: tipo, sucursal_id: sucursales.first, usuario: usuario,
+      grupo = create!(tipo: tipo, sucursal_id: sucursales.first, usuario: usuario, agrupando: true,
                       producto_id: (productos.size == 1 ? productos.first : nil),
                       cantidad: hijas.sum(&:cantidad))
       Etiqueta.where(id: hijas.map(&:id)).update_all(padre_id: grupo.id, updated_at: Time.current)
@@ -100,6 +111,28 @@ class Etiqueta < ApplicationRecord
       return
     end
     errors.add(:codigo, "no quedan códigos libres para este producto")
+  end
+
+  # Una etiqueta nace de un renglón de pedido, de una producción, o con autorización registrada.
+  # Las cajas y tarimas que solo agrupan no necesitan contexto: lo traen sus hijas.
+  def contexto_obligatorio
+    return if pedido_linea || produccion || (autorizado_por && justificacion.present?)
+    return if agrupando || tarima?
+    errors.add(:base, "para etiquetar hace falta un pedido, una producción o una autorización con motivo")
+  end
+
+  def cabe_en_la_produccion
+    return unless produccion
+    errors.add(:base, "la producción #{produccion.folio} está cerrada") unless produccion.abierta?
+    unless produccion.cabe?(cantidad.to_d)
+      errors.add(:cantidad, "no puede salir más de lo que entró: quedan #{produccion.disponible.to_s('F')} de #{produccion.cantidad.to_s('F')}")
+    end
+  end
+
+  def recalcular_renglon
+    return unless pedido_linea && (saved_change_to_estado? || saved_change_to_id?)
+    pedido_linea.recalcular!
+    pedido_linea.pedido.surtiendo!
   end
 
   def contenido_coherente

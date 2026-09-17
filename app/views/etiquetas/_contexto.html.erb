@@ -1,0 +1,19 @@
+<% if linea %>
+  <div class="mb-4 rounded border-l-4 border-blue-600 bg-blue-50 p-3 text-sm">
+    Pedido <strong><%= linea.pedido.folio %></strong> para <strong><%= linea.pedido.sucursal_destino %></strong> ·
+    <%= linea.producto.nombre %>: pide <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span>,
+    lleva <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
+    · <%= link_to "volver al pedido", pedido_path(linea.pedido), class: "text-blue-700 underline" %>
+  </div>
+<% elsif produccion %>
+  <div class="mb-4 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
+    Producción <strong><%= produccion.folio %></strong> · entró <span class="font-mono"><%= number_with_precision(produccion.cantidad, precision: 3) %></span> de <%= produccion.producto.nombre %>,
+    queda <span class="font-mono" id="lleva"><%= number_with_precision(produccion.disponible, precision: 3) %></span>
+    <%= "· pedido #{produccion.pedido.folio}" if produccion.pedido %>
+    · <%= link_to "ver producción", produccion_path(produccion), class: "text-emerald-800 underline" %>
+  </div>
+<% else %>
+  <div class="mb-4 rounded border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
+    <strong>Sin pedido ni producción.</strong> Solo se etiqueta con el PIN de quien pueda autorizarlo y un motivo. Lo normal es entrar desde un renglón del pedido o desde una producción.
+  </div>
+<% end %>

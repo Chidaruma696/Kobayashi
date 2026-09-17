@@ -1,0 +1,47 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <%= @pedido.sucursal_destino %></h1>
+  <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= @pedido.estado %></span>
+</div>
+<p class="mb-4 text-sm text-slate-600">Pidió <%= @pedido.usuario %> el <%= l @pedido.created_at, format: :short %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Pide</th><th class="px-3 py-2 text-right">Lleva</th><th class="px-3 py-2 text-right">Falta</th><th class="px-3 py-2">Estado</th><% if @surtidor && @pedido.abierto? %><th class="px-3 py-2">Acciones</th><% end %></tr></thead>
+  <tbody>
+    <% @pedido.lineas.each do |l| %>
+      <% d = l.producto.decimales %>
+      <tr class="border-t border-slate-100 <%= 'bg-green-50' if l.estado == 'surtido' %> <%= 'bg-amber-50' if l.estado == 'no_surtir' %>">
+        <td class="px-3 py-2"><%= l.producto.nombre %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad, precision: d) %> <%= l.producto.unidad %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad_surtida, precision: d) %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.faltante, precision: d) %></td>
+        <td class="px-3 py-2"><%= l.estado.humanize %><%= " · #{l.motivo}" if l.motivo.present? %></td>
+        <% if @surtidor && @pedido.abierto? %>
+          <td class="px-3 py-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <% if l.pendiente? %>
+                <%= link_to "Etiquetar", new_etiqueta_path(pedido_linea_id: l.id), class: "rounded bg-slate-900 px-2 py-1 text-white" %>
+                <%= button_to "Dar por surtido", surtido_pedido_linea_path(@pedido, l), class: "rounded border border-slate-300 px-2 py-1" %>
+                <%= form_with url: no_surtir_pedido_linea_path(@pedido, l), class: "flex gap-1" do |f| %>
+                  <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "w-28 rounded border border-slate-300 px-2 py-1" %>
+                  <%= f.submit "No surtir", class: "rounded border border-amber-400 px-2 py-1" %>
+                <% end %>
+              <% else %>
+                <%= button_to "Reabrir", reabrir_pedido_linea_path(@pedido, l), class: "rounded border border-slate-300 px-2 py-1" %>
+              <% end %>
+            </div>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if @surtidor && @pedido.abierto? %>
+  <div class="mt-4 flex gap-3 text-sm">
+    <%= link_to "Abrir producción para este pedido", new_produccion_path(pedido_id: @pedido.id), class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+    <% @producciones.each do |pr| %>
+      <%= link_to "Producción #{pr.folio} abierta (#{pr.producto.nombre})", produccion_path(pr), class: "rounded border border-slate-300 px-3 py-2" %>
+    <% end %>
+  </div>
+<% end %>
+<% if @pedido.abierto? && puede?("pedidos.solicitar") %>
+  <%= button_to "Cancelar pedido", cancelar_pedido_path(@pedido), class: "mt-6 text-sm text-red-700 hover:underline", form: { data: { turbo_confirm: "¿Cancelar el pedido #{@pedido.folio}?" } } %>
+<% end %>

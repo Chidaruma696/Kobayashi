@@ -8,7 +8,8 @@ class EtiquetaTest < ActiveSupport::TestCase
   end
 
   def paquete(cantidad = "1.250", producto: @pechuga)
-    Etiqueta.create!(tipo: "paquete", producto: producto, cantidad: cantidad, sucursal: @matriz, usuario: @admin)
+    Etiqueta.create!(tipo: "paquete", producto: producto, cantidad: cantidad, sucursal: @matriz, usuario: @admin,
+                     autorizado_por: @admin, justificacion: "prueba")
   end
 
   test "un paquete recibe un código de identidad con el PLU y una secuencia" do
@@ -48,12 +49,12 @@ class EtiquetaTest < ActiveSupport::TestCase
     b = paquete
     b.dar_de_baja!(motivo: "se rompió", usuario: @admin)
     assert_raises(ArgumentError) { Etiqueta.cerrar_caja!([ b ], usuario: @admin) }
-    ajena = Etiqueta.create!(tipo: "paquete", producto: @pechuga, cantidad: 1, sucursal: sucursales(:tienda), usuario: @admin)
+    ajena = Etiqueta.create!(tipo: "paquete", producto: @pechuga, cantidad: 1, sucursal: sucursales(:tienda), usuario: @admin, autorizado_por: @admin, justificacion: "prueba")
     assert_raises(ArgumentError) { Etiqueta.cerrar_caja!([ paquete, ajena ], usuario: @admin) }
   end
 
   test "una caja de proveedor lleva producto y cantidad sin paquetes" do
-    caja = Etiqueta.create!(tipo: "caja", producto: productos(:catsup), cantidad: 20, sucursal: @matriz, usuario: @admin)
+    caja = Etiqueta.create!(tipo: "caja", producto: productos(:catsup), cantidad: 20, sucursal: @matriz, usuario: @admin, pedido_linea: pedido_lineas(:catsup_10))
     assert_equal({ productos(:catsup) => BigDecimal("20") }, caja.contenido)
   end
 
@@ -62,6 +63,14 @@ class EtiquetaTest < ActiveSupport::TestCase
     assert_equal a, Etiqueta.buscar(" #{a.codigo[0, 12]} ")
     assert_equal a, Etiqueta.buscar(a.codigo)
     assert_nil Etiqueta.buscar("0000000000000")
+  end
+
+  test "sin pedido, producción ni autorización no se etiqueta" do
+    e = Etiqueta.new(tipo: "paquete", producto: @pechuga, cantidad: 1, sucursal: @matriz, usuario: @admin)
+    assert_not e.valid?
+    assert_match "autorización", e.errors.full_messages.join
+    e.pedido_linea = pedido_lineas(:pechuga_5)
+    assert e.valid?
   end
 
   test "dar de baja una caja da de baja sus paquetes" do

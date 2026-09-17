@@ -4,12 +4,12 @@ Sucursal.find_or_create_by!(codigo: "T01") { |s| s.nombre = "Tienda 1"; s.tipo =
 
 roles = {
   "administrador" => [ "*" ],
-  "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver" ],
-  "etiquetador" => [ "etiquetas.crear", "inventario.ver", "salidas.surtir", "salidas.recibir" ],
-  "supervisor" => [ "caja.*", "inventario.*", "salidas.*", "conteos.*" ]
+  "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver", "pedidos.solicitar" ],
+  "etiquetador" => [ "etiquetas.crear", "produccion.abrir", "pedidos.surtir", "inventario.ver", "salidas.surtir", "salidas.recibir" ],
+  "supervisor" => [ "caja.*", "inventario.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "conteos.*" ]
 }
 roles.each do |nombre, permisos|
-  Rol.find_or_create_by!(nombre: nombre) { |r| r.permisos = permisos }
+  Rol.find_or_initialize_by(nombre: nombre).update!(permisos: permisos)
 end
 
 if Rails.env.development? && !Usuario.exists?(usuario: "admin")

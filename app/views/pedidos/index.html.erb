@@ -1,0 +1,26 @@
+<h1 class="mb-4 text-2xl font-bold">Pedidos por surtir · <%= sucursal_actual %></h1>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Pidió</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Avance</th><th class="px-3 py-2"></th></tr></thead>
+  <tbody>
+    <% @abiertos.each do |p| %>
+      <% resueltas = p.lineas.count { |l| !l.pendiente? } %>
+      <tr class="border-t border-slate-100">
+        <td class="px-3 py-2 font-mono"><%= p.folio %></td>
+        <td class="px-3 py-2"><%= p.sucursal_destino %></td>
+        <td class="px-3 py-2"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
+        <td class="px-3 py-2"><%= p.estado %></td>
+        <td class="px-3 py-2"><%= resueltas %>/<%= p.lineas.size %> renglones</td>
+        <td class="px-3 py-2 text-right"><%= link_to "Surtir", pedido_path(p), class: "rounded bg-slate-900 px-3 py-1 text-white" %></td>
+      </tr>
+    <% end %>
+    <% if @abiertos.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-slate-500">Nada pendiente.</td></tr><% end %>
+  </tbody>
+</table>
+<% if @recientes.any? %>
+  <h2 class="mb-2 mt-8 font-semibold">Recientes</h2>
+  <ul class="text-sm">
+    <% @recientes.each do |p| %>
+      <li class="border-t border-slate-200 py-1"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> · <%= p.sucursal_destino %> · <%= p.estado %> · <%= l p.created_at.to_date, format: :short %></li>
+    <% end %>
+  </ul>
+<% end %>

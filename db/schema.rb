@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_235003) do
   create_table "codigos_barras", force: :cascade do |t|
     t.string "codigo", null: false
     t.datetime "created_at", null: false
@@ -29,19 +29,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
   end
 
   create_table "etiquetas", force: :cascade do |t|
+    t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, default: "0.0", null: false
     t.string "codigo", limit: 13, null: false
     t.datetime "created_at", null: false
     t.string "estado", default: "viva", null: false
+    t.string "justificacion"
     t.string "motivo"
     t.integer "padre_id"
+    t.integer "pedido_linea_id"
+    t.integer "produccion_id"
     t.integer "producto_id"
     t.integer "sucursal_id", null: false
     t.string "tipo", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
+    t.index ["autorizado_por_id"], name: "index_etiquetas_on_autorizado_por_id"
     t.index ["codigo"], name: "index_etiquetas_on_codigo", unique: true
     t.index ["padre_id"], name: "index_etiquetas_on_padre_id"
+    t.index ["pedido_linea_id"], name: "index_etiquetas_on_pedido_linea_id"
+    t.index ["produccion_id"], name: "index_etiquetas_on_produccion_id"
     t.index ["producto_id"], name: "index_etiquetas_on_producto_id"
     t.index ["sucursal_id", "estado", "tipo"], name: "index_etiquetas_on_sucursal_id_and_estado_and_tipo"
     t.index ["sucursal_id"], name: "index_etiquetas_on_sucursal_id"
@@ -95,7 +102,61 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
     t.index ["sucursal_id"], name: "index_movimientos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_movimientos_on_usuario_id"
     t.check_constraint "cantidad > 0", name: "movimientos_cantidad_positiva"
-    t.check_constraint "tipo IN ('entrada', 'produccion', 'recepcion', 'devolucion_cliente', 'ajuste_entrada', 'venta', 'salida', 'merma', 'ajuste_salida')", name: "movimientos_tipo"
+    t.check_constraint "tipo IN ('entrada', 'produccion', 'recepcion', 'devolucion_cliente', 'ajuste_entrada', 'venta', 'salida', 'consumo', 'merma', 'ajuste_salida')", name: "movimientos_tipo"
+  end
+
+  create_table "pedido_lineas", force: :cascade do |t|
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.string "estado", default: "pendiente", null: false
+    t.string "motivo"
+    t.integer "pedido_id", null: false
+    t.integer "producto_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pedido_id"], name: "index_pedido_lineas_on_pedido_id"
+    t.index ["producto_id"], name: "index_pedido_lineas_on_producto_id"
+    t.check_constraint "cantidad > 0", name: "pedido_lineas_cantidad"
+    t.check_constraint "estado IN ('pendiente', 'surtido', 'no_surtir')", name: "pedido_lineas_estado"
+  end
+
+  create_table "pedidos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "estado", default: "solicitado", null: false
+    t.string "folio", null: false
+    t.text "notas"
+    t.integer "sucursal_destino_id", null: false
+    t.integer "sucursal_origen_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["folio"], name: "index_pedidos_on_folio", unique: true
+    t.index ["sucursal_destino_id"], name: "index_pedidos_on_sucursal_destino_id"
+    t.index ["sucursal_origen_id", "estado"], name: "index_pedidos_on_sucursal_origen_id_and_estado"
+    t.index ["sucursal_origen_id"], name: "index_pedidos_on_sucursal_origen_id"
+    t.index ["usuario_id"], name: "index_pedidos_on_usuario_id"
+    t.check_constraint "estado IN ('solicitado', 'surtiendo', 'cerrado', 'cancelado')", name: "pedidos_estado"
+  end
+
+  create_table "producciones", force: :cascade do |t|
+    t.integer "autorizado_por_id"
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.string "estado", default: "abierta", null: false
+    t.string "folio", null: false
+    t.string "justificacion"
+    t.decimal "merma", precision: 12, scale: 3
+    t.integer "pedido_id"
+    t.integer "producto_id", null: false
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["autorizado_por_id"], name: "index_producciones_on_autorizado_por_id"
+    t.index ["folio"], name: "index_producciones_on_folio", unique: true
+    t.index ["pedido_id"], name: "index_producciones_on_pedido_id"
+    t.index ["producto_id"], name: "index_producciones_on_producto_id"
+    t.index ["sucursal_id"], name: "index_producciones_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_producciones_on_usuario_id"
+    t.check_constraint "cantidad > 0", name: "producciones_cantidad"
+    t.check_constraint "estado IN ('abierta', 'cerrada')", name: "producciones_estado"
   end
 
   create_table "productos", force: :cascade do |t|
@@ -152,9 +213,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
 
   add_foreign_key "codigos_barras", "productos"
   add_foreign_key "etiquetas", "etiquetas", column: "padre_id"
+  add_foreign_key "etiquetas", "pedido_lineas"
+  add_foreign_key "etiquetas", "producciones"
   add_foreign_key "etiquetas", "productos"
   add_foreign_key "etiquetas", "sucursales"
   add_foreign_key "etiquetas", "usuarios"
+  add_foreign_key "etiquetas", "usuarios", column: "autorizado_por_id"
   add_foreign_key "existencias", "productos"
   add_foreign_key "existencias", "sucursales"
   add_foreign_key "folios", "sucursales"
@@ -162,6 +226,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
   add_foreign_key "movimientos", "productos"
   add_foreign_key "movimientos", "sucursales"
   add_foreign_key "movimientos", "usuarios"
+  add_foreign_key "pedido_lineas", "pedidos"
+  add_foreign_key "pedido_lineas", "productos"
+  add_foreign_key "pedidos", "sucursales", column: "sucursal_destino_id"
+  add_foreign_key "pedidos", "sucursales", column: "sucursal_origen_id"
+  add_foreign_key "pedidos", "usuarios"
+  add_foreign_key "producciones", "pedidos"
+  add_foreign_key "producciones", "productos"
+  add_foreign_key "producciones", "sucursales"
+  add_foreign_key "producciones", "usuarios"
+  add_foreign_key "producciones", "usuarios", column: "autorizado_por_id"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
 end

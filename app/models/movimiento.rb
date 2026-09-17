@@ -1,11 +1,11 @@
 class Movimiento < ApplicationRecord
   ENTRADAS = %w[entrada produccion recepcion devolucion_cliente ajuste_entrada].freeze
-  SALIDAS = %w[venta salida merma ajuste_salida].freeze
+  SALIDAS = %w[venta salida consumo merma ajuste_salida].freeze
   TIPOS = (ENTRADAS + SALIDAS).freeze
   NOMBRES = {
     "entrada" => "Entrada", "produccion" => "Producción", "recepcion" => "Recepción",
     "devolucion_cliente" => "Devolución de cliente", "ajuste_entrada" => "Ajuste (+)",
-    "venta" => "Venta", "salida" => "Salida", "merma" => "Merma", "ajuste_salida" => "Ajuste (−)"
+    "venta" => "Venta", "salida" => "Salida", "consumo" => "Consumo de producción", "merma" => "Merma", "ajuste_salida" => "Ajuste (−)"
   }.freeze
 
   belongs_to :sucursal

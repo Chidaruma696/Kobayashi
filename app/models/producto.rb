@@ -5,6 +5,7 @@ class Producto < ApplicationRecord
   has_many :codigos_barras, class_name: "CodigoBarras", dependent: :destroy
   has_many :existencias, dependent: :restrict_with_error
   has_many :etiquetas, dependent: :restrict_with_error
+  has_many :pedido_lineas, dependent: :restrict_with_error
 
   before_validation :asignar_plu, on: :create
 
