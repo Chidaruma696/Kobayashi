@@ -1,0 +1,46 @@
+<h1 class="mb-4 text-2xl font-bold">Etiquetas vivas · <%= sucursal_actual %></h1>
+<div class="grid gap-6 lg:grid-cols-3">
+  <%= form_with url: cerrar_caja_etiquetas_path, class: "rounded bg-white p-4 shadow-sm" do |f| %>
+    <h2 class="mb-2 flex items-center justify-between font-semibold">Paquetes sueltos <span class="text-sm font-normal text-slate-500"><%= @paquetes.size %></span></h2>
+    <ul class="max-h-96 overflow-auto text-sm">
+      <% @paquetes.each do |e| %>
+        <li class="flex items-center gap-2 border-t border-slate-100 py-1">
+          <%= check_box_tag "ids[]", e.id, false, id: "p#{e.id}" %>
+          <label for="p<%= e.id %>" class="flex-1 truncate"><%= e.producto.nombre %> · <span class="font-mono"><%= number_with_precision(e.cantidad, precision: e.producto.decimales) %></span></label>
+          <span class="font-mono text-xs text-slate-500"><%= e.codigo %></span>
+        </li>
+      <% end %>
+    </ul>
+    <%= f.submit "Cerrar caja con los marcados", class: "mt-3 rounded bg-slate-900 px-3 py-2 text-sm text-white" %>
+  <% end %>
+  <%= form_with url: armar_tarima_etiquetas_path, class: "rounded bg-white p-4 shadow-sm" do |f| %>
+    <h2 class="mb-2 flex items-center justify-between font-semibold">Cajas <span class="text-sm font-normal text-slate-500"><%= @cajas.size %></span></h2>
+    <ul class="max-h-96 overflow-auto text-sm">
+      <% @cajas.each do |e| %>
+        <li class="flex items-center gap-2 border-t border-slate-100 py-1">
+          <%= check_box_tag "ids[]", e.id, false, id: "c#{e.id}" %>
+          <label for="c<%= e.id %>" class="flex-1 truncate"><%= e.producto&.nombre || "mixta" %> · <span class="font-mono"><%= number_with_precision(e.cantidad, precision: e.producto&.decimales || 3) %></span></label>
+          <%= link_to e.codigo, etiqueta_path(e), target: "_blank", class: "font-mono text-xs text-blue-700" %>
+        </li>
+      <% end %>
+    </ul>
+    <%= f.submit "Armar tarima con las marcadas", class: "mt-3 rounded bg-slate-900 px-3 py-2 text-sm text-white" %>
+  <% end %>
+  <div class="rounded bg-white p-4 shadow-sm">
+    <h2 class="mb-2 flex items-center justify-between font-semibold">Tarimas <span class="text-sm font-normal text-slate-500"><%= @tarimas.size %></span></h2>
+    <ul class="text-sm">
+      <% @tarimas.each do |e| %>
+        <li class="flex items-center gap-2 border-t border-slate-100 py-1">
+          <span class="flex-1"><%= e.hijas.size %> cajas · <span class="font-mono"><%= number_with_precision(e.cantidad, precision: 3) %></span></span>
+          <%= link_to e.codigo, etiqueta_path(e), target: "_blank", class: "font-mono text-xs text-blue-700" %>
+        </li>
+      <% end %>
+    </ul>
+    <h2 class="mb-2 mt-6 font-semibold">Dar de baja</h2>
+    <%= form_with url: "#", data: { controller: "baja" }, class: "space-y-2 text-sm" do |f| %>
+      <%= text_field_tag :codigo, nil, placeholder: "Escanea o teclea el código", class: "w-full rounded border border-slate-300 px-2 py-1 font-mono", data: { baja_target: "codigo" } %>
+      <%= text_field_tag :motivo, nil, placeholder: "Motivo (roto, sin etiqueta…)", required: true, class: "w-full rounded border border-slate-300 px-2 py-1", data: { baja_target: "motivo" } %>
+      <button type="button" data-action="baja#enviar" class="rounded bg-red-700 px-3 py-1 text-white">Dar de baja</button>
+    <% end %>
+  </div>
+</div>

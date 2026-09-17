@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Etiqueta <%= @etiqueta.codigo %></title>
+    <style>
+      @page { size: 55mm 45mm; margin: 0; }
+      body { margin: 0; font-family: sans-serif; }
+      .etiqueta { width: 55mm; height: 45mm; box-sizing: border-box; padding: 2mm 3mm; display: flex; flex-direction: column; justify-content: space-between; }
+      .nombre { font-size: 11pt; font-weight: bold; line-height: 1.1; max-height: 24pt; overflow: hidden; }
+      .dato { display: flex; justify-content: space-between; font-size: 9pt; }
+      .cantidad { font-size: 16pt; font-weight: bold; }
+      svg { width: 100%; height: auto; }
+      @media screen { body { background: #ddd; padding: 20px; } .etiqueta { background: white; box-shadow: 0 0 4px #999; } .acciones { margin-top: 12px; font-family: sans-serif; } }
+      @media print { .acciones { display: none; } }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+    <div class="acciones">
+      <button onclick="window.print()">Imprimir</button>
+      <a href="<%= new_etiqueta_path(producto_id: @etiqueta.producto_id) %>">Volver a etiquetar</a>
+    </div>
+    <% if params[:imprimir] %><script>window.addEventListener("load", () => window.print());</script><% end %>
+  </body>
+</html>

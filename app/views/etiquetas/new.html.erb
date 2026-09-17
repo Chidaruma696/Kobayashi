@@ -1,0 +1,39 @@
+<h1 class="mb-4 text-2xl font-bold">Etiquetar · <%= sucursal_actual %></h1>
+<div class="grid gap-6 md:grid-cols-2">
+  <div data-controller="bascula" data-bascula-simulada-value="<%= params[:simulada].present? %>" data-bascula-auto-value="true">
+    <div class="mb-4 flex items-center gap-3 rounded bg-white p-4 shadow-sm">
+      <div class="flex-1">
+        <div class="text-xs uppercase text-slate-500">Báscula <span data-bascula-target="estado">desconectada</span></div>
+        <div class="font-mono text-4xl" data-bascula-target="peso">0.000</div>
+      </div>
+      <button type="button" data-action="bascula#conectar" class="rounded bg-slate-900 px-3 py-2 text-sm text-white">Conectar</button>
+      <% if params[:simulada].present? %>
+        <button type="button" data-action="bascula#simular" class="rounded bg-amber-500 px-3 py-2 text-sm text-white">Simular</button>
+      <% end %>
+    </div>
+    <div id="aviso"></div>
+    <%= form_with url: etiquetas_path, data: { bascula_target: "form", action: "turbo:submit-end->bascula#enviado" }, class: "space-y-4 rounded bg-white p-4 shadow-sm" do |f| %>
+      <div>
+        <%= f.label :producto_id, "Producto", class: "block text-sm font-medium" %>
+        <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id, { "data-unidad": p.unidad } ] }, { selected: @producto&.id }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2", data: { bascula_target: "producto" } %>
+      </div>
+      <div class="flex gap-4 text-sm">
+        <label class="flex items-center gap-1"><%= f.radio_button :tipo, "paquete", checked: true, data: { bascula_target: "tipo" } %> Paquete (pesado)</label>
+        <label class="flex items-center gap-1"><%= f.radio_button :tipo, "caja", data: { bascula_target: "tipo" } %> Caja de proveedor (piezas)</label>
+      </div>
+      <div>
+        <%= f.label :cantidad, "Cantidad", class: "block text-sm font-medium" %>
+        <%= f.number_field :cantidad, step: "0.001", min: "0.001", required: true, autocomplete: "off", data: { bascula_target: "cantidad" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2 font-mono text-2xl" %>
+        <p class="mt-1 text-xs text-slate-500">Con la báscula conectada, el peso estable se captura y se etiqueta solo. Sin báscula, teclea y pulsa Etiquetar.</p>
+      </div>
+      <%= f.submit "Etiquetar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+    <% end %>
+    <div id="ultima" class="mt-3"></div>
+  </div>
+  <div class="rounded bg-white p-4 shadow-sm">
+    <h2 class="mb-2 font-semibold">Mis últimas etiquetas</h2>
+    <ul id="recientes">
+      <%= render partial: "reciente", collection: @recientes, as: :etiqueta %>
+    </ul>
+  </div>
+</div>

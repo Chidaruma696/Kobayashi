@@ -4,6 +4,10 @@ class ApplicationController < ActionController::Base
 
   class SinPermiso < StandardError; end
 
+  # Pestaña de la cinta que corresponde a este controlador (ver RibbonHelper).
+  class_attribute :pestana_ribbon, default: :inicio
+  def self.pestana(id) = self.pestana_ribbon = id
+
   before_action :exigir_sesion
   helper_method :usuario_actual, :sucursal_actual, :puede?
 

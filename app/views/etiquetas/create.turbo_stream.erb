@@ -1,0 +1,6 @@
+<%= turbo_stream.update "aviso", "" %>
+<%= turbo_stream.prepend "recientes", partial: "reciente", locals: { etiqueta: @etiqueta } %>
+<%= turbo_stream.update "ultima" do %>
+  <p class="text-sm text-slate-600">Última: <span class="font-mono"><%= @etiqueta.codigo %></span> · <%= @etiqueta.producto.nombre %> · <%= number_with_precision(@etiqueta.cantidad, precision: @etiqueta.producto.decimales) %> <%= @etiqueta.producto.unidad %>
+    <%= link_to "Imprimir", etiqueta_path(@etiqueta, imprimir: 1), target: "_blank", class: "ml-2 rounded bg-slate-900 px-3 py-1 text-white" %></p>
+<% end %>

@@ -1,0 +1,26 @@
+<h1 class="mb-4 text-2xl font-bold">Entrada o ajuste · <%= @sucursal %></h1>
+<%= form_with url: movimientos_inventario_path(sucursal_id: @sucursal.id), class: "max-w-lg space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <div>
+    <%= f.label :producto_id, "Producto", class: "block text-sm font-medium" %>
+    <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, { selected: @movimiento.producto_id }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+  </div>
+  <div>
+    <%= f.label :tipo, "Tipo", class: "block text-sm font-medium" %>
+    <%= f.select :tipo, [ [ "Entrada", "entrada" ], [ "Ajuste (+)", "ajuste_entrada" ], [ "Ajuste (−)", "ajuste_salida" ], [ "Merma", "merma" ] ], { selected: @movimiento.tipo }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+  </div>
+  <div>
+    <%= f.label :cantidad, "Cantidad", class: "block text-sm font-medium" %>
+    <%= f.number_field :cantidad, step: "0.001", min: "0.001", value: @movimiento.cantidad, required: true, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2 font-mono" %>
+  </div>
+  <div>
+    <%= f.label :motivo, "Motivo", class: "block text-sm font-medium" %>
+    <%= f.text_field :motivo, value: @movimiento.motivo, required: true, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+  </div>
+  <% unless puede?("inventario.ajustar") %>
+    <div>
+      <%= f.label :pin, "PIN de quien autoriza", class: "block text-sm font-medium" %>
+      <%= f.password_field :pin, inputmode: "numeric", autocomplete: "off", class: "mt-1 w-40 rounded border border-slate-300 px-3 py-2" %>
+    </div>
+  <% end %>
+  <%= f.submit "Registrar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+<% end %>

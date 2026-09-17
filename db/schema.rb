@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_17_223546) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_230004) do
   create_table "codigos_barras", force: :cascade do |t|
     t.string "codigo", null: false
     t.datetime "created_at", null: false
@@ -18,6 +18,49 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_223546) do
     t.datetime "updated_at", null: false
     t.index ["codigo"], name: "index_codigos_barras_on_codigo", unique: true
     t.index ["producto_id"], name: "index_codigos_barras_on_producto_id"
+  end
+
+  create_table "contadores", force: :cascade do |t|
+    t.string "clave", null: false
+    t.datetime "created_at", null: false
+    t.integer "ultimo", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["clave"], name: "index_contadores_on_clave", unique: true
+  end
+
+  create_table "etiquetas", force: :cascade do |t|
+    t.decimal "cantidad", precision: 12, scale: 3, default: "0.0", null: false
+    t.string "codigo", limit: 13, null: false
+    t.datetime "created_at", null: false
+    t.string "estado", default: "viva", null: false
+    t.string "motivo"
+    t.integer "padre_id"
+    t.integer "producto_id"
+    t.integer "sucursal_id", null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["codigo"], name: "index_etiquetas_on_codigo", unique: true
+    t.index ["padre_id"], name: "index_etiquetas_on_padre_id"
+    t.index ["producto_id"], name: "index_etiquetas_on_producto_id"
+    t.index ["sucursal_id", "estado", "tipo"], name: "index_etiquetas_on_sucursal_id_and_estado_and_tipo"
+    t.index ["sucursal_id"], name: "index_etiquetas_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_etiquetas_on_usuario_id"
+    t.check_constraint "cantidad >= 0", name: "etiquetas_cantidad"
+    t.check_constraint "estado IN ('viva', 'vendida', 'baja')", name: "etiquetas_estado"
+    t.check_constraint "tipo IN ('paquete', 'caja', 'tarima')", name: "etiquetas_tipo"
+  end
+
+  create_table "existencias", force: :cascade do |t|
+    t.decimal "cantidad", precision: 12, scale: 3, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.integer "producto_id", null: false
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_existencias_on_producto_id"
+    t.index ["sucursal_id", "producto_id"], name: "index_existencias_on_sucursal_id_and_producto_id", unique: true
+    t.index ["sucursal_id"], name: "index_existencias_on_sucursal_id"
+    t.check_constraint "cantidad >= 0", name: "existencias_no_negativas"
   end
 
   create_table "folios", force: :cascade do |t|
@@ -28,6 +71,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_223546) do
     t.datetime "updated_at", null: false
     t.index ["sucursal_id", "prefijo"], name: "index_folios_on_sucursal_id_and_prefijo", unique: true
     t.index ["sucursal_id"], name: "index_folios_on_sucursal_id"
+  end
+
+  create_table "movimientos", force: :cascade do |t|
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.integer "etiqueta_id"
+    t.date "fecha_negocio", null: false
+    t.string "motivo"
+    t.integer "producto_id", null: false
+    t.integer "referencia_id"
+    t.string "referencia_type"
+    t.decimal "saldo", precision: 12, scale: 3, null: false
+    t.integer "sucursal_id", null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["etiqueta_id"], name: "index_movimientos_on_etiqueta_id"
+    t.index ["producto_id"], name: "index_movimientos_on_producto_id"
+    t.index ["referencia_type", "referencia_id"], name: "index_movimientos_on_referencia"
+    t.index ["sucursal_id", "fecha_negocio"], name: "index_movimientos_on_sucursal_id_and_fecha_negocio"
+    t.index ["sucursal_id", "producto_id", "created_at"], name: "idx_on_sucursal_id_producto_id_created_at_be784bb004"
+    t.index ["sucursal_id"], name: "index_movimientos_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_movimientos_on_usuario_id"
+    t.check_constraint "cantidad > 0", name: "movimientos_cantidad_positiva"
+    t.check_constraint "tipo IN ('entrada', 'produccion', 'recepcion', 'devolucion_cliente', 'ajuste_entrada', 'venta', 'salida', 'merma', 'ajuste_salida')", name: "movimientos_tipo"
   end
 
   create_table "productos", force: :cascade do |t|
@@ -83,7 +151,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_17_223546) do
   end
 
   add_foreign_key "codigos_barras", "productos"
+  add_foreign_key "etiquetas", "etiquetas", column: "padre_id"
+  add_foreign_key "etiquetas", "productos"
+  add_foreign_key "etiquetas", "sucursales"
+  add_foreign_key "etiquetas", "usuarios"
+  add_foreign_key "existencias", "productos"
+  add_foreign_key "existencias", "sucursales"
   add_foreign_key "folios", "sucursales"
+  add_foreign_key "movimientos", "etiquetas"
+  add_foreign_key "movimientos", "productos"
+  add_foreign_key "movimientos", "sucursales"
+  add_foreign_key "movimientos", "usuarios"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
 end

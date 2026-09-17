@@ -9,17 +9,16 @@ class PermisosTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Añade la ruta de prueba sin borrar las demás (la cinta del layout las necesita).
   setup do
-    Rails.application.routes.draw do
-      get "prueba", to: "permisos_test/prueba#index"
-      get "entrar", to: "sesiones#new", as: :entrar
-      post "entrar", to: "sesiones#create"
-      delete "salir", to: "sesiones#destroy", as: :salir
-      root "inicio#index"
-    end
+    Rails.application.routes.disable_clear_and_finalize = true
+    Rails.application.routes.draw { get "prueba", to: "permisos_test/prueba#index" }
   end
 
-  teardown { Rails.application.reload_routes! }
+  teardown do
+    Rails.application.routes.disable_clear_and_finalize = false
+    Rails.application.reload_routes!
+  end
 
   test "sin el permiso responde 403 con la clave" do
     post "/entrar", params: { usuario: "cajera", password: "secreto1" }

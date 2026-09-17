@@ -3,6 +3,8 @@ class Sucursal < ApplicationRecord
 
   has_many :usuarios, dependent: :restrict_with_error
   has_many :folios, dependent: :destroy
+  has_many :existencias, dependent: :restrict_with_error
+  has_many :etiquetas, dependent: :restrict_with_error
 
   validates :codigo, presence: true, uniqueness: true, length: { maximum: 10 }
   validates :nombre, presence: true
