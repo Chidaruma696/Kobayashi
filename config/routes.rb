@@ -35,6 +35,22 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :salidas, only: %i[index new create show] do
+    collection { get :recibir, action: :por_recibir }
+    member do
+      post :agregar
+      post :quitar
+      post :manual
+      post :verificar
+      post :sellar
+      post :enviar
+      post :recibir_etiqueta
+      post :reportar
+      post :cerrar_recepcion
+      post :cancelar
+    end
+  end
+
   resources :producciones, only: %i[index new create show] do
     member { post :cerrar }
   end

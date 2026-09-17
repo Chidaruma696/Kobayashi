@@ -29,6 +29,13 @@ module RibbonHelper
         Boton.new("Vivas", :etiquetas_path, "etiquetas.crear", "▦")
       ] }
     ] },
+    { id: :salidas, nombre: "Salidas", grupos: [
+      { nombre: "Enviar", botones: [
+        Boton.new("Nueva salida", :new_salida_path, "salidas.surtir", "🚚"),
+        Boton.new("En curso", :salidas_path, "salidas.surtir", "☰")
+      ] },
+      { nombre: "Recibir", botones: [ Boton.new("Por recibir", :recibir_salidas_path, "salidas.recibir", "📥") ] }
+    ] },
     { id: :inventario, nombre: "Inventario", grupos: [
       { nombre: "Consultar", botones: [
         Boton.new("Existencias", :inventario_path, "inventario.ver", "≡"),

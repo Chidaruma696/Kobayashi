@@ -7,6 +7,8 @@ class Sucursal < ApplicationRecord
   has_many :etiquetas, dependent: :restrict_with_error
   has_many :cortes, dependent: :restrict_with_error
   has_many :ventas, dependent: :restrict_with_error
+  has_many :salidas_enviadas, class_name: "Salida", foreign_key: :sucursal_origen_id, dependent: :restrict_with_error, inverse_of: :sucursal_origen
+  has_many :salidas_recibidas, class_name: "Salida", foreign_key: :sucursal_destino_id, dependent: :restrict_with_error, inverse_of: :sucursal_destino
 
   validates :limite_efectivo_centavos, numericality: { only_integer: true, greater_than: 0 }
 

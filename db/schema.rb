@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_010001) do
   create_table "codigos_barras", force: :cascade do |t|
     t.string "codigo", null: false
     t.datetime "created_at", null: false
@@ -260,6 +260,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_000001) do
     t.index ["nombre"], name: "index_roles_on_nombre", unique: true
   end
 
+  create_table "salida_etiquetas", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "estado", default: "pendiente", null: false
+    t.integer "etiqueta_id", null: false
+    t.integer "grupo_id"
+    t.string "motivo"
+    t.datetime "recibido_en"
+    t.integer "salida_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "verificado_por_id"
+    t.index ["etiqueta_id"], name: "index_salida_etiquetas_on_etiqueta_id"
+    t.index ["grupo_id"], name: "index_salida_etiquetas_on_grupo_id"
+    t.index ["salida_id", "estado"], name: "index_salida_etiquetas_on_salida_id_and_estado"
+    t.index ["salida_id"], name: "index_salida_etiquetas_on_salida_id"
+    t.index ["verificado_por_id"], name: "index_salida_etiquetas_on_verificado_por_id"
+    t.check_constraint "estado IN ('pendiente', 'recibida', 'faltante')", name: "salida_etiquetas_estado"
+  end
+
+  create_table "salida_lineas", force: :cascade do |t|
+    t.integer "autorizado_por_id", null: false
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.string "motivo", null: false
+    t.integer "producto_id", null: false
+    t.boolean "recibida", default: false, null: false
+    t.integer "salida_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["autorizado_por_id"], name: "index_salida_lineas_on_autorizado_por_id"
+    t.index ["producto_id"], name: "index_salida_lineas_on_producto_id"
+    t.index ["salida_id"], name: "index_salida_lineas_on_salida_id"
+    t.check_constraint "cantidad > 0", name: "salida_lineas_cantidad"
+  end
+
+  create_table "salidas", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "enviado_en"
+    t.string "estado", default: "preparando", null: false
+    t.string "folio", null: false
+    t.string "motivo"
+    t.datetime "recibido_en"
+    t.integer "sucursal_destino_id", null: false
+    t.integer "sucursal_origen_id", null: false
+    t.string "tipo", default: "traspaso", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.integer "verificado_por_id"
+    t.index ["folio"], name: "index_salidas_on_folio", unique: true
+    t.index ["sucursal_destino_id", "estado"], name: "index_salidas_on_sucursal_destino_id_and_estado"
+    t.index ["sucursal_destino_id"], name: "index_salidas_on_sucursal_destino_id"
+    t.index ["sucursal_origen_id", "estado"], name: "index_salidas_on_sucursal_origen_id_and_estado"
+    t.index ["sucursal_origen_id"], name: "index_salidas_on_sucursal_origen_id"
+    t.index ["usuario_id"], name: "index_salidas_on_usuario_id"
+    t.index ["verificado_por_id"], name: "index_salidas_on_verificado_por_id"
+    t.check_constraint "estado IN ('preparando', 'sellada', 'enviada', 'recibida', 'cancelada')", name: "salidas_estado"
+    t.check_constraint "tipo IN ('traspaso', 'devolucion')", name: "salidas_tipo"
+  end
+
   create_table "sucursales", force: :cascade do |t|
     t.boolean "activa", default: true, null: false
     t.string "codigo", null: false
@@ -367,6 +424,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_000001) do
   add_foreign_key "retiros", "cortes"
   add_foreign_key "retiros", "usuarios"
   add_foreign_key "retiros", "usuarios", column: "autorizado_por_id"
+  add_foreign_key "salida_etiquetas", "etiquetas"
+  add_foreign_key "salida_etiquetas", "etiquetas", column: "grupo_id"
+  add_foreign_key "salida_etiquetas", "salidas"
+  add_foreign_key "salida_etiquetas", "usuarios", column: "verificado_por_id"
+  add_foreign_key "salida_lineas", "productos"
+  add_foreign_key "salida_lineas", "salidas"
+  add_foreign_key "salida_lineas", "usuarios", column: "autorizado_por_id"
+  add_foreign_key "salidas", "sucursales", column: "sucursal_destino_id"
+  add_foreign_key "salidas", "sucursales", column: "sucursal_origen_id"
+  add_foreign_key "salidas", "usuarios"
+  add_foreign_key "salidas", "usuarios", column: "verificado_por_id"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
   add_foreign_key "venta_lineas", "etiquetas"

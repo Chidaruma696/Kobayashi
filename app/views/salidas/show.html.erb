@@ -1,0 +1,105 @@
+<% s = @salida %>
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold"><%= s.devolucion? ? "Devolución" : "Salida" %> <%= s.folio %> · <%= s.sucursal_origen %> → <%= s.sucursal_destino %></h1>
+  <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= s.estado %></span>
+</div>
+<p class="mb-4 text-sm text-slate-600">Abrió <%= s.usuario %> el <%= l s.created_at, format: :short %><%= " · verificó #{s.verificado_por}" if s.verificado_por %><%= " · #{s.motivo}" if s.motivo.present? %></p>
+
+<% if s.preparando? && s.sucursal_origen_id == sucursal_actual.id %>
+  <div class="mb-4 grid gap-4 md:grid-cols-2">
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Surtir: escanea cajas, tarimas o paquetes</h2>
+      <%= render "escaneo", url: agregar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Agregar" %>
+      <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Quitar una etiqueta</summary>
+        <%= render "escaneo", url: quitar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Quitar" %></details>
+      <% if s.devolucion? %>
+        <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Renglón manual (sin etiqueta, justificado)</summary>
+          <%= form_with url: manual_salida_path(s), class: "mt-2 grid grid-cols-2 gap-2" do |f| %>
+            <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "col-span-2 rounded border border-slate-300 px-2 py-1" %>
+            <%= f.number_field :cantidad, step: "0.001", min: "0.001", placeholder: "cantidad", required: true, class: "rounded border border-slate-300 px-2 py-1 font-mono" %>
+            <%= f.password_field :pin, placeholder: "PIN de quien autoriza", inputmode: "numeric", autocomplete: "off", class: "rounded border border-slate-300 px-2 py-1" %>
+            <%= f.text_field :motivo, placeholder: "motivo (se cayó la etiqueta…)", required: true, class: "col-span-2 rounded border border-slate-300 px-2 py-1" %>
+            <%= f.submit "Agregar renglón", class: "col-span-2 rounded bg-slate-900 px-3 py-1 text-white" %>
+          <% end %></details>
+      <% end %>
+    </div>
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Verificar la carga (otra persona)</h2>
+      <% if puede?("salidas.verificar") %>
+        <%= render "escaneo", url: verificar_salida_path(s), placeholder: "Escanea lo que sube al camión", boton: "Verificar" %>
+        <p class="mt-2 text-sm text-slate-600">Sin verificar: <%= s.sin_verificar.count %> de <%= s.salida_etiquetas.count %></p>
+        <%= button_to "Sellar salida", sellar_salida_path(s), class: "mt-2 rounded bg-emerald-700 px-3 py-2 text-white", disabled: s.sin_verificar.exists? || s.salida_etiquetas.none? && s.lineas.none? %>
+      <% else %>
+        <p class="text-sm text-slate-500">Quien verifica necesita el permiso salidas.verificar.</p>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if s.sellada? && s.sucursal_origen_id == sucursal_actual.id %>
+  <div class="mb-4 flex items-center gap-3 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
+    Sellada y verificada por <%= s.verificado_por %>. Al enviar baja el inventario de <%= s.sucursal_origen %>.
+    <%= button_to "Enviar", enviar_salida_path(s), class: "rounded bg-emerald-700 px-4 py-2 text-white", form: { data: { turbo_confirm: "¿Enviar la salida #{s.folio}?" } } %>
+  </div>
+<% end %>
+
+<% if @recibiendo %>
+  <div class="mb-4 grid gap-4 md:grid-cols-2">
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Recibir: paquete por paquete, o la tarima entera</h2>
+      <%= render "escaneo", url: recibir_etiqueta_salida_path(s), placeholder: "Código del paquete o de la tarima", boton: "Recibir" %>
+      <p class="mt-2 text-sm text-slate-600">Recibidos <%= @filas.count { |f| f.estado == "recibida" } %> · faltantes <%= @filas.count { |f| f.estado == "faltante" } %> · pendientes <%= @filas.count { |f| f.estado == "pendiente" } %></p>
+    </div>
+    <div class="rounded bg-white p-4 shadow-sm">
+      <h2 class="mb-2 font-semibold">Reportar roto o sin etiqueta</h2>
+      <%= render "escaneo", url: reportar_salida_path(s), placeholder: "Código del paquete", boton: "Reportar", motivo: true %>
+      <h2 class="mb-2 mt-4 font-semibold">Cerrar recepción</h2>
+      <%= form_with url: cerrar_recepcion_salida_path(s), class: "flex gap-2 text-sm", data: { turbo_confirm: "Lo pendiente quedará como faltante. ¿Cerrar?" } do |f| %>
+        <%= f.text_field :motivo, placeholder: "motivo para lo pendiente (si queda algo)", class: "flex-1 rounded border border-slate-300 px-3 py-2" %>
+        <%= f.submit "Cerrar", class: "rounded bg-red-700 px-3 py-2 text-white" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if @pedidos&.any? %>
+  <div class="mb-4 rounded bg-blue-50 p-3 text-sm">
+    <strong>Pedidos abiertos para <%= s.sucursal_destino %>:</strong>
+    <% @pedidos.each do |p| %>
+      <span class="ml-2"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> (<%= p.lineas.map { |l| "#{l.producto.nombre} falta #{number_with_precision(l.faltante, precision: l.producto.decimales)}" }.join(", ") %>)</span>
+    <% end %>
+  </div>
+<% end %>
+
+<h2 class="mb-2 font-semibold">Contenido</h2>
+<table class="mb-4 w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Grupo</th><th class="px-3 py-2">Paquete</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2">Verificó</th><th class="px-3 py-2">Recepción</th></tr></thead>
+  <tbody>
+    <% @grupos.each do |grupo, filas| %>
+      <% filas.each_with_index do |f, i| %>
+        <tr class="border-t border-slate-100 <%= { 'recibida' => 'bg-green-50', 'faltante' => 'bg-red-50' }[f.estado] %>">
+          <td class="px-3 py-1 font-mono text-xs"><%= i.zero? ? (grupo ? "#{grupo.tipo} #{grupo.codigo}" : "suelto") : "" %></td>
+          <td class="px-3 py-1 font-mono text-xs"><%= f.etiqueta.codigo %></td>
+          <td class="px-3 py-1"><%= f.etiqueta.producto.nombre %></td>
+          <td class="px-3 py-1 text-right font-mono"><%= cantidad(f.etiqueta.cantidad, f.etiqueta.producto) %></td>
+          <td class="px-3 py-1"><%= f.verificado_por || "—" %></td>
+          <td class="px-3 py-1"><%= f.estado %><%= " · #{f.motivo}" if f.motivo.present? %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    <% s.lineas.includes(:producto, :autorizado_por).each do |l| %>
+      <tr class="border-t border-slate-100 bg-amber-50">
+        <td class="px-3 py-1 text-xs">manual</td><td class="px-3 py-1 text-xs">sin etiqueta</td>
+        <td class="px-3 py-1"><%= l.producto.nombre %></td>
+        <td class="px-3 py-1 text-right font-mono"><%= cantidad(l.cantidad, l.producto) %></td>
+        <td class="px-3 py-1">autorizó <%= l.autorizado_por %></td>
+        <td class="px-3 py-1"><%= l.recibida ? "recibida" : "pendiente" %> · <%= l.motivo %></td>
+      </tr>
+    <% end %>
+    <% if @filas.empty? && s.lineas.empty? %><tr><td colspan="6" class="px-3 py-4 text-center text-slate-500">Vacía.</td></tr><% end %>
+  </tbody>
+</table>
+<div class="text-sm text-slate-600">Totales: <%= s.contenido.map { |p, c| "#{p.nombre} #{cantidad(c, p)}" }.join(" · ") %></div>
+<% if s.abierta? && s.sucursal_origen_id == sucursal_actual.id %>
+  <%= button_to "Cancelar salida", cancelar_salida_path(s), class: "mt-4 text-sm text-red-700 hover:underline", form: { data: { turbo_confirm: "¿Cancelar #{s.folio}?" } } %>
+<% end %>

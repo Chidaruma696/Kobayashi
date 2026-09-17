@@ -72,6 +72,7 @@ module Caja
     if etiqueta
       raise Error, "la etiqueta #{etiqueta.codigo} no está viva (#{etiqueta.estado})" unless etiqueta.viva?
       raise Error, "la etiqueta #{etiqueta.codigo} no es de esta sucursal" unless etiqueta.sucursal_id == sucursal.id
+      raise Error, "la etiqueta #{etiqueta.codigo} está en tránsito: recibe la salida antes de vender" if etiqueta.en_transito?
       raise Error, "la etiqueta #{etiqueta.codigo} es una #{etiqueta.tipo}: escanea los paquetes" unless etiqueta.paquete? || (etiqueta.caja? && etiqueta.producto)
       producto = etiqueta.producto
       cantidad = etiqueta.cantidad

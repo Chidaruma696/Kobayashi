@@ -3,7 +3,7 @@ administrador:
   permisos: ["*"]
 cajero:
   nombre: cajero
-  permisos: ["caja.vender", "caja.abrir", "caja.devolver", "inventario.ver", "pedidos.solicitar"]
+  permisos: ["caja.vender", "caja.abrir", "caja.devolver", "inventario.ver", "pedidos.solicitar", "salidas.recibir"]
 supervisor:
   nombre: supervisor
-  permisos: ["caja.*", "inventario.*", "etiquetas.crear", "pedidos.*", "produccion.*"]
+  permisos: ["caja.*", "inventario.*", "etiquetas.crear", "pedidos.*", "produccion.*", "salidas.*"]

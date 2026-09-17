@@ -16,6 +16,7 @@ class Etiqueta < ApplicationRecord
   has_many :hijas, class_name: "Etiqueta", foreign_key: :padre_id, dependent: :restrict_with_error, inverse_of: :padre
   has_many :movimientos, dependent: :restrict_with_error
   has_many :venta_lineas, dependent: :restrict_with_error
+  has_many :salida_etiquetas, dependent: :restrict_with_error
 
   before_validation :asignar_codigo, on: :create
 
@@ -75,6 +76,16 @@ class Etiqueta < ApplicationRecord
       update!(estado: "baja", motivo: motivo)
       hijas.vivas.each { |h| h.dar_de_baja!(motivo: motivo, usuario: usuario) }
     end
+  end
+
+  # Va en una salida enviada y todavía no la recibieron: no se vende ni se vuelve a mandar.
+  def en_transito?
+    SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, estado: "pendiente", salidas: { estado: "enviada" }).exists?
+  end
+
+  def hijas_ids_profundas
+    ids = hijas.pluck(:id)
+    ids + Etiqueta.where(padre_id: ids).pluck(:id)
   end
 
   def to_s

@@ -4,7 +4,7 @@ Sucursal.find_or_create_by!(codigo: "T01") { |s| s.nombre = "Tienda 1"; s.tipo =
 
 roles = {
   "administrador" => [ "*" ],
-  "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver", "pedidos.solicitar" ],
+  "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver", "pedidos.solicitar", "salidas.recibir", "salidas.surtir", "salidas.verificar" ],
   "etiquetador" => [ "etiquetas.crear", "produccion.abrir", "pedidos.surtir", "inventario.ver", "salidas.surtir", "salidas.recibir" ],
   "supervisor" => [ "caja.*", "inventario.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "conteos.*" ]
 }
