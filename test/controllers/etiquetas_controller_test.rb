@@ -64,7 +64,7 @@ class EtiquetadoraTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_select "[data-controller=etiquetadora]"
     assert_match "Pechuga de pollo", response.body
-    assert_select ".pd-item", minimum: 2
+    assert_select "a[href=?]", new_etiqueta_path(pedido_linea_id: pedido_lineas(:catsup_10).id)
   end
 
   test "el buscador responde JSON por nombre, PLU o código de proveedor" do
@@ -112,11 +112,7 @@ class EtiquetadoraTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
-  test "caja fija de proveedor y vinculación de código" do
-    post vincular_codigo_etiquetas_path, params: { producto_id: productos(:catsup).id, codigo: "7501000123457", peso_fijo: "1" }, as: :json
-    assert_response :ok
-    assert_includes response.parsed_body["codigos"], "7501000123457"
-    assert_equal BigDecimal("1"), productos(:catsup).reload.peso_fijo
+  test "caja fija de proveedor de N piezas" do
     post lote_etiquetas_path, params: { producto_id: productos(:catsup).id, pedido_linea_id: pedido_lineas(:catsup_10).id, caja_fija: "12" }, as: :json
     assert_response :ok
     caja = Etiqueta.find(response.parsed_body["caja"]["id"])

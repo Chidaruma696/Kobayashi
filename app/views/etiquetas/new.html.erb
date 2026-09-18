@@ -1,318 +1,139 @@
-<% content_for :head do %>
-<style>
-  .plus-card { background: #fff; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-  .plus-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: .5px; margin-bottom: 8px; }
-  .plus-prod-info { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: 13px; }
-  .plus-prod-info .nombre { font-size: 16px; font-weight: 700; }
-  .chip { background: rgba(200,22,29,.1); color: #C8161D; padding: 3px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; }
-  .chip.warn { background: rgba(217,119,6,.1); color: #d97706; }
-  .chip.info { background: rgba(37,99,235,.1); color: #2563eb; }
-  .chip.ok { background: rgba(22,163,74,.1); color: #16a34a; }
-  .plus-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
-  .plus-tab { padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; font-weight: 700; font-size: 13px; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
-  .plus-tab:hover { color: #0f172a; background: rgba(200,22,29,.06); }
-  .plus-tab.active { background: rgba(200,22,29,.12); color: #C8161D; border-color: #C8161D; }
-  .plus-mode-body { display: none; }
-  .plus-mode-body.active { display: block; }
-  .plus-label { display: block; font-size: 12px; margin-bottom: 4px; color: #334155; }
-  .plus-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 14px; background: #fff; }
-  .plus-input:focus { outline: 2px solid rgba(200,22,29,.35); border-color: #C8161D; }
-  .plus-hint { font-size: 10.5px; color: #64748b; margin-top: 4px; display: block; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: pointer; white-space: nowrap; }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn-sm { padding: 4px 10px; font-size: 12px; }
-  .btn-primary { background: #C8161D; color: #fff; }
-  .btn-primary:hover { background: #a91217; }
-  .btn-outline { background: #fff; color: #C8161D; border-color: #C8161D; }
-  .btn-outline:hover { background: rgba(200,22,29,.06); }
-  .btn-success { background: #16a34a; color: #fff; }
-  .btn-success:hover { background: #15803d; }
-  .btn-outline-success { background: #fff; color: #16a34a; border-color: #16a34a; }
-  .btn-outline-danger { background: #fff; color: #dc2626; border-color: #dc2626; }
-  .btn-outline-danger:hover { background: rgba(220,38,38,.06); }
-  .btn-secondary { background: #e2e8f0; color: #0f172a; }
-  .btn-warning { background: #f59e0b; color: #fff; }
-  .switch { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-top: 8px; }
-  .switch input { width: 34px; height: 18px; appearance: none; background: #cbd5e1; border-radius: 9px; position: relative; cursor: pointer; transition: background .15s; }
-  .switch input::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: left .15s; }
-  .switch input:checked { background: #C8161D; }
-  .switch input:checked::after { left: 18px; }
-  .alerta { border-radius: 8px; padding: 8px 12px; font-size: 12px; margin-bottom: 12px; }
-  .alerta-info { background: #eff6ff; color: #1e40af; }
-  .alerta-warn { background: #fffbeb; color: #92400e; }
-  .alerta-ok { background: #f0fdf4; color: #166534; }
-  .alerta-error { background: #fef2f2; color: #991b1b; }
-  .alerta-secondary { background: #f1f5f9; color: #475569; }
-  #bascula-display { background: #111; border-radius: 8px; border: 2px solid #cbd5e1; padding: 12px; text-align: center; min-width: 200px; font-family: 'Courier New', monospace; }
-  #bascula-peso { color: #C8161D; font-size: 36px; font-weight: 800; line-height: 1; }
-  #bascula-estado { font-size: 11px; color: #aaa; margin-top: 4px; }
-  .pesada-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-  .pesada-item:last-child { border-bottom: none; }
-  .pesada-item .idx { font-size: 10px; color: #64748b; font-weight: 700; min-width: 20px; }
-  .pesada-item .origen { font-size: 11px; color: #64748b; min-width: 60px; }
-  .pesada-item .peso { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; min-width: 90px; }
-  .pesada-item .codigo { font-family: monospace; font-size: 11px; color: #16a34a; }
-  .pesada-item .quitar { margin-left: auto; padding: 2px 8px; font-size: 11px; }
-  #preview-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; padding: 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; max-height: 420px; overflow-y: auto; overflow-x: hidden; }
-  .preview-etq { box-sizing: border-box; border: 1px solid #ccc; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 6px; color: #000; overflow: hidden; aspect-ratio: 2 / 1; position: relative; }
-  .preview-etq.tipo-caja { grid-column: span 2; border: 2px solid #d97706; background: #fff8ea; aspect-ratio: 3 / 1; }
-  .preview-etq.tipo-caja::before { content: 'CAJA'; position: absolute; top: 3px; left: 4px; font-size: 8px; font-weight: 800; color: #d97706; background: #fff; padding: 1px 5px; border-radius: 3px; border: 1px solid #d97706; letter-spacing: .5px; }
-  .preview-etq .nombre-mini { font-size: 8px; font-weight: 700; width: 100%; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 1px; }
-  .preview-etq.tipo-caja .nombre-mini { font-size: 10px; }
-  .preview-etq .peso-mini { font-size: 10px; font-weight: 800; margin-top: 1px; }
-  .preview-etq.tipo-caja .peso-mini { font-size: 12px; }
-  .preview-etq svg { display: block; margin: 0 auto; max-width: 100%; max-height: 60%; height: auto; }
-  .preview-etq .pendiente { width: 80%; height: 40%; background: repeating-linear-gradient(90deg, #bbb 0 2px, #fff 2px 5px); opacity: .5; border-radius: 2px; }
-  .preview-etq .pendiente-texto { font-size: 8px; color: #94a3b8; }
-  .buscador { position: relative; }
-  .buscador-lista { position: absolute; z-index: 30; left: 0; right: 0; top: 100%; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12); max-height: 320px; overflow-y: auto; margin-top: 4px; }
-  .buscador-item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
-  .buscador-item:hover, .buscador-item.activo { background: rgba(200,22,29,.06); }
-  .buscador-item small { color: #64748b; margin-left: 6px; }
-  .panel { position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .panel-caja { background: #fff; border-radius: 12px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 18px 20px; }
-  .panel-titulo { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 12px; }
-  .pd-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-left: 6px solid #C8161D; border-bottom: 1px dashed #cbd5e1; font-size: 13px; }
-  .pd-item .falta { font-family: monospace; margin-left: auto; }
-  .hidden { display: none !important; }
-  @media (max-width: 767px) {
-    .plus-card { padding: 10px 12px; }
-    .plus-tab { padding: 6px 10px; font-size: 12px; }
-    #c-col-bascula, #bascula-display, #btn-bascula-header { display: none !important; }
-    #preview-container { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); padding: 8px; }
-  }
-</style>
-<% end %>
-
 <div data-controller="etiquetadora"
      data-etiquetadora-lote-url-value="<%= lote_etiquetas_path %>"
      data-etiquetadora-productos-url-value="<%= productos_etiquetas_path %>"
      data-etiquetadora-imprimir-url-value="<%= imprimir_etiquetas_path %>"
-     data-etiquetadora-vincular-url-value="<%= vincular_codigo_etiquetas_path %>"
      data-etiquetadora-pedido-linea-id-value="<%= @linea&.id %>"
      data-etiquetadora-produccion-id-value="<%= @produccion&.id %>"
      data-etiquetadora-producto-value="<%= @producto_json.to_json if @producto_json %>"
-     data-etiquetadora-simulada-value="<%= params[:simulada].present? %>"
-     data-etiquetadora-puede-vincular-value="<%= puede?("admin.catalogo") %>">
+     data-etiquetadora-simulada-value="<%= params[:simulada].present? %>">
 
-  <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-    <h1 class="text-2xl font-bold">Etiquetas · <%= sucursal_actual %></h1>
-    <div class="flex gap-2">
-      <button type="button" class="btn btn-sm btn-outline" data-action="etiquetadora#abrirPedidos">
-        🧺 Pedidos por surtir <span class="ml-1 rounded-full bg-[#C8161D] px-2 text-white <%= 'hidden' if @pendientes.empty? %>"><%= @pendientes.size %></span>
-      </button>
-      <button type="button" id="btn-bascula-header" class="btn btn-sm btn-outline-danger" data-etiquetadora-target="chipBascula" data-action="etiquetadora#alternarBascula" title="Estado de la báscula (clic para conectar/desconectar)">
-        ⚖ <span data-etiquetadora-target="chipBasculaTexto">Conectar báscula</span>
-      </button>
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold">Etiquetar · <%= sucursal_actual %></h1>
+    <div class="flex items-center gap-2 rounded bg-white px-3 py-1 shadow-sm">
+      <span class="text-xs text-slate-500" data-etiquetadora-target="estado">báscula desconectada</span>
+      <span class="font-mono text-2xl" data-etiquetadora-target="peso">0.000</span>
+      <button type="button" data-action="etiquetadora#alternarBascula" class="rounded bg-slate-200 px-2 py-1 text-xs hover:bg-slate-300"><span data-etiquetadora-target="btnBascula">conectar</span></button>
       <% if params[:simulada].present? %>
-        <button type="button" class="btn btn-sm btn-warning" data-action="etiquetadora#simular">Simular pesada</button>
+        <button type="button" data-action="etiquetadora#simular" class="rounded bg-amber-500 px-2 py-1 text-xs text-white">simular</button>
       <% end %>
     </div>
   </div>
 
   <%= render "contexto", linea: @linea, produccion: @produccion %>
 
-  <div id="aviso" data-etiquetadora-target="aviso"></div>
+  <div class="grid gap-4 lg:grid-cols-3">
+    <div class="space-y-4 lg:col-span-2">
+      <div id="aviso" data-etiquetadora-target="aviso" class="empty:hidden rounded bg-red-50 px-3 py-2 text-sm text-red-800"></div>
 
-  <%# Buscador %>
-  <div class="plus-card">
-    <div class="plus-card-title">🔍 Producto</div>
-    <div class="buscador">
-      <input type="text" class="plus-input" placeholder="Buscar por nombre, clave, PLU o código de barras… (o escanéalo)" autocomplete="off"
-             data-etiquetadora-target="buscador" data-action="input->etiquetadora#buscar keydown->etiquetadora#teclaBuscador focus->etiquetadora#buscar blur->etiquetadora#ocultarResultados">
-      <div class="buscador-lista hidden" data-etiquetadora-target="resultados"></div>
-    </div>
-  </div>
-
-  <%# Info del producto %>
-  <div class="plus-card hidden" data-etiquetadora-target="infoCard">
-    <div class="plus-prod-info">
-      <span class="nombre" data-etiquetadora-target="infoNombre">-</span>
-      <span class="chip">Clave: <strong data-etiquetadora-target="infoClave">-</strong></span>
-      <span class="chip">PLU: <strong data-etiquetadora-target="infoPlu">-</strong></span>
-      <span class="chip">Unidad: <strong data-etiquetadora-target="infoUnidad">-</strong></span>
-      <span class="chip info hidden" data-etiquetadora-target="infoPesoFijoChip">Peso fijo: <strong data-etiquetadora-target="infoPesoFijo">-</strong> kg</span>
-      <span class="chip warn hidden" data-etiquetadora-target="infoCodigoChip">Código proveedor: <code data-etiquetadora-target="infoCodigo">-</code></span>
-      <span class="chip ok hidden" data-etiquetadora-target="infoLlevaChip">Lleva: <strong data-etiquetadora-target="infoLleva">-</strong></span>
-    </div>
-  </div>
-
-  <%# Modos %>
-  <div class="plus-card hidden" data-etiquetadora-target="modosCard">
-    <div class="plus-card-title">Modo de generación</div>
-    <div class="plus-tabs">
-      <button type="button" class="plus-tab active" data-modo="A" data-action="etiquetadora#cambiarModo">🔢 A) Individuales</button>
-      <button type="button" class="plus-tab" data-modo="B" data-action="etiquetadora#cambiarModo">📦 B) Caja + Pesadas virtuales</button>
-      <button type="button" class="plus-tab" data-modo="C" data-action="etiquetadora#cambiarModo">⚖ C) Caja + Pesadas reales</button>
-      <button type="button" class="plus-tab" data-modo="D" data-action="etiquetadora#cambiarModo">▥ D) Código de fábrica</button>
-    </div>
-
-    <%# MODO A %>
-    <div class="plus-mode-body active" data-modo-body="A">
-      <div class="grid gap-2 md:grid-cols-3 md:items-end">
-        <div>
-          <label class="plus-label" data-etiquetadora-target="aCantidadLabel">Cantidad de etiquetas</label>
-          <input type="number" class="plus-input" min="1" step="1" value="1" data-etiquetadora-target="aCantidad" data-action="keydown.enter->etiquetadora#generarA">
+      <%# Producto %>
+      <div class="rounded bg-white p-4 shadow-sm">
+        <div class="relative">
+          <input type="text" autocomplete="off" placeholder="Producto: nombre, clave, PLU o escanea su código"
+                 class="w-full rounded border border-slate-300 px-3 py-3 text-lg"
+                 data-etiquetadora-target="buscador"
+                 data-action="input->etiquetadora#buscar focus->etiquetadora#buscar blur->etiquetadora#ocultarResultados keydown->etiquetadora#teclaBuscador">
+          <div class="absolute left-0 right-0 top-full z-30 mt-1 hidden max-h-80 overflow-y-auto rounded border border-slate-300 bg-white shadow-lg" data-etiquetadora-target="resultados"></div>
         </div>
-        <div data-etiquetadora-target="aPesoCol">
-          <label class="plus-label">Peso por etiqueta (kg)</label>
-          <input type="number" class="plus-input" min="0.001" step="0.001" placeholder="ej. 1.000" data-etiquetadora-target="aPeso" data-action="keydown.enter->etiquetadora#generarA">
-        </div>
-        <div><button type="button" class="btn btn-outline w-full" data-action="etiquetadora#generarA">👁 Generar preview</button></div>
+        <p class="mt-2 hidden text-sm text-slate-600" data-etiquetadora-target="ficha"></p>
       </div>
-      <small class="plus-hint" data-etiquetadora-target="aHint">—</small>
-    </div>
 
-    <%# MODO B %>
-    <div class="plus-mode-body" data-modo-body="B">
-      <div class="grid gap-2 md:grid-cols-3 md:items-end">
-        <div data-etiquetadora-target="bTotalCol">
-          <label class="plus-label">Peso total de la caja (kg)</label>
-          <input type="number" class="plus-input" min="0.001" step="0.001" placeholder="ej. 20.000" data-etiquetadora-target="bTotal" data-action="input->etiquetadora#recalcularB keydown.enter->etiquetadora#generarB">
-        </div>
-        <div>
-          <label class="plus-label" data-etiquetadora-target="bPiezasLabel">Piezas dentro de la caja</label>
-          <input type="number" class="plus-input" min="1" step="1" value="10" data-etiquetadora-target="bPiezas" data-action="input->etiquetadora#recalcularB keydown.enter->etiquetadora#generarB">
-        </div>
-        <div><button type="button" class="btn btn-outline w-full" data-action="etiquetadora#generarB">👁 Generar virtuales</button></div>
-      </div>
-      <small class="plus-hint" data-etiquetadora-target="bHint">Peso por pieza: —</small>
-      <label class="switch"><input type="checkbox" checked data-etiquetadora-target="bIncluirCaja"> Incluir etiqueta de caja (suma de pesadas)</label>
-    </div>
-
-    <%# MODO C %>
-    <div class="plus-mode-body" data-modo-body="C">
-      <div class="grid gap-2 md:grid-cols-12 md:items-end">
-        <div class="md:col-span-5" id="c-col-bascula">
-          <label class="plus-label">Báscula USB</label>
-          <div class="flex items-center gap-2">
-            <button type="button" class="btn btn-sm btn-primary" data-action="etiquetadora#alternarBascula">🔌 <span data-etiquetadora-target="btnBasculaTexto">Conectar báscula</span></button>
-            <button type="button" class="btn btn-sm btn-outline-success" disabled data-etiquetadora-target="btnCapturar" data-action="etiquetadora#capturarAhora">＋ Capturar</button>
+      <%# Pesadas (kg) %>
+      <div class="hidden rounded bg-white p-4 shadow-sm" data-etiquetadora-target="panelKg">
+        <div class="grid gap-3 md:grid-cols-2">
+          <div>
+            <div class="text-xs uppercase text-slate-500">Una pesada</div>
+            <div class="mt-1 flex gap-2">
+              <input type="number" step="0.001" min="0.001" placeholder="kg" class="w-32 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="manual" data-action="keydown.enter->etiquetadora#agregarManual">
+              <button type="button" data-action="etiquetadora#agregarManual" class="rounded bg-slate-900 px-3 py-2 text-white hover:bg-slate-700">Agregar</button>
+              <button type="button" data-action="etiquetadora#capturar" disabled class="rounded border border-slate-300 px-3 py-2 disabled:opacity-40" data-etiquetadora-target="btnCapturar" title="Toma el peso que marca la báscula ahora">De la báscula</button>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">Con la báscula conectada cada peso estable entra solo.</p>
+          </div>
+          <div>
+            <div class="text-xs uppercase text-slate-500">Varias iguales</div>
+            <div class="mt-1 flex items-center gap-2">
+              <input type="number" step="1" min="1" value="10" class="w-16 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="qn" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
+              <span>×</span>
+              <input type="number" step="0.001" min="0.001" placeholder="kg c/u" class="w-28 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="qpeso" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
+              <button type="button" data-action="etiquetadora#agregarVarias" class="rounded bg-slate-900 px-3 py-2 text-white hover:bg-slate-700">Agregar</button>
+            </div>
+            <label class="mt-1 flex items-center gap-2 text-xs text-slate-500">o reparte un total de
+              <input type="number" step="0.001" min="0.001" placeholder="kg" class="w-24 rounded border border-slate-300 px-2 py-1 font-mono" data-etiquetadora-target="qtotal" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
+              <span data-etiquetadora-target="qhint"></span>
+            </label>
           </div>
         </div>
-        <div class="md:col-span-4">
-          <label class="plus-label">Agregar manual (kg)</label>
-          <div class="flex gap-1">
-            <input type="number" class="plus-input" step="0.001" min="0.001" placeholder="0.000" data-etiquetadora-target="cManual" data-action="keydown.enter->etiquetadora#agregarManual">
-            <button type="button" class="btn btn-outline" data-action="etiquetadora#agregarManual">＋</button>
+      </div>
+
+      <%# Piezas %>
+      <div class="hidden rounded bg-white p-4 shadow-sm" data-etiquetadora-target="panelPieza">
+        <div class="flex flex-wrap items-end gap-3">
+          <label class="text-sm">Piezas
+            <input type="number" step="1" min="1" value="12" class="ml-2 w-24 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="piezas" data-action="input->etiquetadora#pintarLista keydown.enter->etiquetadora#registrar">
+          </label>
+          <span class="text-sm text-slate-500" data-etiquetadora-target="piezaNota"></span>
+          <button type="button" class="hidden rounded border border-slate-300 px-3 py-2 text-sm" data-etiquetadora-target="btnCopias" data-action="etiquetadora#copiasProveedor" title="Imprime N etiquetas con el código de proveedor, sin registrar nada">Solo imprimir copias del código</button>
+        </div>
+      </div>
+
+      <%# Lista + acción %>
+      <div class="hidden rounded bg-white shadow-sm" data-etiquetadora-target="panelLista">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+          <div class="font-semibold" data-etiquetadora-target="resumen">Sin pesadas</div>
+          <div class="flex flex-wrap items-center gap-4 text-sm">
+            <label class="flex items-center gap-1"><input type="checkbox" data-etiquetadora-target="enCaja" data-action="etiquetadora#guardarPrefs etiquetadora#pintarLista"> Cerrar en caja</label>
+            <label class="flex items-center gap-1" data-etiquetadora-target="alVueloLabel"><input type="checkbox" data-etiquetadora-target="alVuelo" data-action="etiquetadora#guardarPrefs"> Imprimir al vuelo</label>
           </div>
         </div>
-        <div class="md:col-span-3"><button type="button" class="btn btn-sm btn-outline-danger w-full" data-action="etiquetadora#limpiarPesadas">🗑 Limpiar pesadas</button></div>
-      </div>
-      <div id="bascula-display" class="mt-2 hidden" data-etiquetadora-target="display">
-        <div id="bascula-peso" data-etiquetadora-target="peso">0.000</div>
-        <div id="bascula-estado" data-etiquetadora-target="estado">Desconectada</div>
-      </div>
-      <div class="mt-3">
-        <div class="plus-card-title">Pesadas capturadas: <span data-etiquetadora-target="cCount">0</span> | Total: <span data-etiquetadora-target="cTotal">0.000</span> kg</div>
-        <div class="max-h-52 overflow-y-auto rounded-md bg-slate-50" data-etiquetadora-target="cLista"></div>
-      </div>
-      <label class="switch"><input type="checkbox" checked data-etiquetadora-target="cIncluirCaja" data-action="etiquetadora#previewC"> Incluir etiqueta de caja (suma de pesadas)</label>
-      <label class="switch"><input type="checkbox" data-etiquetadora-target="cImprimirCada" data-action="etiquetadora#avisoImprimirCada"> 🖨 Registrar e imprimir cada pesada al instante</label>
-    </div>
-
-    <%# MODO D %>
-    <div class="plus-mode-body" data-modo-body="D">
-      <div class="alerta alerta-info">ℹ Este modo <strong>no pesa</strong>. Vincula al producto el código fijo que viene de fábrica (ej. consomé) para que la caja lo reconozca al escanear, y arma cajas de N piezas con ese producto.</div>
-      <div data-etiquetadora-target="dEstado" class="mb-3"></div>
-      <div class="grid gap-2 md:grid-cols-12 md:items-end">
-        <div class="md:col-span-6">
-          <label class="plus-label">Código de fábrica</label>
-          <div class="flex gap-1">
-            <input type="text" class="plus-input" placeholder="Escanear o teclear…" autocomplete="off" data-etiquetadora-target="dCodigo" data-action="keydown.enter->etiquetadora#vincular">
-            <button type="button" class="btn btn-secondary" title="Generar código interno EAN-13 (prefijo 29) si el producto no trae barcode de fábrica" data-action="etiquetadora#generarInterno">✨ Generar</button>
-          </div>
-          <small class="plus-hint">Si el producto no tiene barcode de fábrica, <strong>Generar</strong> crea un EAN-13 interno único basado en el PLU.</small>
-        </div>
-        <div class="md:col-span-3">
-          <label class="plus-label" data-etiquetadora-target="dPesoLabel">Peso por pieza (kg) <span class="text-slate-400">opcional</span></label>
-          <input type="number" class="plus-input" step="0.001" min="0" placeholder="ej. 0.200" data-etiquetadora-target="dPesoFijo">
-        </div>
-        <div class="md:col-span-3">
-          <button type="button" class="btn btn-warning w-full" data-etiquetadora-target="btnVincular" data-action="etiquetadora#vincular">🔗 Vincular al producto</button>
-        </div>
-      </div>
-      <div data-etiquetadora-target="dResultado" class="mt-3"></div>
-      <hr class="my-4 border-slate-200">
-      <div class="plus-card-title">📦 Armar caja de productos fijos</div>
-      <div class="mb-2 text-[11.5px] text-slate-500">Solo con código fijo. Cada caja agrupa N piezas del mismo producto; al recibirla en la tienda se suma directo al inventario sin pesadas.</div>
-      <div class="alerta alerta-secondary" data-etiquetadora-target="dArmarSin">⊖ Asigna primero el código fijo arriba.</div>
-      <div class="hidden" data-etiquetadora-target="dArmarForm">
-        <div class="grid gap-2 md:grid-cols-12 md:items-end">
-          <div class="md:col-span-4">
-            <label class="plus-label">Cantidad de piezas</label>
-            <input type="number" class="plus-input" min="1" step="1" value="12" data-etiquetadora-target="dCajaCantidad" data-action="keydown.enter->etiquetadora#armarCajaFija">
-          </div>
-          <div class="md:col-span-4"><button type="button" class="btn btn-primary w-full" data-action="etiquetadora#armarCajaFija">📦 Armar caja</button></div>
-          <div class="md:col-span-4"><button type="button" class="btn btn-outline w-full" title="Solo imprime N etiquetas con el código fijo, sin registrar nada" data-action="etiquetadora#soloEtiquetasFijas">🏷 Solo etiquetas</button></div>
-        </div>
-        <small class="plus-hint"><strong>Armar caja</strong> registra la caja (para salida e inventario). <strong>Solo etiquetas</strong> imprime N etiquetas con el código fijo sin tocar nada.</small>
-        <div data-etiquetadora-target="dCajaResultado" class="mt-3"></div>
-      </div>
-    </div>
-
-    <% if @linea.nil? && @produccion.nil? %>
-      <div class="mt-4 flex flex-wrap gap-3 border-t border-slate-200 pt-3 text-sm">
-        <input type="password" placeholder="PIN de quien autoriza" inputmode="numeric" autocomplete="off" class="plus-input w-44" data-etiquetadora-target="pin">
-        <input type="text" placeholder="Motivo (sin pedido ni producción)" class="plus-input flex-1" data-etiquetadora-target="justificacion">
-      </div>
-    <% end %>
-  </div>
-
-  <%# Preview + impresión %>
-  <div class="plus-card hidden" data-etiquetadora-target="previewCard">
-    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-      <div class="plus-card-title mb-0">👁 Preview — <span data-etiquetadora-target="previewCount">0</span> etiquetas</div>
-      <div class="flex flex-wrap items-center gap-2">
-        <button type="button" class="btn btn-success" data-etiquetadora-target="btnRegistrar" data-action="etiquetadora#registrarImprimir">☁ Registrar + Imprimir</button>
-        <button type="button" class="btn btn-outline hidden" data-etiquetadora-target="btnImprimir" data-action="etiquetadora#soloImprimir">🖨 Solo imprimir</button>
-      </div>
-    </div>
-    <div id="preview-container" data-etiquetadora-target="preview"></div>
-  </div>
-
-  <%# Ajustes de etiqueta (engrane flotante) %>
-  <button type="button" class="btn btn-secondary shadow" title="Tamaño de etiqueta" data-action="etiquetadora#abrirAjustes"
-          style="position:fixed;bottom:18px;right:18px;z-index:35;width:46px;height:46px;border-radius:50%;padding:0;font-size:18px;">⚙</button>
-  <div class="panel hidden" data-etiquetadora-target="ajustes" data-action="click->etiquetadora#cerrarPanelFuera">
-    <div class="panel-caja">
-      <div class="panel-titulo">⚙ Configuración de etiqueta <button type="button" class="btn btn-sm btn-secondary" data-action="etiquetadora#cerrarAjustes">✕</button></div>
-      <div class="grid grid-cols-2 gap-2">
-        <div><label class="plus-label">Ancho (mm)</label><input type="number" class="plus-input" min="20" max="200" step="1" data-etiquetadora-target="cfgAncho" data-action="change->etiquetadora#guardarCfg"></div>
-        <div><label class="plus-label">Alto (mm)</label><input type="number" class="plus-input" min="15" max="200" step="1" data-etiquetadora-target="cfgAlto" data-action="change->etiquetadora#guardarCfg"></div>
-      </div>
-      <div class="mt-3"><label class="plus-label">Leyenda opcional (arriba de la etiqueta)</label><input type="text" class="plus-input" placeholder="ej. Select Meat" data-etiquetadora-target="cfgLeyenda" data-action="change->etiquetadora#guardarCfg"></div>
-      <div class="mt-2 grid grid-cols-2 gap-2">
-        <div><label class="plus-label">Alto del barcode (px)</label><input type="number" class="plus-input" min="20" max="200" step="2" data-etiquetadora-target="cfgBarras" data-action="change->etiquetadora#guardarCfg"></div>
-        <div><label class="plus-label">Tamaño letra nombre</label><input type="number" class="plus-input" min="8" max="36" step="1" data-etiquetadora-target="cfgLetra" data-action="change->etiquetadora#guardarCfg"></div>
-      </div>
-      <div class="alerta alerta-info mt-3">Los cambios aplican a la siguiente impresión. Se guardan en este navegador.</div>
-      <div class="flex justify-end gap-2">
-        <button type="button" class="btn btn-secondary" data-action="etiquetadora#cerrarAjustes">Cerrar</button>
-        <button type="button" class="btn btn-primary" data-action="etiquetadora#restablecerCfg">Restablecer</button>
-      </div>
-    </div>
-  </div>
-
-  <%# Pedidos por surtir %>
-  <div class="panel hidden" data-etiquetadora-target="pedidos" data-action="click->etiquetadora#cerrarPanelFuera">
-    <div class="panel-caja">
-      <div class="panel-titulo">🧺 Pedidos por surtir <button type="button" class="btn btn-sm btn-secondary" data-action="etiquetadora#cerrarPedidos">✕</button></div>
-      <% if @pendientes.empty? %>
-        <div class="py-4 text-center text-sm text-slate-500">No hay renglones pendientes de surtir</div>
-      <% else %>
-        <% @pendientes.group_by(&:pedido).each do |pedido, lineas| %>
-          <div class="mb-3">
-            <div class="mb-1 text-sm font-bold"><%= pedido.folio %> · <%= pedido.destino %> <span class="text-xs font-normal text-slate-500"><%= l pedido.created_at, format: :short %></span></div>
-            <% lineas.each do |l| %>
-              <%= link_to new_etiqueta_path(pedido_linea_id: l.id), class: "pd-item hover:bg-red-50 #{'bg-red-50' if l.id == @linea&.id}" do %>
-                <span><%= l.producto.nombre %></span>
-                <span class="falta">falta <%= number_with_precision(l.faltante, precision: l.producto.decimales) %> <%= l.producto.unidad %></span>
-              <% end %>
-            <% end %>
+        <table class="w-full text-sm">
+          <thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-4 py-1">#</th><th class="px-2 py-1">Origen</th><th class="px-2 py-1 text-right">Cantidad</th><th class="px-2 py-1">Código</th><th></th></tr></thead>
+          <tbody data-etiquetadora-target="lista"></tbody>
+        </table>
+        <% if @linea.nil? && @produccion.nil? %>
+          <div class="flex flex-wrap gap-3 border-t border-slate-200 px-4 py-3 text-sm">
+            <input type="password" placeholder="PIN de quien autoriza" inputmode="numeric" autocomplete="off" class="w-44 rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="pin">
+            <input type="text" placeholder="Motivo (no hay pedido ni producción)" class="flex-1 rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="justificacion">
           </div>
         <% end %>
-      <% end %>
+        <div class="flex flex-wrap items-center gap-3 border-t border-slate-200 px-4 py-3">
+          <button type="button" data-action="etiquetadora#registrar" data-etiquetadora-target="btnRegistrar" class="rounded bg-emerald-700 px-4 py-3 text-lg font-semibold text-white hover:bg-emerald-600 disabled:opacity-50">Registrar e imprimir</button>
+          <button type="button" data-action="etiquetadora#reimprimir" data-etiquetadora-target="btnReimprimir" class="hidden rounded border border-slate-300 px-4 py-3">Reimprimir</button>
+          <button type="button" data-action="etiquetadora#limpiar" class="px-3 py-2 text-sm text-slate-500 hover:underline">Limpiar</button>
+          <span class="text-sm text-emerald-800" data-etiquetadora-target="resultado"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="rounded bg-white p-4 shadow-sm">
+        <h2 class="mb-2 font-semibold">Pedidos por surtir</h2>
+        <% if @pendientes.empty? %>
+          <p class="text-sm text-slate-500">Nada pendiente.</p>
+        <% else %>
+          <% @pendientes.group_by(&:pedido).each do |pedido, lineas| %>
+            <div class="mb-3 text-sm">
+              <div class="font-semibold"><%= pedido.folio %> · <%= pedido.destino %></div>
+              <% lineas.each do |l| %>
+                <%= link_to new_etiqueta_path(pedido_linea_id: l.id), class: "flex justify-between gap-2 border-t border-slate-100 py-1 hover:bg-slate-50 #{'bg-blue-50' if l.id == @linea&.id}" do %>
+                  <span class="truncate"><%= l.producto.nombre %></span>
+                  <span class="font-mono text-slate-600">falta <%= number_with_precision(l.faltante, precision: l.producto.decimales) %></span>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      <details class="rounded bg-white p-4 text-sm shadow-sm">
+        <summary class="cursor-pointer font-semibold">Etiqueta impresa</summary>
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <label>Ancho (mm)<input type="number" min="20" max="200" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="cfgAncho" data-action="change->etiquetadora#guardarCfg"></label>
+          <label>Alto (mm)<input type="number" min="15" max="200" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="cfgAlto" data-action="change->etiquetadora#guardarCfg"></label>
+          <label class="col-span-2">Leyenda<input type="text" placeholder="ej. Select Meat" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="cfgLeyenda" data-action="change->etiquetadora#guardarCfg"></label>
+          <label>Alto barras (px)<input type="number" min="20" max="200" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="cfgBarras" data-action="change->etiquetadora#guardarCfg"></label>
+          <label>Letra nombre<input type="number" min="8" max="36" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="cfgLetra" data-action="change->etiquetadora#guardarCfg"></label>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Se guarda en este navegador. <button type="button" class="underline" data-action="etiquetadora#restablecerCfg">Restablecer</button></p>
+      </details>
     </div>
   </div>
 </div>

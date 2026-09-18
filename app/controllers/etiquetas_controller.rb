@@ -10,7 +10,7 @@ class EtiquetasController < ApplicationController
     @tarimas = vivas.where(tipo: "tarima")
   end
 
-  # La etiquetadora: buscador de producto, modos A/B/C/D, báscula, preview e impresión.
+  # La etiquetadora: producto, lista de pesadas (o piezas), báscula, y Registrar e imprimir.
   def new
     cargar_contexto
     producto = @linea&.producto || Producto.activos.find_by(id: params[:producto_id])
@@ -88,19 +88,6 @@ class EtiquetasController < ApplicationController
       end
     end
     render json: productos.limit(30).map { |p| producto_json(p) }
-  end
-
-  # Modo D: liga un código de fábrica al producto y, si viene, su peso por pieza.
-  def vincular_codigo
-    autorizar!("admin.catalogo")
-    producto = Producto.activos.find(params[:producto_id])
-    Producto.transaction do
-      producto.codigos_barras.create!(codigo: params[:codigo]) if params[:codigo].present?
-      producto.update!(peso_fijo: params[:peso_fijo]) if params[:peso_fijo].present?
-    end
-    render json: producto_json(producto.reload)
-  rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.record.errors.full_messages.join(", ") }, status: :unprocessable_entity
   end
 
   # Para el lector: qué etiqueta de esta sucursal es este código (JSON).

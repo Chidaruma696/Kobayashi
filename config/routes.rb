@@ -75,7 +75,6 @@ Rails.application.routes.draw do
       get :productos
       get :imprimir
       post :lote
-      post :vincular_codigo
       post :cerrar_caja
       post :armar_tarima
     end
