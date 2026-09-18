@@ -55,3 +55,86 @@ class EtiquetasControllerTest < ActionDispatch::IntegrationTest
     assert_match "etiquetas.crear", response.body
   end
 end
+
+class EtiquetadoraTest < ActionDispatch::IntegrationTest
+  setup { post entrar_path, params: { usuario: "admin", password: "secreto1" } }
+
+  test "la etiquetadora carga con el producto del renglón y la lista de pendientes" do
+    get new_etiqueta_path(pedido_linea_id: pedido_lineas(:pechuga_5).id)
+    assert_response :ok
+    assert_select "[data-controller=etiquetadora]"
+    assert_match "Pechuga de pollo", response.body
+    assert_select ".pd-item", minimum: 2
+  end
+
+  test "el buscador responde JSON por nombre, PLU o código de proveedor" do
+    productos(:catsup).codigos_barras.create!(codigo: "7501000123457")
+    get productos_etiquetas_path(q: "pech"), headers: { "Accept" => "application/json" }
+    assert_equal [ "Pechuga de pollo" ], response.parsed_body.map { |p| p["nombre"] }
+    get productos_etiquetas_path(q: "90002"), headers: { "Accept" => "application/json" }
+    assert_equal [ "Cátsup 1 kg" ], response.parsed_body.map { |p| p["nombre"] }
+    get productos_etiquetas_path(q: "7501000123457"), headers: { "Accept" => "application/json" }
+    assert_includes response.parsed_body.first["codigos"], "7501000123457"
+  end
+
+  test "un lote registra las pesadas, las cierra en caja y devuelve códigos con barcode" do
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: pedido_lineas(:pechuga_5).id,
+                                        pesadas: [ { cantidad: "1.250" }, { cantidad: "0.980" } ], caja: "1" }, as: :json
+    assert_response :ok
+    datos = response.parsed_body
+    assert_equal 2, datos["etiquetas"].size
+    assert datos["etiquetas"].all? { |e| e["codigo"].start_with?("08") && e["svg"].include?("<svg") }
+    assert datos["caja"]["codigo"].start_with?("07")
+    assert_equal "2.23", datos["caja"]["cantidad"]
+    assert_equal "2,230", datos["lleva"], "lleva viene formateado para pantalla, con la coma del locale"
+    caja = Etiqueta.find(datos["caja"]["id"])
+    assert_equal 2, caja.hijas.count
+    assert_equal pedido_lineas(:pechuga_5), caja.hijas.first.pedido_linea
+
+    # Pesadas ya registradas (impresión al instante) se agrupan por id sin duplicarse.
+    suelta = Etiqueta.create!(tipo: "paquete", producto: productos(:pechuga), cantidad: 2, sucursal: sucursales(:matriz), usuario: usuarios(:admin), pedido_linea: pedido_lineas(:pechuga_5))
+    assert_difference("Etiqueta.count", 2) do
+      post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: pedido_lineas(:pechuga_5).id,
+                                          pesadas: [ { id: suelta.id }, { cantidad: "1" } ], caja: "1" }, as: :json
+    end
+    assert_response :ok
+    assert_equal response.parsed_body["caja"]["id"], suelta.reload.padre_id
+  end
+
+  test "un lote rechaza un producto que no está en el pedido y exige autorización sin contexto" do
+    post lote_etiquetas_path, params: { producto_id: productos(:catsup).id, pedido_linea_id: pedido_lineas(:pechuga_5).id, pesadas: [ { cantidad: "1" } ] }, as: :json
+    assert_response :ok, "la cátsup sí está en el pedido, cae en su renglón"
+    assert_equal pedido_lineas(:catsup_10), Etiqueta.last.pedido_linea
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pesadas: [ { cantidad: "1" } ] }, as: :json
+    assert_response :unprocessable_entity
+    assert_match "autorización", response.parsed_body["error"]
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pesadas: [ { cantidad: "1" } ], pin: "9999", justificacion: "muestra" }, as: :json
+    assert_response :ok
+  end
+
+  test "caja fija de proveedor y vinculación de código" do
+    post vincular_codigo_etiquetas_path, params: { producto_id: productos(:catsup).id, codigo: "7501000123457", peso_fijo: "1" }, as: :json
+    assert_response :ok
+    assert_includes response.parsed_body["codigos"], "7501000123457"
+    assert_equal BigDecimal("1"), productos(:catsup).reload.peso_fijo
+    post lote_etiquetas_path, params: { producto_id: productos(:catsup).id, pedido_linea_id: pedido_lineas(:catsup_10).id, caja_fija: "12" }, as: :json
+    assert_response :ok
+    caja = Etiqueta.find(response.parsed_body["caja"]["id"])
+    assert caja.caja?
+    assert_equal 12, caja.cantidad
+    assert_equal 0, caja.hijas.count
+  end
+
+  test "imprimir varias etiquetas con el tamaño elegido y copias de un código de proveedor" do
+    ids = 2.times.map { Etiqueta.create!(tipo: "paquete", producto: productos(:pechuga), cantidad: 1, sucursal: sucursales(:matriz), usuario: usuarios(:admin), pedido_linea: pedido_lineas(:pechuga_5)).id }
+    get imprimir_etiquetas_path(ids: ids.join(","), ancho: 80, alto: 40, leyenda: "Select Meat")
+    assert_response :ok
+    assert_select ".etiqueta", 2
+    assert_select "svg", 2
+    assert_match "size: 80mm 40mm", response.body
+    assert_match "Select Meat", response.body
+    get imprimir_etiquetas_path(codigo: "750100012345", n: 3, nombre: "Cátsup")
+    assert_select ".etiqueta", 3
+    assert_select "svg", 3
+  end
+end

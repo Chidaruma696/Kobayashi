@@ -1,8 +1,2 @@
-<div class="etiqueta">
-  <div class="nombre"><%= @etiqueta.producto&.nombre || "#{@etiqueta.tipo.capitalize} mixta" %></div>
-  <div class="dato">
-    <span><%= @etiqueta.tipo.capitalize %> · <%= l @etiqueta.created_at.to_date, format: :short %></span>
-    <span class="cantidad"><%= number_with_precision(@etiqueta.cantidad, precision: @etiqueta.producto&.decimales || 3) %> <%= @etiqueta.producto&.unidad %></span>
-  </div>
-  <%= ean13_svg(@etiqueta.codigo, alto: 36, modulo: 2) %>
-</div>
+<% content_for :title, "Etiqueta #{@etiqueta.codigo}" %>
+<%= render partial: "impresa", collection: @etiquetas, as: :etiqueta %>

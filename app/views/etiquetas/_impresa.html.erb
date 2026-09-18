@@ -1,0 +1,21 @@
+<%# Una etiqueta en papel. `etiqueta` es un Etiqueta, o un hash { codigo:, nombre:, cantidad: } para códigos de proveedor. %>
+<% registro = etiqueta.is_a?(Etiqueta) %>
+<% codigo = registro ? etiqueta.codigo : etiqueta[:codigo] %>
+<% nombre = registro ? (etiqueta.producto&.nombre || "#{etiqueta.tipo.capitalize} mixta") : etiqueta[:nombre] %>
+<div class="etiqueta">
+  <% if @leyenda.present? %><div class="leyenda"><%= @leyenda %></div><% end %>
+  <div class="nombre"><% if registro && !etiqueta.paquete? %><span class="tipo"><%= etiqueta.tipo.upcase %></span><% end %><%= nombre %></div>
+  <div class="bc">
+    <% ean = Barcode.valido?(codigo) ? codigo : (Barcode.variantes(codigo).find { |v| Barcode.valido?(v) }) %>
+    <% if ean %><%= ean13_svg(ean, alto: @alto_barras, modulo: 2) %><% else %><span class="texto"><%= codigo %></span><% end %>
+  </div>
+  <div class="pie">
+    <% if registro %>
+      <span><%= l etiqueta.created_at.to_date, format: :short %><%= " · #{etiqueta.hijas.size} paq" if etiqueta.caja? && etiqueta.hijas.any? %></span>
+      <span class="cantidad"><%= number_with_precision(etiqueta.cantidad, precision: etiqueta.producto&.decimales || 3) %> <%= etiqueta.producto&.unidad %></span>
+    <% else %>
+      <span></span>
+      <span class="cantidad"><%= etiqueta[:cantidad] %></span>
+    <% end %>
+  </div>
+</div>

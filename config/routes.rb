@@ -72,6 +72,10 @@ Rails.application.routes.draw do
   resources :etiquetas, only: %i[index new create show] do
     collection do
       get :buscar
+      get :productos
+      get :imprimir
+      post :lote
+      post :vincular_codigo
       post :cerrar_caja
       post :armar_tarima
     end

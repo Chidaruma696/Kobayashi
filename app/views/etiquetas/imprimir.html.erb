@@ -1,0 +1,2 @@
+<% content_for :title, "#{@etiquetas.size + @sueltas.size} etiquetas" %>
+<%= render partial: "impresa", collection: @etiquetas + @sueltas, as: :etiqueta %>
