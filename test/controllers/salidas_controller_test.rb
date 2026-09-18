@@ -72,4 +72,15 @@ class SalidasControllerTest < ActionDispatch::IntegrationTest
     get salida_path(salida)
     assert_response :not_found
   end
+
+  test "una salida que nace de un pedido va a quien pidió, sin escoger destino" do
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    pedido = Pedido.create!(sucursal_origen: sucursales(:matriz), sucursal_destino: @tienda, usuario: usuarios(:admin),
+                            lineas_attributes: [ { producto_id: productos(:pechuga).id, cantidad: 1 } ])
+    get new_salida_path(pedido_id: pedido.id)
+    assert_select "select[name=destino]", 0
+    assert_select "p", /surte el pedido/
+    post salidas_path, params: { pedido_id: pedido.id, destino: "cliente:#{clientes(:taqueria).id}" }
+    assert_equal @tienda, Salida.last.destino
+  end
 end

@@ -1,9 +1,14 @@
 <h1 class="mb-4 text-2xl font-bold">Abrir producción</h1>
 <%= form_with url: producciones_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <div>
-    <%= f.label :pedido_id, "Para el pedido", class: "block text-sm font-medium" %>
-    <%= f.select :pedido_id, @pedidos.map { |p| [ "#{p.folio} · #{p.destino}", p.id ] }, { include_blank: "— sin pedido (pide autorización) —", selected: @pedido&.id }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
-  </div>
+  <% if @pedido %>
+    <%= f.hidden_field :pedido_id, value: @pedido.id %>
+    <p class="text-sm">Para el pedido <%= link_to @pedido.folio, pedido_path(@pedido), class: "font-mono text-blue-700" %> · <strong><%= @pedido.destino %></strong></p>
+  <% else %>
+    <div>
+      <%= f.label :pedido_id, "Para el pedido", class: "block text-sm font-medium" %>
+      <%= f.select :pedido_id, @pedidos.map { |p| [ "#{p.folio} · #{p.destino}", p.id ] }, { include_blank: "— sin pedido (pide autorización) —" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    </div>
+  <% end %>
   <div>
     <%= f.label :producto_id, "Producto que entra", class: "block text-sm font-medium" %>
     <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
@@ -13,6 +18,7 @@
     <%= f.number_field :cantidad, step: "0.001", min: "0.001", required: true, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2 font-mono text-xl" %>
     <p class="mt-1 text-xs text-slate-500">Se descuenta de la existencia al abrir. Al cerrar, lo etiquetado entra y el resto queda como merma.</p>
   </div>
+  <% unless @pedido %>
   <fieldset class="rounded border border-amber-300 bg-amber-50 p-3 text-sm">
     <legend class="px-1 font-medium">Sin pedido</legend>
     <div class="flex gap-3">
@@ -20,5 +26,6 @@
       <%= f.text_field :justificacion, placeholder: "Motivo", class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
     </div>
   </fieldset>
+  <% end %>
   <%= f.submit "Abrir producción", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
 <% end %>

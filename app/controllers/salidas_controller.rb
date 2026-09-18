@@ -15,22 +15,23 @@ class SalidasController < ApplicationController
     @recibidas = Salida.where(sucursal_destino: sucursal_actual).where(estado: "recibida").includes(:sucursal_origen).order(recibido_en: :desc).limit(15)
   end
 
+  # Si la salida nace de un pedido, va a quien pidió: no se escoge destino.
   def new
     autorizar!("salidas.surtir")
+    @pedido = pedido_abierto
+    return if @pedido
+
     @destinos = Sucursal.activas.where.not(id: sucursal_actual.id).order(:nombre)
     @clientes = sucursal_actual.matriz? ? Cliente.activos.includes(:ruta).order(:nombre) : []
-    pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
-    @seleccion = pedido && (pedido.cliente ? "cliente:#{pedido.cliente_id}" : "sucursal:#{pedido.sucursal_destino_id}")
   end
 
   def create
     autorizar!("salidas.surtir")
-    tipo, id = params[:destino].to_s.split(":")
-    destino = tipo == "cliente" && sucursal_actual.matriz? ? Cliente.activos.find(id) : Sucursal.find(id)
+    destino = pedido_abierto&.destino || destino_elegido
     salida = Salida.nueva!(origen: sucursal_actual, destino: destino, usuario: usuario_actual, motivo: params[:motivo].presence)
     redirect_to salida_path(salida), notice: "Salida #{salida.folio} abierta: escanea lo que va"
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to new_salida_path, alert: e.record.errors.full_messages.join(", ")
+    redirect_to new_salida_path(pedido_id: params[:pedido_id]), alert: e.record.errors.full_messages.join(", ")
   end
 
   def show
@@ -122,6 +123,15 @@ class SalidasController < ApplicationController
   end
 
   private
+
+  def pedido_abierto
+    Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual) if params[:pedido_id].present?
+  end
+
+  def destino_elegido
+    tipo, id = params[:destino].to_s.split(":")
+    tipo == "cliente" && sucursal_actual.matriz? ? Cliente.activos.find(id) : Sucursal.find(id)
+  end
 
   def cargar_salida
     @salida = Salida.where(sucursal_origen: sucursal_actual).or(Salida.where(sucursal_destino: sucursal_actual)).includes(:sucursal_origen, :sucursal_destino, :usuario).find(params[:id])

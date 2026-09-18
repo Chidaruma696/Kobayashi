@@ -70,7 +70,8 @@ class AdminTest < ActionDispatch::IntegrationTest
     post pedidos_path, params: { pedido: { destino: "cliente:#{c.id}", lineas_attributes: { "0" => { producto_id: productos(:catsup).id, cantidad: "3" } } } }
     assert_equal c, Pedido.last.cliente
     get new_salida_path(pedido_id: Pedido.last.id)
-    assert_select "option[selected][value='cliente:#{c.id}']"
+    assert_select "select[name=destino]", 0
+    assert_select "strong", /Lupe/
   end
 
   test "sucursales con límite en pesos y sin permiso 403" do
