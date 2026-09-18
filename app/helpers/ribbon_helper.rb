@@ -8,7 +8,8 @@ module RibbonHelper
       { nombre: "Ver", botones: [
         Boton.new("Inicio", :root_path, nil, "⌂"),
         Boton.new("Ventas por producto", :ventas_por_producto_path, "reportes.ver", "📈")
-      ] }
+      ] },
+      { nombre: "Revisar", botones: [ Boton.new("Por revisar", :revisiones_path, "revisiones.resolver", "🕵") ] }
     ] },
     { id: :caja, nombre: "Caja", grupos: [
       { nombre: "Vender", botones: [

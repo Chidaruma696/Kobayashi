@@ -1,0 +1,6 @@
+<% if @por_revisar.to_i.positive? %>
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm">
+    <span><strong><%= @por_revisar %></strong> <%= @por_revisar == 1 ? "operación hecha sin autorización espera revisión" : "operaciones hechas sin autorización esperan revisión" %>.</span>
+    <%= link_to "Revisar", revisiones_path(sucursal_id: sucursal_actual.matriz? ? "todas" : nil), class: "rounded bg-amber-600 px-3 py-1 font-semibold text-white hover:bg-amber-500" %>
+  </div>
+<% end %>

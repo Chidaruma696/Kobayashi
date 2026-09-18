@@ -48,10 +48,11 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     Inventario.mover!(sucursal: sucursales(:matriz), producto: pollo, tipo: "entrada", cantidad: 5, usuario: usuarios(:admin))
     post producciones_path, params: { producto_id: pollo.id, cantidad: "5" }
     assert_redirected_to new_produccion_path
-    assert_match "autorice", flash[:alert]
+    assert_match "motivo", flash[:alert]
     assert_equal 0, Produccion.count
     post producciones_path, params: { producto_id: pollo.id, cantidad: "5", pin: "9999", justificacion: "mostrador" }
     assert_equal usuarios(:admin), Produccion.last.autorizado_por
+    assert_equal 0, Revision.count, "el admin tiene el permiso: nada que revisar"
 
     linea = pedido_lineas(:catsup_10)
     post no_surtir_pedido_linea_path(linea.pedido, linea), params: { motivo: "" }

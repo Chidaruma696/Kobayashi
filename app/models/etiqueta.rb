@@ -135,9 +135,9 @@ class Etiqueta < ApplicationRecord
   # Una etiqueta nace de un renglón de pedido, de una producción, o con autorización registrada.
   # Las cajas y tarimas que solo agrupan no necesitan contexto: lo traen sus hijas.
   def contexto_obligatorio
-    return if pedido_linea || produccion || (autorizado_por && justificacion.present?)
+    return if pedido_linea || produccion || justificacion.present?
     return if agrupando || tarima?
-    errors.add(:base, "para etiquetar hace falta un pedido, una producción o una autorización con motivo")
+    errors.add(:base, "para etiquetar hace falta un pedido, una producción o un motivo")
   end
 
   def cabe_en_la_produccion

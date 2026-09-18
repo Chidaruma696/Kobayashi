@@ -14,7 +14,7 @@
       <%= form_with url: caja_retirar_path, class: "space-y-2 text-sm" do |f| %>
         <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: "Monto", required: true, class: "w-full rounded border border-slate-300 px-3 py-2 font-mono" %>
         <%= f.text_field :motivo, placeholder: "Motivo", required: true, class: "w-full rounded border border-slate-300 px-3 py-2" %>
-        <% unless puede?("caja.retirar") %><%= f.password_field :pin, placeholder: "PIN de quien autoriza", inputmode: "numeric", autocomplete: "off", class: "w-40 rounded border border-slate-300 px-3 py-2" %><% end %>
+        <% unless puede?("caja.retirar") %><%= f.password_field :pin, placeholder: "PIN (opcional: sin PIN queda por revisar)", inputmode: "numeric", autocomplete: "off", class: "w-full rounded border border-slate-300 px-3 py-2" %><% end %>
         <%= f.submit "Retirar", class: "rounded bg-slate-900 px-4 py-2 text-white" %>
       <% end %>
       <% if @corte.retiros.any? %>

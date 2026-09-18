@@ -28,6 +28,7 @@ class EtiquetasController < ApplicationController
     @etiqueta = Etiqueta.create!(tipo: tipo, producto: producto, cantidad: params[:cantidad], sucursal: sucursal_actual,
                                  usuario: usuario_actual, pedido_linea: linea, produccion: @produccion,
                                  autorizado_por: autoriza, justificacion: params[:justificacion].presence)
+    dejar_por_revisar([ @etiqueta ], linea, autoriza)
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to new_etiqueta_path(contexto_params.merge(producto_id: producto.id)), notice: "Etiqueta #{@etiqueta.codigo} creada" }
@@ -67,6 +68,7 @@ class EtiquetasController < ApplicationController
       elsif params[:caja].present? && paquetes.any?
         caja = Etiqueta.cerrar_caja!(paquetes, usuario: usuario_actual)
       end
+      dejar_por_revisar(paquetes.select(&:previously_new_record?) + [ caja ].compact.select(&:previously_new_record?).reject(&:agrupando), linea, autoriza)
     end
     render json: { etiquetas: paquetes.map { |e| etiqueta_json(e) }, caja: (etiqueta_json(caja) if caja),
                    lleva: lleva_de(linea, @produccion, producto) }
@@ -156,9 +158,16 @@ class EtiquetasController < ApplicationController
     linea ||= @produccion&.pedido&.linea_de(producto)
     raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion
-    autoriza = autorizador("etiquetas.libre", params[:pin])
-    raise ArgumentError, "para etiquetar hace falta un pedido, una producción o una autorización con motivo" if autoriza.nil? || params[:justificacion].blank?
-    [ nil, autoriza ]
+    raise ArgumentError, "sin pedido ni producción escribe el motivo (con PIN de quien autoriza, o queda por revisar)" if params[:justificacion].blank?
+    [ nil, autorizador_o_revision("etiquetas.libre", params[:pin]) ]
+  end
+
+  # Etiquetas sueltas sin nadie que las autorizara: a la bandeja de revisión, cada una con lo que vale.
+  def dejar_por_revisar(etiquetas, linea, autoriza)
+    return if linea || @produccion || autoriza
+    etiquetas.each do |e|
+      revisar_si_hace_falta(e, nil, motivo: params[:justificacion], valor_centavos: Revision.valor(e.cantidad, e.producto, sucursal_actual))
+    end
   end
 
   def contexto_params

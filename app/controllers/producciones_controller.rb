@@ -16,13 +16,13 @@ class ProduccionesController < ApplicationController
 
   def create
     pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
-    autoriza = pedido ? nil : autorizador("etiquetas.libre", params[:pin])
-    if pedido.nil? && autoriza.nil?
-      return redirect_to new_produccion_path, alert: "Sin pedido hace falta el PIN de quien autorice"
-    end
-    produccion = Produccion.abrir!(sucursal: sucursal_actual, producto: Producto.activos.find(params[:producto_id]),
+    return redirect_to new_produccion_path, alert: "Sin pedido escribe el motivo" if pedido.nil? && params[:justificacion].blank?
+    autoriza = pedido ? nil : autorizador_o_revision("etiquetas.libre", params[:pin])
+    producto = Producto.activos.find(params[:producto_id])
+    produccion = Produccion.abrir!(sucursal: sucursal_actual, producto: producto,
                                    cantidad: params[:cantidad], usuario: usuario_actual, pedido: pedido,
                                    autorizado_por: autoriza, justificacion: params[:justificacion].presence)
+    revisar_si_hace_falta(produccion, autoriza, motivo: params[:justificacion], valor_centavos: Revision.valor(produccion.cantidad, producto, sucursal_actual)) if pedido.nil?
     redirect_to new_etiqueta_path(produccion_id: produccion.id), notice: "Producción #{produccion.folio} abierta: entraron #{produccion.cantidad.to_s('F')} de #{produccion.producto.nombre}"
   rescue Inventario::SinExistencia, ActiveRecord::RecordInvalid, ArgumentError => e
     redirect_to new_produccion_path(pedido_id: params[:pedido_id]), alert: e.message

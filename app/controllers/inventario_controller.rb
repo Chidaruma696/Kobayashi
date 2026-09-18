@@ -21,15 +21,16 @@ class InventarioController < ApplicationController
   end
 
   def crear_movimiento
-    autoriza = autorizador("inventario.ajustar", params[:pin])
-    return volver_con_error("Hace falta el PIN de alguien con permiso para ajustar inventario") unless autoriza
     return volver_con_error("Escribe el motivo") if params[:motivo].blank?
+    autoriza = autorizador_o_revision("inventario.ajustar", params[:pin])
     producto = Producto.activos.find(params[:producto_id])
     tipo = params[:tipo].presence_in(%w[entrada ajuste_entrada ajuste_salida merma]) || "entrada"
-    Inventario.mover!(sucursal: @sucursal, producto: producto, tipo: tipo, cantidad: params[:cantidad],
-                      usuario: usuario_actual, motivo: "#{params[:motivo]} (autorizó #{autoriza.nombre})")
+    movimiento = Inventario.mover!(sucursal: @sucursal, producto: producto, tipo: tipo, cantidad: params[:cantidad], usuario: usuario_actual,
+                                   motivo: "#{params[:motivo]} (#{autoriza ? "autorizó #{autoriza.nombre}" : 'por revisar'})")
+    revisar_si_hace_falta(movimiento, autoriza, motivo: params[:motivo], sucursal: @sucursal,
+                          valor_centavos: Revision.valor(movimiento.cantidad, producto, @sucursal))
     redirect_to kardex_inventario_path(producto_id: producto.id, sucursal_id: @sucursal.id),
-                notice: "#{Movimiento::NOMBRES[tipo]} de #{producto.nombre} registrada"
+                notice: "#{Movimiento::NOMBRES[tipo]} de #{producto.nombre} registrada#{'; queda por revisar' unless autoriza}"
   rescue Inventario::SinExistencia, ArgumentError => e
     volver_con_error(e.message)
   end

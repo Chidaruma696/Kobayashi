@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root "inicio#index"
   get "ventas-por-producto", to: "inicio#ventas", as: :ventas_por_producto
+  resources :revisiones, only: %i[index] do
+    member { post :resolver }
+  end
 
   get "entrar", to: "sesiones#new", as: :entrar
   post "entrar", to: "sesiones#create"

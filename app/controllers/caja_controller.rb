@@ -76,9 +76,10 @@ class CajaController < ApplicationController
 
   def retirar
     raise ArgumentError, "no hay caja abierta" unless @corte
-    autoriza = autorizador("caja.retirar", params[:pin]) or raise ArgumentError, "hace falta el PIN de quien autorice el retiro"
-    @corte.retirar!(monto_centavos: Dinero.centavos(params[:monto]), motivo: params[:motivo], usuario: usuario_actual, autorizado_por: autoriza)
-    redirect_to caja_corte_path, notice: "Retiro de #{Dinero.pesos(Dinero.centavos(params[:monto]))} registrado"
+    autoriza = autorizador_o_revision("caja.retirar", params[:pin])
+    retiro = @corte.retirar!(monto_centavos: Dinero.centavos(params[:monto]), motivo: params[:motivo], usuario: usuario_actual, autorizado_por: autoriza)
+    revisar_si_hace_falta(retiro, autoriza, motivo: retiro.motivo, valor_centavos: retiro.monto_centavos)
+    redirect_to caja_corte_path, notice: "Retiro de #{Dinero.pesos(retiro.monto_centavos)} registrado#{'; queda por revisar' unless autoriza}"
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to caja_corte_path, alert: e.message
   end

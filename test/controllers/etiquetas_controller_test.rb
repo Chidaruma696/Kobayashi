@@ -34,10 +34,10 @@ class EtiquetasControllerTest < ActionDispatch::IntegrationTest
     assert_match "motivo", flash[:alert]
   end
 
-  test "etiquetar sin pedido exige PIN de quien autoriza y motivo" do
+  test "etiquetar sin pedido exige motivo; con PIN queda autorizada y sin PIN queda por revisar" do
     post etiquetas_path, params: { producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "1" }
     assert_redirected_to new_etiqueta_path(producto_id: productos(:pechuga).id)
-    assert_match "autorización", flash[:alert]
+    assert_match "motivo", flash[:alert]
     assert_equal 0, Etiqueta.count
     delete salir_path
     post entrar_path, params: { usuario: "supervisora", password: "secreto1" }
@@ -45,6 +45,17 @@ class EtiquetasControllerTest < ActionDispatch::IntegrationTest
     post etiquetas_path, params: { producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "1", pin: "9999", justificacion: "muestra para cliente" }
     assert_redirected_to new_etiqueta_path(producto_id: productos(:pechuga).id)
     assert_equal usuarios(:admin), Etiqueta.last.autorizado_por
+    assert_equal 0, Revision.count
+    # Sin PIN no se frena: se etiqueta y queda por revisar con lo que vale.
+    post etiquetas_path, params: { producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "1.5", justificacion: "urge, no hay nadie" }
+    assert_nil Etiqueta.last.autorizado_por
+    r = Revision.last
+    assert_equal Etiqueta.last, r.revisable
+    assert_equal usuarios(:supervisora), r.usuario
+    assert_equal 19_350, r.valor_centavos
+    # Un PIN equivocado sí es error.
+    post etiquetas_path, params: { producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "1", pin: "0000", justificacion: "x" }
+    assert_match "PIN", flash[:alert]
   end
 
   test "sin permiso de etiquetas responde 403 con la clave que falta" do
@@ -107,7 +118,7 @@ class EtiquetadoraTest < ActionDispatch::IntegrationTest
     assert_equal pedido_lineas(:catsup_10), Etiqueta.last.pedido_linea
     post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pesadas: [ { cantidad: "1" } ] }, as: :json
     assert_response :unprocessable_entity
-    assert_match "autorización", response.parsed_body["error"]
+    assert_match "motivo", response.parsed_body["error"]
     post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pesadas: [ { cantidad: "1" } ], pin: "9999", justificacion: "muestra" }, as: :json
     assert_response :ok
   end

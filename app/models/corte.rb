@@ -58,7 +58,7 @@ class Corte < ApplicationRecord
     efectivo_esperado_centavos > sucursal.limite_efectivo_centavos
   end
 
-  def retirar!(monto_centavos:, motivo:, usuario:, autorizado_por:)
+  def retirar!(monto_centavos:, motivo:, usuario:, autorizado_por: nil)
     raise ArgumentError, "el corte está cerrado" unless abierto?
     raise ArgumentError, "hace falta el motivo" if motivo.blank?
     monto = monto_centavos.to_i

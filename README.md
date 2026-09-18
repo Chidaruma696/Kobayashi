@@ -42,6 +42,7 @@ The headquarters produces meat, **labels every package on a scale**, sells at it
 | **Route sales** | Dispatch to a customer closes a note payable on delivery; the driver comes back and the delivery is charged into the open drawer. | Rejected goods come back as a return against the ticket. Cash only. |
 | **Counts** | The supervisor scans everything; the count wins. | Stock is adjusted, unseen labels die, and the shortage is charged to the cashier. |
 | **Prices** | List price, per-shop overrides, promotions (special price, percentage, volume). | The register applies the cheapest valid rule by itself; a promotion never raises a price. |
+| **Deferred authorization** | Anything that would need a supervisor (free labelling, production without an order, a line without a label, a stock adjustment, a cash withdrawal) goes through with a reason when nobody is around, and lands in a review tray. | The flow never stops; the supervisor approves or flags each one at the end of the day, and a flagged one can be charged to whoever did it. A PIN from someone with permission skips the tray. Selling below list price still needs the PIN. |
 | **Dashboard & admin** | Sales, tickets, payment mix, closes, waste, counts, valued stock, CSV by product; products, users, roles, shops, customers, routes. | Permissions by key, ribbon tabs appear only for what the user may do. |
 
 <br/>

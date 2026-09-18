@@ -71,10 +71,11 @@ class Salida < ApplicationRecord
   end
 
   # Renglón manual (sin etiqueta), solo en devoluciones y con quien lo autoriza.
-  def agregar_manual!(producto:, cantidad:, motivo:, autorizado_por:)
+  # Sin autorizado_por la línea queda por revisar (ver Revision); el controlador la abre.
+  def agregar_manual!(producto:, cantidad:, motivo:, autorizado_por: nil, usuario: nil)
     raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "sin etiqueta solo se devuelve, y con justificación" unless devolucion? && motivo.present? && autorizado_por
-    lineas.create!(producto: producto, cantidad: cantidad, motivo: motivo, autorizado_por: autorizado_por)
+    raise ArgumentError, "sin etiqueta solo se devuelve, y con justificación" unless devolucion? && motivo.present?
+    lineas.create!(producto: producto, cantidad: cantidad, motivo: motivo, autorizado_por: autorizado_por, usuario: usuario || self.usuario)
   end
 
   # --- verificar la carga: otra persona escanea lo que sube al camión.

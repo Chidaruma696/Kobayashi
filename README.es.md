@@ -42,6 +42,7 @@ La matriz produce carne, **etiqueta cada paquete en la báscula**, vende en su p
 | **Reparto** | La salida a un cliente cierra una nota por cobrar; el chofer vuelve y la entrega se cobra en la caja abierta. | Lo rechazado vuelve como devolución con el ticket. Todo de contado. |
 | **Conteos** | El supervisor escanea todo; el conteo manda. | Se ajusta el stock, las etiquetas no vistas mueren y el faltante se carga al cajero. |
 | **Precios** | Precio de lista, precio por sucursal, promociones (especial, porcentaje, por cantidad). | La caja aplica sola la regla más barata vigente; una promoción nunca sube el precio. |
+| **Autorización diferida** | Lo que necesitaría a un supervisor (etiquetar sin pedido, producir sin pedido, un renglón sin etiqueta, un ajuste de inventario, un retiro de efectivo) se hace igual con su motivo cuando no hay nadie, y cae en una bandeja de revisión. | El flujo nunca se frena; el supervisor aprueba u observa cada una al final del día, y lo observado se le puede cargar a quien lo hizo. Con el PIN de alguien con permiso no pasa por la bandeja. Bajar precio en caja sigue exigiendo PIN. |
 | **Inicio (tablero) y admin** | Ventas, tickets, formas de pago, cortes, mermas, conteos, inventario valorizado, CSV por producto; productos, usuarios, roles, sucursales, clientes, rutas. | Permisos por clave; las pestañas de la cinta aparecen solo para lo que el usuario puede hacer. |
 
 <br/>

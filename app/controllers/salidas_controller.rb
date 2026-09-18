@@ -56,9 +56,11 @@ class SalidasController < ApplicationController
 
   def manual
     autorizar!("salidas.surtir")
-    autoriza = autorizador("etiquetas.libre", params[:pin]) or raise ArgumentError, "un renglón sin etiqueta necesita el PIN de quien lo autorice"
-    @salida.agregar_manual!(producto: Producto.activos.find(params[:producto_id]), cantidad: params[:cantidad], motivo: params[:motivo].to_s.strip, autorizado_por: autoriza)
-    redirect_to salida_path(@salida), notice: "Renglón manual agregado"
+    autoriza = autorizador_o_revision("etiquetas.libre", params[:pin])
+    linea = @salida.agregar_manual!(producto: Producto.activos.find(params[:producto_id]), cantidad: params[:cantidad],
+                                    motivo: params[:motivo].to_s.strip, autorizado_por: autoriza, usuario: usuario_actual)
+    revisar_si_hace_falta(linea, autoriza, motivo: linea.motivo, valor_centavos: Revision.valor(linea.cantidad, linea.producto, sucursal_actual))
+    redirect_to salida_path(@salida), notice: autoriza ? "Renglón manual agregado" : "Renglón agregado; queda por revisar"
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to salida_path(@salida), alert: e.message
   end

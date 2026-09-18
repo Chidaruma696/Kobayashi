@@ -19,6 +19,7 @@ module Permiso
     "conteos.hacer" => "Hacer conteos físicos y cargar faltantes",
     "conteos.cargos" => "Cobrar o perdonar cargos",
     "reportes.ver" => "Ver el tablero y los reportes",
+    "revisiones.resolver" => "Revisar lo que se hizo sin autorización (aprobar, observar, cargar)",
     "admin.catalogo" => "Administrar productos y códigos",
     "admin.usuarios" => "Administrar usuarios, roles y sucursales"
   }.freeze

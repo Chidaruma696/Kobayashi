@@ -42,10 +42,13 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     corte = Corte.abierto_en(@tienda)
     assert_equal 50_000, corte.fondo_centavos
     post caja_retirar_path, params: { monto: "100", motivo: "caja fuerte" }
-    assert_equal 0, corte.retiros.count, "la cajera no tiene caja.retirar y no dio PIN"
+    assert_equal 1, corte.retiros.count, "la cajera no tiene caja.retirar ni dio PIN: se retira igual y queda por revisar"
+    assert_nil corte.retiros.last.autorizado_por
+    assert_equal 10_000, Revision.last.valor_centavos
     post caja_retirar_path, params: { monto: "100", motivo: "caja fuerte", pin: "4321" }
-    assert_equal 10_000, corte.retiros.sum(:monto_centavos)
-    post caja_cerrar_path, params: { contado: "400.00" }
+    assert_equal 20_000, corte.retiros.sum(:monto_centavos)
+    assert_equal usuarios(:supervisora), corte.retiros.last.autorizado_por
+    post caja_cerrar_path, params: { contado: "300.00" }
     assert_redirected_to caja_corte_path
     assert_equal 0, corte.reload.diferencia_centavos
     get caja_corte_path

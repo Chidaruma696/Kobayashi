@@ -6,6 +6,7 @@ class InicioController < ApplicationController
   before_action(only: :ventas) { autorizar!("reportes.ver") }
 
   def index
+    @por_revisar = Revision.pendientes.where(sucursal: sucursal_actual.matriz? ? Sucursal.all : sucursal_actual).count if puede?("revisiones.resolver")
     return render :bienvenida unless puede?("reportes.ver")
 
     ventas = ventas_del_rango

@@ -18,8 +18,9 @@
   </div>
   <% unless puede?("inventario.ajustar") %>
     <div>
-      <%= f.label :pin, "PIN de quien autoriza", class: "block text-sm font-medium" %>
+      <%= f.label :pin, "PIN de quien autoriza (opcional)", class: "block text-sm font-medium" %>
       <%= f.password_field :pin, inputmode: "numeric", autocomplete: "off", class: "mt-1 w-40 rounded border border-slate-300 px-3 py-2" %>
+      <p class="mt-1 text-xs text-slate-600">Sin PIN se registra igual y queda por revisar al final del día.</p>
     </div>
   <% end %>
   <%= f.submit "Registrar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>

@@ -6,7 +6,7 @@ roles = {
   "administrador" => [ "*" ],
   "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver", "pedidos.solicitar", "salidas.recibir", "salidas.surtir", "salidas.verificar" ],
   "etiquetador" => [ "etiquetas.crear", "produccion.abrir", "pedidos.surtir", "inventario.ver", "salidas.surtir", "salidas.recibir" ],
-  "supervisor" => [ "caja.*", "inventario.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "conteos.*", "reportes.ver" ]
+  "supervisor" => [ "caja.*", "inventario.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "conteos.*", "reportes.ver", "revisiones.resolver" ]
 }
 roles.each do |nombre, permisos|
   Rol.find_or_initialize_by(nombre: nombre).update!(permisos: permisos)

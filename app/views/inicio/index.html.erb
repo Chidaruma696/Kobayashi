@@ -1,5 +1,6 @@
 <h1 class="mb-2 text-2xl font-bold">Inicio · <%= @todas ? "todas las sucursales" : @sucursal %></h1>
 <%= render "filtro" %>
+<%= render "por_revisar" %>
 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
   <% [ [ "Ventas", pesos(@total) ], [ "Tickets", @tickets ], [ "Ticket promedio", pesos(@promedio) ], [ "Devoluciones", pesos(@devoluciones) ],
        [ "Efectivo", pesos((@por_forma["efectivo"] || 0) - @cambio) ], [ "Transferencias", pesos(@por_forma["transferencia"] || 0) ], [ "Depósitos", pesos(@por_forma["deposito"] || 0) ], [ "Inventario valorizado", pesos(@valor_existencias) ] ].each do |nombre, valor| %>

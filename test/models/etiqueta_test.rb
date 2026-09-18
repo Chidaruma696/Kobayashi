@@ -68,7 +68,7 @@ class EtiquetaTest < ActiveSupport::TestCase
   test "sin pedido, producción ni autorización no se etiqueta" do
     e = Etiqueta.new(tipo: "paquete", producto: @pechuga, cantidad: 1, sucursal: @matriz, usuario: @admin)
     assert_not e.valid?
-    assert_match "autorización", e.errors.full_messages.join
+    assert_match "motivo", e.errors.full_messages.join
     e.pedido_linea = pedido_lineas(:pechuga_5)
     assert e.valid?
   end

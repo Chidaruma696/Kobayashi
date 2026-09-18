@@ -74,6 +74,6 @@ class Produccion < ApplicationRecord
 
   def pedido_o_autorizacion
     return if pedido.present?
-    errors.add(:base, "sin pedido hace falta quien autorice y por qué") if autorizado_por.nil? || justificacion.blank?
+    errors.add(:base, "sin pedido hace falta el motivo") if justificacion.blank?
   end
 end

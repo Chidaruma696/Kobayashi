@@ -10,19 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   create_table "cargos", force: :cascade do |t|
-    t.integer "conteo_id", null: false
+    t.integer "conteo_id"
     t.datetime "created_at", null: false
     t.text "detalle"
     t.string "estado", default: "pendiente", null: false
     t.integer "monto_centavos", null: false
     t.datetime "resuelto_en"
     t.integer "resuelto_por_id"
+    t.integer "revision_id"
+    t.integer "sucursal_id", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.index ["conteo_id"], name: "index_cargos_on_conteo_id"
     t.index ["resuelto_por_id"], name: "index_cargos_on_resuelto_por_id"
+    t.index ["revision_id"], name: "index_cargos_on_revision_id"
+    t.index ["sucursal_id"], name: "index_cargos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_cargos_on_usuario_id"
     t.check_constraint "estado IN ('pendiente', 'cobrado', 'perdonado')", name: "cargos_estado"
     t.check_constraint "monto_centavos > 0", name: "cargos_monto"
@@ -348,7 +352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
   end
 
   create_table "retiros", force: :cascade do |t|
-    t.integer "autorizado_por_id", null: false
+    t.integer "autorizado_por_id"
     t.integer "corte_id", null: false
     t.datetime "created_at", null: false
     t.integer "monto_centavos", null: false
@@ -359,6 +363,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
     t.index ["corte_id"], name: "index_retiros_on_corte_id"
     t.index ["usuario_id"], name: "index_retiros_on_usuario_id"
     t.check_constraint "monto_centavos > 0", name: "retiros_monto"
+  end
+
+  create_table "revisiones", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "estado", default: "pendiente", null: false
+    t.string "motivo", null: false
+    t.string "nota"
+    t.integer "revisable_id", null: false
+    t.string "revisable_type", null: false
+    t.datetime "revisado_en"
+    t.integer "revisado_por_id"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.integer "valor_centavos", default: 0, null: false
+    t.index ["revisable_type", "revisable_id"], name: "index_revisiones_on_revisable"
+    t.index ["revisado_por_id"], name: "index_revisiones_on_revisado_por_id"
+    t.index ["sucursal_id", "estado"], name: "index_revisiones_on_sucursal_id_and_estado"
+    t.index ["sucursal_id"], name: "index_revisiones_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_revisiones_on_usuario_id"
+    t.check_constraint "estado IN ('pendiente', 'aprobada', 'observada')", name: "revisiones_estado"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -398,7 +423,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
   end
 
   create_table "salida_lineas", force: :cascade do |t|
-    t.integer "autorizado_por_id", null: false
+    t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, null: false
     t.datetime "created_at", null: false
     t.string "motivo", null: false
@@ -406,9 +431,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
     t.boolean "recibida", default: false, null: false
     t.integer "salida_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "usuario_id"
     t.index ["autorizado_por_id"], name: "index_salida_lineas_on_autorizado_por_id"
     t.index ["producto_id"], name: "index_salida_lineas_on_producto_id"
     t.index ["salida_id"], name: "index_salida_lineas_on_salida_id"
+    t.index ["usuario_id"], name: "index_salida_lineas_on_usuario_id"
     t.check_constraint "cantidad > 0", name: "salida_lineas_cantidad"
   end
 
@@ -517,6 +544,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
   end
 
   add_foreign_key "cargos", "conteos"
+  add_foreign_key "cargos", "revisiones"
+  add_foreign_key "cargos", "sucursales"
   add_foreign_key "cargos", "usuarios"
   add_foreign_key "cargos", "usuarios", column: "resuelto_por_id"
   add_foreign_key "clientes", "rutas"
@@ -569,6 +598,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
   add_foreign_key "retiros", "cortes"
   add_foreign_key "retiros", "usuarios"
   add_foreign_key "retiros", "usuarios", column: "autorizado_por_id"
+  add_foreign_key "revisiones", "sucursales"
+  add_foreign_key "revisiones", "usuarios"
+  add_foreign_key "revisiones", "usuarios", column: "revisado_por_id"
   add_foreign_key "rutas", "usuarios", column: "chofer_id"
   add_foreign_key "salida_etiquetas", "etiquetas"
   add_foreign_key "salida_etiquetas", "etiquetas", column: "grupo_id"
@@ -576,6 +608,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_050001) do
   add_foreign_key "salida_etiquetas", "usuarios", column: "verificado_por_id"
   add_foreign_key "salida_lineas", "productos"
   add_foreign_key "salida_lineas", "salidas"
+  add_foreign_key "salida_lineas", "usuarios"
   add_foreign_key "salida_lineas", "usuarios", column: "autorizado_por_id"
   add_foreign_key "salidas", "clientes"
   add_foreign_key "salidas", "rutas"

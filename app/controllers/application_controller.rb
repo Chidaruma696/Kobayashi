@@ -45,6 +45,21 @@ class ApplicationController < ActionController::Base
     Usuario.autorizador(clave, pin)
   end
 
+  # Autorización diferida: quien autoriza si tiene el permiso o dio su PIN; nil si nadie está,
+  # y entonces la operación sigue y queda por revisar (ver Revision). Un PIN tecleado que no es
+  # de nadie con permiso sí es error: se puso a propósito.
+  def autorizador_o_revision(clave, pin)
+    return usuario_actual if puede?(clave)
+    return nil if pin.blank?
+    Usuario.autorizador(clave, pin) or raise ArgumentError, "ese PIN no es de nadie que pueda #{Permiso::CLAVES[clave].downcase}"
+  end
+
+  # Deja la operación en la bandeja de revisión si nadie la autorizó.
+  def revisar_si_hace_falta(registro, autoriza, motivo:, valor_centavos: 0, sucursal: sucursal_actual)
+    return if autoriza
+    Revision.abrir!(registro, usuario: usuario_actual, sucursal: sucursal, motivo: motivo, valor_centavos: valor_centavos)
+  end
+
   def iniciar_sesion(usuario)
     cookies.signed.permanent[:usuario_id] = { value: usuario.id, httponly: true, same_site: :lax }
     Current.usuario = usuario

@@ -1,10 +1,14 @@
+# Dinero que se le cobra a alguien: el faltante de un conteo o una operación observada en revisión.
 class Cargo < ApplicationRecord
   belongs_to :usuario
-  belongs_to :conteo
+  belongs_to :sucursal
+  belongs_to :conteo, optional: true
+  belongs_to :revision, optional: true
   belongs_to :resuelto_por, class_name: "Usuario", optional: true
 
   validates :monto_centavos, numericality: { only_integer: true, greater_than: 0 }
   validates :estado, inclusion: { in: %w[pendiente cobrado perdonado] }
+  validate { errors.add(:base, "el cargo viene de un conteo o de una revisión") if conteo.nil? && revision.nil? }
 
   scope :pendientes, -> { where(estado: "pendiente") }
 

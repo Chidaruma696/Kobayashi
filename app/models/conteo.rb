@@ -92,7 +92,7 @@ class Conteo < ApplicationRecord
         end
       end
       update!(estado: "cerrado", cerrado_en: Time.current, faltante_centavos: faltante, sobrante_centavos: sobrante)
-      cargos.create!(usuario: responsable, monto_centavos: faltante, detalle: detalle.join("\n")) if faltante.positive?
+      cargos.create!(usuario: responsable, sucursal: sucursal, monto_centavos: faltante, detalle: detalle.join("\n")) if faltante.positive?
     end
     self
   end

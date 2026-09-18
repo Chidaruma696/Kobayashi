@@ -12,5 +12,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "devolucion", "devoluciones"
   inflect.irregular "recepcion", "recepciones"
   inflect.irregular "linea", "lineas"
+  inflect.irregular "revision", "revisiones"
   inflect.uncountable %w[codigo_barras codigos_barras]
 end

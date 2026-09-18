@@ -22,9 +22,10 @@
   <fieldset class="rounded border border-amber-300 bg-amber-50 p-3 text-sm">
     <legend class="px-1 font-medium">Sin pedido</legend>
     <div class="flex gap-3">
-      <%= f.password_field :pin, placeholder: "PIN de quien autoriza", inputmode: "numeric", autocomplete: "off", class: "w-40 rounded border border-slate-300 px-2 py-1" %>
-      <%= f.text_field :justificacion, placeholder: "Motivo", class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
+      <%= f.text_field :justificacion, placeholder: "Motivo (obligatorio)", class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
+      <%= f.password_field :pin, placeholder: "PIN de quien autoriza (opcional)", inputmode: "numeric", autocomplete: "off", class: "w-52 rounded border border-slate-300 px-2 py-1" %>
     </div>
+    <p class="mt-1 text-xs text-slate-600">Sin PIN se abre igual y queda por revisar al final del día.</p>
   </fieldset>
   <% end %>
   <%= f.submit "Abrir producción", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
