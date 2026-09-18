@@ -40,6 +40,14 @@ module RibbonHelper
       ] },
       { nombre: "Recibir", botones: [ Boton.new("Por recibir", :recibir_salidas_path, "salidas.recibir", "📥") ] }
     ] },
+    { id: :rutas, nombre: "Rutas", grupos: [
+      { nombre: "Viajes", botones: [
+        Boton.new("Nuevo viaje", :new_viaje_path, "rutas.armar", "🚛"),
+        Boton.new("Viajes", :viajes_path, "rutas.armar", "☰")
+      ] },
+      { nombre: "Chofer", botones: [ Boton.new("Mi ruta", :reparto_path, "rutas.repartir", "📍") ] },
+      { nombre: "Oficina", botones: [ Boton.new("Liquidar", :viajes_path, "rutas.liquidar", "💵") ] }
+    ] },
     { id: :conteos, nombre: "Conteos", grupos: [
       { nombre: "Contar", botones: [
         Boton.new("Nuevo conteo", :new_conteo_path, "conteos.hacer", "🔍"),

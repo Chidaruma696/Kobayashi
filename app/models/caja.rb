@@ -66,12 +66,48 @@ module Caja
   def self.cobrar_pendiente!(venta:, pagos:, usuario:)
     raise Error, "la nota #{venta.folio} no está por cobrar (#{venta.estado})" unless venta.por_cobrar?
     corte = Corte.abierto_en(venta.sucursal) or raise Error, "no hay caja abierta en #{venta.sucursal.nombre}"
-    pagos_ok = preparar_pagos(pagos, venta.total_centavos)
+    pagos_ok = preparar_pagos(pagos, venta.saldo_centavos)
     Venta.transaction do
       pagos_ok.each { |p| venta.pagos.create!(p) }
-      venta.update!(estado: "cobrada", corte: corte, usuario: usuario, cambio_centavos: pagos_ok.sum { |p| p[:monto_centavos] } - venta.total_centavos)
+      venta.update!(estado: "cobrada", corte: corte, usuario: usuario, cambio_centavos: pagos_ok.sum { |p| p[:monto_centavos] } - venta.saldo_centavos)
     end
     venta
+  end
+
+  # El chofer cobra en la parada: los pagos quedan en la nota, pero el dinero entra a la caja
+  # hasta que liquide el viaje (estado cobrada_en_ruta; el corte no la cuenta todavía).
+  def self.cobrar_en_ruta!(venta:, pagos:, usuario:)
+    raise Error, "la nota #{venta.folio} no está por cobrar (#{venta.estado})" unless venta.por_cobrar?
+    pagos_ok = preparar_pagos(pagos, venta.saldo_centavos)
+    Venta.transaction do
+      pagos_ok.each { |p| venta.pagos.create!(p) }
+      venta.update!(estado: "cobrada_en_ruta", cambio_centavos: pagos_ok.sum { |p| p[:monto_centavos] } - venta.saldo_centavos)
+    end
+    venta
+  end
+
+  # El cliente no quiso estos bultos: vuelven al inventario de la matriz y la nota baja.
+  # No hay dinero de por medio, así que la devolución no toca ningún corte.
+  def self.rechazar_en_ruta!(venta:, etiquetas:, motivo:, usuario:)
+    raise Error, "hace falta el motivo del rechazo" if motivo.blank?
+    raise Error, "la nota #{venta.folio} ya está #{venta.estado}" unless venta.por_cobrar?
+    Venta.transaction do
+      devolucion = Devolucion.new(venta: venta, sucursal: venta.sucursal, usuario: usuario, motivo: motivo, total_centavos: 0)
+      total = 0
+      etiquetas.each do |e|
+        vl = venta.lineas.find_by!(etiqueta: e)
+        importe = Dinero.importe(vl.cantidad_pendiente, vl.precio_centavos)
+        total += importe
+        devolucion.lineas.build(venta_linea: vl, cantidad: vl.cantidad_pendiente, importe_centavos: importe)
+        Inventario.mover!(sucursal: venta.sucursal, producto: vl.producto, tipo: "devolucion_cliente", cantidad: vl.cantidad_pendiente,
+                          usuario: usuario, etiqueta: e, referencia: devolucion, motivo: "#{venta.folio} rechazo en ruta: #{motivo}")
+        e.update!(estado: "viva", padre_id: nil)
+      end
+      devolucion.total_centavos = total
+      devolucion.save!
+      venta.update!(estado: "devuelta") if venta.saldo_centavos.zero?
+      devolucion
+    end
   end
 
   # lineas: [{ venta_linea_id:, cantidad: }]. El dinero sale de la gaveta del corte abierto.

@@ -43,7 +43,24 @@
   </div>
 <% end %>
 
-<% if s.reparto? && s.enviada? && s.sucursal_origen_id == sucursal_actual.id && puede?("caja.vender") %>
+<% if s.reparto? && s.viaje %>
+  <p class="mb-4 rounded bg-slate-100 p-3 text-sm">Va en el viaje <%= link_to s.viaje.folio, viaje_path(s.viaje), class: "font-mono text-blue-700" %> (<%= s.viaje.ruta %>, chofer <%= s.viaje.chofer %>). <%= s.enviada? ? "Se entrega y se cobra en la parada; el dinero entra al liquidar el viaje." : "" %></p>
+<% elsif s.reparto? && s.abierta? && puede?("rutas.armar") %>
+  <% viajes = Viaje.where(sucursal: s.sucursal_origen, estado: "armando").includes(:ruta, :chofer).order(:fecha) %>
+  <div class="mb-4 flex flex-wrap items-center gap-3 rounded bg-slate-100 p-3 text-sm">
+    <% if viajes.any? %>
+      <%= form_with url: subir_viajes_path, class: "flex flex-wrap items-center gap-2" do |f| %>
+        <label>Subir al viaje</label>
+        <%= f.select :viaje_id, viajes.map { |v| [ "#{v.folio} · #{v.ruta} · #{v.chofer} · #{l v.fecha}", v.id ] }, { selected: viajes.find { |v| v.ruta_id == s.ruta_id }&.id }, class: "rounded border border-slate-300 px-2 py-1" %>
+        <%= f.hidden_field :salida_id, value: s.id %>
+        <%= f.submit "Agregar", class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+      <% end %>
+    <% else %>
+      No hay ningún viaje armándose. <%= link_to "Armar viaje de #{s.ruta || 'reparto'}", new_viaje_path(ruta_id: s.ruta_id), class: "text-blue-700 underline" %>
+    <% end %>
+  </div>
+<% end %>
+<% if s.reparto? && s.enviada? && s.viaje.nil? && s.sucursal_origen_id == sucursal_actual.id && puede?("caja.vender") %>
   <div class="mb-4 rounded bg-white p-4 shadow-sm">
     <h2 class="mb-1 font-semibold">Cobrar la entrega · nota <%= link_to s.venta.folio, caja_ticket_path(s.venta), target: "_blank", class: "font-mono text-blue-700" %> · <%= pesos(s.venta.total_centavos) %></h2>
     <p class="mb-2 text-sm text-slate-600">Lo que trae el chofer entra a la caja abierta. Si el cliente rechazó algo, cobra la nota completa y luego haz la devolución con el ticket.</p>
@@ -56,7 +73,9 @@
   </div>
 <% end %>
 <% if s.entregada? && s.venta %>
-  <p class="mb-4 rounded bg-green-50 p-3 text-sm">Entregada y cobrada: nota <%= link_to s.venta.folio, caja_ticket_path(s.venta), target: "_blank", class: "font-mono text-blue-700" %> · <%= pesos(s.venta.total_centavos) %></p>
+  <p class="mb-4 rounded bg-green-50 p-3 text-sm">Entregada y cobrada: nota <%= link_to s.venta.folio, caja_ticket_path(s.venta), target: "_blank", class: "font-mono text-blue-700" %> · <%= pesos(s.venta.saldo_centavos) %><%= " (rechazó #{pesos(s.venta.total_devuelto_centavos)})" if s.venta.total_devuelto_centavos.positive? %></p>
+<% elsif s.rechazada? && s.venta %>
+  <p class="mb-4 rounded bg-red-50 p-3 text-sm">Rechazada completa: la mercancía volvió al inventario y la nota <%= s.venta.folio %> quedó en cero.</p>
 <% end %>
 
 <% if @recibiendo %>

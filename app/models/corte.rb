@@ -29,7 +29,7 @@ class Corte < ApplicationRecord
 
   # Ventas cuyo dinero ya entró (cobradas o luego devueltas); las notas por cobrar no cuentan.
   def ventas_cobradas
-    ventas.where.not(estado: "por_cobrar")
+    ventas.where.not(estado: %w[por_cobrar cobrada_en_ruta])
   end
 
   # Efectivo que entró por ventas: lo pagado en efectivo menos el cambio devuelto.

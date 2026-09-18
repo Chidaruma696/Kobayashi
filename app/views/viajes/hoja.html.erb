@@ -1,0 +1,21 @@
+<div class="ticket">
+  <div class="centro"><strong>HOJA DE RUTA <%= @viaje.folio %></strong></div>
+  <div class="centro"><%= @viaje.ruta %> · <%= l @viaje.fecha %></div>
+  <div class="centro">Chofer: <%= @viaje.chofer %></div>
+  <div class="linea"></div>
+  <% @paradas.each_with_index do |s, i| %>
+    <div><strong><%= i + 1 %>. <%= s.cliente %></strong> <%= s.folio %></div>
+    <% if s.cliente.direccion.present? %><div><%= s.cliente.direccion %></div><% end %>
+    <% if s.cliente.telefono.present? %><div>Tel. <%= s.cliente.telefono %></div><% end %>
+    <table>
+      <% s.contenido.each do |producto, cant| %>
+        <tr><td><%= producto.nombre %></td><td class="der"><%= number_with_precision(cant, precision: producto.decimales) %> <%= producto.unidad %></td></tr>
+      <% end %>
+    </table>
+    <div class="der"><%= s.salida_etiquetas.count %> bultos<%= " · nota #{s.venta.folio} #{Dinero.pesos(s.venta.saldo_centavos)}" if s.venta %></div>
+    <div>Cobrado: ____________  Firma: ____________</div>
+    <div class="linea"></div>
+  <% end %>
+  <div>Total paradas: <%= @paradas.size %></div>
+  <% if @viaje.ventas.any? %><div class="total">A cobrar: <%= Dinero.pesos(@viaje.ventas.sum(:total_centavos)) %></div><% end %>
+</div>

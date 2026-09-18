@@ -3,13 +3,14 @@
 # el destino recibe paquete por paquete o tarima entera y reporta lo roto o perdido.
 class Salida < ApplicationRecord
   TIPOS = %w[traspaso devolucion reparto].freeze
-  ESTADOS = %w[preparando sellada enviada recibida entregada cancelada].freeze
+  ESTADOS = %w[preparando sellada enviada recibida entregada rechazada cancelada].freeze
 
   belongs_to :sucursal_origen, class_name: "Sucursal"
   belongs_to :sucursal_destino, class_name: "Sucursal", optional: true
   belongs_to :cliente, optional: true
   belongs_to :ruta, optional: true
   belongs_to :venta, optional: true
+  belongs_to :viaje, optional: true
   belongs_to :usuario
   belongs_to :verificado_por, class_name: "Usuario", optional: true
   has_many :salida_etiquetas, dependent: :destroy
@@ -30,6 +31,7 @@ class Salida < ApplicationRecord
   def devolucion? = tipo == "devolucion"
   def reparto? = tipo == "reparto"
   def entregada? = estado == "entregada"
+  def rechazada? = estado == "rechazada"
 
   def destino
     cliente || sucursal_destino
@@ -119,9 +121,49 @@ class Salida < ApplicationRecord
     end
   end
 
-  # El chofer vuelve con el dinero: se cobra la nota en la caja abierta y la salida queda entregada.
+  # --- la parada del chofer: entrega escaneando, rechaza lo que no bajó y cobra de contado.
+  def entregar!(etiqueta, usuario:)
+    raise ArgumentError, "solo se entrega un reparto en ruta (#{estado})" unless reparto? && enviada?
+    filas = salida_etiquetas.where(etiqueta: Salida.hojas_de_reparto(etiqueta), estado: "pendiente")
+    raise ArgumentError, "#{etiqueta.codigo} no va en esta parada o ya se entregó" if filas.empty?
+    filas.update_all(estado: "recibida", recibido_en: Time.current, updated_at: Time.current)
+  end
+
+  # Todo lo pendiente se da por entregado sin escanear (queda por revisar; el controlador abre la revisión).
+  def entregar_todo!
+    raise ArgumentError, "solo se entrega un reparto en ruta (#{estado})" unless reparto? && enviada?
+    salida_etiquetas.where(estado: "pendiente").update_all(estado: "recibida", recibido_en: Time.current, updated_at: Time.current)
+  end
+
+  def pendientes_de_entrega
+    salida_etiquetas.where(estado: "pendiente")
+  end
+
+  # Cierra la parada: lo no escaneado se rechaza (vuelve al inventario, la nota baja), y si queda
+  # algo que cobrar se cobra de contado ahí mismo. Sin nada entregado la parada queda rechazada.
+  def cerrar_parada!(usuario:, motivo_rechazo: nil, pagos: [])
+    raise ArgumentError, "solo se cierra un reparto en ruta (#{estado})" unless reparto? && enviada?
+    transaction do
+      pendientes = pendientes_de_entrega.includes(:etiqueta).to_a
+      if pendientes.any?
+        raise ArgumentError, "quedan #{pendientes.size} bultos sin escanear: escanéalos o da el motivo del rechazo" if motivo_rechazo.blank?
+        Caja.rechazar_en_ruta!(venta: venta, etiquetas: pendientes.map(&:etiqueta), motivo: motivo_rechazo, usuario: usuario)
+        salida_etiquetas.where(id: pendientes.map(&:id)).update_all(estado: "faltante", motivo: motivo_rechazo, updated_at: Time.current)
+      end
+      if venta.saldo_centavos.positive?
+        Caja.cobrar_en_ruta!(venta: venta, pagos: pagos, usuario: usuario)
+        update!(estado: "entregada", recibido_en: Time.current)
+      else
+        update!(estado: "rechazada", recibido_en: Time.current)
+      end
+    end
+    self
+  end
+
+  # Cobro en oficina de una nota por cobrar (reparto suelto, sin viaje): el dinero entra a la caja abierta.
   def cobrar_entrega!(pagos:, usuario:)
     raise ArgumentError, "solo se cobra un reparto en ruta" unless reparto? && enviada?
+    raise ArgumentError, "este reparto va en el viaje #{viaje.folio}: se cobra en la parada y se liquida al volver" if viaje
     transaction do
       Caja.cobrar_pendiente!(venta: venta, pagos: pagos, usuario: usuario)
       update!(estado: "entregada", recibido_en: Time.current)
@@ -213,6 +255,12 @@ class Salida < ApplicationRecord
 
   def self.hojas_de(etiqueta)
     etiqueta.hojas_vivas
+  end
+
+  # En un reparto las hojas ya están "vendidas" (la nota se cerró al salir): se buscan por estado vendida.
+  def self.hojas_de_reparto(etiqueta)
+    return [ etiqueta ] if etiqueta.hijas.none?
+    Etiqueta.where(padre_id: etiqueta.id, estado: "vendida").flat_map { |h| hojas_de_reparto(h) }
   end
 
   def to_s

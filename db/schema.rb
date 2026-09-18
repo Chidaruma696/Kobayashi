@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
   create_table "cargos", force: :cascade do |t|
     t.integer "conteo_id"
     t.datetime "created_at", null: false
@@ -23,11 +23,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
     t.integer "sucursal_id", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
+    t.integer "viaje_id"
     t.index ["conteo_id"], name: "index_cargos_on_conteo_id"
     t.index ["resuelto_por_id"], name: "index_cargos_on_resuelto_por_id"
     t.index ["revision_id"], name: "index_cargos_on_revision_id"
     t.index ["sucursal_id"], name: "index_cargos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_cargos_on_usuario_id"
+    t.index ["viaje_id"], name: "index_cargos_on_viaje_id"
     t.check_constraint "estado IN ('pendiente', 'cobrado', 'perdonado')", name: "cargos_estado"
     t.check_constraint "monto_centavos > 0", name: "cargos_monto"
   end
@@ -144,16 +146,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   end
 
   create_table "devoluciones", force: :cascade do |t|
-    t.integer "corte_id", null: false
+    t.integer "corte_id"
     t.datetime "created_at", null: false
     t.string "folio", null: false
     t.string "motivo", null: false
+    t.integer "sucursal_id", null: false
     t.integer "total_centavos", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.integer "venta_id", null: false
     t.index ["corte_id"], name: "index_devoluciones_on_corte_id"
     t.index ["folio"], name: "index_devoluciones_on_folio", unique: true
+    t.index ["sucursal_id"], name: "index_devoluciones_on_sucursal_id"
     t.index ["usuario_id"], name: "index_devoluciones_on_usuario_id"
     t.index ["venta_id"], name: "index_devoluciones_on_venta_id"
   end
@@ -455,6 +459,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
     t.integer "usuario_id", null: false
     t.integer "venta_id"
     t.integer "verificado_por_id"
+    t.integer "viaje_id"
     t.index ["cliente_id"], name: "index_salidas_on_cliente_id"
     t.index ["folio"], name: "index_salidas_on_folio", unique: true
     t.index ["ruta_id"], name: "index_salidas_on_ruta_id"
@@ -465,7 +470,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
     t.index ["usuario_id"], name: "index_salidas_on_usuario_id"
     t.index ["venta_id"], name: "index_salidas_on_venta_id"
     t.index ["verificado_por_id"], name: "index_salidas_on_verificado_por_id"
-    t.check_constraint "estado IN ('preparando', 'sellada', 'enviada', 'recibida', 'entregada', 'cancelada')", name: "salidas_estado"
+    t.index ["viaje_id"], name: "index_salidas_on_viaje_id"
+    t.check_constraint "estado IN ('preparando', 'sellada', 'enviada', 'recibida', 'entregada', 'rechazada', 'cancelada')", name: "salidas_estado"
     t.check_constraint "tipo IN ('traspaso', 'devolucion', 'reparto')", name: "salidas_tipo"
   end
 
@@ -539,8 +545,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
     t.index ["folio"], name: "index_ventas_on_folio", unique: true
     t.index ["sucursal_id"], name: "index_ventas_on_sucursal_id"
     t.index ["usuario_id"], name: "index_ventas_on_usuario_id"
-    t.check_constraint "estado IN ('por_cobrar', 'cobrada', 'devuelta')", name: "ventas_estado"
+    t.check_constraint "estado IN ('por_cobrar', 'cobrada_en_ruta', 'cobrada', 'devuelta')", name: "ventas_estado"
     t.check_constraint "total_centavos >= 0", name: "ventas_total"
+  end
+
+  create_table "viaje_gastos", force: :cascade do |t|
+    t.string "concepto", null: false
+    t.datetime "created_at", null: false
+    t.integer "monto_centavos", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.integer "viaje_id", null: false
+    t.index ["usuario_id"], name: "index_viaje_gastos_on_usuario_id"
+    t.index ["viaje_id"], name: "index_viaje_gastos_on_viaje_id"
+    t.check_constraint "monto_centavos > 0", name: "viaje_gastos_monto"
+  end
+
+  create_table "viajes", force: :cascade do |t|
+    t.integer "chofer_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "diferencia_centavos"
+    t.integer "efectivo_entregado_centavos"
+    t.integer "efectivo_esperado_centavos"
+    t.string "estado", default: "armando", null: false
+    t.date "fecha", null: false
+    t.string "folio", null: false
+    t.datetime "liquidado_en"
+    t.integer "liquidado_por_id"
+    t.text "notas"
+    t.integer "ruta_id", null: false
+    t.datetime "salido_en"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["chofer_id"], name: "index_viajes_on_chofer_id"
+    t.index ["folio"], name: "index_viajes_on_folio", unique: true
+    t.index ["liquidado_por_id"], name: "index_viajes_on_liquidado_por_id"
+    t.index ["ruta_id"], name: "index_viajes_on_ruta_id"
+    t.index ["sucursal_id"], name: "index_viajes_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_viajes_on_usuario_id"
+    t.check_constraint "estado IN ('armando', 'en_ruta', 'liquidado', 'cancelado')", name: "viajes_estado"
   end
 
   add_foreign_key "cargos", "conteos"
@@ -548,6 +592,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   add_foreign_key "cargos", "sucursales"
   add_foreign_key "cargos", "usuarios"
   add_foreign_key "cargos", "usuarios", column: "resuelto_por_id"
+  add_foreign_key "cargos", "viajes"
   add_foreign_key "clientes", "rutas"
   add_foreign_key "codigos_barras", "productos"
   add_foreign_key "conteo_etiquetas", "conteos"
@@ -563,6 +608,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   add_foreign_key "devolucion_lineas", "devoluciones"
   add_foreign_key "devolucion_lineas", "venta_lineas"
   add_foreign_key "devoluciones", "cortes"
+  add_foreign_key "devoluciones", "sucursales"
   add_foreign_key "devoluciones", "usuarios"
   add_foreign_key "devoluciones", "ventas"
   add_foreign_key "etiquetas", "etiquetas", column: "padre_id"
@@ -617,6 +663,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   add_foreign_key "salidas", "usuarios"
   add_foreign_key "salidas", "usuarios", column: "verificado_por_id"
   add_foreign_key "salidas", "ventas"
+  add_foreign_key "salidas", "viajes"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
   add_foreign_key "venta_lineas", "etiquetas"
@@ -628,4 +675,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_060001) do
   add_foreign_key "ventas", "cortes"
   add_foreign_key "ventas", "sucursales"
   add_foreign_key "ventas", "usuarios"
+  add_foreign_key "viaje_gastos", "usuarios"
+  add_foreign_key "viaje_gastos", "viajes"
+  add_foreign_key "viajes", "rutas"
+  add_foreign_key "viajes", "sucursales"
+  add_foreign_key "viajes", "usuarios"
+  add_foreign_key "viajes", "usuarios", column: "chofer_id"
+  add_foreign_key "viajes", "usuarios", column: "liquidado_por_id"
 end

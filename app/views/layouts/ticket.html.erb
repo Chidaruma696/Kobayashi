@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title><%= @venta.folio %></title>
+    <title><%= @venta&.folio || @titulo %></title>
     <style>
       @page { size: 80mm auto; margin: 2mm; }
       body { margin: 0; font-family: monospace; font-size: 11pt; }
@@ -22,7 +22,7 @@
     <%= yield %>
     <div class="acciones">
       <button onclick="window.print()">Imprimir</button>
-      <a href="<%= caja_path %>">Nueva venta</a>
+      <% if @venta %><a href="<%= caja_path %>">Nueva venta</a><% end %>
     </div>
     <% if params[:imprimir] %><script>window.addEventListener("load", () => window.print());</script><% end %>
   </body>

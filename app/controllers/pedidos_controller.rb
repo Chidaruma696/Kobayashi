@@ -25,7 +25,8 @@ class PedidosController < ApplicationController
       @pedido.sucursal_destino = sucursal_actual
     end
     if @pedido.save
-      redirect_to pedido_path(@pedido), notice: "Pedido #{@pedido.folio} enviado a #{@pedido.sucursal_origen}"
+      volver = params[:volver].to_s
+      redirect_to (volver.start_with?("/") ? volver : pedido_path(@pedido)), notice: "Pedido #{@pedido.folio} enviado a #{@pedido.sucursal_origen}"
     else
       cargar_destinos
       flash.now[:alert] = @pedido.errors.full_messages.join(", ")

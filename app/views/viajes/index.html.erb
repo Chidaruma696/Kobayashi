@@ -1,0 +1,35 @@
+<h1 class="mb-4 text-2xl font-bold">Viajes de reparto · <%= sucursal_actual %></h1>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Paradas</th><th></th></tr></thead>
+  <tbody>
+    <% @abiertos.each do |v| %>
+      <% cerradas = v.salidas.count { |s| s.entregada? || s.rechazada? } %>
+      <tr class="border-t border-slate-100">
+        <td class="px-3 py-2 font-mono"><%= v.folio %></td>
+        <td class="px-3 py-2"><%= l v.fecha %></td>
+        <td class="px-3 py-2"><%= v.ruta %></td>
+        <td class="px-3 py-2"><%= v.chofer %></td>
+        <td class="px-3 py-2"><%= v.estado.humanize %></td>
+        <td class="px-3 py-2"><%= v.en_ruta? ? "#{cerradas}/#{v.salidas.size} cerradas" : "#{v.salidas.size}" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to v.en_ruta? ? "Liquidar" : "Armar", viaje_path(v), class: "rounded bg-slate-900 px-3 py-1 text-white" %></td>
+      </tr>
+    <% end %>
+    <% if @abiertos.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">Ningún viaje abierto.</td></tr><% end %>
+  </tbody>
+</table>
+<% if @liquidados.any? %>
+  <h2 class="mb-2 mt-8 font-semibold">Liquidados</h2>
+  <table class="w-full border-collapse bg-white text-sm shadow-sm">
+    <tbody>
+      <% @liquidados.each do |v| %>
+        <tr class="border-t border-slate-100">
+          <td class="px-3 py-1"><%= link_to v.folio, viaje_path(v), class: "font-mono text-blue-700" %></td>
+          <td class="px-3 py-1"><%= l v.fecha %> · <%= v.ruta %> · <%= v.chofer %></td>
+          <td class="px-3 py-1"><%= v.estado %><%= " por #{v.liquidado_por}" if v.liquidado_por %></td>
+          <td class="px-3 py-1 text-right font-mono"><%= pesos(v.efectivo_entregado_centavos) if v.liquidado? %></td>
+          <td class="px-3 py-1 text-right font-mono <%= v.diferencia_centavos.to_i.negative? ? 'text-red-700' : 'text-green-700' %>"><%= pesos(v.diferencia_centavos) if v.liquidado? %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

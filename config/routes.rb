@@ -56,6 +56,27 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :viajes, only: %i[index new create show] do
+    collection { post :subir }
+    member do
+      get :hoja
+      post :agregar
+      post :quitar
+      post :salir
+      post :gasto
+      post :liquidar
+      post :cancelar
+    end
+  end
+  scope "reparto", controller: "reparto", as: "reparto" do
+    get "/", action: :index
+    get ":id", action: :parada, as: :parada
+    post ":id/entregar", action: :entregar, as: :entregar
+    post ":id/entregar_todo", action: :entregar_todo, as: :entregar_todo
+    post ":id/cerrar", action: :cerrar, as: :cerrar
+    post ":id/no_entregado", action: :no_entregado, as: :no_entregado
+  end
+
   resources :conteos, only: %i[index new create show] do
     member do
       post :escanear

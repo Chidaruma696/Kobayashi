@@ -29,3 +29,9 @@ inactivo:
   rol: supervisor
   sucursal: tienda
   activo: false
+chofer:
+  <<: *defaults
+  nombre: Chofer Beto
+  usuario: chofer
+  rol: chofer
+  sucursal: matriz

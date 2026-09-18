@@ -1,6 +1,7 @@
 class Devolucion < ApplicationRecord
   belongs_to :venta
-  belongs_to :corte
+  belongs_to :sucursal
+  belongs_to :corte, optional: true
   belongs_to :usuario
   has_many :lineas, class_name: "DevolucionLinea", dependent: :restrict_with_error, inverse_of: :devolucion
 
@@ -17,6 +18,7 @@ class Devolucion < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(corte.sucursal, "D") if corte
+    self.sucursal ||= corte&.sucursal || venta&.sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "D") if sucursal
   end
 end

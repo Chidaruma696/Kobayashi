@@ -1,0 +1,26 @@
+<h1 class="mb-4 text-2xl font-bold">Mi ruta</h1>
+<% @viajes.each do |viaje, paradas| %>
+  <div class="mb-6 rounded bg-white p-4 shadow-sm">
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <h2 class="font-semibold">Viaje <%= viaje.folio %> · <%= viaje.ruta %> · <%= l viaje.fecha %></h2>
+      <span class="text-sm text-slate-600">Chofer <%= viaje.chofer %> · <%= link_to "hoja", hoja_viaje_path(viaje), target: "_blank", class: "text-blue-700 underline" %> · <%= link_to "viaje", viaje_path(viaje), class: "text-blue-700 underline" %></span>
+    </div>
+    <ol class="space-y-2">
+      <% paradas.each_with_index do |s, i| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-200 px-3 py-2 <%= 'bg-green-50' if s.entregada? %> <%= 'bg-red-50' if s.rechazada? %>">
+          <div>
+            <div class="font-semibold"><%= i + 1 %>. <%= s.cliente %></div>
+            <div class="text-xs text-slate-600"><%= s.cliente.direccion %><%= " · #{s.cliente.telefono}" if s.cliente.telefono.present? %> · <%= s.salida_etiquetas.count %> bultos<%= " · #{pesos(s.venta.saldo_centavos)}" if s.venta %></div>
+          </div>
+          <% if s.enviada? %>
+            <%= link_to "Entregar", reparto_parada_path(s), class: "rounded bg-emerald-700 px-4 py-2 text-lg font-semibold text-white" %>
+          <% else %>
+            <span class="text-sm"><%= s.entregada? ? "Entregada y cobrada" : "Rechazada" %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+    <p class="mt-3 text-xs text-slate-500">Efectivo que llevas: <%= pesos(viaje.efectivo_por_entregar_centavos) %> (cobrado menos cambio y gastos).</p>
+  </div>
+<% end %>
+<% if @viajes.empty? %><p class="rounded bg-white p-6 text-center text-slate-500 shadow-sm">No tienes ningún viaje en ruta.</p><% end %>
