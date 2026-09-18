@@ -1,0 +1,14 @@
+<%= form_with model: [ :admin, @cliente ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
+  <div class="grid grid-cols-2 gap-4">
+    <%= render "admin/campo", f: f, campo: :telefono, etiqueta: "Teléfono", tipo: :text_field %>
+    <div><%= f.label :ruta_id, "Ruta", class: "block text-sm font-medium" %><%= f.collection_select :ruta_id, Ruta.activas.order(:nombre), :id, :nombre, { include_blank: "sin ruta" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  </div>
+  <%= render "admin/campo", f: f, campo: :direccion, etiqueta: "Dirección", tipo: :text_field %>
+  <div class="grid grid-cols-2 gap-4">
+    <%= render "admin/campo", f: f, campo: :orden, etiqueta: "Orden en la ruta", tipo: :number_field, opciones: { min: 0 } %>
+    <label class="flex items-center gap-2 self-end text-sm"><%= f.check_box :activo %> Activo</label>
+  </div>
+  <%= render "admin/campo", f: f, campo: :notas, etiqueta: "Notas", tipo: :text_area, opciones: { rows: 2 } %>
+  <%= f.submit @cliente.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>

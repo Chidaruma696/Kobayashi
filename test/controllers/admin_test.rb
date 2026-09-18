@@ -57,6 +57,22 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_equal 0, Promocion.count
   end
 
+  test "clientes y rutas" do
+    post admin_rutas_path, params: { ruta: { nombre: "Sur", chofer_id: usuarios(:cajera).id, activa: "1" } }
+    ruta = Ruta.find_by!(nombre: "Sur")
+    post admin_clientes_path, params: { cliente: { nombre: "Doña Lupe", telefono: "555", ruta_id: ruta.id, orden: 2, activo: "1" } }
+    c = Cliente.find_by!(nombre: "Doña Lupe")
+    assert_equal ruta, c.ruta
+    get admin_clientes_path(q: "lupe")
+    assert_select "td", /Lupe/
+    get admin_rutas_path
+    assert_select "td", /Lupe/
+    post pedidos_path, params: { pedido: { destino: "cliente:#{c.id}", lineas_attributes: { "0" => { producto_id: productos(:catsup).id, cantidad: "3" } } } }
+    assert_equal c, Pedido.last.cliente
+    get new_salida_path(pedido_id: Pedido.last.id)
+    assert_select "option[selected][value='cliente:#{c.id}']"
+  end
+
   test "sucursales con límite en pesos y sin permiso 403" do
     post admin_sucursales_path, params: { sucursal: { codigo: "t03", nombre: "Tienda 3", tipo: "tienda", limite_efectivo: "5000", activa: "1" } }
     s = Sucursal.find_by!(codigo: "T03")

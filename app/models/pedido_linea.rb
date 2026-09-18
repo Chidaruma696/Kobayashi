@@ -10,9 +10,10 @@ class PedidoLinea < ApplicationRecord
 
   def pendiente? = estado == "pendiente"
 
-  # Lo surtido no se guarda: se suma de las etiquetas hoja vivas ligadas al renglón.
+  # Lo surtido no se guarda: se suma de las etiquetas hoja ligadas al renglón que siguen
+  # existiendo (vivas o ya vendidas en un reparto); las dadas de baja no cuentan.
   def cantidad_surtida
-    etiquetas.vivas.hojas.sum(:cantidad)
+    etiquetas.where(estado: %w[viva vendida]).hojas.sum(:cantidad)
   end
 
   def faltante

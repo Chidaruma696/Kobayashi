@@ -1,5 +1,5 @@
 <div class="ticket">
-  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %></div>
+  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %><%= "<br>Cliente: #{@venta.cliente.nombre}".html_safe if @venta.cliente %></div>
   <div class="linea"></div>
   <table>
     <% @venta.lineas.each do |l| %>
@@ -14,6 +14,7 @@
     <tr><td>Cambio</td><td class="der"><%= pesos(@venta.cambio_centavos) %></td></tr>
   </table>
   <% if @venta.estado == "devuelta" %><div class="centro"><strong>DEVUELTA</strong></div><% end %>
+  <% if @venta.por_cobrar? %><div class="centro"><strong>POR COBRAR · contado contra entrega</strong></div><% end %>
   <div class="linea"></div>
   <div class="centro">Devoluciones solo con este ticket</div>
   <%= ean13_svg(@venta.codigo, alto: 34, modulo: 2) %>

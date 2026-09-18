@@ -63,6 +63,10 @@ module RibbonHelper
         Boton.new("Productos", :admin_productos_path, "admin.catalogo", "🥩"),
         Boton.new("Promociones", :admin_promociones_path, "admin.catalogo", "🏷")
       ] },
+      { nombre: "Reparto", botones: [
+        Boton.new("Clientes", :admin_clientes_path, "admin.catalogo", "🧑"),
+        Boton.new("Rutas", :admin_rutas_path, "admin.catalogo", "🛣")
+      ] },
       { nombre: "Gente", botones: [
         Boton.new("Usuarios", :admin_usuarios_path, "admin.usuarios", "👤"),
         Boton.new("Roles", :admin_roles_path, "admin.usuarios", "🔑"),

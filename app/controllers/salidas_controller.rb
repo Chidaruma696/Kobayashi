@@ -5,8 +5,8 @@ class SalidasController < ApplicationController
 
   def index
     autorizar!("salidas.surtir")
-    @salidas = Salida.where(sucursal_origen: sucursal_actual).where.not(estado: %w[recibida cancelada]).includes(:sucursal_destino, :usuario).order(:created_at)
-    @historial = Salida.where(sucursal_origen: sucursal_actual).where(estado: %w[recibida cancelada]).includes(:sucursal_destino).order(created_at: :desc).limit(15)
+    @salidas = Salida.where(sucursal_origen: sucursal_actual).where.not(estado: %w[recibida entregada cancelada]).includes(:sucursal_destino, :cliente, :usuario).order(:created_at)
+    @historial = Salida.where(sucursal_origen: sucursal_actual).where(estado: %w[recibida entregada cancelada]).includes(:sucursal_destino, :cliente).order(created_at: :desc).limit(15)
   end
 
   def por_recibir
@@ -18,12 +18,16 @@ class SalidasController < ApplicationController
   def new
     autorizar!("salidas.surtir")
     @destinos = Sucursal.activas.where.not(id: sucursal_actual.id).order(:nombre)
-    @pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
+    @clientes = sucursal_actual.matriz? ? Cliente.activos.includes(:ruta).order(:nombre) : []
+    pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
+    @seleccion = pedido && (pedido.cliente ? "cliente:#{pedido.cliente_id}" : "sucursal:#{pedido.sucursal_destino_id}")
   end
 
   def create
     autorizar!("salidas.surtir")
-    salida = Salida.nueva!(origen: sucursal_actual, destino: Sucursal.find(params[:sucursal_destino_id]), usuario: usuario_actual, motivo: params[:motivo].presence)
+    tipo, id = params[:destino].to_s.split(":")
+    destino = tipo == "cliente" && sucursal_actual.matriz? ? Cliente.activos.find(id) : Sucursal.find(id)
+    salida = Salida.nueva!(origen: sucursal_actual, destino: destino, usuario: usuario_actual, motivo: params[:motivo].presence)
     redirect_to salida_path(salida), notice: "Salida #{salida.folio} abierta: escanea lo que va"
   rescue ActiveRecord::RecordInvalid => e
     redirect_to new_salida_path, alert: e.record.errors.full_messages.join(", ")
@@ -32,7 +36,9 @@ class SalidasController < ApplicationController
   def show
     @filas = @salida.salida_etiquetas.includes(:verificado_por, etiqueta: :producto, grupo: :producto).order(:grupo_id, :id)
     @grupos = @filas.group_by(&:grupo)
-    @pedidos = Pedido.abiertos.where(sucursal_origen: @salida.sucursal_origen, sucursal_destino: @salida.sucursal_destino).includes(lineas: :producto) if @salida.preparando? && !@salida.devolucion?
+    if @salida.preparando? && !@salida.devolucion?
+      @pedidos = Pedido.abiertos.where(sucursal_origen: @salida.sucursal_origen, sucursal_destino_id: @salida.sucursal_destino_id, cliente_id: @salida.cliente_id).includes(lineas: :producto)
+    end
     @recibiendo = @salida.enviada? && @salida.sucursal_destino_id == sucursal_actual.id
   end
 
@@ -73,8 +79,18 @@ class SalidasController < ApplicationController
   def enviar
     autorizar!("salidas.surtir")
     @salida.enviar!(usuario: usuario_actual)
-    redirect_to salidas_path, notice: "Salida #{@salida.folio} enviada a #{@salida.sucursal_destino}"
-  rescue ArgumentError, Inventario::SinExistencia => e
+    redirect_to salidas_path, notice: "Salida #{@salida.folio} enviada a #{@salida.destino}"
+  rescue ArgumentError, Inventario::SinExistencia, Caja::Error => e
+    redirect_to salida_path(@salida), alert: e.message
+  end
+
+  # El chofer vuelve con el dinero del reparto.
+  def cobrar_entrega
+    autorizar!("caja.vender")
+    pagos = %w[efectivo transferencia deposito].map { |f| { forma: f, monto_centavos: Dinero.centavos(params[f]) } }
+    @salida.cobrar_entrega!(pagos: pagos, usuario: usuario_actual)
+    redirect_to salida_path(@salida), notice: "Entrega de #{@salida.folio} cobrada: nota #{@salida.venta.folio}"
+  rescue ArgumentError, Caja::Error => e
     redirect_to salida_path(@salida), alert: e.message
   end
 

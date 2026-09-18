@@ -1,6 +1,6 @@
 <% s = @salida %>
 <div class="mb-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold"><%= s.devolucion? ? "Devolución" : "Salida" %> <%= s.folio %> · <%= s.sucursal_origen %> → <%= s.sucursal_destino %></h1>
+  <h1 class="text-2xl font-bold"><%= { "devolucion" => "Devolución", "reparto" => "Reparto" }.fetch(s.tipo, "Salida") %> <%= s.folio %> · <%= s.sucursal_origen %> → <%= s.destino %><%= " (ruta #{s.ruta})" if s.ruta %></h1>
   <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= s.estado %></span>
 </div>
 <p class="mb-4 text-sm text-slate-600">Abrió <%= s.usuario %> el <%= l s.created_at, format: :short %><%= " · verificó #{s.verificado_por}" if s.verificado_por %><%= " · #{s.motivo}" if s.motivo.present? %></p>
@@ -38,9 +38,25 @@
 
 <% if s.sellada? && s.sucursal_origen_id == sucursal_actual.id %>
   <div class="mb-4 flex items-center gap-3 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
-    Sellada y verificada por <%= s.verificado_por %>. Al enviar baja el inventario de <%= s.sucursal_origen %>.
+    Sellada y verificada por <%= s.verificado_por %>. <%= s.reparto? ? "Al enviar se cierra la nota de venta por cobrar y baja el inventario." : "Al enviar baja el inventario de #{s.sucursal_origen}." %>
     <%= button_to "Enviar", enviar_salida_path(s), class: "rounded bg-emerald-700 px-4 py-2 text-white", form: { data: { turbo_confirm: "¿Enviar la salida #{s.folio}?" } } %>
   </div>
+<% end %>
+
+<% if s.reparto? && s.enviada? && s.sucursal_origen_id == sucursal_actual.id && puede?("caja.vender") %>
+  <div class="mb-4 rounded bg-white p-4 shadow-sm">
+    <h2 class="mb-1 font-semibold">Cobrar la entrega · nota <%= link_to s.venta.folio, caja_ticket_path(s.venta), target: "_blank", class: "font-mono text-blue-700" %> · <%= pesos(s.venta.total_centavos) %></h2>
+    <p class="mb-2 text-sm text-slate-600">Lo que trae el chofer entra a la caja abierta. Si el cliente rechazó algo, cobra la nota completa y luego haz la devolución con el ticket.</p>
+    <%= form_with url: cobrar_entrega_salida_path(s), class: "flex flex-wrap items-end gap-3 text-sm" do |f| %>
+      <div><%= f.label :efectivo, "Efectivo", class: "block" %><%= f.number_field :efectivo, step: "0.01", min: 0, value: s.venta.total_centavos / 100.0, class: "w-32 rounded border border-slate-300 px-2 py-1 text-right font-mono" %></div>
+      <div><%= f.label :transferencia, "Transferencia", class: "block" %><%= f.number_field :transferencia, step: "0.01", min: 0, class: "w-32 rounded border border-slate-300 px-2 py-1 text-right font-mono" %></div>
+      <div><%= f.label :deposito, "Depósito", class: "block" %><%= f.number_field :deposito, step: "0.01", min: 0, class: "w-32 rounded border border-slate-300 px-2 py-1 text-right font-mono" %></div>
+      <%= f.submit "Cobrar entrega", class: "rounded bg-emerald-700 px-4 py-2 text-white" %>
+    <% end %>
+  </div>
+<% end %>
+<% if s.entregada? && s.venta %>
+  <p class="mb-4 rounded bg-green-50 p-3 text-sm">Entregada y cobrada: nota <%= link_to s.venta.folio, caja_ticket_path(s.venta), target: "_blank", class: "font-mono text-blue-700" %> · <%= pesos(s.venta.total_centavos) %></p>
 <% end %>
 
 <% if @recibiendo %>
@@ -64,7 +80,7 @@
 
 <% if @pedidos&.any? %>
   <div class="mb-4 rounded bg-blue-50 p-3 text-sm">
-    <strong>Pedidos abiertos para <%= s.sucursal_destino %>:</strong>
+    <strong>Pedidos abiertos para <%= s.destino %>:</strong>
     <% @pedidos.each do |p| %>
       <span class="ml-2"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> (<%= p.lineas.map { |l| "#{l.producto.nombre} falta #{number_with_precision(l.faltante, precision: l.producto.decimales)}" }.join(", ") %>)</span>
     <% end %>

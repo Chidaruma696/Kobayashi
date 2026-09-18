@@ -10,7 +10,7 @@ class SalidasControllerTest < ActionDispatch::IntegrationTest
 
   test "flujo completo por pantalla: abrir, surtir, verificar, sellar, enviar, recibir y cerrar" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
-    post salidas_path, params: { sucursal_destino_id: @tienda.id }
+    post salidas_path, params: { destino: "sucursal:#{@tienda.id}" }
     salida = Salida.last
     assert_redirected_to salida_path(salida)
     post agregar_salida_path(salida), params: { codigo: @p.codigo }
@@ -41,6 +41,28 @@ class SalidasControllerTest < ActionDispatch::IntegrationTest
     post cerrar_recepcion_salida_path(salida)
     assert_redirected_to recibir_salidas_path
     assert_equal "recibida", salida.reload.estado
+  end
+
+  test "reparto por pantalla: abrir para un cliente, enviar y cobrar la entrega" do
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    Corte.abrir!(sucursal: @matriz, usuario: usuarios(:admin), fondo_centavos: 0)
+    post salidas_path, params: { destino: "cliente:#{clientes(:taqueria).id}" }
+    salida = Salida.last
+    assert salida.reparto?
+    post agregar_salida_path(salida), params: { codigo: @p.codigo }
+    delete salir_path
+    usuarios(:supervisora).update!(sucursal: @matriz) # quien verifica trabaja en la matriz
+    post entrar_path, params: { usuario: "supervisora", password: "secreto1" }
+    post verificar_salida_path(salida), params: { codigo: @p.codigo }
+    post sellar_salida_path(salida)
+    post enviar_salida_path(salida)
+    assert_nil flash[:alert]
+    assert salida.reload.venta.por_cobrar?
+    get salida_path(salida)
+    assert_select "h2", /Cobrar la entrega/
+    post cobrar_entrega_salida_path(salida), params: { efectivo: "516.00" }
+    assert_equal "entregada", salida.reload.estado
+    assert salida.venta.reload.cobrada?
   end
 
   test "la tienda no toca las salidas de otros" do

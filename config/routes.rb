@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       post :recibir_etiqueta
       post :reportar
       post :cerrar_recepcion
+      post :cobrar_entrega
       post :cancelar
     end
   end
@@ -82,6 +83,8 @@ Rails.application.routes.draw do
       resources :codigos, only: %i[create destroy], controller: "codigos_barras"
     end
     resources :promociones, except: %i[show]
+    resources :clientes, except: %i[show destroy]
+    resources :rutas, except: %i[show destroy]
     resources :usuarios, except: %i[show destroy]
     resources :roles, except: %i[show destroy]
     resources :sucursales, except: %i[show destroy]

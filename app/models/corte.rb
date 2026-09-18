@@ -27,17 +27,18 @@ class Corte < ApplicationRecord
     create!(sucursal: sucursal, usuario: usuario, fondo_centavos: fondo_centavos, abierto_en: Time.current)
   end
 
+  # Ventas cuyo dinero ya entró (cobradas o luego devueltas); las notas por cobrar no cuentan.
   def ventas_cobradas
-    ventas.where(estado: "cobrada")
+    ventas.where.not(estado: "por_cobrar")
   end
 
   # Efectivo que entró por ventas: lo pagado en efectivo menos el cambio devuelto.
   def efectivo_ventas_centavos
-    Pago.where(venta: ventas, forma: "efectivo").sum(:monto_centavos) - ventas.sum(:cambio_centavos)
+    Pago.where(venta: ventas_cobradas, forma: "efectivo").sum(:monto_centavos) - ventas_cobradas.sum(:cambio_centavos)
   end
 
   def total_ventas_centavos
-    ventas.sum(:total_centavos)
+    ventas_cobradas.sum(:total_centavos)
   end
 
   def devoluciones_centavos

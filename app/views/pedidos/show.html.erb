@@ -1,5 +1,5 @@
 <div class="mb-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <%= @pedido.sucursal_destino %></h1>
+  <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <%= @pedido.destino %></h1>
   <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= @pedido.estado %></span>
 </div>
 <p class="mb-4 text-sm text-slate-600">Pidió <%= @pedido.usuario %> el <%= l @pedido.created_at, format: :short %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
@@ -37,7 +37,7 @@
 <% if @surtidor && @pedido.abierto? %>
   <div class="mt-4 flex gap-3 text-sm">
     <%= link_to "Abrir producción para este pedido", new_produccion_path(pedido_id: @pedido.id), class: "rounded bg-slate-900 px-3 py-2 text-white" %>
-    <%= link_to "Nueva salida a #{@pedido.sucursal_destino}", new_salida_path(pedido_id: @pedido.id), class: "rounded border border-slate-300 px-3 py-2" if puede?("salidas.surtir") %>
+    <%= link_to "Nueva salida a #{@pedido.destino}", new_salida_path(pedido_id: @pedido.id), class: "rounded border border-slate-300 px-3 py-2" if puede?("salidas.surtir") %>
     <% @producciones.each do |pr| %>
       <%= link_to "Producción #{pr.folio} abierta (#{pr.producto.nombre})", produccion_path(pr), class: "rounded border border-slate-300 px-3 py-2" %>
     <% end %>

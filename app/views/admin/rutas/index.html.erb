@@ -1,0 +1,18 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Rutas</h1>
+  <%= link_to "Nueva ruta", new_admin_ruta_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+</div>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2">Clientes</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
+  <tbody>
+    <% @rutas.each do |r| %>
+      <tr class="border-t border-slate-100 align-top">
+        <td class="px-3 py-2 font-semibold"><%= r.nombre %></td><td class="px-3 py-2"><%= r.chofer || "—" %></td>
+        <td class="px-3 py-2 text-slate-600"><%= r.clientes.sort_by(&:orden).map(&:nombre).join(", ") %></td>
+        <td class="px-3 py-2"><%= r.activa ? "sí" : "no" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_ruta_path(r), class: "text-blue-700" %></td>
+      </tr>
+    <% end %>
+    <% if @rutas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-slate-500">Sin rutas.</td></tr><% end %>
+  </tbody>
+</table>

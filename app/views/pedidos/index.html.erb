@@ -6,7 +6,7 @@
       <% resueltas = p.lineas.count { |l| !l.pendiente? } %>
       <tr class="border-t border-slate-100">
         <td class="px-3 py-2 font-mono"><%= p.folio %></td>
-        <td class="px-3 py-2"><%= p.sucursal_destino %></td>
+        <td class="px-3 py-2"><%= p.destino %></td>
         <td class="px-3 py-2"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
         <td class="px-3 py-2"><%= p.estado %></td>
         <td class="px-3 py-2"><%= resueltas %>/<%= p.lineas.size %> renglones</td>
@@ -20,7 +20,7 @@
   <h2 class="mb-2 mt-8 font-semibold">Recientes</h2>
   <ul class="text-sm">
     <% @recientes.each do |p| %>
-      <li class="border-t border-slate-200 py-1"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> · <%= p.sucursal_destino %> · <%= p.estado %> · <%= l p.created_at.to_date, format: :short %></li>
+      <li class="border-t border-slate-200 py-1"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> · <%= p.destino %> · <%= p.estado %> · <%= l p.created_at.to_date, format: :short %></li>
     <% end %>
   </ul>
 <% end %>

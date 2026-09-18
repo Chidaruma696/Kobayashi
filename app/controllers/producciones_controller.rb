@@ -10,7 +10,7 @@ class ProduccionesController < ApplicationController
 
   def new
     @pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
-    @pedidos = Pedido.abiertos.where(sucursal_origen: sucursal_actual).includes(:sucursal_destino).order(:created_at)
+    @pedidos = Pedido.abiertos.where(sucursal_origen: sucursal_actual).includes(:sucursal_destino, :cliente).order(:created_at)
     @productos = Producto.activos.order(:nombre)
   end
 

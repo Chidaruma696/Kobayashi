@@ -2,11 +2,14 @@
 # verifica la carga; se sella; se envía (el kardex del origen baja y las etiquetas viajan);
 # el destino recibe paquete por paquete o tarima entera y reporta lo roto o perdido.
 class Salida < ApplicationRecord
-  TIPOS = %w[traspaso devolucion].freeze
-  ESTADOS = %w[preparando sellada enviada recibida cancelada].freeze
+  TIPOS = %w[traspaso devolucion reparto].freeze
+  ESTADOS = %w[preparando sellada enviada recibida entregada cancelada].freeze
 
   belongs_to :sucursal_origen, class_name: "Sucursal"
-  belongs_to :sucursal_destino, class_name: "Sucursal"
+  belongs_to :sucursal_destino, class_name: "Sucursal", optional: true
+  belongs_to :cliente, optional: true
+  belongs_to :ruta, optional: true
+  belongs_to :venta, optional: true
   belongs_to :usuario
   belongs_to :verificado_por, class_name: "Usuario", optional: true
   has_many :salida_etiquetas, dependent: :destroy
@@ -19,20 +22,31 @@ class Salida < ApplicationRecord
   validates :tipo, inclusion: { in: TIPOS }
   validates :estado, inclusion: { in: ESTADOS }
   validates :motivo, presence: true, if: :devolucion?
-  validate :destino_distinto
+  validate :destino_coherente
 
   scope :abiertas, -> { where(estado: %w[preparando sellada]) }
   scope :en_transito, -> { where(estado: "enviada") }
 
   def devolucion? = tipo == "devolucion"
+  def reparto? = tipo == "reparto"
+  def entregada? = estado == "entregada"
+
+  def destino
+    cliente || sucursal_destino
+  end
   def preparando? = estado == "preparando"
   def sellada? = estado == "sellada"
   def enviada? = estado == "enviada"
   def abierta? = preparando? || sellada?
 
+  # `destino` es una Sucursal (traspaso o devolución) o un Cliente (reparto de contado).
   def self.nueva!(origen:, destino:, usuario:, motivo: nil)
-    tipo = origen.matriz? ? "traspaso" : "devolucion"
-    create!(tipo: tipo, sucursal_origen: origen, sucursal_destino: destino, usuario: usuario, motivo: motivo)
+    if destino.is_a?(Cliente)
+      create!(tipo: "reparto", sucursal_origen: origen, cliente: destino, ruta: destino.ruta, usuario: usuario, motivo: motivo)
+    else
+      tipo = origen.matriz? ? "traspaso" : "devolucion"
+      create!(tipo: tipo, sucursal_origen: origen, sucursal_destino: destino, usuario: usuario, motivo: motivo)
+    end
   end
 
   # --- surtir: escanear una etiqueta viva y suelta del origen; se expande a sus hojas.
@@ -87,19 +101,35 @@ class Salida < ApplicationRecord
   def enviar!(usuario:)
     raise ArgumentError, "primero hay que sellar la salida" unless sellada?
     transaction do
-      contenido.each do |producto, cant|
-        Inventario.mover!(sucursal: sucursal_origen, producto: producto, tipo: "salida", cantidad: cant,
-                          usuario: usuario, referencia: self, motivo: "#{folio} → #{sucursal_destino.nombre}")
+      if reparto?
+        # La nota de venta se cierra aquí; se cobra de contado cuando el chofer vuelve.
+        nota = Caja.nota_de_reparto!(self, usuario: usuario)
+        update!(estado: "enviada", enviado_en: Time.current, venta: nota)
+      else
+        contenido.each do |producto, cant|
+          Inventario.mover!(sucursal: sucursal_origen, producto: producto, tipo: "salida", cantidad: cant,
+                            usuario: usuario, referencia: self, motivo: "#{folio} → #{destino}")
+        end
+        ids = salida_etiquetas.pluck(:etiqueta_id)
+        Etiqueta.where(id: ids).or(Etiqueta.where(id: salida_etiquetas.pluck(:grupo_id).compact)).update_all(sucursal_id: sucursal_destino_id, updated_at: Time.current)
+        update!(estado: "enviada", enviado_en: Time.current)
       end
-      ids = salida_etiquetas.pluck(:etiqueta_id)
-      Etiqueta.where(id: ids).or(Etiqueta.where(id: salida_etiquetas.pluck(:grupo_id).compact)).update_all(sucursal_id: sucursal_destino_id, updated_at: Time.current)
-      update!(estado: "enviada", enviado_en: Time.current)
       cerrar_pedidos_completos!
+    end
+  end
+
+  # El chofer vuelve con el dinero: se cobra la nota en la caja abierta y la salida queda entregada.
+  def cobrar_entrega!(pagos:, usuario:)
+    raise ArgumentError, "solo se cobra un reparto en ruta" unless reparto? && enviada?
+    transaction do
+      Caja.cobrar_pendiente!(venta: venta, pagos: pagos, usuario: usuario)
+      update!(estado: "entregada", recibido_en: Time.current)
     end
   end
 
   # --- recibir en el destino.
   def recibir!(etiqueta, usuario:)
+    raise ArgumentError, "un reparto se cobra, no se recibe" if reparto?
     raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
     hojas = Salida.hojas_de(etiqueta)
     raise ArgumentError, "una caja se recibe paquete por paquete; la tarima entera sí" if etiqueta.caja? && hojas.size > 1
@@ -191,11 +221,16 @@ class Salida < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal_origen, devolucion? ? "DV" : "S") if sucursal_origen
+    self.folio ||= Folio.siguiente!(sucursal_origen, { "devolucion" => "DV", "reparto" => "R" }.fetch(tipo, "S")) if sucursal_origen
   end
 
-  def destino_distinto
-    errors.add(:sucursal_destino, "no puede ser el origen") if sucursal_origen_id == sucursal_destino_id
+  def destino_coherente
+    if reparto?
+      errors.add(:cliente, "obligatorio en un reparto") if cliente.nil?
+    else
+      errors.add(:sucursal_destino, "obligatoria") if sucursal_destino.nil?
+      errors.add(:sucursal_destino, "no puede ser el origen") if sucursal_origen_id == sucursal_destino_id
+    end
   end
 
   # Las cajas y tarimas que viajaron y ya no tienen nada dentro se dan de baja: su trabajo terminó.

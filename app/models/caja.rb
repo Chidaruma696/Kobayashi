@@ -39,6 +39,41 @@ module Caja
     raise Error, "#{e.message}. No se vende lo que no hay: recibe el traspaso antes."
   end
 
+  # Nota de venta de un reparto: las etiquetas de la salida, al precio de la matriz (con promociones),
+  # por cobrar. El inventario sale aquí y las etiquetas quedan vendidas.
+  def self.nota_de_reparto!(salida, usuario:)
+    sucursal = salida.sucursal_origen
+    corte = Corte.abierto_en(sucursal) or raise Error, "no hay caja abierta en #{sucursal.nombre}: ábrela antes de enviar el reparto"
+    hojas = salida.salida_etiquetas.includes(etiqueta: :producto).map(&:etiqueta)
+    raise Error, "la salida está vacía" if hojas.empty?
+    Venta.transaction do
+      preparadas = hojas.map { |e| preparar_linea(sucursal, { etiqueta_id: e.id }, nil) }
+      total = preparadas.sum { |l| l[:importe_centavos] }
+      venta = Venta.create!(sucursal: sucursal, corte: corte, usuario: usuario, cliente: salida.cliente, clave: "reparto:#{salida.id}",
+                            folio: Folio.siguiente!(sucursal, "B"), codigo: codigo_ticket(sucursal), estado: "por_cobrar",
+                            total_centavos: total, cambio_centavos: 0, fecha_negocio: Date.current)
+      preparadas.each do |l|
+        linea = venta.lineas.create!(l)
+        Inventario.mover!(sucursal: sucursal, producto: linea.producto, tipo: "venta", cantidad: linea.cantidad,
+                          usuario: usuario, etiqueta: linea.etiqueta, referencia: venta, motivo: "#{venta.folio} reparto #{salida.folio}")
+        linea.etiqueta.update!(estado: "vendida")
+      end
+      venta
+    end
+  end
+
+  # Cobra una nota por cobrar (reparto) en la caja abierta de ahora.
+  def self.cobrar_pendiente!(venta:, pagos:, usuario:)
+    raise Error, "la nota #{venta.folio} no está por cobrar (#{venta.estado})" unless venta.por_cobrar?
+    corte = Corte.abierto_en(venta.sucursal) or raise Error, "no hay caja abierta en #{venta.sucursal.nombre}"
+    pagos_ok = preparar_pagos(pagos, venta.total_centavos)
+    Venta.transaction do
+      pagos_ok.each { |p| venta.pagos.create!(p) }
+      venta.update!(estado: "cobrada", corte: corte, usuario: usuario, cambio_centavos: pagos_ok.sum { |p| p[:monto_centavos] } - venta.total_centavos)
+    end
+    venta
+  end
+
   # lineas: [{ venta_linea_id:, cantidad: }]. El dinero sale de la gaveta del corte abierto.
   def self.devolver!(venta:, lineas:, motivo:, usuario:)
     raise Error, "hace falta el motivo" if motivo.blank?

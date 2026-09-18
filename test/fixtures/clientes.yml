@@ -1,0 +1,4 @@
+taqueria:
+  nombre: Taquería El Güero
+  ruta: norte
+  activo: true

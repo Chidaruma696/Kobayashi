@@ -6,7 +6,7 @@
       <tr class="border-t border-slate-100">
         <td class="px-3 py-2 font-mono"><%= s.folio %></td>
         <td class="px-3 py-2"><%= s.tipo %></td>
-        <td class="px-3 py-2"><%= s.sucursal_destino %></td>
+        <td class="px-3 py-2"><%= s.destino %></td>
         <td class="px-3 py-2"><%= s.estado %></td>
         <td class="px-3 py-2"><%= s.salida_etiquetas.count %></td>
         <td class="px-3 py-2"><%= s.usuario %> · <%= l s.created_at, format: :short %></td>
@@ -18,5 +18,5 @@
 </table>
 <% if @historial.any? %>
   <h2 class="mb-2 mt-8 font-semibold">Historial</h2>
-  <ul class="text-sm"><% @historial.each do |s| %><li class="border-t border-slate-200 py-1"><%= link_to s.folio, salida_path(s), class: "font-mono text-blue-700" %> · <%= s.sucursal_destino %> · <%= s.estado %> · <%= l s.created_at.to_date, format: :short %></li><% end %></ul>
+  <ul class="text-sm"><% @historial.each do |s| %><li class="border-t border-slate-200 py-1"><%= link_to s.folio, salida_path(s), class: "font-mono text-blue-700" %> · <%= s.destino %> · <%= s.estado %> · <%= l s.created_at.to_date, format: :short %></li><% end %></ul>
 <% end %>
