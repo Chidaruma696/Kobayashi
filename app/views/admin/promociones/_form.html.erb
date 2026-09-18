@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, @promocion ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: [ :admin, @promocion ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre (sale en el ticket)", tipo: :text_field %>
   <div class="grid grid-cols-2 gap-4">
     <div><%= f.label :producto_id, "Producto", class: "block text-sm font-medium" %><%= f.collection_select :producto_id, Producto.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>

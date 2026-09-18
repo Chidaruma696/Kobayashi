@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, @cliente ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: [ :admin, @cliente ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
   <div class="grid grid-cols-2 gap-4">
     <%= render "admin/campo", f: f, campo: :telefono, etiqueta: "Teléfono", tipo: :text_field %>

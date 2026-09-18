@@ -1,5 +1,5 @@
 <h1 class="mb-4 text-2xl font-bold">Entrada o ajuste · <%= @sucursal %></h1>
-<%= form_with url: movimientos_inventario_path(sucursal_id: @sucursal.id), class: "max-w-lg space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with url: movimientos_inventario_path(sucursal_id: @sucursal.id), class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div>
     <%= f.label :producto_id, "Producto", class: "block text-sm font-medium" %>
     <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, { selected: @movimiento.producto_id }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>

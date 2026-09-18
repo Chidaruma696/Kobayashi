@@ -1,5 +1,5 @@
 <h1 class="mb-4 text-2xl font-bold">Abrir producción</h1>
-<%= form_with url: producciones_path, class: "max-w-lg space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with url: producciones_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div>
     <%= f.label :pedido_id, "Para el pedido", class: "block text-sm font-medium" %>
     <%= f.select :pedido_id, @pedidos.map { |p| [ "#{p.folio} · #{p.destino}", p.id ] }, { include_blank: "— sin pedido (pide autorización) —", selected: @pedido&.id }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>

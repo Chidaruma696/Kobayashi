@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, @usuario ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: [ :admin, @usuario ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
   <%= render "admin/campo", f: f, campo: :usuario, etiqueta: "Usuario (minúsculas)", tipo: :text_field, opciones: { autocapitalize: "none" } %>
   <div class="grid grid-cols-2 gap-4">

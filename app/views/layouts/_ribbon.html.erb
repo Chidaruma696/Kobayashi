@@ -1,6 +1,6 @@
 <% activa = pestana_activa %>
 <div class="bg-slate-900 text-white">
-  <nav class="mx-auto flex max-w-6xl items-end gap-1 px-5 pt-2 text-sm">
+  <nav class="flex w-full flex-wrap items-end gap-1 px-4 pt-2 text-sm">
     <%= link_to "Kobayashi", root_path, class: "mr-4 pb-2 text-lg font-bold" %>
     <% pestanas_visibles.each do |p| %>
       <%= link_to p[:nombre], ruta_de_pestana(p),
@@ -11,7 +11,7 @@
   </nav>
 </div>
 <div class="border-b border-slate-300 bg-slate-100">
-  <div class="mx-auto flex max-w-6xl gap-6 px-5 py-2">
+  <div class="flex w-full flex-wrap gap-x-6 gap-y-2 px-4 py-2">
     <% activa[:grupos].each do |g| %>
       <% botones = g[:botones].select { |b| boton_visible?(b) } %>
       <% next if botones.empty? %>

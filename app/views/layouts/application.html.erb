@@ -16,12 +16,12 @@
   <body class="min-h-screen bg-slate-100 text-slate-900">
     <%= render "layouts/ribbon" %>
     <% if flash[:notice] || flash[:alert] %>
-      <div class="mx-auto max-w-6xl px-5 pt-4">
+      <div class="w-full px-4 pt-4">
         <% if flash[:notice] %><p class="rounded bg-green-50 px-3 py-2 text-sm text-green-800"><%= flash[:notice] %></p><% end %>
         <% if flash[:alert] %><p class="rounded bg-red-50 px-3 py-2 text-sm text-red-800"><%= flash[:alert] %></p><% end %>
       </div>
     <% end %>
-    <main class="mx-auto max-w-6xl px-5 py-6">
+    <main class="w-full overflow-x-auto px-4 py-4">
       <%= yield %>
     </main>
   </body>

@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, @ruta ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: [ :admin, @ruta ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
   <div><%= f.label :chofer_id, "Chofer", class: "block text-sm font-medium" %><%= f.collection_select :chofer_id, Usuario.activos.order(:nombre), :id, :nombre, { include_blank: "sin asignar" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
   <label class="flex items-center gap-2 text-sm"><%= f.check_box :activa %> Activa</label>

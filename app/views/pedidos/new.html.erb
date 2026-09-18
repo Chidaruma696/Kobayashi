@@ -1,5 +1,5 @@
 <h1 class="mb-4 text-2xl font-bold"><%= sucursal_actual.matriz? ? "Nuevo pedido" : "Nuevo pedido a la matriz" %></h1>
-<%= form_with model: @pedido, url: pedidos_path, data: { controller: "lineas" }, class: "max-w-2xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: @pedido, url: pedidos_path, data: { controller: "lineas" }, class: "max-w-4xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <% if sucursal_actual.matriz? %>
     <div>
       <%= f.label :destino, "Para", class: "block text-sm font-medium" %>

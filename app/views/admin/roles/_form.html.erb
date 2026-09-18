@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, @rol ], class: "max-w-2xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with model: [ :admin, @rol ], class: "max-w-4xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
   <%= hidden_field_tag "rol[permisos][]", "" %>
   <label class="flex items-center gap-2 text-sm font-semibold"><%= check_box_tag "rol[permisos][]", "*", @rol.permisos.include?("*"), id: "permiso_todo" %> Todo (administrador)</label>

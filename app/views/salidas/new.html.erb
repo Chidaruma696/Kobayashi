@@ -1,5 +1,5 @@
 <h1 class="mb-4 text-2xl font-bold">Nueva salida desde <%= sucursal_actual %></h1>
-<%= form_with url: salidas_path, class: "max-w-lg space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+<%= form_with url: salidas_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div>
     <%= f.label :destino, "Para", class: "block text-sm font-medium" %>
     <%= f.select :destino, grouped_options_for_select({ "Tiendas" => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, "Clientes de ruta" => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }, @seleccion), {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
