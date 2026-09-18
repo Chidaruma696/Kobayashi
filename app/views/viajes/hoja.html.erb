@@ -12,6 +12,7 @@
         <tr><td><%= producto.nombre %></td><td class="der"><%= number_with_precision(cant, precision: producto.decimales) %> <%= producto.unidad %></td></tr>
       <% end %>
     </table>
+    <% if (saldo = s.cliente.saldo_centavos).positive? %><div>Debe: <%= Dinero.pesos(saldo) %> · <%= Credito::TIPOS[s.cliente.credito] %></div><% end %>
     <div class="der"><%= s.salida_etiquetas.count %> bultos<%= " · nota #{s.venta.folio} #{Dinero.pesos(s.venta.saldo_centavos)}" if s.venta %></div>
     <div>Cobrado: ____________  Firma: ____________</div>
     <div class="linea"></div>

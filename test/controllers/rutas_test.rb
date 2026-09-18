@@ -72,12 +72,13 @@ class RutasTest < ActionDispatch::IntegrationTest
     post reparto_entregar_path(s1), params: { codigo: @p1.codigo }
     assert_match "1 bulto entregado", flash[:notice]
     post reparto_cerrar_path(s1), params: { efectivo: "600" }
-    assert_match "sin escanear", flash[:alert], "con pendientes hace falta el motivo del rechazo"
+    assert_match "sin entregar", flash[:alert], "con pendientes hace falta el motivo del rechazo"
     post reparto_cerrar_path(s1), params: { motivo_rechazo: "no quiso la cátsup", efectivo: "600" }
     assert_redirected_to reparto_path
     assert s1.reload.entregada?
     venta1 = s1.venta.reload
-    assert venta1.cobrada_en_ruta?
+    assert venta1.cobrada?
+    assert venta1.en_ruta
     assert_equal 8_400, venta1.total_devuelto_centavos
     assert_equal 51_600, venta1.saldo_centavos
     assert_equal 8_400, venta1.cambio_centavos
@@ -112,7 +113,7 @@ class RutasTest < ActionDispatch::IntegrationTest
     assert_equal @chofer, cargo.usuario
     assert_equal 1_600, cargo.monto_centavos
     assert_equal viaje, cargo.viaje
-    assert venta1.reload.cobrada?
+    assert_not venta1.reload.en_ruta
     assert_equal @corte, venta1.corte
     assert_equal 41_600, @corte.reload.efectivo_esperado_centavos, "efectivo 600 − cambio 84 − gasto 100 como retiro"
     assert_equal 1, @corte.retiros.count

@@ -32,8 +32,9 @@ module Admin
     end
 
     def permitidos
-      p = params.require(:cliente).permit(:nombre, :telefono, :direccion, :ruta_id, :orden, :activo, :notas)
+      p = params.require(:cliente).permit(:nombre, :telefono, :direccion, :ruta_id, :orden, :activo, :notas, :credito, :limite_credito, :dia_corte)
       p[:ruta_id] = nil if p[:ruta_id].blank?
+      p[:dia_corte] = nil if p[:dia_corte].blank?
       p
     end
   end

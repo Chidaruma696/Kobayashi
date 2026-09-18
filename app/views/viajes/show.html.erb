@@ -64,8 +64,9 @@
     <div class="rounded bg-white p-4 shadow-sm">
       <h2 class="mb-2 font-semibold">Dinero del viaje</h2>
       <table class="w-full text-sm">
-        <tr><td class="py-1">Cobrado en efectivo</td><td class="py-1 text-right font-mono"><%= pesos(cobrado["efectivo"] || 0) %></td></tr>
+        <tr><td class="py-1">Cobrado en efectivo (notas y abonos)</td><td class="py-1 text-right font-mono"><%= pesos(cobrado["efectivo"] || 0) %></td></tr>
         <tr><td class="py-1">Cambio dado</td><td class="py-1 text-right font-mono">−<%= pesos(v.cambio_centavos) %></td></tr>
+        <tr><td class="py-1">A crédito (a la cuenta del cliente)</td><td class="py-1 text-right font-mono text-slate-500"><%= pesos(v.credito_centavos) %></td></tr>
         <tr><td class="py-1">Transferencias y depósitos</td><td class="py-1 text-right font-mono"><%= pesos((cobrado["transferencia"] || 0) + (cobrado["deposito"] || 0)) %></td></tr>
         <tr><td class="py-1">Gastos del chofer</td><td class="py-1 text-right font-mono">−<%= pesos(v.gastos_centavos) %></td></tr>
         <tr class="border-t border-slate-300 font-semibold"><td class="py-1">Efectivo que debe entregar</td><td class="py-1 text-right font-mono"><%= pesos(v.liquidado? ? v.efectivo_esperado_centavos : v.efectivo_por_entregar_centavos) %></td></tr>

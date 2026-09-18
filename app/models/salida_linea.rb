@@ -6,4 +6,6 @@ class SalidaLinea < ApplicationRecord
 
   validates :cantidad, numericality: { greater_than: 0 }
   validates :motivo, presence: true
+
+  scope :vivas, -> { where(rechazada: false) }
 end

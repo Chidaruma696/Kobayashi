@@ -45,9 +45,11 @@ module Caja
     sucursal = salida.sucursal_origen
     corte = Corte.abierto_en(sucursal) or raise Error, "no hay caja abierta en #{sucursal.nombre}: ábrela antes de enviar el reparto"
     hojas = salida.salida_etiquetas.includes(etiqueta: :producto).map(&:etiqueta)
-    raise Error, "la salida está vacía" if hojas.empty?
+    manuales = salida.lineas.includes(:producto).to_a
+    raise Error, "la salida está vacía" if hojas.empty? && manuales.empty?
     Venta.transaction do
-      preparadas = hojas.map { |e| preparar_linea(sucursal, { etiqueta_id: e.id }, nil) }
+      preparadas = hojas.map { |e| preparar_linea(sucursal, { etiqueta_id: e.id }, nil) } +
+                   manuales.map { |l| preparar_linea(sucursal, { producto_id: l.producto_id, cantidad: l.cantidad }, nil) }
       total = preparadas.sum { |l| l[:importe_centavos] }
       venta = Venta.create!(sucursal: sucursal, corte: corte, usuario: usuario, cliente: salida.cliente, clave: "reparto:#{salida.id}",
                             folio: Folio.siguiente!(sucursal, "B"), codigo: codigo_ticket(sucursal), estado: "por_cobrar",
@@ -56,7 +58,7 @@ module Caja
         linea = venta.lineas.create!(l)
         Inventario.mover!(sucursal: sucursal, producto: linea.producto, tipo: "venta", cantidad: linea.cantidad,
                           usuario: usuario, etiqueta: linea.etiqueta, referencia: venta, motivo: "#{venta.folio} reparto #{salida.folio}")
-        linea.etiqueta.update!(estado: "vendida")
+        linea.etiqueta&.update!(estado: "vendida")
       end
       venta
     end
@@ -74,34 +76,52 @@ module Caja
     venta
   end
 
-  # El chofer cobra en la parada: los pagos quedan en la nota, pero el dinero entra a la caja
-  # hasta que liquide el viaje (estado cobrada_en_ruta; el corte no la cuenta todavía).
-  def self.cobrar_en_ruta!(venta:, pagos:, usuario:)
+  # El chofer cobra en la parada. Lo que paga queda en la nota; lo que no paga se va a la cuenta
+  # del cliente si su crédito lo permite. El dinero entra a la caja hasta liquidar el viaje
+  # (marca en_ruta: el corte no la cuenta todavía).
+  def self.cobrar_en_ruta!(venta:, pagos:, usuario:, a_credito: false)
     raise Error, "la nota #{venta.folio} no está por cobrar (#{venta.estado})" unless venta.por_cobrar?
-    pagos_ok = preparar_pagos(pagos, venta.saldo_centavos)
+    saldo = venta.saldo_centavos
+    limpios = Array(pagos).map { |p| { forma: p[:forma].to_s, monto_centavos: p[:monto_centavos].to_i } }.reject { |p| p[:monto_centavos] <= 0 }
+    suma = limpios.sum { |p| p[:monto_centavos] }
     Venta.transaction do
-      pagos_ok.each { |p| venta.pagos.create!(p) }
-      venta.update!(estado: "cobrada_en_ruta", cambio_centavos: pagos_ok.sum { |p| p[:monto_centavos] } - venta.saldo_centavos)
+      if suma >= saldo
+        pagos_ok = preparar_pagos(limpios, saldo)
+        pagos_ok.each { |p| venta.pagos.create!(p) }
+        venta.update!(estado: "cobrada", en_ruta: true, cambio_centavos: suma - saldo)
+      else
+        raise Error, "falta dinero: la nota es #{Dinero.pesos(saldo)} y se pagan #{Dinero.pesos(suma)}; marca el resto a crédito si el cliente lo tiene" unless a_credito
+        cliente = venta.cliente or raise Error, "la nota no tiene cliente"
+        estado = Credito.evaluar(cliente)
+        raise Error, "#{cliente.nombre} no tiene crédito (#{estado.regla.downcase})" if cliente.credito == "contado"
+        raise Error, "#{cliente.nombre} está bloqueado: #{estado.motivo}" if estado.bloqueado
+        limpios.each { |p| raise Error, "forma de pago desconocida: #{p[:forma]}" unless Pago::FORMAS.include?(p[:forma]) }
+        limpios.each { |p| venta.pagos.create!(p) }
+        venta.update!(estado: "a_credito", en_ruta: true, cambio_centavos: 0)
+        cliente.movimientos_credito.create!(tipo: "cargo", monto_centavos: saldo - suma, fecha: Date.current, referencia: venta,
+                                            usuario: usuario, motivo: "Nota #{venta.folio} a crédito")
+      end
     end
     venta
   end
 
   # El cliente no quiso estos bultos: vuelven al inventario de la matriz y la nota baja.
   # No hay dinero de por medio, así que la devolución no toca ningún corte.
-  def self.rechazar_en_ruta!(venta:, etiquetas:, motivo:, usuario:)
+  def self.rechazar_en_ruta!(venta:, etiquetas:, motivo:, usuario:, lineas_manuales: [])
     raise Error, "hace falta el motivo del rechazo" if motivo.blank?
     raise Error, "la nota #{venta.folio} ya está #{venta.estado}" unless venta.por_cobrar?
     Venta.transaction do
       devolucion = Devolucion.new(venta: venta, sucursal: venta.sucursal, usuario: usuario, motivo: motivo, total_centavos: 0)
       total = 0
-      etiquetas.each do |e|
-        vl = venta.lineas.find_by!(etiqueta: e)
+      renglones = etiquetas.map { |e| [ venta.lineas.find_by!(etiqueta: e), e ] }
+      renglones += lineas_manuales.map { |l| [ venta.lineas.where(etiqueta: nil, producto_id: l.producto_id).find { |vl| vl.cantidad == l.cantidad && vl.cantidad_pendiente.positive? } || raise(Error, "no encuentro en la nota el renglón de #{l.producto.nombre}"), nil ] }
+      renglones.each do |vl, e|
         importe = Dinero.importe(vl.cantidad_pendiente, vl.precio_centavos)
         total += importe
         devolucion.lineas.build(venta_linea: vl, cantidad: vl.cantidad_pendiente, importe_centavos: importe)
         Inventario.mover!(sucursal: venta.sucursal, producto: vl.producto, tipo: "devolucion_cliente", cantidad: vl.cantidad_pendiente,
                           usuario: usuario, etiqueta: e, referencia: devolucion, motivo: "#{venta.folio} rechazo en ruta: #{motivo}")
-        e.update!(estado: "viva", padre_id: nil)
+        e&.update!(estado: "viva", padre_id: nil)
       end
       devolucion.total_centavos = total
       devolucion.save!

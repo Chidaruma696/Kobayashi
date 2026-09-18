@@ -12,8 +12,7 @@
       <%= render "escaneo", url: agregar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Agregar" %>
       <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Quitar una etiqueta</summary>
         <%= render "escaneo", url: quitar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Quitar" %></details>
-      <% if s.devolucion? %>
-        <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Renglón manual (sin etiqueta, justificado)</summary>
+      <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Renglón sin etiqueta (mandar sin escanear, con motivo)</summary>
           <%= form_with url: manual_salida_path(s), class: "mt-2 grid grid-cols-2 gap-2" do |f| %>
             <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "col-span-2 rounded border border-slate-300 px-2 py-1" %>
             <%= f.number_field :cantidad, step: "0.001", min: "0.001", placeholder: "cantidad", required: true, class: "rounded border border-slate-300 px-2 py-1 font-mono" %>
@@ -21,7 +20,6 @@
             <%= f.text_field :motivo, placeholder: "motivo (se cayó la etiqueta…)", required: true, class: "col-span-2 rounded border border-slate-300 px-2 py-1" %>
             <%= f.submit "Agregar renglón", class: "col-span-2 rounded bg-slate-900 px-3 py-1 text-white" %>
           <% end %></details>
-      <% end %>
     </div>
     <div class="rounded bg-white p-4 shadow-sm">
       <h2 class="mb-2 font-semibold">Verificar la carga (otra persona)</h2>
@@ -31,6 +29,13 @@
         <%= button_to "Sellar salida", sellar_salida_path(s), class: "mt-2 rounded bg-emerald-700 px-3 py-2 text-white", disabled: s.sin_verificar.exists? || s.salida_etiquetas.none? && s.lineas.none? %>
       <% else %>
         <p class="text-sm text-slate-500">Quien verifica necesita el permiso salidas.verificar.</p>
+      <% end %>
+      <% if s.sin_verificar.exists? || s.salida_etiquetas.none? %>
+        <details class="mt-3 text-sm"><summary class="cursor-pointer text-slate-500">Sellar sin verificar (queda por revisar)</summary>
+          <%= form_with url: sellar_salida_path(s), class: "mt-2 flex gap-2" do |f| %>
+            <%= f.text_field :motivo_sin_verificar, placeholder: "por qué sale sin el segundo escaneo", required: true, class: "flex-1 rounded border border-slate-300 px-3 py-2" %>
+            <%= f.submit "Sellar así", class: "rounded border border-amber-400 px-3 py-2" %>
+          <% end %></details>
       <% end %>
     </div>
   </div>
@@ -127,8 +132,8 @@
         <td class="px-3 py-1 text-xs">manual</td><td class="px-3 py-1 text-xs">sin etiqueta</td>
         <td class="px-3 py-1"><%= l.producto.nombre %></td>
         <td class="px-3 py-1 text-right font-mono"><%= cantidad(l.cantidad, l.producto) %></td>
-        <td class="px-3 py-1">autorizó <%= l.autorizado_por %></td>
-        <td class="px-3 py-1"><%= l.recibida ? "recibida" : "pendiente" %> · <%= l.motivo %></td>
+        <td class="px-3 py-1"><%= l.autorizado_por ? "autorizó #{l.autorizado_por}" : "por revisar (#{l.usuario})" %></td>
+        <td class="px-3 py-1"><%= l.rechazada ? "rechazada" : (l.recibida ? "recibida" : "pendiente") %> · <%= l.motivo %></td>
       </tr>
     <% end %>
     <% if @filas.empty? && s.lineas.empty? %><tr><td colspan="6" class="px-3 py-4 text-center text-slate-500">Vacía.</td></tr><% end %>

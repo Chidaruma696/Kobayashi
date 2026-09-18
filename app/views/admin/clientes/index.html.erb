@@ -9,15 +9,15 @@
   </div>
 </div>
 <table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Teléfono</th><th class="px-3 py-2">Dirección</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Orden</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Teléfono</th><th class="px-3 py-2">Dirección</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Orden</th><th class="px-3 py-2">Crédito</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
   <tbody>
     <% @clientes.each do |c| %>
       <tr class="border-t border-slate-100 <%= 'text-slate-400' unless c.activo %>">
         <td class="px-3 py-2"><%= c.nombre %></td><td class="px-3 py-2"><%= c.telefono %></td><td class="px-3 py-2"><%= c.direccion %></td>
-        <td class="px-3 py-2"><%= c.ruta %></td><td class="px-3 py-2"><%= c.orden %></td><td class="px-3 py-2"><%= c.activo ? "sí" : "no" %></td>
+        <td class="px-3 py-2"><%= c.ruta %></td><td class="px-3 py-2"><%= c.orden %></td><td class="px-3 py-2"><%= Credito::TIPOS[c.credito] %></td><td class="px-3 py-2 text-right font-mono"><%= pesos(c.saldo_centavos) %></td><td class="px-3 py-2"><%= c.activo ? "sí" : "no" %></td>
         <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_cliente_path(c), class: "text-blue-700" %></td>
       </tr>
     <% end %>
-    <% if @clientes.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">Sin clientes.</td></tr><% end %>
+    <% if @clientes.empty? %><tr><td colspan="9" class="px-3 py-6 text-center text-slate-500">Sin clientes.</td></tr><% end %>
   </tbody>
 </table>

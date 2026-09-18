@@ -72,11 +72,11 @@ class Salida < ApplicationRecord
     salida_etiquetas.where(etiqueta: Salida.hojas_de(etiqueta)).destroy_all.size
   end
 
-  # Renglón manual (sin etiqueta), solo en devoluciones y con quien lo autoriza.
-  # Sin autorizado_por la línea queda por revisar (ver Revision); el controlador la abre.
+  # Renglón manual (sin etiqueta) con motivo: mandar sin escanear se puede, pero queda a nombre de
+  # alguien. Sin autorizado_por la línea queda por revisar (ver Revision); el controlador la abre.
   def agregar_manual!(producto:, cantidad:, motivo:, autorizado_por: nil, usuario: nil)
     raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "sin etiqueta solo se devuelve, y con justificación" unless devolucion? && motivo.present?
+    raise ArgumentError, "un renglón sin etiqueta lleva motivo" if motivo.blank?
     lineas.create!(producto: producto, cantidad: cantidad, motivo: motivo, autorizado_por: autorizado_por, usuario: usuario || self.usuario)
   end
 
@@ -93,11 +93,16 @@ class Salida < ApplicationRecord
     salida_etiquetas.where(verificado_por_id: nil)
   end
 
-  def sellar!(usuario:)
+  # Sellar exige que otra persona haya escaneado todo. Con `sin_verificar_motivo` se sella igual
+  # (mandar sin escanear se puede) y devuelve cuántos bultos quedaron sin verificar, para que el
+  # controlador lo deje por revisar.
+  def sellar!(usuario:, sin_verificar_motivo: nil)
     raise ArgumentError, "la salida está #{estado}" unless preparando?
     raise ArgumentError, "no hay nada en la salida" if salida_etiquetas.none? && lineas.none?
-    raise ArgumentError, "faltan #{sin_verificar.count} etiquetas por verificar" if sin_verificar.exists?
+    pendientes = sin_verificar.count
+    raise ArgumentError, "faltan #{pendientes} etiquetas por verificar: escanéalas o sella con motivo" if pendientes.positive? && sin_verificar_motivo.blank?
     update!(estado: "sellada", verificado_por: usuario)
+    pendientes
   end
 
   # --- enviar: baja el kardex del origen, las etiquetas viajan y los pedidos completos se cierran.
@@ -141,17 +146,20 @@ class Salida < ApplicationRecord
 
   # Cierra la parada: lo no escaneado se rechaza (vuelve al inventario, la nota baja), y si queda
   # algo que cobrar se cobra de contado ahí mismo. Sin nada entregado la parada queda rechazada.
-  def cerrar_parada!(usuario:, motivo_rechazo: nil, pagos: [])
+  def cerrar_parada!(usuario:, motivo_rechazo: nil, pagos: [], a_credito: false, rechazar_lineas: [])
     raise ArgumentError, "solo se cierra un reparto en ruta (#{estado})" unless reparto? && enviada?
     transaction do
       pendientes = pendientes_de_entrega.includes(:etiqueta).to_a
-      if pendientes.any?
-        raise ArgumentError, "quedan #{pendientes.size} bultos sin escanear: escanéalos o da el motivo del rechazo" if motivo_rechazo.blank?
-        Caja.rechazar_en_ruta!(venta: venta, etiquetas: pendientes.map(&:etiqueta), motivo: motivo_rechazo, usuario: usuario)
+      manuales = lineas.where(id: rechazar_lineas, rechazada: false).includes(:producto).to_a
+      if pendientes.any? || manuales.any?
+        raise ArgumentError, "quedan #{pendientes.size + manuales.size} bultos sin entregar: escanéalos o da el motivo del rechazo" if motivo_rechazo.blank?
+        Caja.rechazar_en_ruta!(venta: venta, etiquetas: pendientes.map(&:etiqueta), lineas_manuales: manuales, motivo: motivo_rechazo, usuario: usuario)
         salida_etiquetas.where(id: pendientes.map(&:id)).update_all(estado: "faltante", motivo: motivo_rechazo, updated_at: Time.current)
+        lineas.where(id: manuales.map(&:id)).update_all(rechazada: true, updated_at: Time.current)
       end
+      lineas.where(rechazada: false).update_all(recibida: true, updated_at: Time.current)
       if venta.saldo_centavos.positive?
-        Caja.cobrar_en_ruta!(venta: venta, pagos: pagos, usuario: usuario)
+        Caja.cobrar_en_ruta!(venta: venta, pagos: pagos, usuario: usuario, a_credito: a_credito)
         update!(estado: "entregada", recibido_en: Time.current)
       else
         update!(estado: "rechazada", recibido_en: Time.current)
@@ -245,7 +253,7 @@ class Salida < ApplicationRecord
   def contenido
     acc = Hash.new(BigDecimal("0"))
     salida_etiquetas.includes(etiqueta: :producto).each { |f| acc[f.etiqueta.producto] += f.etiqueta.cantidad }
-    lineas.includes(:producto).each { |l| acc[l.producto] += l.cantidad }
+    lineas.vivas.includes(:producto).each { |l| acc[l.producto] += l.cantidad }
     acc
   end
 

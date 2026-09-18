@@ -68,6 +68,12 @@ Rails.application.routes.draw do
       post :cancelar
     end
   end
+  scope "cobranza", controller: "cobranza", as: "cobranza" do
+    get "/", action: :index
+    get "clientes/:id", action: :cliente, as: :cliente
+    post "clientes/:id/abonar", action: :abonar, as: :abonar
+    post "clientes/:id/bloquear", action: :bloquear, as: :bloquear
+  end
   scope "reparto", controller: "reparto", as: "reparto" do
     get "/", action: :index
     get ":id", action: :parada, as: :parada
@@ -75,6 +81,7 @@ Rails.application.routes.draw do
     post ":id/entregar_todo", action: :entregar_todo, as: :entregar_todo
     post ":id/cerrar", action: :cerrar, as: :cerrar
     post ":id/no_entregado", action: :no_entregado, as: :no_entregado
+    post ":id/abonar", action: :abonar, as: :abonar
   end
 
   resources :conteos, only: %i[index new create show] do

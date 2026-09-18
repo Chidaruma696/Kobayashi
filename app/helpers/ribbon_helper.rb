@@ -46,7 +46,10 @@ module RibbonHelper
         Boton.new("Viajes", :viajes_path, "rutas.armar", "☰")
       ] },
       { nombre: "Chofer", botones: [ Boton.new("Mi ruta", :reparto_path, "rutas.repartir", "📍") ] },
-      { nombre: "Oficina", botones: [ Boton.new("Liquidar", :viajes_path, "rutas.liquidar", "💵") ] }
+      { nombre: "Oficina", botones: [
+        Boton.new("Liquidar", :viajes_path, "rutas.liquidar", "💵"),
+        Boton.new("Cobranza", :cobranza_path, "cobranza.ver", "📒")
+      ] }
     ] },
     { id: :conteos, nombre: "Conteos", grupos: [
       { nombre: "Contar", botones: [

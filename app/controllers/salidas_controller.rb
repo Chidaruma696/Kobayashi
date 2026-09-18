@@ -72,8 +72,12 @@ class SalidasController < ApplicationController
   end
 
   def sellar
-    autorizar!("salidas.verificar")
-    @salida.sellar!(usuario: usuario_actual)
+    autorizar!(params[:motivo_sin_verificar].present? ? "salidas.surtir" : "salidas.verificar")
+    pendientes = @salida.sellar!(usuario: usuario_actual, sin_verificar_motivo: params[:motivo_sin_verificar].presence)
+    if pendientes.positive?
+      revisar_si_hace_falta(@salida, nil, motivo: "Selló #{@salida.folio} con #{pendientes} bultos sin verificar: #{params[:motivo_sin_verificar]}",
+                            valor_centavos: @salida.contenido.sum { |producto, cant| Revision.valor(cant, producto, sucursal_actual) })
+    end
     redirect_to salida_path(@salida), notice: "Salida #{@salida.folio} sellada por #{usuario_actual}"
   rescue ArgumentError => e
     redirect_to salida_path(@salida), alert: e.message

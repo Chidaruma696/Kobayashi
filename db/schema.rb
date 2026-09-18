@@ -10,7 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
+  create_table "abonos", force: :cascade do |t|
+    t.integer "cliente_id", null: false
+    t.integer "corte_id"
+    t.datetime "created_at", null: false
+    t.boolean "en_ruta", default: false, null: false
+    t.string "folio", null: false
+    t.string "forma", null: false
+    t.integer "monto_centavos", null: false
+    t.string "notas"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.integer "viaje_id"
+    t.index ["cliente_id"], name: "index_abonos_on_cliente_id"
+    t.index ["corte_id"], name: "index_abonos_on_corte_id"
+    t.index ["folio"], name: "index_abonos_on_folio", unique: true
+    t.index ["sucursal_id"], name: "index_abonos_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_abonos_on_usuario_id"
+    t.index ["viaje_id"], name: "index_abonos_on_viaje_id"
+    t.check_constraint "monto_centavos > 0", name: "abonos_monto"
+  end
+
   create_table "cargos", force: :cascade do |t|
     t.integer "conteo_id"
     t.datetime "created_at", null: false
@@ -36,16 +58,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
 
   create_table "clientes", force: :cascade do |t|
     t.boolean "activo", default: true, null: false
+    t.string "bloqueo_manual"
+    t.string "bloqueo_motivo"
+    t.integer "bloqueo_por_id"
     t.datetime "created_at", null: false
+    t.string "credito", default: "contado", null: false
+    t.integer "dia_corte"
     t.string "direccion"
+    t.integer "limite_credito_centavos", default: 0, null: false
     t.string "nombre", null: false
     t.text "notas"
     t.integer "orden", default: 0, null: false
     t.integer "ruta_id"
     t.string "telefono"
     t.datetime "updated_at", null: false
+    t.index ["bloqueo_por_id"], name: "index_clientes_on_bloqueo_por_id"
     t.index ["nombre"], name: "index_clientes_on_nombre"
     t.index ["ruta_id"], name: "index_clientes_on_ruta_id"
+    t.check_constraint "credito IN ('contado', 'nota_x_nota', 'limite', 'semanal', 'contado_abonando', 'especial')", name: "clientes_credito"
   end
 
   create_table "codigos_barras", force: :cascade do |t|
@@ -237,6 +267,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
     t.index ["usuario_id"], name: "index_movimientos_on_usuario_id"
     t.check_constraint "cantidad > 0", name: "movimientos_cantidad_positiva"
     t.check_constraint "tipo IN ('entrada', 'produccion', 'recepcion', 'devolucion_cliente', 'ajuste_entrada', 'venta', 'salida', 'consumo', 'merma', 'ajuste_salida')", name: "movimientos_tipo"
+  end
+
+  create_table "movimientos_credito", force: :cascade do |t|
+    t.integer "cliente_id", null: false
+    t.datetime "created_at", null: false
+    t.date "fecha", null: false
+    t.integer "monto_centavos", null: false
+    t.string "motivo"
+    t.integer "referencia_id"
+    t.string "referencia_type"
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["cliente_id", "fecha"], name: "index_movimientos_credito_on_cliente_id_and_fecha"
+    t.index ["cliente_id"], name: "index_movimientos_credito_on_cliente_id"
+    t.index ["referencia_type", "referencia_id"], name: "index_movimientos_credito_on_referencia"
+    t.index ["usuario_id"], name: "index_movimientos_credito_on_usuario_id"
+    t.check_constraint "tipo IN ('cargo', 'abono', 'devolucion', 'ajuste')", name: "movimientos_credito_tipo"
   end
 
   create_table "pagos", force: :cascade do |t|
@@ -432,6 +480,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
     t.datetime "created_at", null: false
     t.string "motivo", null: false
     t.integer "producto_id", null: false
+    t.boolean "rechazada", default: false, null: false
     t.boolean "recibida", default: false, null: false
     t.integer "salida_id", null: false
     t.datetime "updated_at", null: false
@@ -530,6 +579,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
     t.string "codigo", limit: 13, null: false
     t.integer "corte_id", null: false
     t.datetime "created_at", null: false
+    t.boolean "en_ruta", default: false, null: false
     t.string "estado", default: "cobrada", null: false
     t.date "fecha_negocio", null: false
     t.string "folio", null: false
@@ -545,7 +595,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
     t.index ["folio"], name: "index_ventas_on_folio", unique: true
     t.index ["sucursal_id"], name: "index_ventas_on_sucursal_id"
     t.index ["usuario_id"], name: "index_ventas_on_usuario_id"
-    t.check_constraint "estado IN ('por_cobrar', 'cobrada_en_ruta', 'cobrada', 'devuelta')", name: "ventas_estado"
+    t.check_constraint "estado IN ('por_cobrar', 'cobrada', 'a_credito', 'devuelta')", name: "ventas_estado"
     t.check_constraint "total_centavos >= 0", name: "ventas_total"
   end
 
@@ -587,6 +637,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
     t.check_constraint "estado IN ('armando', 'en_ruta', 'liquidado', 'cancelado')", name: "viajes_estado"
   end
 
+  add_foreign_key "abonos", "clientes"
+  add_foreign_key "abonos", "cortes"
+  add_foreign_key "abonos", "sucursales"
+  add_foreign_key "abonos", "usuarios"
+  add_foreign_key "abonos", "viajes"
   add_foreign_key "cargos", "conteos"
   add_foreign_key "cargos", "revisiones"
   add_foreign_key "cargos", "sucursales"
@@ -594,6 +649,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
   add_foreign_key "cargos", "usuarios", column: "resuelto_por_id"
   add_foreign_key "cargos", "viajes"
   add_foreign_key "clientes", "rutas"
+  add_foreign_key "clientes", "usuarios", column: "bloqueo_por_id"
   add_foreign_key "codigos_barras", "productos"
   add_foreign_key "conteo_etiquetas", "conteos"
   add_foreign_key "conteo_etiquetas", "etiquetas"
@@ -625,6 +681,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_070001) do
   add_foreign_key "movimientos", "productos"
   add_foreign_key "movimientos", "sucursales"
   add_foreign_key "movimientos", "usuarios"
+  add_foreign_key "movimientos_credito", "clientes"
+  add_foreign_key "movimientos_credito", "usuarios"
   add_foreign_key "pagos", "ventas"
   add_foreign_key "pedido_lineas", "pedidos"
   add_foreign_key "pedido_lineas", "productos"

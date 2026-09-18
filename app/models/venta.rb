@@ -8,14 +8,24 @@ class Venta < ApplicationRecord
   has_many :devoluciones, dependent: :restrict_with_error
 
   validates :folio, :codigo, :clave, presence: true, uniqueness: true
-  validates :estado, inclusion: { in: %w[por_cobrar cobrada_en_ruta cobrada devuelta] }
+  validates :estado, inclusion: { in: %w[por_cobrar cobrada a_credito devuelta] }
   validates :total_centavos, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   scope :recientes, -> { order(created_at: :desc) }
 
   def cobrada? = estado == "cobrada"
   def por_cobrar? = estado == "por_cobrar"
-  def cobrada_en_ruta? = estado == "cobrada_en_ruta"
+  def a_credito? = estado == "a_credito"
+
+  # Lo que sí se pagó: pagos menos cambio.
+  def pagado_centavos
+    pagos.sum(:monto_centavos) - cambio_centavos
+  end
+
+  # Lo que se fue a la cuenta del cliente.
+  def credito_centavos
+    a_credito? ? saldo_centavos - pagado_centavos : 0
+  end
 
   # Lo que queda por pagar de la nota: el total menos lo que se rechazó o devolvió.
   def saldo_centavos

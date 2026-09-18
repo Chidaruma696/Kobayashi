@@ -15,8 +15,19 @@ class RepartoController < ApplicationController
   def parada
     @filas = @salida.salida_etiquetas.includes(etiqueta: :producto, grupo: :producto).order(:grupo_id, :id)
     @bultos = @filas.group_by { |f| f.grupo || f.etiqueta }
+    @manuales = @salida.lineas.vivas.includes(:producto)
     @venta = @salida.venta
+    @credito = @salida.cliente.estado_credito
     @productos = Producto.activos.order(:nombre)
+  end
+
+  # El cliente paga algo de lo que debía: abono a cuenta que trae el chofer.
+  def abonar
+    abono = Abono.registrar!(cliente: @salida.cliente, sucursal: @salida.sucursal_origen, monto_centavos: Dinero.centavos(params[:monto]),
+                             forma: params[:forma].to_s, usuario: usuario_actual, viaje: @salida.viaje)
+    volver("Abono #{abono.folio} de #{Dinero.pesos(abono.monto_centavos)} registrado; saldo #{Dinero.pesos(@salida.cliente.saldo_centavos)}")
+  rescue ArgumentError, ActiveRecord::RecordInvalid => e
+    volver(nil, e.message)
   end
 
   def entregar
@@ -38,8 +49,14 @@ class RepartoController < ApplicationController
 
   def cerrar
     pagos = Pago::FORMAS.map { |f| { forma: f, monto_centavos: Dinero.centavos(params[f]) } }
-    @salida.cerrar_parada!(usuario: usuario_actual, motivo_rechazo: params[:motivo_rechazo].presence, pagos: pagos)
-    redirect_to reparto_path, notice: @salida.entregada? ? "Parada #{@salida.destino} cobrada: #{Dinero.pesos(@salida.venta.saldo_centavos)}" : "Parada #{@salida.destino} rechazada completa"
+    @salida.cerrar_parada!(usuario: usuario_actual, motivo_rechazo: params[:motivo_rechazo].presence, pagos: pagos,
+                           a_credito: params[:a_credito] == "1", rechazar_lineas: Array(params[:rechazar_lineas]))
+    venta = @salida.venta
+    aviso = if @salida.rechazada? then "Parada #{@salida.destino} rechazada completa"
+    elsif venta.a_credito? then "Parada #{@salida.destino}: pagó #{Dinero.pesos(venta.pagado_centavos)}, a crédito #{Dinero.pesos(venta.credito_centavos)}"
+    else "Parada #{@salida.destino} cobrada: #{Dinero.pesos(venta.saldo_centavos)}"
+    end
+    redirect_to reparto_path, notice: aviso
   rescue ArgumentError, Caja::Error => e
     volver(nil, e.message)
   end

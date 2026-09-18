@@ -13,6 +13,7 @@ class Viaje < ApplicationRecord
   has_many :salidas, dependent: :nullify
   has_many :gastos, class_name: "ViajeGasto", dependent: :destroy
   has_many :cargos, dependent: :restrict_with_error
+  has_many :abonos, dependent: :restrict_with_error
 
   before_validation :asignar_folio, on: :create
 
@@ -60,12 +61,22 @@ class Viaje < ApplicationRecord
     Venta.where(id: salidas.where.not(venta_id: nil).select(:venta_id))
   end
 
+  def ventas_en_ruta
+    ventas.where(en_ruta: true)
+  end
+
+  # { forma => centavos } de lo que el chofer cobró: pagos de notas y abonos a cuenta.
   def cobrado_centavos
-    Pago.where(venta: ventas.where(estado: "cobrada_en_ruta")).group(:forma).sum(:monto_centavos)
+    Pago.where(venta: ventas_en_ruta).group(:forma).sum(:monto_centavos)
+        .merge(abonos.where(en_ruta: true).group(:forma).sum(:monto_centavos)) { |_, a, b| a + b }
   end
 
   def cambio_centavos
-    ventas.where(estado: "cobrada_en_ruta").sum(:cambio_centavos)
+    ventas_en_ruta.sum(:cambio_centavos)
+  end
+
+  def credito_centavos
+    ventas_en_ruta.where(estado: "a_credito").sum { |v| v.credito_centavos }
   end
 
   def gastos_centavos
@@ -91,7 +102,8 @@ class Viaje < ApplicationRecord
     transaction do
       salidas.where(estado: "enviada").each { |s| s.cerrar_parada!(usuario: usuario, motivo_rechazo: "no se entregó (viaje #{folio} liquidado)") }
       esperado = efectivo_por_entregar_centavos
-      ventas.where(estado: "cobrada_en_ruta").find_each { |v| v.update!(estado: "cobrada", corte: corte) }
+      ventas_en_ruta.find_each { |v| v.update!(en_ruta: false, corte: corte) }
+      abonos.where(en_ruta: true).find_each { |a| a.update!(en_ruta: false, corte: corte) }
       gastos.each do |g|
         corte.retiros.create!(monto_centavos: g.monto_centavos, motivo: "Gasto de ruta #{folio}: #{g.concepto}", usuario: chofer, autorizado_por: usuario)
       end

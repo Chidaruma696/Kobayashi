@@ -6,6 +6,7 @@ class Corte < ApplicationRecord
   has_many :ventas, dependent: :restrict_with_error
   has_many :retiros, dependent: :restrict_with_error
   has_many :devoluciones, dependent: :restrict_with_error
+  has_many :abonos, dependent: :restrict_with_error
 
   before_validation :asignar_folio, on: :create
 
@@ -29,7 +30,7 @@ class Corte < ApplicationRecord
 
   # Ventas cuyo dinero ya entró (cobradas o luego devueltas); las notas por cobrar no cuentan.
   def ventas_cobradas
-    ventas.where.not(estado: %w[por_cobrar cobrada_en_ruta])
+    ventas.where(en_ruta: false).where.not(estado: "por_cobrar")
   end
 
   # Efectivo que entró por ventas: lo pagado en efectivo menos el cambio devuelto.
@@ -50,8 +51,12 @@ class Corte < ApplicationRecord
   end
 
   # Lo que debe haber en la gaveta ahora mismo.
+  def abonos_efectivo_centavos
+    abonos.where(forma: "efectivo").sum(:monto_centavos)
+  end
+
   def efectivo_esperado_centavos
-    fondo_centavos + efectivo_ventas_centavos - devoluciones_centavos - retiros_centavos
+    fondo_centavos + efectivo_ventas_centavos + abonos_efectivo_centavos - devoluciones_centavos - retiros_centavos
   end
 
   def excede_limite?
