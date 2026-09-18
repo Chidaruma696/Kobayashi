@@ -280,7 +280,11 @@ export default class extends Controller {
       this.btnBasculaTarget.textContent = on ? "desconectar" : "conectar"
       this.btnCapturarTarget.disabled = !on
     })
-    this.bascula.on("aviso", a => this.avisar(a.mensaje || String(a)))
+    this.bascula.on("aviso", a => { this.estadoTarget.textContent = a.mensaje || String(a) })
+    // ?depurar=1 enseña la trama cruda bajo el peso, para ver qué manda la báscula cuando algo se atora.
+    if (new URLSearchParams(location.search).has("depurar")) {
+      this.bascula.on("trama", t => { this.estadoTarget.textContent = JSON.stringify(t.texto); console.debug("[báscula]", t.texto) })
+    }
     if (!this.simuladaValue && Bascula.soportada) this.bascula.reconectar().catch(() => {})
     if (!this.simuladaValue && !Bascula.soportada) this.estadoTarget.textContent = "sin Web Serial (usa Chrome o Edge)"
   }
