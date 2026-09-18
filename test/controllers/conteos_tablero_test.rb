@@ -27,18 +27,22 @@ class ConteosTableroTest < ActionDispatch::IntegrationTest
     assert_select "td", /#{conteo.folio}/
   end
 
-  test "tablero y ventas por producto con CSV" do
+  test "el inicio es el tablero y ventas por producto con CSV; sin permiso, bienvenida" do
     Caja.cobrar!(sucursal: @tienda, usuario: usuarios(:cajera), clave: "tb", lineas: [ { producto_id: productos(:catsup).id, cantidad: 2 } ], pagos: [ { forma: "efectivo", monto_centavos: 10_000 } ])
-    get tablero_path
+    get root_path
     assert_response :ok
     assert_match "$84.00", response.body
-    get ventas_tablero_path
+    get ventas_por_producto_path
     assert_select "td", /Cátsup/
-    get ventas_tablero_path(format: :csv)
+    get ventas_por_producto_path(format: :csv)
     assert_match "CATS;", response.body
     delete salir_path
     post entrar_path, params: { usuario: "cajera", password: "secreto1" }
-    get tablero_path
+    get root_path
+    assert_response :ok
+    assert_no_match "$84.00", response.body
+    assert_match "Cajera", response.body
+    get ventas_por_producto_path
     assert_response :forbidden
   end
 end

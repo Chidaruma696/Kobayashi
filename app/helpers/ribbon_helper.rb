@@ -5,7 +5,10 @@ module RibbonHelper
 
   PESTANAS = [
     { id: :inicio, nombre: "Inicio", grupos: [
-      { nombre: "General", botones: [ Boton.new("Inicio", :root_path, nil, "⌂") ] }
+      { nombre: "Ver", botones: [
+        Boton.new("Inicio", :root_path, nil, "⌂"),
+        Boton.new("Ventas por producto", :ventas_por_producto_path, "reportes.ver", "📈")
+      ] }
     ] },
     { id: :caja, nombre: "Caja", grupos: [
       { nombre: "Vender", botones: [
@@ -42,12 +45,6 @@ module RibbonHelper
         Boton.new("Conteos", :conteos_path, "conteos.hacer", "☰")
       ] },
       { nombre: "Cargos", botones: [ Boton.new("Cargos", :cargos_path, "conteos.cargos", "⚖") ] }
-    ] },
-    { id: :tablero, nombre: "Tablero", grupos: [
-      { nombre: "Ver", botones: [
-        Boton.new("Tablero", :tablero_path, "reportes.ver", "▣"),
-        Boton.new("Ventas por producto", :ventas_tablero_path, "reportes.ver", "📈")
-      ] }
     ] },
     { id: :inventario, nombre: "Inventario", grupos: [
       { nombre: "Consultar", botones: [

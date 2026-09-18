@@ -1,6 +1,6 @@
 <h1 class="mb-2 text-2xl font-bold">Ventas por producto · <%= @todas ? "todas las sucursales" : @sucursal %></h1>
 <%= render "filtro" %>
-<p class="mb-2 text-sm"><%= link_to "Descargar CSV", ventas_tablero_path(format: :csv, desde: @desde, hasta: @hasta, sucursal_id: params[:sucursal_id]), class: "text-blue-700 underline" %></p>
+<p class="mb-2 text-sm"><%= link_to "Descargar CSV", ventas_por_producto_path(format: :csv, desde: @desde, hasta: @hasta, sucursal_id: params[:sucursal_id]), class: "text-blue-700 underline" %></p>
 <table class="w-full border-collapse bg-white text-sm shadow-sm">
   <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Clave</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Importe</th><th class="px-3 py-2 text-right">Líneas</th></tr></thead>
   <tbody>

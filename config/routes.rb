@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "inicio#index"
+  get "ventas-por-producto", to: "inicio#ventas", as: :ventas_por_producto
 
   get "entrar", to: "sesiones#new", as: :entrar
   post "entrar", to: "sesiones#create"
@@ -62,8 +63,6 @@ Rails.application.routes.draw do
   resources :cargos, only: %i[index] do
     member { post :resolver }
   end
-  get "tablero", to: "tablero#index", as: :tablero
-  get "tablero/ventas", to: "tablero#ventas", as: :ventas_tablero
 
   resources :producciones, only: %i[index new create show] do
     member { post :cerrar }
