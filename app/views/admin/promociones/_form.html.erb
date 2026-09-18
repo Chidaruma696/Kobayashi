@@ -1,0 +1,20 @@
+<%= form_with model: [ :admin, @promocion ], class: "max-w-xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre (sale en el ticket)", tipo: :text_field %>
+  <div class="grid grid-cols-2 gap-4">
+    <div><%= f.label :producto_id, "Producto", class: "block text-sm font-medium" %><%= f.collection_select :producto_id, Producto.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :sucursal_id, "Sucursal", class: "block text-sm font-medium" %><%= f.collection_select :sucursal_id, Sucursal.activas.order(:nombre), :id, :nombre, { include_blank: "todas" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  </div>
+  <div><%= f.label :tipo, "Regla", class: "block text-sm font-medium" %><%= f.select :tipo, Promocion::TIPOS.map { |k, v| [ v, k ] }, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  <div class="grid grid-cols-3 gap-4">
+    <div><%= f.label :precio, "Precio", class: "block text-sm font-medium" %><%= f.number_field :precio, value: (@promocion.precio_centavos && @promocion.precio_centavos / 100.0), step: "0.01", min: 0, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+    <%= render "admin/campo", f: f, campo: :porcentaje, etiqueta: "Descuento %", tipo: :number_field, opciones: { step: "0.01", min: 0, max: 100 } %>
+    <%= render "admin/campo", f: f, campo: :cantidad_minima, etiqueta: "Cantidad mínima", tipo: :number_field, opciones: { step: "0.001", min: 0 } %>
+  </div>
+  <div class="grid grid-cols-2 gap-4">
+    <%= render "admin/campo", f: f, campo: :desde, etiqueta: "Desde (opcional)", tipo: :date_field %>
+    <%= render "admin/campo", f: f, campo: :hasta, etiqueta: "Hasta (opcional)", tipo: :date_field %>
+  </div>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activa %> Activa</label>
+  <p class="text-xs text-slate-500">Precio especial y precio a partir de una cantidad usan el campo Precio; el descuento usa el porcentaje sobre el precio de la sucursal. Si hay varias vigentes, la caja aplica la más barata.</p>
+  <%= f.submit @promocion.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>

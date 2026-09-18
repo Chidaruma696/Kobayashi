@@ -43,6 +43,20 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_select "td", /bodega/
   end
 
+  test "promociones: crear, listar y borrar" do
+    post admin_promociones_path, params: { promocion: { nombre: "Martes", producto_id: productos(:catsup).id, sucursal_id: "", tipo: "precio", precio: "39.90", cantidad_minima: "", activa: "1" } }
+    promo = Promocion.last
+    assert_redirected_to admin_promociones_path
+    assert_equal 3_990, promo.precio_centavos
+    assert_nil promo.sucursal_id
+    get admin_promociones_path
+    assert_select "td", /Martes/
+    get caja_escanear_path(codigo: "CATS"), headers: { "Accept" => "application/json" }
+    assert_equal "Martes", response.parsed_body["promociones"].first["nombre"]
+    delete admin_promocion_path(promo)
+    assert_equal 0, Promocion.count
+  end
+
   test "sucursales con límite en pesos y sin permiso 403" do
     post admin_sucursales_path, params: { sucursal: { codigo: "t03", nombre: "Tienda 3", tipo: "tienda", limite_efectivo: "5000", activa: "1" } }
     s = Sucursal.find_by!(codigo: "T03")

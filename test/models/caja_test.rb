@@ -123,6 +123,24 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal 4_200, @catsup.reload.precio_centavos_en(@tienda)
   end
 
+  test "la caja aplica la promoción sola, la marca en la línea y el PIN se mide contra ella" do
+    Inventario.mover!(sucursal: @tienda, producto: @catsup, tipo: "entrada", cantidad: 20, usuario: @cajera)
+    promo = Promocion.create!(nombre: "Mayoreo", producto: @catsup, tipo: "por_cantidad", cantidad_minima: 3, precio_centavos: 3_500)
+    venta = cobrar([ { producto_id: @catsup.id, cantidad: 3 } ])
+    linea = venta.lineas.first
+    assert_equal 3_500, linea.precio_centavos
+    assert_equal 4_200, linea.catalogo_centavos
+    assert_equal promo, linea.promocion
+    assert_equal 10_500, venta.total_centavos
+    sin = cobrar([ { producto_id: @catsup.id, cantidad: 2 } ])
+    assert_nil sin.lineas.first.promocion
+    assert_equal 4_200, sin.lineas.first.precio_centavos
+    assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 3, precio_centavos: 3_400 } ]) }
+    con = cobrar([ { producto_id: @catsup.id, cantidad: 3, precio_centavos: 3_400 } ], nil, autorizador: usuarios(:supervisora))
+    assert_nil con.lineas.first.promocion
+    assert_equal usuarios(:supervisora), con.lineas.first.autorizado_por
+  end
+
   test "dinero: formato y redondeo" do
     assert_equal "$1,234.50", Dinero.pesos(123_450)
     assert_equal "−$0.05", Dinero.pesos(-5)

@@ -7,6 +7,7 @@ class Producto < ApplicationRecord
   has_many :etiquetas, dependent: :restrict_with_error
   has_many :pedido_lineas, dependent: :restrict_with_error
   has_many :precios_sucursal, class_name: "PrecioSucursal", dependent: :destroy
+  has_many :promociones, dependent: :destroy
 
   before_validation :asignar_plu, on: :create
 

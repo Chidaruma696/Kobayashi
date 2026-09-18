@@ -54,11 +54,25 @@ export default class extends Controller {
   }
 
   agregar(datos) {
-    this.lineas.push({ etiqueta_id: datos.etiqueta_id, codigo: datos.codigo, producto_id: datos.producto_id, nombre: datos.nombre,
-                       unidad: datos.unidad, decimales: datos.decimales, cantidad: datos.cantidad,
-                       catalogo: datos.precio_centavos, precio: datos.precio_centavos })
+    const l = { etiqueta_id: datos.etiqueta_id, codigo: datos.codigo, producto_id: datos.producto_id, nombre: datos.nombre,
+                unidad: datos.unidad, decimales: datos.decimales, cantidad: datos.cantidad,
+                catalogo: datos.precio_centavos, promociones: datos.promociones || [], manual: false }
+    l.precio = this.precioVigente(l)
+    this.lineas.push(l)
     this.render()
     this.codigoTarget.focus()
+  }
+
+  // El mejor precio legítimo para la cantidad: promoción vigente o catálogo. El servidor lo recalcula.
+  precioVigente(l) {
+    let mejor = l.catalogo
+    l.promo = null
+    for (const p of l.promociones) {
+      if (l.cantidad < Number(p.cantidad_minima)) continue
+      const precio = p.tipo === "porcentaje" ? Math.round(l.catalogo * (1 - Number(p.porcentaje) / 100)) : p.precio_centavos
+      if (precio < mejor) { mejor = precio; l.promo = p.nombre }
+    }
+    return mejor
   }
 
   quitar(event) {
@@ -69,13 +83,15 @@ export default class extends Controller {
   cambiarPrecio(event) {
     const l = this.lineas[Number(event.params.indice)]
     l.precio = Math.round(Number(event.target.value) * 100)
+    l.manual = true
     this.render(false)
   }
 
   cambiarCantidad(event) {
     const l = this.lineas[Number(event.params.indice)]
     l.cantidad = Number(event.target.value)
-    this.render(false)
+    if (!l.manual) l.precio = this.precioVigente(l)
+    this.render()
   }
 
   importe(l) { return Math.round(l.cantidad * l.precio) }
@@ -86,8 +102,8 @@ export default class extends Controller {
   render(filas = true) {
     if (filas) {
       this.cuerpoTarget.innerHTML = this.lineas.map((l, i) => `
-        <tr class="border-t border-slate-100 ${l.precio < l.catalogo ? "bg-amber-50" : ""}">
-          <td class="px-3 py-2">${l.nombre}${l.codigo ? ` <span class="font-mono text-xs text-slate-500">${l.codigo}</span>` : ""}</td>
+        <tr class="border-t border-slate-100 ${l.manual && l.precio < l.catalogo ? "bg-amber-50" : ""}">
+          <td class="px-3 py-2">${l.nombre}${l.codigo ? ` <span class="font-mono text-xs text-slate-500">${l.codigo}</span>` : ""}${l.promo ? ` <span class="rounded bg-emerald-100 px-1 text-xs text-emerald-800">${l.promo}</span>` : ""}</td>
           <td class="px-3 py-2 text-right font-mono">${l.etiqueta_id
             ? `${l.cantidad.toFixed(l.decimales)} ${l.unidad}`
             : `<input type="number" value="${l.cantidad}" step="${l.unidad === "kg" ? "0.001" : "1"}" min="0" data-action="change->pos#cambiarCantidad" data-pos-indice-param="${i}" class="w-24 rounded border border-slate-300 px-1 text-right font-mono"> ${l.unidad}`}</td>
@@ -121,7 +137,7 @@ export default class extends Controller {
       { forma: "deposito", monto_centavos: this.centavos(this.depositoTarget) }
     ]
     const cuerpo = new FormData()
-    cuerpo.append("lineas", JSON.stringify(this.lineas.map(l => ({ etiqueta_id: l.etiqueta_id, producto_id: l.producto_id, cantidad: l.cantidad, precio_centavos: l.precio }))))
+    cuerpo.append("lineas", JSON.stringify(this.lineas.map(l => ({ etiqueta_id: l.etiqueta_id, producto_id: l.producto_id, cantidad: l.cantidad, precio_centavos: l.manual ? l.precio : null }))))
     cuerpo.append("pagos", JSON.stringify(pagos))
     cuerpo.append("clave", this.claveValue)
     cuerpo.append("pin", this.pinTarget.value)

@@ -3,6 +3,7 @@ class VentaLinea < ApplicationRecord
   belongs_to :producto
   belongs_to :etiqueta, optional: true
   belongs_to :autorizado_por, class_name: "Usuario", optional: true
+  belongs_to :promocion, optional: true
   has_many :devolucion_lineas, dependent: :restrict_with_error
 
   validates :cantidad, numericality: { greater_than: 0 }

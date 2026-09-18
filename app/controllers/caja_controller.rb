@@ -21,8 +21,12 @@ class CajaController < ApplicationController
       return render json: { error: "Es una #{e.tipo}: escanea los paquetes" }, status: :unprocessable_entity unless e.paquete? || (e.caja? && e.producto)
     end
     p = r.producto
+    catalogo = p.precio_centavos_en(sucursal_actual)
+    promos = Promocion.para(p, sucursal_actual).select(&:vigente?).map do |pr|
+      { tipo: pr.tipo, cantidad_minima: pr.cantidad_minima, precio_centavos: pr.precio_centavos, porcentaje: pr.porcentaje, nombre: pr.nombre }
+    end
     render json: { etiqueta_id: r.etiqueta&.id, codigo: r.etiqueta&.codigo, producto_id: p.id, nombre: p.nombre, unidad: p.unidad,
-                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: p.precio_centavos_en(sucursal_actual) }
+                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: catalogo, promociones: promos }
   end
 
   def cobrar

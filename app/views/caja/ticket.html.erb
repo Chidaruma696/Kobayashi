@@ -3,7 +3,7 @@
   <div class="linea"></div>
   <table>
     <% @venta.lineas.each do |l| %>
-      <tr><td colspan="2"><%= l.producto.nombre %></td></tr>
+      <tr><td colspan="2"><%= l.producto.nombre %><%= " (#{l.promocion.nombre})" if l.promocion %></td></tr>
       <tr><td><%= cantidad(l.cantidad, l.producto) %> × <%= pesos(l.precio_centavos) %><%= " *" if l.precio_centavos < l.catalogo_centavos %></td><td class="der"><%= pesos(l.importe_centavos) %></td></tr>
     <% end %>
   </table>

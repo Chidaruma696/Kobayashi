@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_040001) do
   create_table "cargos", force: :cascade do |t|
     t.integer "conteo_id", null: false
     t.datetime "created_at", null: false
@@ -312,6 +312,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
     t.check_constraint "unidad IN ('kg', 'pieza')", name: "productos_unidad"
   end
 
+  create_table "promociones", force: :cascade do |t|
+    t.boolean "activa", default: true, null: false
+    t.decimal "cantidad_minima", precision: 12, scale: 3, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.date "desde"
+    t.date "hasta"
+    t.string "nombre", null: false
+    t.decimal "porcentaje", precision: 5, scale: 2
+    t.integer "precio_centavos"
+    t.integer "producto_id", null: false
+    t.integer "sucursal_id"
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id", "activa"], name: "index_promociones_on_producto_id_and_activa"
+    t.index ["producto_id"], name: "index_promociones_on_producto_id"
+    t.index ["sucursal_id"], name: "index_promociones_on_sucursal_id"
+    t.check_constraint "tipo IN ('precio', 'porcentaje', 'por_cantidad')", name: "promociones_tipo"
+  end
+
   create_table "retiros", force: :cascade do |t|
     t.integer "autorizado_por_id", null: false
     t.integer "corte_id", null: false
@@ -427,11 +446,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
     t.integer "importe_centavos", null: false
     t.integer "precio_centavos", null: false
     t.integer "producto_id", null: false
+    t.integer "promocion_id"
     t.datetime "updated_at", null: false
     t.integer "venta_id", null: false
     t.index ["autorizado_por_id"], name: "index_venta_lineas_on_autorizado_por_id"
     t.index ["etiqueta_id"], name: "index_venta_lineas_on_etiqueta_id"
     t.index ["producto_id"], name: "index_venta_lineas_on_producto_id"
+    t.index ["promocion_id"], name: "index_venta_lineas_on_promocion_id"
     t.index ["venta_id"], name: "index_venta_lineas_on_venta_id"
     t.check_constraint "cantidad > 0", name: "venta_lineas_cantidad"
     t.check_constraint "precio_centavos >= 0 AND importe_centavos >= 0", name: "venta_lineas_dinero"
@@ -507,6 +528,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
   add_foreign_key "producciones", "sucursales"
   add_foreign_key "producciones", "usuarios"
   add_foreign_key "producciones", "usuarios", column: "autorizado_por_id"
+  add_foreign_key "promociones", "productos"
+  add_foreign_key "promociones", "sucursales"
   add_foreign_key "retiros", "cortes"
   add_foreign_key "retiros", "usuarios"
   add_foreign_key "retiros", "usuarios", column: "autorizado_por_id"
@@ -525,6 +548,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_030001) do
   add_foreign_key "usuarios", "sucursales"
   add_foreign_key "venta_lineas", "etiquetas"
   add_foreign_key "venta_lineas", "productos"
+  add_foreign_key "venta_lineas", "promociones"
   add_foreign_key "venta_lineas", "usuarios", column: "autorizado_por_id"
   add_foreign_key "venta_lineas", "ventas"
   add_foreign_key "ventas", "cortes"

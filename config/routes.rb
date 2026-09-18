@@ -81,6 +81,7 @@ Rails.application.routes.draw do
     resources :productos, except: %i[show destroy] do
       resources :codigos, only: %i[create destroy], controller: "codigos_barras"
     end
+    resources :promociones, except: %i[show]
     resources :usuarios, except: %i[show destroy]
     resources :roles, except: %i[show destroy]
     resources :sucursales, except: %i[show destroy]

@@ -83,15 +83,17 @@ module Caja
       raise Error, "#{producto.nombre} va por piezas enteras" if !producto.kg? && cantidad != cantidad.floor
     end
     catalogo = producto.precio_centavos_en(sucursal)
-    precio = l[:precio_centavos].present? ? l[:precio_centavos].to_i : catalogo
+    promo_precio, promocion = Promocion.mejor(producto, sucursal, cantidad, catalogo)
+    legitimo = promo_precio || catalogo
+    precio = l[:precio_centavos].present? ? l[:precio_centavos].to_i : legitimo
     autoriza = nil
-    if precio < catalogo
+    if precio < legitimo
       raise Error, "#{producto.nombre}: el precio no puede bajar de la mitad del catálogo (#{Dinero.pesos((catalogo * PISO_PRECIO).ceil)})" if precio < catalogo * PISO_PRECIO
       raise Error, "#{producto.nombre}: bajar el precio necesita el PIN de quien pueda autorizarlo" unless autorizador&.puede?("caja.bajar_precio")
       autoriza = autorizador
     end
     { producto: producto, etiqueta: etiqueta, cantidad: cantidad, precio_centavos: precio, catalogo_centavos: catalogo,
-      importe_centavos: Dinero.importe(cantidad, precio), autorizado_por: autoriza }
+      importe_centavos: Dinero.importe(cantidad, precio), autorizado_por: autoriza, promocion: (precio == promo_precio ? promocion : nil) }
   end
   private_class_method :preparar_linea
 
