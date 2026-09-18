@@ -27,9 +27,10 @@ class Viaje < ApplicationRecord
   def en_ruta? = estado == "en_ruta"
   def liquidado? = estado == "liquidado"
 
-  # Paradas en el orden de reparto de la ruta.
+  # Paradas en el orden de reparto: el número de parada generado al armar (zona → cliente),
+  # que la oficina puede mover a mano antes de salir.
   def paradas
-    salidas.includes(:cliente, :venta).sort_by { |s| [ s.cliente&.orden || 0, s.id ] }
+    salidas.includes(:venta, cliente: :zona).sort_by { |s| [ s.parada || 9_999, s.id ] }
   end
 
   def agregar!(salida)
@@ -37,12 +38,39 @@ class Viaje < ApplicationRecord
     raise ArgumentError, "#{salida.folio} no es un reparto" unless salida.reparto?
     raise ArgumentError, "#{salida.folio} ya va en el viaje #{salida.viaje.folio}" if salida.viaje_id && salida.viaje_id != id
     raise ArgumentError, "#{salida.folio} está #{salida.estado}" unless salida.abierta?
-    salida.update!(viaje: self)
+    transaction do
+      salida.update!(viaje: self)
+      generar_orden!
+    end
   end
 
   def quitar!(salida)
     raise ArgumentError, "el viaje ya salió" unless armando?
-    salida.update!(viaje: nil) if salida.viaje_id == id
+    transaction do
+      salida.update!(viaje: nil, parada: nil) if salida.viaje_id == id
+      generar_orden!
+    end
+  end
+
+  # Genera el orden de reparto: zona de la ruta, orden del cliente. Numera las paradas 1..N.
+  def generar_orden!
+    salidas.includes(cliente: :zona).sort_by { |s| s.cliente.orden_reparto }.each_with_index { |s, i| s.update_column(:parada, i + 1) }
+  end
+
+  # Mueve una parada un lugar arriba (−1) o abajo (+1) antes de salir.
+  def mover!(salida, paso)
+    raise ArgumentError, "el viaje ya salió" unless armando?
+    lista = paradas
+    i = lista.index(salida) or raise ArgumentError, "esa parada no es de este viaje"
+    j = i + paso
+    return if j.negative? || j >= lista.size
+    lista[i], lista[j] = lista[j], lista[i]
+    lista.each_with_index { |s, k| s.update_column(:parada, k + 1) }
+  end
+
+  # Canastillas por tipo que van cargadas: la suma de las salidas.
+  def canastillas_cargadas
+    SalidaCanastilla.where(salida: salidas).group(:tipo_canastilla_id).sum(:cantidad)
   end
 
   # Sale el camión: cada reparto se envía (nace su nota por cobrar) y el viaje queda en ruta.
@@ -53,6 +81,10 @@ class Viaje < ApplicationRecord
     raise ArgumentError, "faltan por sellar: #{sin_sellar.map(&:folio).join(', ')}" if sin_sellar.any?
     transaction do
       salidas.each { |s| s.enviar!(usuario: usuario) }
+      canastillas_cargadas.each do |tipo_id, n|
+        Canastillas.mover!(tipo: "carga", tipo_canastilla: TipoCanastilla.find(tipo_id), cantidad: n, sucursal: sucursal, usuario: usuario,
+                           chofer: chofer, viaje: self, concepto: "Carga del viaje #{folio}")
+      end
       update!(estado: "en_ruta", salido_en: Time.current)
     end
   end
@@ -96,10 +128,20 @@ class Viaje < ApplicationRecord
   # Liquidar: las paradas que no se cerraron se dan por no entregadas, las ventas cobradas en
   # ruta entran a la caja abierta, los gastos salen de esa caja como retiro, y la diferencia
   # entre lo esperado y lo entregado se carga al chofer.
-  def liquidar!(efectivo_entregado_centavos:, usuario:)
+  # Lo que el camión debería traer de vuelta por tipo: cargado − entregado + devuelto por clientes.
+  def canastillas_a_bordo
+    MovimientoCanastilla.where(viaje: self).group(:tipo_canastilla_id).sum(:cantidad_chofer).reject { |_, v| v.zero? }
+  end
+
+  def liquidar!(efectivo_entregado_centavos:, usuario:, canastillas_regresan: {})
     raise ArgumentError, "el viaje está #{estado}" unless en_ruta?
     corte = Corte.abierto_en(sucursal) or raise ArgumentError, "no hay caja abierta en #{sucursal.nombre} para recibir el dinero"
     transaction do
+      canastillas_regresan.each do |tipo_id, n|
+        next unless n.to_i.positive?
+        Canastillas.mover!(tipo: "descarga", tipo_canastilla: TipoCanastilla.find(tipo_id), cantidad: n, sucursal: sucursal, usuario: usuario,
+                           chofer: chofer, viaje: self, concepto: "Descarga del viaje #{folio}")
+      end
       salidas.where(estado: "enviada").each { |s| s.cerrar_parada!(usuario: usuario, motivo_rechazo: "no se entregó (viaje #{folio} liquidado)") }
       esperado = efectivo_por_entregar_centavos
       ventas_en_ruta.find_each { |v| v.update!(en_ruta: false, corte: corte) }

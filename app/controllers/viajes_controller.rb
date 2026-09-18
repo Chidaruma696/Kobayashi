@@ -19,19 +19,20 @@ class ViajesController < ApplicationController
   def create
     autorizar!("rutas.armar")
     ruta = Ruta.activas.find(params[:ruta_id])
-    chofer = Usuario.activos.find(params[:chofer_id].presence || ruta.chofer_id)
+    chofer = Usuario.activos.find_by(id: params[:chofer_id].presence || ruta.chofer_id) or raise ArgumentError, "la ruta #{ruta} no tiene chofer: elige uno"
     viaje = Viaje.create!(sucursal: sucursal_actual, ruta: ruta, chofer: chofer, usuario: usuario_actual,
                           fecha: (Date.parse(params[:fecha]) rescue Date.current), notas: params[:notas].presence)
     # Los repartos sellados de la ruta que aún no van en ningún viaje suben solos.
     Salida.where(sucursal_origen: sucursal_actual, tipo: "reparto", ruta: ruta, viaje_id: nil, estado: "sellada").find_each { |s| viaje.agregar!(s) }
     redirect_to viaje_path(viaje), notice: "Viaje #{viaje.folio} armado con #{viaje.salidas.count} repartos"
-  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
+  rescue ArgumentError, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
     redirect_to new_viaje_path, alert: e.message
   end
 
   def show
     autorizar_alguno!("rutas.armar", "rutas.liquidar", "rutas.repartir")
     @paradas = @viaje.paradas
+    @tipos = TipoCanastilla.where(id: (@viaje.canastillas_cargadas.keys + @viaje.canastillas_a_bordo.keys).uniq).order(:nombre)
     @candidatas = Salida.where(sucursal_origen: @viaje.sucursal, tipo: "reparto", viaje_id: nil).abiertas.includes(:cliente, :ruta).order(:created_at) if @viaje.armando?
   end
 
@@ -39,7 +40,7 @@ class ViajesController < ApplicationController
   def hoja
     autorizar_alguno!("rutas.armar", "rutas.liquidar", "rutas.repartir")
     @paradas = @viaje.paradas
-    @titulo = "Hoja de ruta #{@viaje.folio}"
+    @titulo = "Orden de reparto #{@viaje.folio}"
     render layout: "ticket"
   end
 
@@ -69,6 +70,14 @@ class ViajesController < ApplicationController
     volver(nil, e.message)
   end
 
+  def mover
+    autorizar!("rutas.armar")
+    @viaje.mover!(Salida.find(params[:salida_id]), params[:paso].to_i.negative? ? -1 : 1)
+    volver(nil)
+  rescue ArgumentError => e
+    volver(nil, e.message)
+  end
+
   def salir
     autorizar!("rutas.armar")
     @viaje.salir!(usuario: usuario_actual)
@@ -87,7 +96,8 @@ class ViajesController < ApplicationController
 
   def liquidar
     autorizar!("rutas.liquidar")
-    @viaje.liquidar!(efectivo_entregado_centavos: Dinero.centavos(params[:entregado]), usuario: usuario_actual)
+    @viaje.liquidar!(efectivo_entregado_centavos: Dinero.centavos(params[:entregado]), usuario: usuario_actual,
+                     canastillas_regresan: (params[:canastillas]&.to_unsafe_h || {}))
     aviso = "Viaje liquidado: esperaba #{Dinero.pesos(@viaje.efectivo_esperado_centavos)}, entregó #{Dinero.pesos(@viaje.efectivo_entregado_centavos)}"
     aviso += "; cargo de #{Dinero.pesos(-@viaje.diferencia_centavos)} a #{@viaje.chofer}" if @viaje.diferencia_centavos.negative?
     volver(aviso)

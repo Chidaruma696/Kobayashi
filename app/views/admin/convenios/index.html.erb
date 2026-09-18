@@ -1,0 +1,20 @@
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Convenios de precio</h1>
+  <%= link_to "Nuevo convenio", new_admin_convenio_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+</div>
+<p class="mb-4 text-sm text-slate-600">Precio fijo por kilo en ciertas líneas, hasta un tope semanal de cajas que se acumula entre todas las notas de la semana del cliente. Lo que se pasa del tope va a precio de lista.</p>
+<table class="w-full border-collapse bg-white text-sm shadow-sm">
+  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Cliente</th><th class="px-3 py-2">Líneas</th><th class="px-3 py-2">Excluye</th><th class="px-3 py-2 text-right">Precio/kg</th><th class="px-3 py-2 text-right">Tope semanal</th><th class="px-3 py-2 text-right">Usadas esta semana</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <tbody>
+    <% @convenios.each do |c| %>
+      <tr class="border-t border-slate-100 <%= 'text-slate-400' unless c.activo %>">
+        <td class="px-3 py-2"><%= c.cliente %></td><td class="px-3 py-2"><%= c.lineas %></td><td class="px-3 py-2"><%= c.excluir %></td>
+        <td class="px-3 py-2 text-right font-mono"><%= pesos(c.precio_centavos) %></td><td class="px-3 py-2 text-right font-mono"><%= c.tope_cajas.to_s("F") %> cajas</td>
+        <td class="px-3 py-2 text-right font-mono"><%= c.cajas_usadas(Date.current).to_s("F") %></td>
+        <td class="px-3 py-2"><%= c.activo ? "sí" : "no" %></td>
+        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "editar", edit_admin_convenio_path(c), class: "text-blue-700" %> · <%= button_to "borrar", admin_convenio_path(c), method: :delete, class: "text-red-700", form: { class: "inline", data: { turbo_confirm: "¿Borrar el convenio?" } } %></td>
+      </tr>
+    <% end %>
+    <% if @convenios.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-slate-500">Sin convenios.</td></tr><% end %>
+  </tbody>
+</table>

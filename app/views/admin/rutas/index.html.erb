@@ -8,9 +8,9 @@
     <% @rutas.each do |r| %>
       <tr class="border-t border-slate-100 align-top">
         <td class="px-3 py-2 font-semibold"><%= r.nombre %></td><td class="px-3 py-2"><%= r.chofer || "—" %></td>
-        <td class="px-3 py-2 text-slate-600"><%= r.clientes.sort_by(&:orden).map(&:nombre).join(", ") %></td>
+        <td class="px-3 py-2 text-slate-600"><%= r.clientes_en_orden.map(&:nombre).join(" → ") %></td>
         <td class="px-3 py-2"><%= r.activa ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_ruta_path(r), class: "text-blue-700" %></td>
+        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "editar", edit_admin_ruta_path(r), class: "text-blue-700" %> · <%= link_to "orden de reparto", orden_admin_ruta_path(r), class: "text-blue-700" %></td>
       </tr>
     <% end %>
     <% if @rutas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-slate-500">Sin rutas.</td></tr><% end %>

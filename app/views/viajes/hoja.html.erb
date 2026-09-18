@@ -1,10 +1,10 @@
 <div class="ticket">
-  <div class="centro"><strong>HOJA DE RUTA <%= @viaje.folio %></strong></div>
+  <div class="centro"><strong>ORDEN DE REPARTO <%= @viaje.folio %></strong></div>
   <div class="centro"><%= @viaje.ruta %> · <%= l @viaje.fecha %></div>
   <div class="centro">Chofer: <%= @viaje.chofer %></div>
   <div class="linea"></div>
-  <% @paradas.each_with_index do |s, i| %>
-    <div><strong><%= i + 1 %>. <%= s.cliente %></strong> <%= s.folio %></div>
+  <% @paradas.each do |s| %>
+    <div><strong><%= s.parada %>. <%= s.cliente %></strong> <%= s.folio %><%= " · #{s.cliente.zona}" if s.cliente.zona %></div>
     <% if s.cliente.direccion.present? %><div><%= s.cliente.direccion %></div><% end %>
     <% if s.cliente.telefono.present? %><div>Tel. <%= s.cliente.telefono %></div><% end %>
     <table>
@@ -13,6 +13,7 @@
       <% end %>
     </table>
     <% if (saldo = s.cliente.saldo_centavos).positive? %><div>Debe: <%= Dinero.pesos(saldo) %> · <%= Credito::TIPOS[s.cliente.credito] %></div><% end %>
+    <% if s.canastillas.any? %><div>Canastillas: <%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ") %><% saldo_c = s.cliente.saldo_canastillas %><%= " · debe #{saldo_c.map { |t, n| "#{n} #{TipoCanastilla.find(t)}" }.join(', ')}" if saldo_c.any? %></div><% end %>
     <div class="der"><%= s.salida_etiquetas.count %> bultos<%= " · nota #{s.venta.folio} #{Dinero.pesos(s.venta.saldo_centavos)}" if s.venta %></div>
     <div>Cobrado: ____________  Firma: ____________</div>
     <div class="linea"></div>

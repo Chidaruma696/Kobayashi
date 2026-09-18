@@ -48,7 +48,8 @@ module RibbonHelper
       { nombre: "Chofer", botones: [ Boton.new("Mi ruta", :reparto_path, "rutas.repartir", "📍") ] },
       { nombre: "Oficina", botones: [
         Boton.new("Liquidar", :viajes_path, "rutas.liquidar", "💵"),
-        Boton.new("Cobranza", :cobranza_path, "cobranza.ver", "📒")
+        Boton.new("Cobranza", :cobranza_path, "cobranza.ver", "📒"),
+        Boton.new("Canastillas", :canastillas_path, "canastillas.ver", "🧺")
       ] }
     ] },
     { id: :conteos, nombre: "Conteos", grupos: [
@@ -74,7 +75,9 @@ module RibbonHelper
       ] },
       { nombre: "Reparto", botones: [
         Boton.new("Clientes", :admin_clientes_path, "admin.catalogo", "🧑"),
-        Boton.new("Rutas", :admin_rutas_path, "admin.catalogo", "🛣")
+        Boton.new("Rutas", :admin_rutas_path, "admin.catalogo", "🛣"),
+        Boton.new("Convenios", :admin_convenios_path, "admin.catalogo", "🤝"),
+        Boton.new("Canastillas", :admin_tipos_canastilla_path, "admin.catalogo", "🧺")
       ] },
       { nombre: "Gente", botones: [
         Boton.new("Usuarios", :admin_usuarios_path, "admin.usuarios", "👤"),

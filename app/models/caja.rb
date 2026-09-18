@@ -47,9 +47,12 @@ module Caja
     hojas = salida.salida_etiquetas.includes(etiqueta: :producto).map(&:etiqueta)
     manuales = salida.lineas.includes(:producto).to_a
     raise Error, "la salida está vacía" if hojas.empty? && manuales.empty?
+    cajas = salida.cajas_por_hoja
     Venta.transaction do
-      preparadas = hojas.map { |e| preparar_linea(sucursal, { etiqueta_id: e.id }, nil) } +
+      preparadas = hojas.map { |e| preparar_linea(sucursal, { etiqueta_id: e.id }, nil).merge(cajas: cajas[e.id]) } +
                    manuales.map { |l| preparar_linea(sucursal, { producto_id: l.producto_id, cantidad: l.cantidad }, nil) }
+      preparadas = salida.cliente.convenio.aplicar(preparadas, Date.current) if salida.cliente.convenio
+      preparadas.each { |l| l.delete(:cajas) }
       total = preparadas.sum { |l| l[:importe_centavos] }
       venta = Venta.create!(sucursal: sucursal, corte: corte, usuario: usuario, cliente: salida.cliente, clave: "reparto:#{salida.id}",
                             folio: Folio.siguiente!(sucursal, "B"), codigo: codigo_ticket(sucursal), estado: "por_cobrar",

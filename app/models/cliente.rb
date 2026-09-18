@@ -1,5 +1,8 @@
 class Cliente < ApplicationRecord
   belongs_to :ruta, optional: true
+  belongs_to :zona, optional: true
+  has_one :convenio, -> { where(activo: true) }, dependent: :restrict_with_error
+  has_many :movimientos_canastillas, class_name: "MovimientoCanastilla", dependent: :restrict_with_error
   has_many :pedidos, dependent: :restrict_with_error
   has_many :salidas, dependent: :restrict_with_error
   has_many :ventas, dependent: :restrict_with_error
@@ -11,6 +14,16 @@ class Cliente < ApplicationRecord
   validates :credito, inclusion: { in: Credito::TIPOS.keys }
   validates :limite_credito_centavos, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :dia_corte, inclusion: { in: 0..6 }, allow_nil: true
+  validate { errors.add(:zona, "no es de la ruta #{ruta}") if zona && zona.ruta_id != ruta_id }
+
+  # [orden de la zona, orden del cliente]: el orden de reparto.
+  def orden_reparto
+    [ zona&.orden || 0, orden, id.to_i ]
+  end
+
+  def saldo_canastillas
+    Canastillas.saldo_cliente(self)
+  end
 
   def saldo_centavos
     movimientos_credito.sum(:monto_centavos)

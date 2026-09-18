@@ -1,0 +1,44 @@
+# Saldos de canastillas por tipo: lo que debe cada cliente y lo que trae cada chofer.
+module Canastillas
+  def self.saldo_cliente(cliente)
+    MovimientoCanastilla.where(cliente: cliente).group(:tipo_canastilla_id).sum(:cantidad_cliente).reject { |_, v| v.zero? }
+  end
+
+  def self.saldo_chofer(chofer)
+    MovimientoCanastilla.where(chofer: chofer).group(:tipo_canastilla_id).sum(:cantidad_chofer).reject { |_, v| v.zero? }
+  end
+
+  # { cliente_id => { tipo_id => saldo } } de todos los que deben algo.
+  def self.saldos_clientes
+    MovimientoCanastilla.where.not(cliente_id: nil).group(:cliente_id, :tipo_canastilla_id).sum(:cantidad_cliente)
+                        .each_with_object({}) { |((c, t), v), h| (h[c] ||= {})[t] = v unless v.zero? }
+  end
+
+  def self.saldos_choferes
+    MovimientoCanastilla.where.not(chofer_id: nil).group(:chofer_id, :tipo_canastilla_id).sum(:cantidad_chofer)
+                        .each_with_object({}) { |((c, t), v), h| (h[c] ||= {})[t] = v unless v.zero? }
+  end
+
+  def self.mover!(tipo:, tipo_canastilla:, cantidad:, sucursal:, usuario:, cliente: nil, chofer: nil, viaje: nil, concepto: nil, fecha: Date.current)
+    n = cantidad.to_i
+    raise ArgumentError, "la cantidad debe ser mayor que cero" unless n.positive?
+    cli, cho = case tipo
+    when "carga" then [ 0, n ]
+    when "entrega" then [ n, -n ]
+    when "devolucion" then [ -n, chofer ? n : 0 ]
+    when "descarga" then [ 0, -n ]
+    else raise ArgumentError, "tipo de movimiento desconocido: #{tipo}"
+    end
+    MovimientoCanastilla.create!(tipo: tipo, tipo_canastilla: tipo_canastilla, cliente: cliente, chofer: chofer, viaje: viaje, sucursal: sucursal,
+                                 cantidad_cliente: cliente ? cli : 0, cantidad_chofer: chofer ? cho : 0, fecha: fecha, concepto: concepto, usuario: usuario)
+  end
+
+  # Ajuste a mano, con motivo: cantidad con signo sobre el cliente o sobre el chofer.
+  def self.ajustar!(tipo_canastilla:, cantidad:, motivo:, sucursal:, usuario:, cliente: nil, chofer: nil)
+    raise ArgumentError, "escribe el motivo del ajuste" if motivo.blank?
+    raise ArgumentError, "un ajuste es sobre un cliente o sobre un chofer" if cliente.nil? == chofer.nil?
+    MovimientoCanastilla.create!(tipo: "ajuste", tipo_canastilla: tipo_canastilla, cliente: cliente, chofer: chofer, sucursal: sucursal,
+                                 cantidad_cliente: cliente ? cantidad.to_i : 0, cantidad_chofer: chofer ? cantidad.to_i : 0,
+                                 fecha: Date.current, concepto: motivo, usuario: usuario)
+  end
+end

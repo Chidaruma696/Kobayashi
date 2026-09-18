@@ -12,6 +12,16 @@
       <%= render "escaneo", url: agregar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Agregar" %>
       <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Quitar una etiqueta</summary>
         <%= render "escaneo", url: quitar_salida_path(s), placeholder: "Código de la etiqueta", boton: "Quitar" %></details>
+      <% if s.reparto? && (tipos = TipoCanastilla.activos.to_a).any? %>
+        <div class="mt-3 text-sm">
+          <span class="font-semibold">Canastillas que van:</span> <%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ").presence || "ninguna" %>
+          <%= form_with url: canastillas_salida_path(s), class: "mt-1 flex gap-2" do |f| %>
+            <%= f.select :tipo_canastilla_id, tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "rounded border border-slate-300 px-2 py-1" %>
+            <%= f.number_field :cantidad, min: 0, placeholder: "cantidad (0 quita)", required: true, class: "w-32 rounded border border-slate-300 px-2 py-1 font-mono" %>
+            <%= f.submit "Anotar", class: "rounded border border-slate-300 px-3 py-1" %>
+          <% end %>
+        </div>
+      <% end %>
       <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Renglón sin etiqueta (mandar sin escanear, con motivo)</summary>
           <%= form_with url: manual_salida_path(s), class: "mt-2 grid grid-cols-2 gap-2" do |f| %>
             <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "col-span-2 rounded border border-slate-300 px-2 py-1" %>

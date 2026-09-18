@@ -3,13 +3,13 @@
   <div class="mb-6 rounded bg-white p-4 shadow-sm">
     <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
       <h2 class="font-semibold">Viaje <%= viaje.folio %> · <%= viaje.ruta %> · <%= l viaje.fecha %></h2>
-      <span class="text-sm text-slate-600">Chofer <%= viaje.chofer %> · <%= link_to "hoja", hoja_viaje_path(viaje), target: "_blank", class: "text-blue-700 underline" %> · <%= link_to "viaje", viaje_path(viaje), class: "text-blue-700 underline" %></span>
+      <span class="text-sm text-slate-600">Chofer <%= viaje.chofer %> · <%= link_to "orden de reparto", hoja_viaje_path(viaje), target: "_blank", class: "text-blue-700 underline" %> · <%= link_to "viaje", viaje_path(viaje), class: "text-blue-700 underline" %></span>
     </div>
     <ol class="space-y-2">
-      <% paradas.each_with_index do |s, i| %>
+      <% paradas.each do |s| %>
         <li class="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-200 px-3 py-2 <%= 'bg-green-50' if s.entregada? %> <%= 'bg-red-50' if s.rechazada? %>">
           <div>
-            <div class="font-semibold"><%= i + 1 %>. <%= s.cliente %></div>
+            <div class="font-semibold"><%= s.parada %>. <%= s.cliente %><%= " · #{s.cliente.zona}" if s.cliente.zona %></div>
             <div class="text-xs text-slate-600"><%= s.cliente.direccion %><%= " · #{s.cliente.telefono}" if s.cliente.telefono.present? %> · <%= s.salida_etiquetas.count %> bultos<%= " · #{pesos(s.venta.saldo_centavos)}" if s.venta %></div>
           </div>
           <% if s.enviada? %>

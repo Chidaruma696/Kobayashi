@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       post :reportar
       post :cerrar_recepcion
       post :cobrar_entrega
+      post :canastillas
       post :cancelar
     end
   end
@@ -62,11 +63,17 @@ Rails.application.routes.draw do
       get :hoja
       post :agregar
       post :quitar
+      post :mover
       post :salir
       post :gasto
       post :liquidar
       post :cancelar
     end
+  end
+  scope "canastillas", controller: "canastillas", as: "canastillas" do
+    get "/", action: :index
+    post "devolucion", action: :devolucion, as: :devolucion
+    post "ajuste", action: :ajuste, as: :ajuste
   end
   scope "cobranza", controller: "cobranza", as: "cobranza" do
     get "/", action: :index
@@ -82,6 +89,7 @@ Rails.application.routes.draw do
     post ":id/cerrar", action: :cerrar, as: :cerrar
     post ":id/no_entregado", action: :no_entregado, as: :no_entregado
     post ":id/abonar", action: :abonar, as: :abonar
+    post ":id/canastillas", action: :canastillas, as: :canastillas
   end
 
   resources :conteos, only: %i[index new create show] do
@@ -117,7 +125,14 @@ Rails.application.routes.draw do
     end
     resources :promociones, except: %i[show]
     resources :clientes, except: %i[show destroy]
-    resources :rutas, except: %i[show destroy]
+    resources :rutas, except: %i[show destroy] do
+      member do
+        get :orden
+        post :orden, action: :guardar_orden
+      end
+    end
+    resources :convenios, except: %i[show]
+    resources :tipos_canastilla, except: %i[show destroy], controller: "tipos_canastilla"
     resources :usuarios, except: %i[show destroy]
     resources :roles, except: %i[show destroy]
     resources :sucursales, except: %i[show destroy]

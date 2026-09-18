@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -72,9 +72,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.integer "ruta_id"
     t.string "telefono"
     t.datetime "updated_at", null: false
+    t.integer "zona_id"
     t.index ["bloqueo_por_id"], name: "index_clientes_on_bloqueo_por_id"
     t.index ["nombre"], name: "index_clientes_on_nombre"
     t.index ["ruta_id"], name: "index_clientes_on_ruta_id"
+    t.index ["zona_id"], name: "index_clientes_on_zona_id"
     t.check_constraint "credito IN ('contado', 'nota_x_nota', 'limite', 'semanal', 'contado_abonando', 'especial')", name: "clientes_credito"
   end
 
@@ -138,6 +140,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.index ["sucursal_id"], name: "index_conteos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_conteos_on_usuario_id"
     t.check_constraint "estado IN ('abierto', 'cerrado')", name: "conteos_estado"
+  end
+
+  create_table "convenios", force: :cascade do |t|
+    t.boolean "activo", default: true, null: false
+    t.integer "cliente_id", null: false
+    t.datetime "created_at", null: false
+    t.string "excluir"
+    t.string "lineas", null: false
+    t.string "notas"
+    t.integer "precio_centavos", null: false
+    t.decimal "tope_cajas", precision: 8, scale: 2, default: "0.0", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cliente_id"], name: "index_convenios_activo_por_cliente", unique: true, where: "activo"
+    t.index ["cliente_id"], name: "index_convenios_on_cliente_id"
   end
 
   create_table "cortes", force: :cascade do |t|
@@ -267,6 +283,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.index ["usuario_id"], name: "index_movimientos_on_usuario_id"
     t.check_constraint "cantidad > 0", name: "movimientos_cantidad_positiva"
     t.check_constraint "tipo IN ('entrada', 'produccion', 'recepcion', 'devolucion_cliente', 'ajuste_entrada', 'venta', 'salida', 'consumo', 'merma', 'ajuste_salida')", name: "movimientos_tipo"
+  end
+
+  create_table "movimientos_canastillas", force: :cascade do |t|
+    t.integer "cantidad_chofer", default: 0, null: false
+    t.integer "cantidad_cliente", default: 0, null: false
+    t.integer "chofer_id"
+    t.integer "cliente_id"
+    t.string "concepto"
+    t.datetime "created_at", null: false
+    t.date "fecha", null: false
+    t.integer "sucursal_id", null: false
+    t.string "tipo", null: false
+    t.integer "tipo_canastilla_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.integer "viaje_id"
+    t.index ["chofer_id"], name: "index_movimientos_canastillas_on_chofer_id"
+    t.index ["cliente_id"], name: "index_movimientos_canastillas_on_cliente_id"
+    t.index ["sucursal_id"], name: "index_movimientos_canastillas_on_sucursal_id"
+    t.index ["tipo_canastilla_id"], name: "index_movimientos_canastillas_on_tipo_canastilla_id"
+    t.index ["usuario_id"], name: "index_movimientos_canastillas_on_usuario_id"
+    t.index ["viaje_id"], name: "index_movimientos_canastillas_on_viaje_id"
+    t.check_constraint "tipo IN ('carga', 'entrega', 'devolucion', 'descarga', 'ajuste')", name: "movimientos_canastillas_tipo"
   end
 
   create_table "movimientos_credito", force: :cascade do |t|
@@ -456,6 +495,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.index ["nombre"], name: "index_rutas_on_nombre", unique: true
   end
 
+  create_table "salida_canastillas", force: :cascade do |t|
+    t.integer "cantidad", null: false
+    t.datetime "created_at", null: false
+    t.integer "salida_id", null: false
+    t.integer "tipo_canastilla_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["salida_id", "tipo_canastilla_id"], name: "index_salida_canastillas_on_salida_id_and_tipo_canastilla_id", unique: true
+    t.index ["salida_id"], name: "index_salida_canastillas_on_salida_id"
+    t.index ["tipo_canastilla_id"], name: "index_salida_canastillas_on_tipo_canastilla_id"
+  end
+
   create_table "salida_etiquetas", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "estado", default: "pendiente", null: false
@@ -499,6 +549,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.string "estado", default: "preparando", null: false
     t.string "folio", null: false
     t.string "motivo"
+    t.integer "parada"
     t.datetime "recibido_en"
     t.integer "ruta_id"
     t.integer "sucursal_destino_id"
@@ -536,6 +587,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.check_constraint "tipo IN ('matriz', 'tienda')", name: "sucursales_tipo"
   end
 
+  create_table "tipos_canastilla", force: :cascade do |t|
+    t.boolean "activo", default: true, null: false
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.string "nombre", null: false
+    t.datetime "updated_at", null: false
+    t.index ["nombre"], name: "index_tipos_canastilla_on_nombre", unique: true
+  end
+
   create_table "usuarios", force: :cascade do |t|
     t.boolean "activo", default: true, null: false
     t.datetime "created_at", null: false
@@ -555,6 +615,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, null: false
     t.integer "catalogo_centavos", null: false
+    t.decimal "convenio_cajas", precision: 8, scale: 3, default: "0.0", null: false
+    t.integer "convenio_id"
     t.datetime "created_at", null: false
     t.integer "etiqueta_id"
     t.integer "importe_centavos", null: false
@@ -564,6 +626,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.datetime "updated_at", null: false
     t.integer "venta_id", null: false
     t.index ["autorizado_por_id"], name: "index_venta_lineas_on_autorizado_por_id"
+    t.index ["convenio_id"], name: "index_venta_lineas_on_convenio_id"
     t.index ["etiqueta_id"], name: "index_venta_lineas_on_etiqueta_id"
     t.index ["producto_id"], name: "index_venta_lineas_on_producto_id"
     t.index ["promocion_id"], name: "index_venta_lineas_on_promocion_id"
@@ -637,6 +700,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
     t.check_constraint "estado IN ('armando', 'en_ruta', 'liquidado', 'cancelado')", name: "viajes_estado"
   end
 
+  create_table "zonas", force: :cascade do |t|
+    t.boolean "activa", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "nombre", null: false
+    t.integer "orden", default: 0, null: false
+    t.integer "ruta_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ruta_id"], name: "index_zonas_on_ruta_id"
+  end
+
   add_foreign_key "abonos", "clientes"
   add_foreign_key "abonos", "cortes"
   add_foreign_key "abonos", "sucursales"
@@ -650,6 +723,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "cargos", "viajes"
   add_foreign_key "clientes", "rutas"
   add_foreign_key "clientes", "usuarios", column: "bloqueo_por_id"
+  add_foreign_key "clientes", "zonas"
   add_foreign_key "codigos_barras", "productos"
   add_foreign_key "conteo_etiquetas", "conteos"
   add_foreign_key "conteo_etiquetas", "etiquetas"
@@ -658,6 +732,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "conteos", "sucursales"
   add_foreign_key "conteos", "usuarios"
   add_foreign_key "conteos", "usuarios", column: "responsable_id"
+  add_foreign_key "convenios", "clientes"
   add_foreign_key "cortes", "sucursales"
   add_foreign_key "cortes", "usuarios"
   add_foreign_key "cortes", "usuarios", column: "cerrado_por_id"
@@ -681,6 +756,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "movimientos", "productos"
   add_foreign_key "movimientos", "sucursales"
   add_foreign_key "movimientos", "usuarios"
+  add_foreign_key "movimientos_canastillas", "clientes"
+  add_foreign_key "movimientos_canastillas", "sucursales"
+  add_foreign_key "movimientos_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
+  add_foreign_key "movimientos_canastillas", "usuarios"
+  add_foreign_key "movimientos_canastillas", "usuarios", column: "chofer_id"
+  add_foreign_key "movimientos_canastillas", "viajes"
   add_foreign_key "movimientos_credito", "clientes"
   add_foreign_key "movimientos_credito", "usuarios"
   add_foreign_key "pagos", "ventas"
@@ -706,6 +787,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "revisiones", "usuarios"
   add_foreign_key "revisiones", "usuarios", column: "revisado_por_id"
   add_foreign_key "rutas", "usuarios", column: "chofer_id"
+  add_foreign_key "salida_canastillas", "salidas"
+  add_foreign_key "salida_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
   add_foreign_key "salida_etiquetas", "etiquetas"
   add_foreign_key "salida_etiquetas", "etiquetas", column: "grupo_id"
   add_foreign_key "salida_etiquetas", "salidas"
@@ -724,6 +807,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "salidas", "viajes"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
+  add_foreign_key "venta_lineas", "convenios"
   add_foreign_key "venta_lineas", "etiquetas"
   add_foreign_key "venta_lineas", "productos"
   add_foreign_key "venta_lineas", "promociones"
@@ -740,4 +824,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_080001) do
   add_foreign_key "viajes", "usuarios"
   add_foreign_key "viajes", "usuarios", column: "chofer_id"
   add_foreign_key "viajes", "usuarios", column: "liquidado_por_id"
+  add_foreign_key "zonas", "rutas"
 end

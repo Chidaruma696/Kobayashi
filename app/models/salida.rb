@@ -16,6 +16,7 @@ class Salida < ApplicationRecord
   has_many :salida_etiquetas, dependent: :destroy
   has_many :etiquetas, through: :salida_etiquetas
   has_many :lineas, class_name: "SalidaLinea", dependent: :destroy
+  has_many :canastillas, class_name: "SalidaCanastilla", dependent: :destroy
 
   before_validation :asignar_folio, on: :create
 
@@ -144,6 +145,27 @@ class Salida < ApplicationRecord
     salida_etiquetas.where(estado: "pendiente")
   end
 
+  # Canastillas que van en la salida (solo mientras se prepara). Cantidad 0 la quita.
+  def fijar_canastillas!(tipo_canastilla, cantidad)
+    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    fila = canastillas.find_or_initialize_by(tipo_canastilla: tipo_canastilla)
+    cantidad.to_i.positive? ? fila.update!(cantidad: cantidad.to_i) : fila.destroy
+  end
+
+  # Cuántas cajas (canastillas) de cada hoja: una caja de proveedor es 1; un paquete dentro de
+  # una caja es su parte proporcional; un paquete suelto no cuenta como caja.
+  def cajas_por_hoja
+    filas = salida_etiquetas.includes(:etiqueta).to_a
+    por_padre = filas.group_by { |f| f.etiqueta.padre_id }
+    filas.each_with_object({}) do |f, h|
+      e = f.etiqueta
+      h[e.id] = if e.caja? then BigDecimal("1")
+      elsif e.padre_id && (padre = e.padre) && padre.caja? then (BigDecimal("1") / por_padre[e.padre_id].size).round(3)
+      else BigDecimal("0")
+      end
+    end
+  end
+
   # Cierra la parada: lo no escaneado se rechaza (vuelve al inventario, la nota baja), y si queda
   # algo que cobrar se cobra de contado ahí mismo. Sin nada entregado la parada queda rechazada.
   def cerrar_parada!(usuario:, motivo_rechazo: nil, pagos: [], a_credito: false, rechazar_lineas: [])
@@ -161,6 +183,10 @@ class Salida < ApplicationRecord
       if venta.saldo_centavos.positive?
         Caja.cobrar_en_ruta!(venta: venta, pagos: pagos, usuario: usuario, a_credito: a_credito)
         update!(estado: "entregada", recibido_en: Time.current)
+        canastillas.includes(:tipo_canastilla).each do |c|
+          Canastillas.mover!(tipo: "entrega", tipo_canastilla: c.tipo_canastilla, cantidad: c.cantidad, sucursal: sucursal_origen, usuario: usuario,
+                             cliente: cliente, chofer: viaje&.chofer, viaje: viaje, concepto: "Entrega #{folio}")
+        end
       else
         update!(estado: "rechazada", recibido_en: Time.current)
       end

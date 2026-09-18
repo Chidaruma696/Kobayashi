@@ -13,5 +13,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "recepcion", "recepciones"
   inflect.irregular "linea", "lineas"
   inflect.irregular "revision", "revisiones"
+  inflect.irregular "tipo_canastilla", "tipos_canastilla"
   inflect.uncountable %w[codigo_barras codigos_barras]
 end

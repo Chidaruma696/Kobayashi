@@ -44,7 +44,7 @@ class RutasTest < ActionDispatch::IntegrationTest
     get viaje_path(viaje)
     assert_select "td", /Taquería/
     get hoja_viaje_path(viaje)
-    assert_match "HOJA DE RUTA", response.body
+    assert_match "ORDEN DE REPARTO", response.body
 
     post salir_viaje_path(viaje)
     assert_nil flash[:alert]

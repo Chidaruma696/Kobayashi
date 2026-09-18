@@ -22,6 +22,8 @@ module Permiso
     "cobranza.ver" => "Ver saldos, antigüedad y estados de cuenta",
     "cobranza.abonar" => "Registrar abonos de clientes en oficina",
     "cobranza.bloquear" => "Bloquear o desbloquear el crédito a mano",
+    "canastillas.ver" => "Ver saldos de canastillas por cliente y chofer",
+    "canastillas.ajustar" => "Registrar devoluciones y ajustes de canastillas",
     "conteos.hacer" => "Hacer conteos físicos y cargar faltantes",
     "conteos.cargos" => "Cobrar o perdonar cargos",
     "reportes.ver" => "Ver el tablero y los reportes",

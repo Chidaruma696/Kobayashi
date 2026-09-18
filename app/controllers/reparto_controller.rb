@@ -18,7 +18,19 @@ class RepartoController < ApplicationController
     @manuales = @salida.lineas.vivas.includes(:producto)
     @venta = @salida.venta
     @credito = @salida.cliente.estado_credito
+    @canastillas_cliente = @salida.cliente.saldo_canastillas
+    @tipos = TipoCanastilla.activos.to_a
     @productos = Producto.activos.order(:nombre)
+  end
+
+  # El cliente devuelve canastillas: bajan de su saldo y suben al camión.
+  def canastillas
+    Canastillas.mover!(tipo: "devolucion", tipo_canastilla: TipoCanastilla.find(params[:tipo_canastilla_id]), cantidad: params[:cantidad],
+                       sucursal: @salida.sucursal_origen, usuario: usuario_actual, cliente: @salida.cliente, chofer: @salida.viaje.chofer,
+                       viaje: @salida.viaje, concepto: "Devolvió en la parada #{@salida.folio}")
+    volver("Canastillas devueltas anotadas")
+  rescue ArgumentError, ActiveRecord::RecordInvalid => e
+    volver(nil, e.message)
   end
 
   # El cliente paga algo de lo que debía: abono a cuenta que trae el chofer.

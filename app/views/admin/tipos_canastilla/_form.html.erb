@@ -1,0 +1,8 @@
+<%= form_with model: @tipo, url: (@tipo.new_record? ? admin_tipos_canastilla_path : admin_tipo_canastilla_path(@tipo)), scope: :tipo_canastilla, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre (marca)", tipo: :text_field %>
+    <%= render "admin/campo", f: f, campo: :color, etiqueta: "Color", tipo: :text_field %>
+  </div>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
+  <%= f.submit @tipo.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>

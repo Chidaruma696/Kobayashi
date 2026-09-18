@@ -1,0 +1,15 @@
+<%= form_with model: [ :admin, @convenio ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
+  <div><%= f.label :cliente_id, "Cliente", class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <%= render "admin/campo", f: f, campo: :lineas, etiqueta: "Líneas de producto (separadas por coma)", tipo: :text_field, opciones: { placeholder: "Pollo, Rosticero", list: "lineas_producto" } %>
+    <%= render "admin/campo", f: f, campo: :excluir, etiqueta: "Excluir productos cuyo nombre contenga", tipo: :text_field, opciones: { placeholder: "Avimarca" } %>
+  </div>
+  <datalist id="lineas_producto"><% Producto.activos.distinct.pluck(:linea).compact.each do |l| %><option value="<%= l %>"><% end %></datalist>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <%= render "admin/campo", f: f, campo: :precio, etiqueta: "Precio convenio por kg (pesos)", tipo: :number_field, opciones: { step: "0.01", min: "0.01" } %>
+    <%= render "admin/campo", f: f, campo: :tope_cajas, etiqueta: "Tope semanal (cajas)", tipo: :number_field, opciones: { step: "0.5", min: 0 } %>
+  </div>
+  <%= render "admin/campo", f: f, campo: :notas, etiqueta: "Notas", tipo: :text_field %>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
+  <%= f.submit @convenio.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+<% end %>

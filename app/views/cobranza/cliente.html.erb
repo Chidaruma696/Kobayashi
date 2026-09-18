@@ -11,6 +11,7 @@
     <div class="font-mono text-3xl"><%= pesos(@estado.saldo_centavos) %></div>
     <div class="mt-2 text-sm <%= @estado.bloqueado ? 'text-red-700' : 'text-green-700' %>"><%= @estado.bloqueado ? "Crédito bloqueado" : (@estado.tipo == "contado" ? "Sin crédito" : "Crédito abierto") %><%= " (manual)" if @estado.manual %></div>
     <div class="text-xs text-slate-500"><%= @estado.regla %><%= ". #{@estado.motivo}" if @estado.motivo.present? %></div>
+    <% if (sc = c.saldo_canastillas).any? %><div class="mt-2 text-xs text-slate-600">Canastillas: <%= sc.map { |t, n| "#{n} #{TipoCanastilla.find(t)}" }.join(", ") %></div><% end %>
     <table class="mt-3 w-full text-xs text-slate-600">
       <% @aging.each do |k, v| %><tr><td><%= k %> días</td><td class="text-right font-mono"><%= pesos(v) %></td></tr><% end %>
     </table>

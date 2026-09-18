@@ -92,6 +92,14 @@ class SalidasController < ApplicationController
   end
 
   # El chofer vuelve con el dinero del reparto.
+  def canastillas
+    autorizar!("salidas.surtir")
+    @salida.fijar_canastillas!(TipoCanastilla.find(params[:tipo_canastilla_id]), params[:cantidad])
+    redirect_to salida_path(@salida), notice: "Canastillas anotadas"
+  rescue ArgumentError, ActiveRecord::RecordInvalid => e
+    redirect_to salida_path(@salida), alert: e.message
+  end
+
   def cobrar_entrega
     autorizar!("caja.vender")
     pagos = %w[efectivo transferencia deposito].map { |f| { forma: f, monto_centavos: Dinero.centavos(params[f]) } }
