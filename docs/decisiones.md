@@ -15,10 +15,10 @@ El EAN-13 de la etiqueta identifica el paquete (08/07/06 + PLU + secuencia) y el
 Se etiqueta contra un pedido o una producción. Si no hay ni uno ni otro, hace falta motivo. Antes con PIN de alguien con permiso; ahora ver abajo.
 
 ## Autorización diferida en vez de PIN que bloquea (18 sept 2026)
-El PIN frenaba el flujo: si no había admin y urgía el pedido, nadie podía hacer nada. Lo de Neotenia (pedir aprobación y esperar) también bloquea, solo que de otra forma. Ahora la operación se hace con motivo y queda a nombre de quien la hizo en una bandeja; el supervisor la aprueba u observa al final del día, y lo observado se puede cargar. Bajar precio en caja sigue con PIN porque ahí el hueco es dinero directo.
+El PIN frenaba el flujo: si no había admin y urgía el pedido, nadie podía hacer nada. Lo que hacía el sistema anterior (pedir aprobación y esperar) también bloquea, solo que de otra forma. Ahora la operación se hace con motivo y queda a nombre de quien la hizo en una bandeja; el supervisor la aprueba u observa al final del día, y lo observado se puede cargar. Bajar precio en caja sigue con PIN porque ahí el hueco es dinero directo.
 
 ## Doble escaneo sí, doble pesada no
-Surtir escaneando y que otra persona verifique escaneando antes de cargar. La doble pesada a ciegas de Neotenia (romaneo + aduana) la descarté: es lenta y el problema real era la falta de trazabilidad, no el peso. Pero mandar sin escanear tiene que poder pasar: renglón sin etiqueta o sellar sin verificar, con motivo, y cae a revisión.
+Surtir escaneando y que otra persona verifique escaneando antes de cargar. La doble pesada a ciegas del sistema anterior (romaneo + aduana) la descarté: es lenta y el problema real era la falta de trazabilidad, no el peso. Pero mandar sin escanear tiene que poder pasar: renglón sin etiqueta o sellar sin verificar, con motivo, y cae a revisión.
 
 ## Contado en el punto de venta, crédito en ruta
 En mostrador todo es de contado, punto. En la ruta el cliente sí tiene crédito y de varios tipos (nota por nota, límite, semanal, contado abonando, especial), porque así funciona el negocio. Me confundí una vez y lo hice todo de contado; corregido.
