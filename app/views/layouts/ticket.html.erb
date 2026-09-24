@@ -30,7 +30,17 @@
       .cancelado { color: #000; font-weight: bold; font-size: 16pt; text-align: center; margin: 2mm 0; letter-spacing: 2px; }
       .recuadro { border: 1px dashed #000; padding: 1.2mm 1.6mm; margin: 1.5mm 0; }
       svg { width: 100%; height: auto; }
-      @media screen { body { background: #ddd; padding: 20px; } .ticket { background: white; box-shadow: 0 0 4px #999; } .acciones { margin-top: 12px; font-family: sans-serif; } }
+      /* Hojas de trabajo (pendientes, pedido, orden de reparto): letra un punto más grande que el ticket. */
+      .hoja { font-size: 9.5pt; }
+      .hoja th { font-size: 9pt; }
+      /* En pantalla el papel se ve al doble y centrado; al imprimir sale a su tamaño real. */
+      @media screen {
+        body { background: #e7e5e4; padding: 24px 16px 48px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .ticket { background: white; box-shadow: 0 2px 12px rgba(0,0,0,.18); zoom: 1.9; }
+        .acciones { display: flex; gap: 10px; font-family: system-ui, sans-serif; }
+        .acciones button, .acciones a { font: 600 15px/1 system-ui, sans-serif; padding: 10px 18px; border-radius: 8px; border: 1px solid #b84f53; background: #b84f53; color: white; text-decoration: none; cursor: pointer; }
+        .acciones a { background: white; color: #b84f53; }
+      }
       @media print { .acciones { display: none; } }
     </style>
   </head>

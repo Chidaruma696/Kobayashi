@@ -1,5 +1,5 @@
 <% p = @pedido %>
-<div class="ticket">
+<div class="ticket hoja">
   <div class="centro"><strong><%= t("pedidos.pedido").upcase %> <%= p.folio %></strong></div>
   <div class="centro"><%= t("pedidos.para_min") %> <%= p.destino %> · <%= t("pedidos.surte") %> <%= p.sucursal_origen %></div>
   <div class="centro"><%= t("pedidos.pidio_el", quien: p.usuario, fecha: l(p.created_at, format: :short)).downcase %></div>
