@@ -4,7 +4,7 @@ class AcercaDeTest < ActionDispatch::IntegrationTest
   test "el logo de la cinta abre el Acerca de con versión, build y sesión" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     get root_path
-    assert_select "button[title='Acerca de Kobayashi'] svg[aria-label=Kobayashi]"
+    assert_select "button[title='Acerca de Kobayashi'] img[alt=Kobayashi]"
     assert_select "dialog[data-dialogo-target=dialogo]" do
       assert_select "dd", /#{Regexp.escape(Kobayashi::VERSION)}/
       assert_select "dd", /Rails #{Regexp.escape(Rails.version)}/
