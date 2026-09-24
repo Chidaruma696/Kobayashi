@@ -66,10 +66,10 @@ class Salida < ApplicationRecord
   # entraron al vuelo como sueltas y ahora se cerraron en caja se reagrupan bajo la caja.
   # Devuelve cuántas hojas entraron nuevas.
   def acomodar!(etiqueta)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
     hojas = Salida.hojas_de(etiqueta)
     ajena = SalidaEtiqueta.joins(:salida).where(etiqueta: hojas, salidas: { estado: %w[preparando sellada enviada] }).where.not(salida_id: id).first
-    raise ArgumentError, "#{ajena.etiqueta.codigo} ya va en la salida #{ajena.salida.folio}" if ajena
+    raise ArgumentError, I18n.t("errores.salida.ya_va_en", codigo: ajena.etiqueta.codigo, folio: ajena.salida.folio) if ajena
     transaction do
       puestas = salida_etiquetas.where(etiqueta: hojas).to_a
       puestas.each { |f| f.update!(grupo: (f.etiqueta_id == etiqueta.id ? nil : etiqueta)) }
@@ -80,14 +80,14 @@ class Salida < ApplicationRecord
 
   # --- surtir: escanear una etiqueta viva y suelta del origen; se expande a sus hojas.
   def agregar!(etiqueta)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} no está viva" unless etiqueta.viva?
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} no está en #{sucursal_origen.nombre}" unless etiqueta.sucursal_id == sucursal_origen_id
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} va dentro de otra: escanea la caja o la tarima" if etiqueta.padre_id
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.no_viva", codigo: etiqueta.codigo) unless etiqueta.viva?
+    raise ArgumentError, I18n.t("errores.salida.no_esta_en", codigo: etiqueta.codigo, sucursal: sucursal_origen.nombre) unless etiqueta.sucursal_id == sucursal_origen_id
+    raise ArgumentError, I18n.t("errores.salida.va_dentro", codigo: etiqueta.codigo) if etiqueta.padre_id
     hojas = Salida.hojas_de(etiqueta)
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} está vacía" if hojas.empty?
+    raise ArgumentError, I18n.t("errores.salida.etiqueta_vacia", codigo: etiqueta.codigo) if hojas.empty?
     ocupada = SalidaEtiqueta.joins(:salida).where(etiqueta: hojas, salidas: { estado: %w[preparando sellada enviada] }).first
-    raise ArgumentError, "#{ocupada.etiqueta.codigo} ya va en la salida #{ocupada.salida.folio}" if ocupada
+    raise ArgumentError, I18n.t("errores.salida.ya_va_en", codigo: ocupada.etiqueta.codigo, folio: ocupada.salida.folio) if ocupada
     transaction do
       hojas.each { |h| salida_etiquetas.create!(etiqueta: h, grupo: (h == etiqueta ? nil : etiqueta)) }
     end
@@ -95,24 +95,24 @@ class Salida < ApplicationRecord
   end
 
   def quitar!(etiqueta)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
     salida_etiquetas.where(etiqueta: Salida.hojas_de(etiqueta)).destroy_all.size
   end
 
   # Renglón manual (sin etiqueta) con motivo: mandar sin escanear se puede, pero queda a nombre de
   # alguien. Sin autorizado_por la línea queda por revisar (ver Revision); el controlador la abre.
   def agregar_manual!(producto:, cantidad:, motivo:, autorizado_por: nil, usuario: nil)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "un renglón sin etiqueta lleva motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.manual_motivo") if motivo.blank?
     lineas.create!(producto: producto, cantidad: cantidad, motivo: motivo, autorizado_por: autorizado_por, usuario: usuario || self.usuario)
   end
 
   # --- verificar la carga: otra persona escanea lo que sube al camión.
   def verificar!(etiqueta, usuario:)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "quien surte no puede verificar su propia carga" if usuario == self.usuario
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.verificar_propia") if usuario == self.usuario
     filas = salida_etiquetas.where(etiqueta: Salida.hojas_de(etiqueta))
-    raise ArgumentError, "#{etiqueta.codigo} no va en esta salida" if filas.empty?
+    raise ArgumentError, I18n.t("errores.salida.no_va", codigo: etiqueta.codigo) if filas.empty?
     filas.update_all(verificado_por_id: usuario.id, updated_at: Time.current)
   end
 
@@ -124,17 +124,17 @@ class Salida < ApplicationRecord
   # (mandar sin escanear se puede) y devuelve cuántos bultos quedaron sin verificar, para que el
   # controlador lo deje por revisar.
   def sellar!(usuario:, sin_verificar_motivo: nil)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
-    raise ArgumentError, "no hay nada en la salida" if salida_etiquetas.none? && lineas.none?
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.nada") if salida_etiquetas.none? && lineas.none?
     pendientes = sin_verificar.count
-    raise ArgumentError, "faltan #{pendientes} etiquetas por verificar: escanéalas o sella con motivo" if pendientes.positive? && sin_verificar_motivo.blank?
+    raise ArgumentError, I18n.t("errores.salida.faltan_verificar", n: pendientes) if pendientes.positive? && sin_verificar_motivo.blank?
     update!(estado: "sellada", verificado_por: usuario)
     pendientes
   end
 
   # --- enviar: baja el kardex del origen, las etiquetas viajan y los pedidos completos se cierran.
   def enviar!(usuario:)
-    raise ArgumentError, "primero hay que sellar la salida" unless sellada?
+    raise ArgumentError, I18n.t("errores.salida.primero_sellar") unless sellada?
     transaction do
       if reparto?
         # La nota de venta se cierra aquí; se cobra de contado cuando el chofer vuelve.
@@ -155,15 +155,15 @@ class Salida < ApplicationRecord
 
   # --- la parada del chofer: entrega escaneando, rechaza lo que no bajó y cobra de contado.
   def entregar!(etiqueta, usuario:)
-    raise ArgumentError, "solo se entrega un reparto en ruta (#{estado})" unless reparto? && enviada?
+    raise ArgumentError, I18n.t("errores.salida.solo_entrega_reparto", estado: I18n.t("estados.#{estado}")) unless reparto? && enviada?
     filas = salida_etiquetas.where(etiqueta: Salida.hojas_de_reparto(etiqueta), estado: "pendiente")
-    raise ArgumentError, "#{etiqueta.codigo} no va en esta parada o ya se entregó" if filas.empty?
+    raise ArgumentError, I18n.t("errores.salida.no_va_parada", codigo: etiqueta.codigo) if filas.empty?
     filas.update_all(estado: "recibida", recibido_en: Time.current, updated_at: Time.current)
   end
 
   # Todo lo pendiente se da por entregado sin escanear (queda por revisar; el controlador abre la revisión).
   def entregar_todo!
-    raise ArgumentError, "solo se entrega un reparto en ruta (#{estado})" unless reparto? && enviada?
+    raise ArgumentError, I18n.t("errores.salida.solo_entrega_reparto", estado: I18n.t("estados.#{estado}")) unless reparto? && enviada?
     salida_etiquetas.where(estado: "pendiente").update_all(estado: "recibida", recibido_en: Time.current, updated_at: Time.current)
   end
 
@@ -173,7 +173,7 @@ class Salida < ApplicationRecord
 
   # Canastillas que van en la salida (solo mientras se prepara). Cantidad 0 la quita.
   def fijar_canastillas!(tipo_canastilla, cantidad)
-    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    raise ArgumentError, I18n.t("errores.salida.esta", estado: I18n.t("estados.#{estado}")) unless preparando?
     fila = canastillas.find_or_initialize_by(tipo_canastilla: tipo_canastilla)
     cantidad.to_i.positive? ? fila.update!(cantidad: cantidad.to_i) : fila.destroy
   end
@@ -195,12 +195,12 @@ class Salida < ApplicationRecord
   # Cierra la parada: lo no escaneado se rechaza (vuelve al inventario, la nota baja), y si queda
   # algo que cobrar se cobra de contado ahí mismo. Sin nada entregado la parada queda rechazada.
   def cerrar_parada!(usuario:, motivo_rechazo: nil, pagos: [], a_credito: false, rechazar_lineas: [])
-    raise ArgumentError, "solo se cierra un reparto en ruta (#{estado})" unless reparto? && enviada?
+    raise ArgumentError, I18n.t("errores.salida.solo_cierra_reparto", estado: I18n.t("estados.#{estado}")) unless reparto? && enviada?
     transaction do
       pendientes = pendientes_de_entrega.includes(:etiqueta).to_a
       manuales = lineas.where(id: rechazar_lineas, rechazada: false).includes(:producto).to_a
       if pendientes.any? || manuales.any?
-        raise ArgumentError, "quedan #{pendientes.size + manuales.size} bultos sin entregar: escanéalos o da el motivo del rechazo" if motivo_rechazo.blank?
+        raise ArgumentError, I18n.t("errores.salida.sin_entregar", n: pendientes.size + manuales.size) if motivo_rechazo.blank?
         Caja.rechazar_en_ruta!(venta: venta, etiquetas: pendientes.map(&:etiqueta), lineas_manuales: manuales, motivo: motivo_rechazo, usuario: usuario)
         salida_etiquetas.where(id: pendientes.map(&:id)).update_all(estado: "faltante", motivo: motivo_rechazo, updated_at: Time.current)
         lineas.where(id: manuales.map(&:id)).update_all(rechazada: true, updated_at: Time.current)
@@ -211,7 +211,7 @@ class Salida < ApplicationRecord
         update!(estado: "entregada", recibido_en: Time.current)
         canastillas.includes(:tipo_canastilla).each do |c|
           Canastillas.mover!(tipo: "entrega", tipo_canastilla: c.tipo_canastilla, cantidad: c.cantidad, sucursal: sucursal_origen, usuario: usuario,
-                             cliente: cliente, chofer: viaje&.chofer, viaje: viaje, concepto: "Entrega #{folio}")
+                             cliente: cliente, chofer: viaje&.chofer, viaje: viaje, concepto: I18n.t("salidas.entrega_concepto", folio: folio))
         end
       else
         update!(estado: "rechazada", recibido_en: Time.current)
@@ -222,8 +222,8 @@ class Salida < ApplicationRecord
 
   # Cobro en oficina de una nota por cobrar (reparto suelto, sin viaje): el dinero entra a la caja abierta.
   def cobrar_entrega!(pagos:, usuario:)
-    raise ArgumentError, "solo se cobra un reparto en ruta" unless reparto? && enviada?
-    raise ArgumentError, "este reparto va en el viaje #{viaje.folio}: se cobra en la parada y se liquida al volver" if viaje
+    raise ArgumentError, I18n.t("errores.salida.solo_cobra_reparto") unless reparto? && enviada?
+    raise ArgumentError, I18n.t("errores.salida.va_en_viaje", folio: viaje.folio) if viaje
     transaction do
       Caja.cobrar_pendiente!(venta: venta, pagos: pagos, usuario: usuario)
       update!(estado: "entregada", recibido_en: Time.current)
@@ -232,12 +232,12 @@ class Salida < ApplicationRecord
 
   # --- recibir en el destino.
   def recibir!(etiqueta, usuario:)
-    raise ArgumentError, "un reparto se cobra, no se recibe" if reparto?
-    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
+    raise ArgumentError, I18n.t("errores.salida.reparto_no_se_recibe") if reparto?
+    raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
     hojas = Salida.hojas_de(etiqueta)
-    raise ArgumentError, "una caja se recibe paquete por paquete; la tarima entera sí" if etiqueta.caja? && hojas.size > 1
+    raise ArgumentError, I18n.t("errores.salida.caja_por_paquete") if etiqueta.caja? && hojas.size > 1
     filas = salida_etiquetas.where(etiqueta: hojas, estado: "pendiente").includes(etiqueta: :producto)
-    raise ArgumentError, "#{etiqueta.codigo} no viene en esta salida o ya se recibió" if filas.empty?
+    raise ArgumentError, I18n.t("errores.salida.no_viene", codigo: etiqueta.codigo) if filas.empty?
     transaction do
       filas.each do |f|
         Inventario.mover!(sucursal: sucursal_destino, producto: f.etiqueta.producto, tipo: "recepcion", cantidad: f.etiqueta.cantidad,
@@ -255,15 +255,15 @@ class Salida < ApplicationRecord
   # pierde ni se queda en el limbo: sale del origen, entra a la tienda como sobrante con motivo, y
   # queda por revisar (la revisión la abre el controlador).
   def recibir_sobrante!(etiqueta, motivo:, usuario:)
-    raise ArgumentError, "un reparto se cobra, no se recibe" if reparto?
-    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
-    raise ArgumentError, "hace falta el motivo" if motivo.blank?
-    raise ArgumentError, "#{etiqueta.codigo} está #{etiqueta.estado}" unless etiqueta.viva?
-    raise ArgumentError, "#{etiqueta.codigo} es una #{etiqueta.tipo}: escanea los paquetes" unless etiqueta.paquete? || (etiqueta.caja? && etiqueta.hijas.none?)
-    raise ArgumentError, "#{etiqueta.codigo} sí viene en esta salida: recíbela normal" if salida_etiquetas.exists?(etiqueta: etiqueta)
-    raise ArgumentError, "#{etiqueta.codigo} es de #{etiqueta.sucursal.nombre}, no de #{sucursal_origen.nombre}" unless etiqueta.sucursal_id == sucursal_origen_id
+    raise ArgumentError, I18n.t("errores.salida.reparto_no_se_recibe") if reparto?
+    raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
+    raise ArgumentError, I18n.t("errores.hace_falta_motivo") if motivo.blank?
+    raise ArgumentError, I18n.t("errores.salida.etiqueta_esta", codigo: etiqueta.codigo, estado: I18n.t("estados.#{etiqueta.estado}")) unless etiqueta.viva?
+    raise ArgumentError, I18n.t("errores.salida.es_grupo", codigo: etiqueta.codigo, tipo: I18n.t("etiquetas.tipos.#{etiqueta.tipo}")) unless etiqueta.paquete? || (etiqueta.caja? && etiqueta.hijas.none?)
+    raise ArgumentError, I18n.t("errores.salida.si_viene", codigo: etiqueta.codigo) if salida_etiquetas.exists?(etiqueta: etiqueta)
+    raise ArgumentError, I18n.t("errores.salida.de_otra_sucursal", codigo: etiqueta.codigo, de: etiqueta.sucursal.nombre, origen: sucursal_origen.nombre) unless etiqueta.sucursal_id == sucursal_origen_id
     if (otra = SalidaEtiqueta.joins(:salida).where(etiqueta: etiqueta, salidas: { estado: %w[preparando sellada enviada] }).includes(:salida).first)
-      raise ArgumentError, "#{etiqueta.codigo} va en la salida #{otra.salida.folio}: recíbela allá"
+      raise ArgumentError, I18n.t("errores.salida.recibela_alla", codigo: etiqueta.codigo, folio: otra.salida.folio)
     end
     transaction do
       # El origen no lo descontó al enviar esta salida: se descuenta ahora, con el mismo rastro.
@@ -279,7 +279,7 @@ class Salida < ApplicationRecord
   end
 
   def recibir_lineas!(usuario:)
-    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
+    raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
     transaction do
       lineas.where(recibida: false).includes(:producto).each do |l|
         Inventario.mover!(sucursal: sucursal_destino, producto: l.producto, tipo: "recepcion", cantidad: l.cantidad,
@@ -291,10 +291,10 @@ class Salida < ApplicationRecord
 
   # Lo que no llegó o llegó sin etiqueta: no suma al stock, queda el barcode exacto y la etiqueta muere.
   def reportar!(etiqueta, motivo:, usuario:)
-    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
-    raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
+    raise ArgumentError, I18n.t("errores.hace_falta_motivo") if motivo.blank?
     filas = salida_etiquetas.where(etiqueta: Salida.hojas_de(etiqueta), estado: "pendiente").includes(:etiqueta)
-    raise ArgumentError, "#{etiqueta.codigo} no está pendiente en esta salida" if filas.empty?
+    raise ArgumentError, I18n.t("errores.salida.no_pendiente", codigo: etiqueta.codigo) if filas.empty?
     transaction do
       filas.each do |f|
         f.update!(estado: "faltante", motivo: motivo)
@@ -307,11 +307,11 @@ class Salida < ApplicationRecord
 
   # Cierra la recepción: lo pendiente se reporta como faltante con el motivo dado.
   def cerrar_recepcion!(usuario:, motivo_pendientes: nil)
-    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
+    raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
     transaction do
       pendientes = salida_etiquetas.where(estado: "pendiente").includes(:etiqueta)
       if pendientes.exists?
-        raise ArgumentError, "quedan #{pendientes.count} paquetes sin recibir: escanéalos o da el motivo del faltante" if motivo_pendientes.blank?
+        raise ArgumentError, I18n.t("errores.salida.sin_recibir", n: pendientes.count) if motivo_pendientes.blank?
         pendientes.each { |f| reportar!(f.etiqueta, motivo: motivo_pendientes, usuario: usuario) }
       end
       recibir_lineas!(usuario: usuario) if lineas.where(recibida: false).exists?
@@ -320,7 +320,7 @@ class Salida < ApplicationRecord
   end
 
   def cancelar!
-    raise ArgumentError, "solo se cancela antes de enviar" unless abierta?
+    raise ArgumentError, I18n.t("errores.salida.solo_cancela_antes") unless abierta?
     transaction do
       salida_etiquetas.destroy_all
       lineas.destroy_all
@@ -362,10 +362,10 @@ class Salida < ApplicationRecord
 
   def destino_coherente
     if reparto?
-      errors.add(:cliente, "obligatorio en un reparto") if cliente.nil?
+      errors.add(:cliente, I18n.t("errores.salida.cliente_obligatorio")) if cliente.nil?
     else
-      errors.add(:sucursal_destino, "obligatoria") if sucursal_destino.nil?
-      errors.add(:sucursal_destino, "no puede ser el origen") if sucursal_origen_id == sucursal_destino_id
+      errors.add(:sucursal_destino, I18n.t("errores.salida.destino_obligatorio")) if sucursal_destino.nil?
+      errors.add(:sucursal_destino, I18n.t("errores.salida.destino_no_origen")) if sucursal_origen_id == sucursal_destino_id
     end
   end
 
@@ -375,7 +375,7 @@ class Salida < ApplicationRecord
     ids += Etiqueta.where(id: ids).where.not(padre_id: nil).pluck(:padre_id)
     Etiqueta.where(id: ids.uniq).vivas.each do |g|
       next if Etiqueta.where(padre_id: g.id).vivas.exists?
-      g.update!(estado: "baja", motivo: "#{folio}: desarmada al recibir", padre_id: nil)
+      g.update!(estado: "baja", motivo: I18n.t("salidas.avisos.desarmada", folio: folio), padre_id: nil)
     end
   end
 

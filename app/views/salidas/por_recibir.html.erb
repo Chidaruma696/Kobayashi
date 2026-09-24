@@ -1,6 +1,6 @@
-<h1 class="mb-4 text-2xl font-bold">Por recibir · <%= sucursal_actual %></h1>
+<h1 class="mb-4 text-2xl font-bold"><%= t("salidas.por_recibir") %> · <%= sucursal_actual %></h1>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Desde</th><th class="px-3 py-2">Enviada</th><th class="px-3 py-2">Paquetes</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.folio") %></th><th class="px-3 py-2"><%= t("comun.desde") %></th><th class="px-3 py-2"><%= t("salidas.enviada") %></th><th class="px-3 py-2"><%= t("salidas.paquetes") %></th><th></th></tr></thead>
   <tbody>
     <% @salidas.each do |s| %>
       <tr class="border-t border-stone-100">
@@ -8,13 +8,13 @@
         <td class="px-3 py-2"><%= s.sucursal_origen %></td>
         <td class="px-3 py-2"><%= l s.enviado_en, format: :short %></td>
         <td class="px-3 py-2"><%= s.salida_etiquetas.where(estado: "recibida").count %>/<%= s.salida_etiquetas.count %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Recibir", salida_path(s), class: "btn btn-primary btn-sm" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to t("salidas.recibir"), salida_path(s), class: "btn btn-primary btn-sm" %></td>
       </tr>
     <% end %>
-    <% if @salidas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-stone-500">No hay nada en camino.</td></tr><% end %>
+    <% if @salidas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-stone-500"><%= t("salidas.nada_en_camino") %></td></tr><% end %>
   </tbody>
 </table>
 <% if @recibidas.any? %>
-  <h2 class="mb-2 mt-8 font-semibold">Recibidas</h2>
-  <ul class="text-sm"><% @recibidas.each do |s| %><li class="border-t border-stone-200 py-1"><%= link_to s.folio, salida_path(s), class: "chip-folio" %> · desde <%= s.sucursal_origen %> · <%= l s.recibido_en, format: :short %></li><% end %></ul>
+  <h2 class="mb-2 mt-8 font-semibold"><%= t("salidas.recibidas") %></h2>
+  <ul class="text-sm"><% @recibidas.each do |s| %><li class="border-t border-stone-200 py-1"><%= link_to s.folio, salida_path(s), class: "chip-folio" %> · <%= t("comun.desde").downcase %> <%= s.sucursal_origen %> · <%= l s.recibido_en, format: :short %></li><% end %></ul>
 <% end %>

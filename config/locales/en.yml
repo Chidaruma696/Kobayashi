@@ -211,12 +211,88 @@ en:
       producto_obligatorio: required on a package
       tarima_sin_producto: a pallet has no product
       sin_paquetes: 'no packages: all were written off'
+      no_encontrada: label “%{codigo}” not found
     produccion:
       ya_cerrada: the production run is already closed
     barcode:
       doce_digitos: 12 digits expected
       plu_rango: PLU out of range
       secuencia_rango: sequence out of range
+    salida:
+      esta: the transfer is %{estado}
+      ya_va_en: '%{codigo} is already on transfer %{folio}'
+      no_viva: label %{codigo} is not live
+      no_esta_en: label %{codigo} is not at %{sucursal}
+      va_dentro: 'label %{codigo} is inside another one: scan the box or the pallet'
+      etiqueta_vacia: label %{codigo} is empty
+      manual_motivo: a line without a label needs a reason
+      verificar_propia: whoever packs cannot verify their own load
+      no_va: '%{codigo} is not on this transfer'
+      nada: there is nothing on the transfer
+      faltan_verificar: '%{n} labels still to verify: scan them or seal with a reason'
+      primero_sellar: the transfer has to be sealed first
+      solo_entrega_reparto: only a delivery on the road can be delivered (%{estado})
+      no_va_parada: '%{codigo} is not on this stop or was already delivered'
+      solo_cierra_reparto: only a delivery on the road can be closed (%{estado})
+      sin_entregar: '%{n} items not delivered: scan them or give the rejection reason'
+      solo_cobra_reparto: only a delivery on the road can be charged
+      va_en_viaje: 'this delivery is on trip %{folio}: it is charged at the stop and settled on return'
+      reparto_no_se_recibe: a delivery is charged, not received
+      no_en_transito: the transfer is not in transit (%{estado})
+      caja_por_paquete: a box is received package by package; a whole pallet is fine
+      no_viene: '%{codigo} is not on this transfer or was already received'
+      etiqueta_esta: '%{codigo} is %{estado}'
+      es_grupo: '%{codigo} is a %{tipo}: scan the packages'
+      si_viene: '%{codigo} is on this transfer: receive it normally'
+      de_otra_sucursal: '%{codigo} belongs to %{de}, not %{origen}'
+      recibela_alla: '%{codigo} is on transfer %{folio}: receive it there'
+      no_pendiente: '%{codigo} is not pending on this transfer'
+      sin_recibir: '%{n} packages not received: scan them or give the reason for the shortage'
+      solo_cancela_antes: it can only be cancelled before sending
+      cliente_obligatorio: required on a delivery
+      destino_obligatorio: required
+      destino_no_origen: cannot be the origin
+    corte:
+      ya_abierto: there is already an open register session at %{sucursal}
+      cerrado: the register session is closed
+      sin_efectivo: there is not that much cash in the drawer (%{monto})
+      ya_cerrado: the register session is already closed
+    caja:
+      clave_ticket: the ticket key is missing
+      sin_caja: 'no register open at %{sucursal}: open it with its float'
+      sin_caja_simple: no register open
+      excede_limite: 'there is more than %{monto} in the drawer: drop cash into the safe before going on'
+      ticket_vacio: the ticket is empty
+      no_se_vende_sin: '%{mensaje}. You cannot sell what is not there: receive the transfer first.'
+      sin_caja_reparto: 'no register open at %{sucursal}: open it before sending the delivery'
+      salida_vacia: the transfer is empty
+      nota_no_por_cobrar: note %{folio} is not pending payment (%{estado})
+      sin_caja_en: no register open at %{sucursal}
+      falta_dinero_nota: 'not enough money: the note is %{nota} and %{pago} is being paid; put the rest on credit if the customer has it'
+      sin_cliente: the note has no customer
+      sin_credito: '%{cliente} has no credit (%{regla})'
+      bloqueado: '%{cliente} is blocked: %{motivo}'
+      forma_desconocida: 'unknown payment method: %{forma}'
+      motivo_rechazo: the rejection reason is missing
+      nota_ya: note %{folio} is already %{estado}
+      renglon_no_encontrado: cannot find the line for %{producto} on the note
+      ya_devuelta: the sale is already fully refunded
+      sin_caja_devolver: no register open to give the money back
+      nada_devuelto: nothing was returned
+      max_devolver: '%{producto}: at most %{max} can be returned'
+      etiqueta_no_viva: label %{codigo} is not live (%{estado})
+      etiqueta_otra_sucursal: label %{codigo} belongs to another branch
+      etiqueta_en_transito: 'label %{codigo} is in transit: receive the transfer before selling'
+      etiqueta_esta: Label %{codigo} is %{estado}
+      es_grupo: 'It is a %{tipo}: scan the packages'
+      es_grupo_codigo: 'label %{codigo} is a %{tipo}: scan the packages'
+      cantidad_invalida: '%{producto}: invalid quantity'
+      piezas_enteras: '%{producto} is sold in whole pieces'
+      sin_precio: '%{producto}: no price at %{sucursal}; ask head office before selling it'
+      piso_precio: '%{producto}: the price cannot go below %{piso} % of the catalog (%{monto})'
+      falta_dinero: 'not enough money: the ticket is %{total} and %{pago} is being paid'
+      no_efectivo_excede: a transfer or deposit cannot exceed the total
+      sin_ticket_devolucion: 'No refund without a ticket or a label: “%{codigo}” not found'
   inicio:
     titulo: Home
     ventas: Sales
@@ -502,6 +578,14 @@ en:
       sin_web_serial: no Web Serial (use Chrome or Edge)
       confirmar_desconectar: Disconnect the scale? Next time you will have to pick the port again.
       pz: pc
+    pos:
+      la_etiqueta: Label
+      ya_en_ticket: is already on the ticket
+      cantidad_o_bascula: Enter the quantity or use the scale
+      ticket_vacio: The ticket is empty
+    baja:
+      faltan_codigo_y_motivo: Code and reason are required
+      no_encontrada: That label was not found
   etiquetas:
     etiqueta: Label
     etiquetar: Label
@@ -609,3 +693,185 @@ en:
     cerrada_aviso: 'Production run closed: shrinkage %{merma}'
   caja:
     nueva_venta: New sale
+    corte_de_caja: Register session
+    corte: Session
+    fondo: Float
+    ventas: Sales
+    efectivo_de_ventas: Cash from sales
+    devoluciones: Refunds
+    retiros: Cash drops
+    en_gaveta: In drawer
+    corte_abierto_por: Session %{folio} opened by %{quien} on %{fecha}
+    n_ventas:
+      one: 1 sale
+      other: '%{count} sales'
+    retiro_caja_fuerte: Cash drop to safe
+    monto: Amount
+    retiro_por_revisar: The drop is recorded and goes to review.
+    retirar: Drop
+    cerrar_corte: Close session
+    cerrar_corte_ayuda: Count the cash in the drawer (float included) and type it in. The system keeps the expected amount and the difference.
+    confirmar_cerrar_corte: Close session %{folio}?
+    efectivo_contado: Counted cash
+    cortes_cerrados: Closed sessions
+    abierto: Opened
+    cerrado: Closed
+    cajero: Cashier
+    esperado: Expected
+    contado: Counted
+    diferencia: Difference
+    devolucion: Refund
+    escanea_ticket_o_etiqueta: Scan the ticket or the product label
+    ticket: Ticket
+    vendido: Sold
+    ya_devuelto: Already returned
+    devolver: Return
+    devolver_y_regresar: Return and give the money back
+    excede_limite_html: 'There is more than %{monto} in the drawer: %{enlace} before selling any more.'
+    haz_un_retiro: drop cash into the safe
+    escanea_o_teclea: Scan the label or type PLU / key and Enter
+    bascula: scale
+    conectar: connect
+    usar_bascula: use scale
+    cambio: Change
+    cobrar: Charge
+    vaciar_ticket: Clear ticket
+    sin_caja_en: No register open at %{sucursal}.
+    fondo_inicial: Opening float
+    abrir_caja: Open register
+    pide_que_la_abran: Ask someone with permission to open it.
+    le_atendio: Served by
+    cliente: Customer
+    por_cobrar_contra_entrega: PENDING PAYMENT · cash on delivery
+    devoluciones_solo_con_ticket: Refunds only with this ticket
+    hora: Time
+    lineas: Lines
+    pago: Payment
+    sin_ventas: No sales.
+    avisos:
+      abierta: Register opened with a float of %{fondo}
+      bajo_precio: Lowered %{producto} from %{de} to %{a} on %{folio}
+      corte_cerrado: 'Session %{folio} closed: expected %{esperado}, counted %{contado}, difference %{diferencia}'
+      retiro: Cash drop of %{monto} recorded
+      queda_por_revisar: ; goes to review
+      devolucion: Refund %{folio} of %{monto} on %{venta}
+      rechazo_en_ruta: '%{folio} rejected on the road: %{motivo}'
+  formas_pago:
+    efectivo: Cash
+    transferencia: Transfer
+    deposito: Deposit
+  salidas:
+    en_curso: Transfers in progress
+    tipo: Type
+    paquetes: Packages
+    abrio: Opened by
+    nada_en_curso: Nothing in progress.
+    historial: History
+    tipos:
+      traspaso: transfer
+      devolucion: return
+      reparto: delivery
+    titulos:
+      traspaso: Transfer
+      devolucion: Return
+      reparto: Delivery
+    nueva_desde: New transfer from %{sucursal}
+    surte_el_pedido: fills order
+    tiendas: Stores
+    clientes_de_ruta: Route customers
+    motivo_devolucion: Reason for the return
+    abrir_salida: Open transfer
+    por_recibir: To receive
+    enviada: Sent
+    recibir: Receive
+    nada_en_camino: Nothing on the way.
+    recibidas: Received
+    ruta: Route
+    abrio_el: Opened by %{quien} on %{fecha}
+    verifico: verified by
+    surtir_escanea: 'Pack: scan boxes, pallets or packages'
+    codigo_etiqueta: Label code
+    agregar: Add
+    quitar: Remove
+    quitar_etiqueta: Remove a label
+    canastillas_que_van: 'Crates going:'
+    ninguna: none
+    cantidad_cero_quita: quantity (0 removes)
+    anotar: Note
+    renglon_sin_etiqueta: Line without a label (send without scanning, with a reason)
+    motivo_sin_etiqueta: reason (the label fell off…)
+    agregar_renglon: Add line
+    verificar_carga: Verify the load (someone else)
+    escanea_sube_camion: Scan what goes on the truck
+    verificar: Verify
+    sin_verificar_n: 'Unverified: %{n} of %{total}'
+    sellar: Seal transfer
+    necesita_permiso_verificar: The verifier needs the salidas.verificar permission.
+    sellar_sin_verificar: Seal without verifying (goes to review)
+    por_que_sin_segundo_escaneo: why it leaves without the second scan
+    sellar_asi: Seal anyway
+    sellada_por: Sealed and verified by %{quien}.
+    al_enviar_reparto: Sending closes the pending-payment sales note and reduces inventory.
+    al_enviar_baja: Sending reduces the inventory of %{sucursal}.
+    enviar: Send
+    confirmar_enviar: Send transfer %{folio}?
+    va_en_viaje: It goes on trip
+    chofer: Driver
+    se_cobra_en_parada: It is delivered and charged at the stop; the money comes in when the trip is settled.
+    subir_al_viaje: Put on trip
+    sin_viaje_armandose: No trip is being assembled.
+    armar_viaje_de: Assemble %{ruta} trip
+    cobrar_entrega_nota: Charge the delivery · note
+    cobrar_entrega_ayuda: What the driver brings goes into the open register. If the customer rejected something, charge the full note and then do the refund with the ticket.
+    cobrar_entrega: Charge delivery
+    entregada_y_cobrada: 'Delivered and charged: note'
+    rechazo: rejected
+    rechazada_completa: 'Fully rejected: the goods went back to inventory and note %{folio} was zeroed.'
+    recibir_paquete_o_tarima: 'Receive: package by package, or the whole pallet'
+    codigo_paquete_o_tarima: Package or pallet code
+    codigo_paquete: Package code
+    llegan_sin_precio_html: 'Arriving <strong>without a price</strong> at this store: %{productos}. They are received anyway, but the register will not sell them until head office sets a price.'
+    sobrante_titulo: A package arrived that is not on the transfer (surplus)
+    sobrante_ayuda: It was labeled outside and never went into the transfer. It enters the store with a reason and goes to review.
+    recibir_sobrante: Receive surplus
+    conteo_recepcion: Received %{recibidos} · missing %{faltantes} · pending %{pendientes}
+    reportar_roto: Report broken or unlabeled
+    reportar: Report
+    cerrar_recepcion: Close reception
+    confirmar_cerrar_recepcion: Whatever is pending will be marked missing. Close?
+    motivo_pendiente: reason for what is pending (if anything)
+    pedidos_abiertos_para: 'Open orders for %{destino}:'
+    falta: short
+    contenido: Contents
+    grupo: Group
+    paquete: Package
+    recepcion: Reception
+    suelto: loose
+    manual: manual
+    sin_etiqueta: no label
+    autorizo: authorized by
+    por_revisar: to review
+    vacia: Empty.
+    totales: Totals
+    cancelar_salida: Cancel transfer
+    confirmar_cancelar: Cancel %{folio}?
+    entrega_concepto: Delivery %{folio}
+    avisos:
+      abierta: 'Transfer %{folio} opened: scan what goes'
+      agregada: '%{tipo} %{codigo} added (%{n} packages)'
+      quitados: '%{n} packages off the transfer'
+      manual: Manual line added
+      manual_revision: Line added; goes to review
+      verificada: '%{codigo} verified'
+      sellada: Transfer %{folio} sealed by %{quien}
+      sello_sin_verificar: 'Sealed %{folio} with %{n} unverified items: %{motivo}'
+      enviada: Transfer %{folio} sent to %{destino}
+      canastillas: Crates noted
+      cobrada: 'Delivery %{folio} charged: note %{nota}'
+      cancelada: Transfer %{folio} cancelled
+      recibidos: '%{n} packages received'
+      reportados: '%{n} packages reported missing'
+      sobrante_motivo: 'Surplus on %{folio} (not on the transfer): %{motivo}'
+      sobrante: '%{codigo} received as surplus; goes to review'
+      recibida: Transfer %{folio} received
+      desarmada: '%{folio}: broken up on reception'

@@ -211,12 +211,88 @@ es:
       producto_obligatorio: obligatorio en un paquete
       tarima_sin_producto: una tarima no lleva producto
       sin_paquetes: 'sin paquetes: se dieron de baja todos'
+      no_encontrada: no se encontró la etiqueta «%{codigo}»
     produccion:
       ya_cerrada: la producción ya está cerrada
     barcode:
       doce_digitos: se esperan 12 dígitos
       plu_rango: PLU fuera de rango
       secuencia_rango: secuencia fuera de rango
+    salida:
+      esta: la salida está %{estado}
+      ya_va_en: '%{codigo} ya va en la salida %{folio}'
+      no_viva: la etiqueta %{codigo} no está viva
+      no_esta_en: la etiqueta %{codigo} no está en %{sucursal}
+      va_dentro: 'la etiqueta %{codigo} va dentro de otra: escanea la caja o la tarima'
+      etiqueta_vacia: la etiqueta %{codigo} está vacía
+      manual_motivo: un renglón sin etiqueta lleva motivo
+      verificar_propia: quien surte no puede verificar su propia carga
+      no_va: '%{codigo} no va en esta salida'
+      nada: no hay nada en la salida
+      faltan_verificar: 'faltan %{n} etiquetas por verificar: escanéalas o sella con motivo'
+      primero_sellar: primero hay que sellar la salida
+      solo_entrega_reparto: solo se entrega un reparto en ruta (%{estado})
+      no_va_parada: '%{codigo} no va en esta parada o ya se entregó'
+      solo_cierra_reparto: solo se cierra un reparto en ruta (%{estado})
+      sin_entregar: 'quedan %{n} bultos sin entregar: escanéalos o da el motivo del rechazo'
+      solo_cobra_reparto: solo se cobra un reparto en ruta
+      va_en_viaje: 'este reparto va en el viaje %{folio}: se cobra en la parada y se liquida al volver'
+      reparto_no_se_recibe: un reparto se cobra, no se recibe
+      no_en_transito: la salida no está en tránsito (%{estado})
+      caja_por_paquete: una caja se recibe paquete por paquete; la tarima entera sí
+      no_viene: '%{codigo} no viene en esta salida o ya se recibió'
+      etiqueta_esta: '%{codigo} está %{estado}'
+      es_grupo: '%{codigo} es una %{tipo}: escanea los paquetes'
+      si_viene: '%{codigo} sí viene en esta salida: recíbela normal'
+      de_otra_sucursal: '%{codigo} es de %{de}, no de %{origen}'
+      recibela_alla: '%{codigo} va en la salida %{folio}: recíbela allá'
+      no_pendiente: '%{codigo} no está pendiente en esta salida'
+      sin_recibir: 'quedan %{n} paquetes sin recibir: escanéalos o da el motivo del faltante'
+      solo_cancela_antes: solo se cancela antes de enviar
+      cliente_obligatorio: obligatorio en un reparto
+      destino_obligatorio: obligatoria
+      destino_no_origen: no puede ser el origen
+    corte:
+      ya_abierto: ya hay un corte abierto en %{sucursal}
+      cerrado: el corte está cerrado
+      sin_efectivo: no hay tanto efectivo en la gaveta (%{monto})
+      ya_cerrado: el corte ya está cerrado
+    caja:
+      clave_ticket: hace falta la clave del ticket
+      sin_caja: 'no hay caja abierta en %{sucursal}: ábrela con su fondo'
+      sin_caja_simple: no hay caja abierta
+      excede_limite: 'hay más de %{monto} en la gaveta: haz un retiro a la caja fuerte antes de seguir'
+      ticket_vacio: el ticket está vacío
+      no_se_vende_sin: '%{mensaje}. No se vende lo que no hay: recibe el traspaso antes.'
+      sin_caja_reparto: 'no hay caja abierta en %{sucursal}: ábrela antes de enviar el reparto'
+      salida_vacia: la salida está vacía
+      nota_no_por_cobrar: la nota %{folio} no está por cobrar (%{estado})
+      sin_caja_en: no hay caja abierta en %{sucursal}
+      falta_dinero_nota: 'falta dinero: la nota es %{nota} y se pagan %{pago}; marca el resto a crédito si el cliente lo tiene'
+      sin_cliente: la nota no tiene cliente
+      sin_credito: '%{cliente} no tiene crédito (%{regla})'
+      bloqueado: '%{cliente} está bloqueado: %{motivo}'
+      forma_desconocida: 'forma de pago desconocida: %{forma}'
+      motivo_rechazo: hace falta el motivo del rechazo
+      nota_ya: la nota %{folio} ya está %{estado}
+      renglon_no_encontrado: no encuentro en la nota el renglón de %{producto}
+      ya_devuelta: la venta ya está devuelta completa
+      sin_caja_devolver: no hay caja abierta para devolver el dinero
+      nada_devuelto: no se devolvió nada
+      max_devolver: '%{producto}: se pueden devolver como mucho %{max}'
+      etiqueta_no_viva: la etiqueta %{codigo} no está viva (%{estado})
+      etiqueta_otra_sucursal: la etiqueta %{codigo} es de otra sucursal
+      etiqueta_en_transito: 'la etiqueta %{codigo} está en tránsito: recibe la salida antes de vender'
+      etiqueta_esta: La etiqueta %{codigo} está %{estado}
+      es_grupo: 'Es una %{tipo}: escanea los paquetes'
+      es_grupo_codigo: 'la etiqueta %{codigo} es una %{tipo}: escanea los paquetes'
+      cantidad_invalida: '%{producto}: cantidad inválida'
+      piezas_enteras: '%{producto} va por piezas enteras'
+      sin_precio: '%{producto}: sin precio en %{sucursal}; pídelo a la matriz antes de venderlo'
+      piso_precio: '%{producto}: el precio no puede bajar del %{piso} % del catálogo (%{monto})'
+      falta_dinero: 'falta dinero: el ticket es %{total} y se pagan %{pago}'
+      no_efectivo_excede: una transferencia o depósito no puede pasarse del total
+      sin_ticket_devolucion: 'Sin ticket ni etiqueta no hay devolución: no se encontró «%{codigo}»'
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -502,6 +578,14 @@ es:
       sin_web_serial: sin Web Serial (usa Chrome o Edge)
       confirmar_desconectar: ¿Desconectar la báscula? La próxima vez habrá que elegir el puerto de nuevo.
       pz: pz
+    pos:
+      la_etiqueta: La etiqueta
+      ya_en_ticket: ya está en el ticket
+      cantidad_o_bascula: Escribe la cantidad o usa la báscula
+      ticket_vacio: El ticket está vacío
+    baja:
+      faltan_codigo_y_motivo: Hacen falta el código y el motivo
+      no_encontrada: No se encontró esa etiqueta
   etiquetas:
     etiqueta: Etiqueta
     etiquetar: Etiquetar
@@ -609,3 +693,185 @@ es:
     cerrada_aviso: 'Producción cerrada: merma %{merma}'
   caja:
     nueva_venta: Nueva venta
+    corte_de_caja: Corte de caja
+    corte: Corte
+    fondo: Fondo
+    ventas: Ventas
+    efectivo_de_ventas: Efectivo de ventas
+    devoluciones: Devoluciones
+    retiros: Retiros
+    en_gaveta: En gaveta
+    corte_abierto_por: Corte %{folio} abierto por %{quien} el %{fecha}
+    n_ventas:
+      one: 1 venta
+      other: '%{count} ventas'
+    retiro_caja_fuerte: Retiro a caja fuerte
+    monto: Monto
+    retiro_por_revisar: El retiro se registra y queda por revisar.
+    retirar: Retirar
+    cerrar_corte: Cerrar corte
+    cerrar_corte_ayuda: Cuenta el efectivo de la gaveta (con el fondo) y escríbelo. El sistema guarda lo esperado y la diferencia.
+    confirmar_cerrar_corte: ¿Cerrar el corte %{folio}?
+    efectivo_contado: Efectivo contado
+    cortes_cerrados: Cortes cerrados
+    abierto: Abierto
+    cerrado: Cerrado
+    cajero: Cajero
+    esperado: Esperado
+    contado: Contado
+    diferencia: Diferencia
+    devolucion: Devolución
+    escanea_ticket_o_etiqueta: Escanea el ticket o la etiqueta del producto
+    ticket: Ticket
+    vendido: Vendido
+    ya_devuelto: Ya devuelto
+    devolver: Devolver
+    devolver_y_regresar: Devolver y regresar el dinero
+    excede_limite_html: 'Hay más de %{monto} en la gaveta: %{enlace} antes de seguir vendiendo.'
+    haz_un_retiro: haz un retiro a la caja fuerte
+    escanea_o_teclea: Escanea la etiqueta o teclea PLU / clave y Enter
+    bascula: báscula
+    conectar: conectar
+    usar_bascula: usar báscula
+    cambio: Cambio
+    cobrar: Cobrar
+    vaciar_ticket: Vaciar ticket
+    sin_caja_en: No hay caja abierta en %{sucursal}.
+    fondo_inicial: Fondo inicial
+    abrir_caja: Abrir caja
+    pide_que_la_abran: Pide a alguien con permiso que la abra.
+    le_atendio: Le atendió
+    cliente: Cliente
+    por_cobrar_contra_entrega: POR COBRAR · contado contra entrega
+    devoluciones_solo_con_ticket: Devoluciones solo con este ticket
+    hora: Hora
+    lineas: Líneas
+    pago: Pago
+    sin_ventas: Sin ventas.
+    avisos:
+      abierta: Caja abierta con fondo de %{fondo}
+      bajo_precio: Bajó %{producto} de %{de} a %{a} en %{folio}
+      corte_cerrado: 'Corte %{folio} cerrado: esperado %{esperado}, contado %{contado}, diferencia %{diferencia}'
+      retiro: Retiro de %{monto} registrado
+      queda_por_revisar: ; queda por revisar
+      devolucion: Devolución %{folio} de %{monto} sobre %{venta}
+      rechazo_en_ruta: '%{folio} rechazo en ruta: %{motivo}'
+  formas_pago:
+    efectivo: Efectivo
+    transferencia: Transferencia
+    deposito: Depósito
+  salidas:
+    en_curso: Salidas en curso
+    tipo: Tipo
+    paquetes: Paquetes
+    abrio: Abrió
+    nada_en_curso: Nada en curso.
+    historial: Historial
+    tipos:
+      traspaso: traspaso
+      devolucion: devolución
+      reparto: reparto
+    titulos:
+      traspaso: Salida
+      devolucion: Devolución
+      reparto: Reparto
+    nueva_desde: Nueva salida desde %{sucursal}
+    surte_el_pedido: surte el pedido
+    tiendas: Tiendas
+    clientes_de_ruta: Clientes de ruta
+    motivo_devolucion: Motivo de la devolución
+    abrir_salida: Abrir salida
+    por_recibir: Por recibir
+    enviada: Enviada
+    recibir: Recibir
+    nada_en_camino: No hay nada en camino.
+    recibidas: Recibidas
+    ruta: Ruta
+    abrio_el: Abrió %{quien} el %{fecha}
+    verifico: verificó
+    surtir_escanea: 'Surtir: escanea cajas, tarimas o paquetes'
+    codigo_etiqueta: Código de la etiqueta
+    agregar: Agregar
+    quitar: Quitar
+    quitar_etiqueta: Quitar una etiqueta
+    canastillas_que_van: 'Canastillas que van:'
+    ninguna: ninguna
+    cantidad_cero_quita: cantidad (0 quita)
+    anotar: Anotar
+    renglon_sin_etiqueta: Renglón sin etiqueta (mandar sin escanear, con motivo)
+    motivo_sin_etiqueta: motivo (se cayó la etiqueta…)
+    agregar_renglon: Agregar renglón
+    verificar_carga: Verificar la carga (otra persona)
+    escanea_sube_camion: Escanea lo que sube al camión
+    verificar: Verificar
+    sin_verificar_n: 'Sin verificar: %{n} de %{total}'
+    sellar: Sellar salida
+    necesita_permiso_verificar: Quien verifica necesita el permiso salidas.verificar.
+    sellar_sin_verificar: Sellar sin verificar (queda por revisar)
+    por_que_sin_segundo_escaneo: por qué sale sin el segundo escaneo
+    sellar_asi: Sellar así
+    sellada_por: Sellada y verificada por %{quien}.
+    al_enviar_reparto: Al enviar se cierra la nota de venta por cobrar y baja el inventario.
+    al_enviar_baja: Al enviar baja el inventario de %{sucursal}.
+    enviar: Enviar
+    confirmar_enviar: ¿Enviar la salida %{folio}?
+    va_en_viaje: Va en el viaje
+    chofer: Chofer
+    se_cobra_en_parada: Se entrega y se cobra en la parada; el dinero entra al liquidar el viaje.
+    subir_al_viaje: Subir al viaje
+    sin_viaje_armandose: No hay ningún viaje armándose.
+    armar_viaje_de: Armar viaje de %{ruta}
+    cobrar_entrega_nota: Cobrar la entrega · nota
+    cobrar_entrega_ayuda: Lo que trae el chofer entra a la caja abierta. Si el cliente rechazó algo, cobra la nota completa y luego haz la devolución con el ticket.
+    cobrar_entrega: Cobrar entrega
+    entregada_y_cobrada: 'Entregada y cobrada: nota'
+    rechazo: rechazó
+    rechazada_completa: 'Rechazada completa: la mercancía volvió al inventario y la nota %{folio} quedó en cero.'
+    recibir_paquete_o_tarima: 'Recibir: paquete por paquete, o la tarima entera'
+    codigo_paquete_o_tarima: Código del paquete o de la tarima
+    codigo_paquete: Código del paquete
+    llegan_sin_precio_html: 'Llegan <strong>sin precio</strong> en esta tienda: %{productos}. Se reciben igual, pero la caja no los vende hasta que la matriz les ponga precio.'
+    sobrante_titulo: Llegó un paquete que no viene en la salida (sobrante)
+    sobrante_ayuda: Se etiquetó por fuera y nunca entró a la salida. Entra a la tienda con motivo y queda por revisar.
+    recibir_sobrante: Recibir sobrante
+    conteo_recepcion: Recibidos %{recibidos} · faltantes %{faltantes} · pendientes %{pendientes}
+    reportar_roto: Reportar roto o sin etiqueta
+    reportar: Reportar
+    cerrar_recepcion: Cerrar recepción
+    confirmar_cerrar_recepcion: Lo pendiente quedará como faltante. ¿Cerrar?
+    motivo_pendiente: motivo para lo pendiente (si queda algo)
+    pedidos_abiertos_para: 'Pedidos abiertos para %{destino}:'
+    falta: falta
+    contenido: Contenido
+    grupo: Grupo
+    paquete: Paquete
+    recepcion: Recepción
+    suelto: suelto
+    manual: manual
+    sin_etiqueta: sin etiqueta
+    autorizo: autorizó
+    por_revisar: por revisar
+    vacia: Vacía.
+    totales: Totales
+    cancelar_salida: Cancelar salida
+    confirmar_cancelar: ¿Cancelar %{folio}?
+    entrega_concepto: Entrega %{folio}
+    avisos:
+      abierta: 'Salida %{folio} abierta: escanea lo que va'
+      agregada: '%{tipo} %{codigo} agregada (%{n} paquetes)'
+      quitados: '%{n} paquetes fuera de la salida'
+      manual: Renglón manual agregado
+      manual_revision: Renglón agregado; queda por revisar
+      verificada: '%{codigo} verificada'
+      sellada: Salida %{folio} sellada por %{quien}
+      sello_sin_verificar: 'Selló %{folio} con %{n} bultos sin verificar: %{motivo}'
+      enviada: Salida %{folio} enviada a %{destino}
+      canastillas: Canastillas anotadas
+      cobrada: 'Entrega de %{folio} cobrada: nota %{nota}'
+      cancelada: Salida %{folio} cancelada
+      recibidos: '%{n} paquetes recibidos'
+      reportados: '%{n} paquetes reportados como faltantes'
+      sobrante_motivo: 'Sobrante en %{folio} (no venía en la salida): %{motivo}'
+      sobrante: '%{codigo} recibida como sobrante; queda por revisar'
+      recibida: Salida %{folio} recibida
+      desarmada: '%{folio}: desarmada al recibir'

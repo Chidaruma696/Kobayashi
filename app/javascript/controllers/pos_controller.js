@@ -23,7 +23,7 @@ export default class extends Controller {
     if (!r.ok) { this.avisar(datos.error); return }
     this.avisar("")
     if (datos.etiqueta_id) {
-      if (this.lineas.some(l => l.etiqueta_id === datos.etiqueta_id)) { this.avisar(`La etiqueta ${datos.codigo} ya está en el ticket`); return }
+      if (this.lineas.some(l => l.etiqueta_id === datos.etiqueta_id)) { this.avisar(`${T.pos.la_etiqueta} ${datos.codigo} ${T.pos.ya_en_ticket}`); return }
       this.agregar({ ...datos, cantidad: Number(datos.cantidad) })
     } else if (datos.unidad === "kg") {
       this.pendienteProducto = datos
@@ -42,7 +42,7 @@ export default class extends Controller {
   confirmarPendiente(event) {
     event?.preventDefault()
     const cantidad = Number(this.pendienteCantidadTarget.value)
-    if (!(cantidad > 0)) { this.avisar("Escribe la cantidad o usa la báscula"); return }
+    if (!(cantidad > 0)) { this.avisar(T.pos.cantidad_o_bascula); return }
     this.agregar({ ...this.pendienteProducto, cantidad })
     this.cancelarPendiente()
   }
@@ -126,7 +126,7 @@ export default class extends Controller {
   }
 
   async cobrar() {
-    if (this.lineas.length === 0) { this.avisar("El ticket está vacío"); return }
+    if (this.lineas.length === 0) { this.avisar(T.pos.ticket_vacio); return }
     const total = this.totalCentavos()
     let efectivo = this.centavos(this.efectivoTarget)
     const otros = this.centavos(this.transferenciaTarget) + this.centavos(this.depositoTarget)

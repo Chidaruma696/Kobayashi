@@ -16,13 +16,13 @@ class CajaController < ApplicationController
     return render json: { error: "No se encontró «#{params[:codigo]}»" }, status: :not_found unless r
     if r.etiqueta?
       e = r.etiqueta
-      return render json: { error: "La etiqueta #{e.codigo} está #{e.estado}" }, status: :unprocessable_entity unless e.viva?
-      return render json: { error: "La etiqueta #{e.codigo} es de otra sucursal" }, status: :unprocessable_entity unless e.sucursal_id == sucursal_actual.id
-      return render json: { error: "Es una #{e.tipo}: escanea los paquetes" }, status: :unprocessable_entity unless e.paquete? || (e.caja? && e.producto)
+      return render json: { error: t("errores.caja.etiqueta_esta", codigo: e.codigo, estado: t("estados.#{e.estado}")) }, status: :unprocessable_entity unless e.viva?
+      return render json: { error: t("errores.caja.etiqueta_otra_sucursal", codigo: e.codigo) }, status: :unprocessable_entity unless e.sucursal_id == sucursal_actual.id
+      return render json: { error: t("errores.caja.es_grupo", tipo: t("etiquetas.tipos.#{e.tipo}")) }, status: :unprocessable_entity unless e.paquete? || (e.caja? && e.producto)
     end
     p = r.producto
     catalogo = p.precio_centavos_en(sucursal_actual)
-    return render json: { error: "#{p.nombre}: sin precio en #{sucursal_actual.nombre}; pídelo a la matriz antes de venderlo" }, status: :unprocessable_entity unless catalogo.positive?
+    return render json: { error: t("errores.caja.sin_precio", producto: p.nombre, sucursal: sucursal_actual.nombre) }, status: :unprocessable_entity unless catalogo.positive?
     promos = Promocion.para(p, sucursal_actual).select(&:vigente?).map do |pr|
       { tipo: pr.tipo, cantidad_minima: pr.cantidad_minima, precio_centavos: pr.precio_centavos, porcentaje: pr.porcentaje, nombre: pr.nombre }
     end
@@ -38,7 +38,7 @@ class CajaController < ApplicationController
     venta = Caja.cobrar!(sucursal: sucursal_actual, usuario: usuario_actual, lineas: lineas, pagos: pagos, clave: params[:clave], autorizador: autoriza)
     # Bajó precios sin tener el permiso: cada renglón queda por revisar con lo que dejó de cobrar.
     venta.lineas.where(autorizado_por: nil).where("precio_centavos < catalogo_centavos").includes(:producto).each do |l|
-      revisar_si_hace_falta(l, nil, motivo: "Bajó #{l.producto.nombre} de #{Dinero.pesos(l.catalogo_centavos)} a #{Dinero.pesos(l.precio_centavos)} en #{venta.folio}",
+      revisar_si_hace_falta(l, nil, motivo: t("caja.avisos.bajo_precio", producto: l.producto.nombre, de: Dinero.pesos(l.catalogo_centavos), a: Dinero.pesos(l.precio_centavos), folio: venta.folio),
                             valor_centavos: Dinero.importe(l.cantidad, l.catalogo_centavos - l.precio_centavos))
     end
     render json: { url: caja_ticket_path(venta, imprimir: 1), folio: venta.folio, cambio: Dinero.pesos(venta.cambio_centavos) }
@@ -66,26 +66,26 @@ class CajaController < ApplicationController
   def abrir
     autorizar!("caja.abrir")
     Corte.abrir!(sucursal: sucursal_actual, usuario: usuario_actual, fondo_centavos: Dinero.centavos(params[:fondo]))
-    redirect_to caja_path, notice: "Caja abierta con fondo de #{Dinero.pesos(Dinero.centavos(params[:fondo]))}"
+    redirect_to caja_path, notice: t("caja.avisos.abierta", fondo: Dinero.pesos(Dinero.centavos(params[:fondo])))
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to caja_corte_path, alert: e.message
   end
 
   def cerrar
     autorizar!("caja.abrir")
-    raise ArgumentError, "no hay caja abierta" unless @corte
+    raise ArgumentError, t("errores.caja.sin_caja_simple") unless @corte
     @corte.cerrar!(contado_centavos: Dinero.centavos(params[:contado]), usuario: usuario_actual)
-    redirect_to caja_corte_path, notice: "Corte #{@corte.folio} cerrado: esperado #{Dinero.pesos(@corte.esperado_centavos)}, contado #{Dinero.pesos(@corte.contado_centavos)}, diferencia #{Dinero.pesos(@corte.diferencia_centavos)}"
+    redirect_to caja_corte_path, notice: t("caja.avisos.corte_cerrado", folio: @corte.folio, esperado: Dinero.pesos(@corte.esperado_centavos), contado: Dinero.pesos(@corte.contado_centavos), diferencia: Dinero.pesos(@corte.diferencia_centavos))
   rescue ArgumentError => e
     redirect_to caja_corte_path, alert: e.message
   end
 
   def retirar
-    raise ArgumentError, "no hay caja abierta" unless @corte
+    raise ArgumentError, t("errores.caja.sin_caja_simple") unless @corte
     autoriza = autorizador_o_revision("caja.retirar")
     retiro = @corte.retirar!(monto_centavos: Dinero.centavos(params[:monto]), motivo: params[:motivo], usuario: usuario_actual, autorizado_por: autoriza)
     revisar_si_hace_falta(retiro, autoriza, motivo: retiro.motivo, valor_centavos: retiro.monto_centavos)
-    redirect_to caja_corte_path, notice: "Retiro de #{Dinero.pesos(retiro.monto_centavos)} registrado#{'; queda por revisar' unless autoriza}"
+    redirect_to caja_corte_path, notice: t("caja.avisos.retiro", monto: Dinero.pesos(retiro.monto_centavos)) + (autoriza ? "" : t("caja.avisos.queda_por_revisar"))
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to caja_corte_path, alert: e.message
   end
@@ -98,7 +98,7 @@ class CajaController < ApplicationController
     if @venta.nil? && (etiqueta = Etiqueta.buscar(params[:codigo]))
       @venta = Venta.where(sucursal: sucursal_actual).joins(:lineas).find_by(venta_lineas: { etiqueta_id: etiqueta.id })
     end
-    flash.now[:alert] = "Sin ticket ni etiqueta no hay devolución: no se encontró «#{params[:codigo]}»" unless @venta
+    flash.now[:alert] = t("errores.caja.sin_ticket_devolucion", codigo: params[:codigo]) unless @venta
   end
 
   def devolver
@@ -106,7 +106,7 @@ class CajaController < ApplicationController
     venta = Venta.where(sucursal: sucursal_actual).find(params[:venta_id])
     lineas = params.fetch(:lineas, {}).to_unsafe_h.map { |id, cant| { venta_linea_id: id, cantidad: cant } }.reject { |l| l[:cantidad].blank? || l[:cantidad].to_d <= 0 }
     dev = Caja.devolver!(venta: venta, lineas: lineas, motivo: params[:motivo].to_s.strip, usuario: usuario_actual)
-    redirect_to caja_ventas_path, notice: "Devolución #{dev.folio} de #{Dinero.pesos(dev.total_centavos)} sobre #{venta.folio}"
+    redirect_to caja_ventas_path, notice: t("caja.avisos.devolucion", folio: dev.folio, monto: Dinero.pesos(dev.total_centavos), venta: venta.folio)
   rescue Caja::Error, ActiveRecord::RecordInvalid => e
     redirect_to caja_devolucion_path(codigo: params[:codigo]), alert: e.message
   end

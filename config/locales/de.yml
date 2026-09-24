@@ -211,12 +211,88 @@ de:
       producto_obligatorio: bei einem Paket Pflicht
       tarima_sin_producto: eine Palette hat kein Produkt
       sin_paquetes: 'keine Pakete: alle wurden abgeschrieben'
+      no_encontrada: Etikett „%{codigo}“ nicht gefunden
     produccion:
       ya_cerrada: die Produktion ist bereits geschlossen
     barcode:
       doce_digitos: 12 Ziffern erwartet
       plu_rango: PLU außerhalb des Bereichs
       secuencia_rango: Laufnummer außerhalb des Bereichs
+    salida:
+      esta: der Transfer ist %{estado}
+      ya_va_en: '%{codigo} ist bereits in Transfer %{folio}'
+      no_viva: Etikett %{codigo} ist nicht aktiv
+      no_esta_en: Etikett %{codigo} ist nicht in %{sucursal}
+      va_dentro: 'Etikett %{codigo} steckt in einem anderen: Kiste oder Palette scannen'
+      etiqueta_vacia: Etikett %{codigo} ist leer
+      manual_motivo: eine Zeile ohne Etikett braucht einen Grund
+      verificar_propia: wer packt, darf die eigene Ladung nicht prüfen
+      no_va: '%{codigo} gehört nicht zu diesem Transfer'
+      nada: der Transfer ist leer
+      faltan_verificar: '%{n} Etiketten noch nicht geprüft: scannen oder mit Grund versiegeln'
+      primero_sellar: der Transfer muss zuerst versiegelt werden
+      solo_entrega_reparto: nur eine Lieferung auf Tour kann zugestellt werden (%{estado})
+      no_va_parada: '%{codigo} gehört nicht zu diesem Halt oder wurde schon zugestellt'
+      solo_cierra_reparto: nur eine Lieferung auf Tour kann geschlossen werden (%{estado})
+      sin_entregar: '%{n} Stücke nicht zugestellt: scannen oder Grund der Ablehnung angeben'
+      solo_cobra_reparto: nur eine Lieferung auf Tour kann kassiert werden
+      va_en_viaje: 'diese Lieferung ist auf Fahrt %{folio}: wird am Halt kassiert und bei Rückkehr abgerechnet'
+      reparto_no_se_recibe: eine Lieferung wird kassiert, nicht empfangen
+      no_en_transito: der Transfer ist nicht unterwegs (%{estado})
+      caja_por_paquete: eine Kiste wird Paket für Paket empfangen; eine ganze Palette geht
+      no_viene: '%{codigo} ist nicht in diesem Transfer oder wurde schon empfangen'
+      etiqueta_esta: '%{codigo} ist %{estado}'
+      es_grupo: '%{codigo} ist eine %{tipo}: die Pakete scannen'
+      si_viene: '%{codigo} ist in diesem Transfer: normal empfangen'
+      de_otra_sucursal: '%{codigo} gehört zu %{de}, nicht zu %{origen}'
+      recibela_alla: '%{codigo} ist in Transfer %{folio}: dort empfangen'
+      no_pendiente: '%{codigo} ist in diesem Transfer nicht offen'
+      sin_recibir: '%{n} Pakete nicht empfangen: scannen oder Grund für den Fehlbestand angeben'
+      solo_cancela_antes: nur vor dem Versand stornierbar
+      cliente_obligatorio: bei einer Lieferung Pflicht
+      destino_obligatorio: Pflicht
+      destino_no_origen: darf nicht der Ursprung sein
+    corte:
+      ya_abierto: in %{sucursal} ist bereits ein Kassenabschnitt offen
+      cerrado: der Kassenabschnitt ist geschlossen
+      sin_efectivo: so viel Bargeld ist nicht in der Lade (%{monto})
+      ya_cerrado: der Kassenabschnitt ist bereits geschlossen
+    caja:
+      clave_ticket: der Ticketschlüssel fehlt
+      sin_caja: 'keine Kasse offen in %{sucursal}: mit Wechselgeld öffnen'
+      sin_caja_simple: keine Kasse offen
+      excede_limite: 'mehr als %{monto} in der Lade: erst Abschöpfung in den Tresor'
+      ticket_vacio: das Ticket ist leer
+      no_se_vende_sin: '%{mensaje}. Was nicht da ist, wird nicht verkauft: erst den Transfer empfangen.'
+      sin_caja_reparto: 'keine Kasse offen in %{sucursal}: vor dem Versand der Lieferung öffnen'
+      salida_vacia: der Transfer ist leer
+      nota_no_por_cobrar: Lieferschein %{folio} ist nicht offen (%{estado})
+      sin_caja_en: keine Kasse offen in %{sucursal}
+      falta_dinero_nota: 'Geld fehlt: der Lieferschein ist %{nota} und gezahlt werden %{pago}; Rest auf Kredit, falls der Kunde einen hat'
+      sin_cliente: der Lieferschein hat keinen Kunden
+      sin_credito: '%{cliente} hat keinen Kredit (%{regla})'
+      bloqueado: '%{cliente} ist gesperrt: %{motivo}'
+      forma_desconocida: 'unbekannte Zahlungsart: %{forma}'
+      motivo_rechazo: der Grund der Ablehnung fehlt
+      nota_ya: Lieferschein %{folio} ist bereits %{estado}
+      renglon_no_encontrado: die Zeile für %{producto} fehlt im Lieferschein
+      ya_devuelta: der Verkauf ist bereits komplett erstattet
+      sin_caja_devolver: keine Kasse offen, um das Geld zurückzugeben
+      nada_devuelto: nichts zurückgegeben
+      max_devolver: '%{producto}: höchstens %{max} können zurückgegeben werden'
+      etiqueta_no_viva: Etikett %{codigo} ist nicht aktiv (%{estado})
+      etiqueta_otra_sucursal: Etikett %{codigo} gehört zu einer anderen Filiale
+      etiqueta_en_transito: 'Etikett %{codigo} ist unterwegs: erst den Transfer empfangen'
+      etiqueta_esta: Etikett %{codigo} ist %{estado}
+      es_grupo: 'Es ist eine %{tipo}: die Pakete scannen'
+      es_grupo_codigo: 'Etikett %{codigo} ist eine %{tipo}: die Pakete scannen'
+      cantidad_invalida: '%{producto}: ungültige Menge'
+      piezas_enteras: '%{producto} geht nur in ganzen Stücken'
+      sin_precio: '%{producto}: kein Preis in %{sucursal}; vor dem Verkauf bei der Zentrale anfragen'
+      piso_precio: '%{producto}: der Preis darf nicht unter %{piso} % des Katalogs fallen (%{monto})'
+      falta_dinero: 'Geld fehlt: das Ticket ist %{total} und gezahlt werden %{pago}'
+      no_efectivo_excede: Überweisung oder Einzahlung dürfen die Summe nicht übersteigen
+      sin_ticket_devolucion: 'Ohne Ticket oder Etikett keine Erstattung: „%{codigo}“ nicht gefunden'
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -502,6 +578,14 @@ de:
       sin_web_serial: kein Web Serial (Chrome oder Edge verwenden)
       confirmar_desconectar: Waage trennen? Beim nächsten Mal muss der Port neu gewählt werden.
       pz: St.
+    pos:
+      la_etiqueta: Etikett
+      ya_en_ticket: ist schon auf dem Ticket
+      cantidad_o_bascula: Menge eingeben oder Waage nutzen
+      ticket_vacio: Das Ticket ist leer
+    baja:
+      faltan_codigo_y_motivo: Code und Grund fehlen
+      no_encontrada: Dieses Etikett wurde nicht gefunden
   etiquetas:
     etiqueta: Etikett
     etiquetar: Etikettieren
@@ -609,3 +693,185 @@ de:
     cerrada_aviso: 'Produktion geschlossen: Schwund %{merma}'
   caja:
     nueva_venta: Neuer Verkauf
+    corte_de_caja: Kassenabschnitt
+    corte: Abschnitt
+    fondo: Wechselgeld
+    ventas: Verkäufe
+    efectivo_de_ventas: Bargeld aus Verkäufen
+    devoluciones: Erstattungen
+    retiros: Abschöpfungen
+    en_gaveta: In der Lade
+    corte_abierto_por: Abschnitt %{folio} geöffnet von %{quien} am %{fecha}
+    n_ventas:
+      one: 1 Verkauf
+      other: '%{count} Verkäufe'
+    retiro_caja_fuerte: Abschöpfung in den Tresor
+    monto: Betrag
+    retiro_por_revisar: Die Abschöpfung wird erfasst und geht zur Prüfung.
+    retirar: Abschöpfen
+    cerrar_corte: Abschnitt schließen
+    cerrar_corte_ayuda: Zähle das Bargeld in der Lade (mit Wechselgeld) und trage es ein. Das System speichert den Sollbetrag und die Differenz.
+    confirmar_cerrar_corte: Abschnitt %{folio} schließen?
+    efectivo_contado: Gezähltes Bargeld
+    cortes_cerrados: Geschlossene Abschnitte
+    abierto: Geöffnet
+    cerrado: Geschlossen
+    cajero: Kassierer
+    esperado: Soll
+    contado: Gezählt
+    diferencia: Differenz
+    devolucion: Erstattung
+    escanea_ticket_o_etiqueta: Ticket oder Produktetikett scannen
+    ticket: Ticket
+    vendido: Verkauft
+    ya_devuelto: Schon zurück
+    devolver: Zurückgeben
+    devolver_y_regresar: Zurückgeben und Geld erstatten
+    excede_limite_html: 'Mehr als %{monto} in der Lade: %{enlace}, bevor weiter verkauft wird.'
+    haz_un_retiro: Abschöpfung in den Tresor machen
+    escanea_o_teclea: Etikett scannen oder PLU / Schlüssel eingeben und Enter
+    bascula: Waage
+    conectar: verbinden
+    usar_bascula: Waage nutzen
+    cambio: Rückgeld
+    cobrar: Kassieren
+    vaciar_ticket: Ticket leeren
+    sin_caja_en: Keine Kasse offen in %{sucursal}.
+    fondo_inicial: Anfangs-Wechselgeld
+    abrir_caja: Kasse öffnen
+    pide_que_la_abran: Bitte jemanden mit Berechtigung, sie zu öffnen.
+    le_atendio: Bedient von
+    cliente: Kunde
+    por_cobrar_contra_entrega: OFFEN · bar bei Lieferung
+    devoluciones_solo_con_ticket: Erstattungen nur mit diesem Ticket
+    hora: Uhrzeit
+    lineas: Zeilen
+    pago: Zahlung
+    sin_ventas: Keine Verkäufe.
+    avisos:
+      abierta: Kasse geöffnet mit Wechselgeld %{fondo}
+      bajo_precio: '%{producto} von %{de} auf %{a} gesenkt in %{folio}'
+      corte_cerrado: 'Abschnitt %{folio} geschlossen: Soll %{esperado}, gezählt %{contado}, Differenz %{diferencia}'
+      retiro: Abschöpfung von %{monto} erfasst
+      queda_por_revisar: ; geht zur Prüfung
+      devolucion: Erstattung %{folio} über %{monto} auf %{venta}
+      rechazo_en_ruta: '%{folio} auf Tour abgelehnt: %{motivo}'
+  formas_pago:
+    efectivo: Bar
+    transferencia: Überweisung
+    deposito: Einzahlung
+  salidas:
+    en_curso: Laufende Transfers
+    tipo: Art
+    paquetes: Pakete
+    abrio: Geöffnet von
+    nada_en_curso: Nichts in Arbeit.
+    historial: Verlauf
+    tipos:
+      traspaso: Transfer
+      devolucion: Rücksendung
+      reparto: Lieferung
+    titulos:
+      traspaso: Transfer
+      devolucion: Rücksendung
+      reparto: Lieferung
+    nueva_desde: Neuer Transfer von %{sucursal}
+    surte_el_pedido: erfüllt Bestellung
+    tiendas: Filialen
+    clientes_de_ruta: Tourkunden
+    motivo_devolucion: Grund der Rücksendung
+    abrir_salida: Transfer öffnen
+    por_recibir: Zu empfangen
+    enviada: Versendet
+    recibir: Empfangen
+    nada_en_camino: Nichts unterwegs.
+    recibidas: Empfangen
+    ruta: Tour
+    abrio_el: Geöffnet von %{quien} am %{fecha}
+    verifico: geprüft von
+    surtir_escanea: 'Packen: Kisten, Paletten oder Pakete scannen'
+    codigo_etiqueta: Etikettcode
+    agregar: Hinzufügen
+    quitar: Entfernen
+    quitar_etiqueta: Ein Etikett entfernen
+    canastillas_que_van: 'Mitgehende Körbe:'
+    ninguna: keine
+    cantidad_cero_quita: Menge (0 entfernt)
+    anotar: Vermerken
+    renglon_sin_etiqueta: Zeile ohne Etikett (ohne Scan senden, mit Grund)
+    motivo_sin_etiqueta: Grund (Etikett abgefallen…)
+    agregar_renglon: Zeile hinzufügen
+    verificar_carga: Ladung prüfen (andere Person)
+    escanea_sube_camion: Scannen, was auf den Lkw kommt
+    verificar: Prüfen
+    sin_verificar_n: 'Ungeprüft: %{n} von %{total}'
+    sellar: Transfer versiegeln
+    necesita_permiso_verificar: Wer prüft, braucht die Berechtigung salidas.verificar.
+    sellar_sin_verificar: Ohne Prüfung versiegeln (geht zur Prüfung)
+    por_que_sin_segundo_escaneo: warum ohne zweiten Scan
+    sellar_asi: Trotzdem versiegeln
+    sellada_por: Versiegelt und geprüft von %{quien}.
+    al_enviar_reparto: Beim Versand wird der offene Lieferschein geschlossen und der Bestand reduziert.
+    al_enviar_baja: Beim Versand sinkt der Bestand von %{sucursal}.
+    enviar: Senden
+    confirmar_enviar: Transfer %{folio} senden?
+    va_en_viaje: Geht mit Fahrt
+    chofer: Fahrer
+    se_cobra_en_parada: Wird am Halt zugestellt und kassiert; das Geld kommt bei der Abrechnung der Fahrt.
+    subir_al_viaje: Auf Fahrt laden
+    sin_viaje_armandose: Keine Fahrt wird gerade zusammengestellt.
+    armar_viaje_de: Fahrt %{ruta} zusammenstellen
+    cobrar_entrega_nota: Lieferung kassieren · Lieferschein
+    cobrar_entrega_ayuda: Was der Fahrer bringt, geht in die offene Kasse. Hat der Kunde etwas abgelehnt, den ganzen Lieferschein kassieren und dann die Erstattung mit dem Ticket machen.
+    cobrar_entrega: Lieferung kassieren
+    entregada_y_cobrada: 'Zugestellt und kassiert: Lieferschein'
+    rechazo: abgelehnt
+    rechazada_completa: 'Komplett abgelehnt: die Ware ging zurück in den Bestand und Lieferschein %{folio} steht auf null.'
+    recibir_paquete_o_tarima: 'Empfangen: Paket für Paket oder die ganze Palette'
+    codigo_paquete_o_tarima: Paket- oder Palettencode
+    codigo_paquete: Paketcode
+    llegan_sin_precio_html: 'Kommen <strong>ohne Preis</strong> in dieser Filiale an: %{productos}. Sie werden trotzdem empfangen, aber die Kasse verkauft sie erst, wenn die Zentrale einen Preis setzt.'
+    sobrante_titulo: Ein Paket kam an, das nicht im Transfer steht (Überschuss)
+    sobrante_ayuda: Es wurde außerhalb etikettiert und kam nie in den Transfer. Es geht mit Grund in die Filiale und zur Prüfung.
+    recibir_sobrante: Überschuss empfangen
+    conteo_recepcion: Empfangen %{recibidos} · fehlend %{faltantes} · offen %{pendientes}
+    reportar_roto: Kaputt oder ohne Etikett melden
+    reportar: Melden
+    cerrar_recepcion: Wareneingang schließen
+    confirmar_cerrar_recepcion: Offenes wird als fehlend gebucht. Schließen?
+    motivo_pendiente: Grund für Offenes (falls etwas bleibt)
+    pedidos_abiertos_para: 'Offene Bestellungen für %{destino}:'
+    falta: fehlt
+    contenido: Inhalt
+    grupo: Gruppe
+    paquete: Paket
+    recepcion: Wareneingang
+    suelto: lose
+    manual: manuell
+    sin_etiqueta: ohne Etikett
+    autorizo: genehmigt von
+    por_revisar: zur Prüfung
+    vacia: Leer.
+    totales: Summen
+    cancelar_salida: Transfer stornieren
+    confirmar_cancelar: '%{folio} stornieren?'
+    entrega_concepto: Lieferung %{folio}
+    avisos:
+      abierta: 'Transfer %{folio} geöffnet: scannen, was mitgeht'
+      agregada: '%{tipo} %{codigo} hinzugefügt (%{n} Pakete)'
+      quitados: '%{n} Pakete aus dem Transfer entfernt'
+      manual: Manuelle Zeile hinzugefügt
+      manual_revision: Zeile hinzugefügt; geht zur Prüfung
+      verificada: '%{codigo} geprüft'
+      sellada: Transfer %{folio} versiegelt von %{quien}
+      sello_sin_verificar: '%{folio} mit %{n} ungeprüften Stücken versiegelt: %{motivo}'
+      enviada: Transfer %{folio} gesendet an %{destino}
+      canastillas: Körbe vermerkt
+      cobrada: 'Lieferung %{folio} kassiert: Lieferschein %{nota}'
+      cancelada: Transfer %{folio} storniert
+      recibidos: '%{n} Pakete empfangen'
+      reportados: '%{n} Pakete als fehlend gemeldet'
+      sobrante_motivo: 'Überschuss in %{folio} (nicht im Transfer): %{motivo}'
+      sobrante: '%{codigo} als Überschuss empfangen; geht zur Prüfung'
+      recibida: Transfer %{folio} empfangen
+      desarmada: '%{folio}: beim Empfang aufgelöst'

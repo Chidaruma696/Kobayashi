@@ -29,7 +29,7 @@ class SalidasController < ApplicationController
     autorizar!("salidas.surtir")
     destino = pedido_abierto&.destino || destino_elegido
     salida = Salida.nueva!(origen: sucursal_actual, destino: destino, usuario: usuario_actual, motivo: params[:motivo].presence)
-    redirect_to salida_path(salida), notice: "Salida #{salida.folio} abierta: escanea lo que va"
+    redirect_to salida_path(salida), notice: t("salidas.avisos.abierta", folio: salida.folio)
   rescue ActiveRecord::RecordInvalid => e
     redirect_to new_salida_path(pedido_id: params[:pedido_id]), alert: e.record.errors.full_messages.join(", ")
   end
@@ -46,12 +46,12 @@ class SalidasController < ApplicationController
   # --- surtir
   def agregar
     autorizar!("salidas.surtir")
-    con_etiqueta { |e| n = @salida.agregar!(e); "#{e.tipo} #{e.codigo} agregada (#{n} paquetes)" }
+    con_etiqueta { |e| n = @salida.agregar!(e); t("salidas.avisos.agregada", tipo: t("etiquetas.tipos.#{e.tipo}"), codigo: e.codigo, n: n) }
   end
 
   def quitar
     autorizar!("salidas.surtir")
-    con_etiqueta { |e| n = @salida.quitar!(e); "#{n} paquetes fuera de la salida" }
+    con_etiqueta { |e| n = @salida.quitar!(e); t("salidas.avisos.quitados", n: n) }
   end
 
   def manual
@@ -60,7 +60,7 @@ class SalidasController < ApplicationController
     linea = @salida.agregar_manual!(producto: Producto.activos.find(params[:producto_id]), cantidad: params[:cantidad],
                                     motivo: params[:motivo].to_s.strip, autorizado_por: autoriza, usuario: usuario_actual)
     revisar_si_hace_falta(linea, autoriza, motivo: linea.motivo, valor_centavos: Revision.valor(linea.cantidad, linea.producto, sucursal_actual))
-    redirect_to salida_path(@salida), notice: autoriza ? "Renglón manual agregado" : "Renglón agregado; queda por revisar"
+    redirect_to salida_path(@salida), notice: autoriza ? t("salidas.avisos.manual") : t("salidas.avisos.manual_revision")
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -68,17 +68,17 @@ class SalidasController < ApplicationController
   # --- verificar y sellar
   def verificar
     autorizar!("salidas.verificar")
-    con_etiqueta { |e| @salida.verificar!(e, usuario: usuario_actual); "#{e.codigo} verificada" }
+    con_etiqueta { |e| @salida.verificar!(e, usuario: usuario_actual); t("salidas.avisos.verificada", codigo: e.codigo) }
   end
 
   def sellar
     autorizar!(params[:motivo_sin_verificar].present? ? "salidas.surtir" : "salidas.verificar")
     pendientes = @salida.sellar!(usuario: usuario_actual, sin_verificar_motivo: params[:motivo_sin_verificar].presence)
     if pendientes.positive?
-      revisar_si_hace_falta(@salida, nil, motivo: "Selló #{@salida.folio} con #{pendientes} bultos sin verificar: #{params[:motivo_sin_verificar]}",
+      revisar_si_hace_falta(@salida, nil, motivo: t("salidas.avisos.sello_sin_verificar", folio: @salida.folio, n: pendientes, motivo: params[:motivo_sin_verificar]),
                             valor_centavos: @salida.contenido.sum { |producto, cant| Revision.valor(cant, producto, sucursal_actual) })
     end
-    redirect_to salida_path(@salida), notice: "Salida #{@salida.folio} sellada por #{usuario_actual}"
+    redirect_to salida_path(@salida), notice: t("salidas.avisos.sellada", folio: @salida.folio, quien: usuario_actual)
   rescue ArgumentError => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -86,7 +86,7 @@ class SalidasController < ApplicationController
   def enviar
     autorizar!("salidas.surtir")
     @salida.enviar!(usuario: usuario_actual)
-    redirect_to salidas_path, notice: "Salida #{@salida.folio} enviada a #{@salida.destino}"
+    redirect_to salidas_path, notice: t("salidas.avisos.enviada", folio: @salida.folio, destino: @salida.destino)
   rescue ArgumentError, Inventario::SinExistencia, Caja::Error => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -95,7 +95,7 @@ class SalidasController < ApplicationController
   def canastillas
     autorizar!("salidas.surtir")
     @salida.fijar_canastillas!(TipoCanastilla.find(params[:tipo_canastilla_id]), params[:cantidad])
-    redirect_to salida_path(@salida), notice: "Canastillas anotadas"
+    redirect_to salida_path(@salida), notice: t("salidas.avisos.canastillas")
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -104,7 +104,7 @@ class SalidasController < ApplicationController
     autorizar!("caja.vender")
     pagos = %w[efectivo transferencia deposito].map { |f| { forma: f, monto_centavos: Dinero.centavos(params[f]) } }
     @salida.cobrar_entrega!(pagos: pagos, usuario: usuario_actual)
-    redirect_to salida_path(@salida), notice: "Entrega de #{@salida.folio} cobrada: nota #{@salida.venta.folio}"
+    redirect_to salida_path(@salida), notice: t("salidas.avisos.cobrada", folio: @salida.folio, nota: @salida.venta.folio)
   rescue ArgumentError, Caja::Error => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -112,7 +112,7 @@ class SalidasController < ApplicationController
   def cancelar
     autorizar!("salidas.surtir")
     @salida.cancelar!
-    redirect_to salidas_path, notice: "Salida #{@salida.folio} cancelada"
+    redirect_to salidas_path, notice: t("salidas.avisos.cancelada", folio: @salida.folio)
   rescue ArgumentError => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -120,31 +120,31 @@ class SalidasController < ApplicationController
   # --- recibir
   def recibir_etiqueta
     autorizar!("salidas.recibir")
-    con_etiqueta { |e| n = @salida.recibir!(e, usuario: usuario_actual); "#{n} paquetes recibidos" }
+    con_etiqueta { |e| n = @salida.recibir!(e, usuario: usuario_actual); t("salidas.avisos.recibidos", n: n) }
   end
 
   # Un paquete que llegó sin venir en la salida: entra como sobrante con motivo y queda por revisar.
   def sobrante
     autorizar!("salidas.recibir")
-    etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, "no se encontró la etiqueta «#{params[:codigo]}»"
+    etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, t("errores.etiqueta.no_encontrada", codigo: params[:codigo])
     motivo = params[:motivo].to_s.strip
     @salida.recibir_sobrante!(etiqueta, motivo: motivo, usuario: usuario_actual)
-    revisar_si_hace_falta(etiqueta, nil, motivo: "Sobrante en #{@salida.folio} (no venía en la salida): #{motivo}",
+    revisar_si_hace_falta(etiqueta, nil, motivo: t("salidas.avisos.sobrante_motivo", folio: @salida.folio, motivo: motivo),
                           valor_centavos: Revision.valor(etiqueta.cantidad, etiqueta.producto, sucursal_actual))
-    redirect_to salida_path(@salida), notice: "#{etiqueta.codigo} recibida como sobrante; queda por revisar"
+    redirect_to salida_path(@salida), notice: t("salidas.avisos.sobrante", codigo: etiqueta.codigo)
   rescue ArgumentError, Inventario::SinExistencia => e
     redirect_to salida_path(@salida), alert: e.message
   end
 
   def reportar
     autorizar!("salidas.recibir")
-    con_etiqueta { |e| n = @salida.reportar!(e, motivo: params[:motivo].to_s.strip, usuario: usuario_actual); "#{n} paquetes reportados como faltantes" }
+    con_etiqueta { |e| n = @salida.reportar!(e, motivo: params[:motivo].to_s.strip, usuario: usuario_actual); t("salidas.avisos.reportados", n: n) }
   end
 
   def cerrar_recepcion
     autorizar!("salidas.recibir")
     @salida.cerrar_recepcion!(usuario: usuario_actual, motivo_pendientes: params[:motivo].presence)
-    redirect_to recibir_salidas_path, notice: "Salida #{@salida.folio} recibida"
+    redirect_to recibir_salidas_path, notice: t("salidas.avisos.recibida", folio: @salida.folio)
   rescue ArgumentError => e
     redirect_to salida_path(@salida), alert: e.message
   end
@@ -165,7 +165,7 @@ class SalidasController < ApplicationController
   end
 
   def con_etiqueta
-    etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, "no se encontró la etiqueta «#{params[:codigo]}»"
+    etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, t("errores.etiqueta.no_encontrada", codigo: params[:codigo])
     redirect_to salida_path(@salida), notice: yield(etiqueta)
   rescue ArgumentError, Inventario::SinExistencia => e
     redirect_to salida_path(@salida), alert: e.message

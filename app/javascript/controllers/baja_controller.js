@@ -7,9 +7,9 @@ export default class extends Controller {
   async enviar() {
     const codigo = this.codigoTarget.value.trim()
     const motivo = this.motivoTarget.value.trim()
-    if (!codigo || !motivo) { alert("Hacen falta el código y el motivo"); return }
+    if (!codigo || !motivo) { alert(T.baja.faltan_codigo_y_motivo); return }
     const r = await fetch(`/etiquetas/buscar?codigo=${encodeURIComponent(codigo)}`, { headers: { Accept: "application/json" } })
-    if (!r.ok) { alert("No se encontró esa etiqueta"); return }
+    if (!r.ok) { alert(T.baja.no_encontrada); return }
     const { id } = await r.json()
     const form = document.createElement("form")
     form.method = "post"

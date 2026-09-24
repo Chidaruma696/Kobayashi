@@ -15,7 +15,7 @@ export default class extends Controller {
     this.bascula.on("estado", e => { this.estadoTarget.textContent = e.mensaje || e.estado })
     this.bascula.on("aviso", a => { this.estadoTarget.textContent = a.mensaje || String(a) })
     if (!this.simuladaValue && Bascula.soportada) this.bascula.reconectar().catch(() => {})
-    if (!this.simuladaValue && !Bascula.soportada) this.estadoTarget.textContent = "sin Web Serial (usa Chrome o Edge)"
+    if (!this.simuladaValue && !Bascula.soportada) this.estadoTarget.textContent = T.etq.sin_web_serial
   }
 
   disconnect() {

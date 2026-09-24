@@ -1,5 +1,5 @@
 <%= form_with url: url, class: "flex gap-2" do |f| %>
   <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: placeholder, class: "flex-1 rounded border border-stone-300 px-3 py-2 font-mono" %>
-  <% if local_assigns[:motivo] %><%= f.text_field :motivo, placeholder: "motivo", required: true, class: "w-40 rounded border border-stone-300 px-3 py-2" %><% end %>
+  <% if local_assigns[:motivo] %><%= f.text_field :motivo, placeholder: t("comun.motivo").downcase, required: true, class: "w-40 rounded border border-stone-300 px-3 py-2" %><% end %>
   <%= f.submit boton, class: "btn btn-primary" %>
 <% end %>

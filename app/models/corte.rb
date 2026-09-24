@@ -24,7 +24,7 @@ class Corte < ApplicationRecord
 
   # Un corte abierto por sucursal.
   def self.abrir!(sucursal:, usuario:, fondo_centavos:)
-    raise ArgumentError, "ya hay un corte abierto en #{sucursal.nombre}" if abierto_en(sucursal)
+    raise ArgumentError, I18n.t("errores.corte.ya_abierto", sucursal: sucursal.nombre) if abierto_en(sucursal)
     create!(sucursal: sucursal, usuario: usuario, fondo_centavos: fondo_centavos, abierto_en: Time.current)
   end
 
@@ -64,15 +64,15 @@ class Corte < ApplicationRecord
   end
 
   def retirar!(monto_centavos:, motivo:, usuario:, autorizado_por: nil)
-    raise ArgumentError, "el corte está cerrado" unless abierto?
-    raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.corte.cerrado") unless abierto?
+    raise ArgumentError, I18n.t("errores.hace_falta_motivo") if motivo.blank?
     monto = monto_centavos.to_i
-    raise ArgumentError, "no hay tanto efectivo en la gaveta (#{Dinero.pesos(efectivo_esperado_centavos)})" if monto > efectivo_esperado_centavos
+    raise ArgumentError, I18n.t("errores.corte.sin_efectivo", monto: Dinero.pesos(efectivo_esperado_centavos)) if monto > efectivo_esperado_centavos
     retiros.create!(monto_centavos: monto, motivo: motivo, usuario: usuario, autorizado_por: autorizado_por)
   end
 
   def cerrar!(contado_centavos:, usuario:)
-    raise ArgumentError, "el corte ya está cerrado" unless abierto?
+    raise ArgumentError, I18n.t("errores.corte.ya_cerrado") unless abierto?
     esperado = efectivo_esperado_centavos
     update!(estado: "cerrado", contado_centavos: contado_centavos.to_i, esperado_centavos: esperado,
             diferencia_centavos: contado_centavos.to_i - esperado, cerrado_en: Time.current, cerrado_por: usuario)
