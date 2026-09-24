@@ -3,6 +3,11 @@
 <div align="center">
   <br/>
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo/kobayashi-logo-w.png">
+  <img src="docs/logo/kobayashi-logo-b.png" width="140" alt="Kobayashi">
+</picture>
+
 # Kobayashi
 
 **帳 · Punto de venta y administración para una planta de carne que etiqueta por peso, surte a sus propias tiendas y reparte a clientes de ruta. Ruby on Rails.**
@@ -52,6 +57,32 @@ La matriz produce carne, **etiqueta cada paquete en la báscula**, vende en su p
 | **Inicio (tablero) y admin** | Ventas, tickets, formas de pago, cortes, mermas, conteos, inventario valorizado, CSV por producto; productos, usuarios, roles, sucursales, clientes, rutas. | Permisos por clave; las pestañas de la cinta aparecen solo para lo que el usuario puede hacer. |
 
 <br/>
+
+## 📸 Capturas
+
+<img src="docs/capturas/inicio.png" alt="" width="100%">
+
+*Inicio: el tablero del día de la sucursal (ventas, efectivo, lo más vendido, lo que espera revisión).*
+
+<img src="docs/capturas/etiquetadora.png" alt="" width="100%">
+
+*Etiquetar contra un pedido: el banner lleva el color del destino y cada caja entra sola a la salida.*
+
+<img src="docs/capturas/pedidos.png" alt="" width="100%">
+
+*Cola de pedidos: lo pendiente y lo que salió completo o parcial.*
+
+<img src="docs/capturas/salida.png" alt="" width="100%">
+
+*Una salida: se surte escaneando, otra persona verifica, se sella y se envía.*
+
+<img src="docs/capturas/viaje.png" alt="" width="100%">
+
+*Un viaje de reparto: paradas en orden, lo cobrado y lo que el chofer debe entregar.*
+
+<img src="docs/capturas/inicio-movil.png" alt="" width="320">
+
+*También cabe en un teléfono.*
 
 ## 🧭 Diseño
 

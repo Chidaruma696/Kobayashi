@@ -3,6 +3,11 @@
 <div align="center">
   <br/>
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo/kobayashi-logo-w.png">
+  <img src="docs/logo/kobayashi-logo-b.png" width="140" alt="Kobayashi">
+</picture>
+
 # Kobayashi
 
 **帳 · Point of sale and back office for a meat plant that labels by weight, supplies its own shops and delivers to route customers. Ruby on Rails.**
@@ -52,6 +57,32 @@ The headquarters produces meat, **labels every package on a scale**, sells at it
 | **Dashboard & admin** | Sales, tickets, payment mix, closes, waste, counts, valued stock, CSV by product; products, users, roles, shops, customers, routes. | Permissions by key, ribbon tabs appear only for what the user may do. |
 
 <br/>
+
+## 📸 Screenshots
+
+<img src="docs/capturas/inicio.png" alt="" width="100%">
+
+*Home: the day's board for the branch (sales, cash, top sellers, what awaits review).*
+
+<img src="docs/capturas/etiquetadora.png" alt="" width="100%">
+
+*Labeling against an order: the banner carries the destination colour; every box goes straight into the outbound note.*
+
+<img src="docs/capturas/pedidos.png" alt="" width="100%">
+
+*Orders queue: what is pending, what shipped complete or partial.*
+
+<img src="docs/capturas/salida.png" alt="" width="100%">
+
+*An outbound note: pick by scanning, a second person verifies, seal, ship.*
+
+<img src="docs/capturas/viaje.png" alt="" width="100%">
+
+*A delivery trip: stops in order, what was collected, what the driver owes.*
+
+<img src="docs/capturas/inicio-movil.png" alt="" width="320">
+
+*It also fits a phone.*
 
 ## 🧭 Design
 
