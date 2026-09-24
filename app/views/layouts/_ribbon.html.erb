@@ -12,7 +12,7 @@
     <div class="flex min-w-0 flex-1 items-center gap-1.5 whitespace-nowrap max-lg:overflow-x-auto [scrollbar-width:none]">
       <% pestanas_visibles.each do |p| %>
         <%= link_to p[:nombre], ruta_de_pestana(p),
-              class: "shrink-0 rounded-lg px-4 py-1.5 font-medium transition-colors #{p[:id] == activa[:id] ? 'bg-white font-semibold text-marca-900 shadow-sm' : 'text-marca-950/80 hover:bg-white/25 hover:text-marca-950'}" %>
+              class: "shrink-0 rounded-full px-4 py-1.5 font-medium transition-colors #{p[:id] == activa[:id] ? 'bg-white font-semibold text-marca-900 shadow-sm' : 'text-marca-950/80 hover:bg-white/25 hover:text-marca-950'}" %>
       <% end %>
     </div>
     <span class="hidden shrink-0 text-marca-950/80 lg:inline" title="<%= sucursal_actual %> · <%= usuario_actual %>"><%= sucursal_actual %> · <%= usuario_actual %></span>
