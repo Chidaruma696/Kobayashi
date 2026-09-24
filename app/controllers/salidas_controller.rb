@@ -56,7 +56,7 @@ class SalidasController < ApplicationController
 
   def manual
     autorizar!("salidas.surtir")
-    autoriza = autorizador_o_revision("etiquetas.libre", params[:pin])
+    autoriza = autorizador_o_revision("etiquetas.libre")
     linea = @salida.agregar_manual!(producto: Producto.activos.find(params[:producto_id]), cantidad: params[:cantidad],
                                     motivo: params[:motivo].to_s.strip, autorizado_por: autoriza, usuario: usuario_actual)
     revisar_si_hace_falta(linea, autoriza, motivo: linea.motivo, valor_centavos: Revision.valor(linea.cantidad, linea.producto, sucursal_actual))
@@ -121,6 +121,19 @@ class SalidasController < ApplicationController
   def recibir_etiqueta
     autorizar!("salidas.recibir")
     con_etiqueta { |e| n = @salida.recibir!(e, usuario: usuario_actual); "#{n} paquetes recibidos" }
+  end
+
+  # Un paquete que llegó sin venir en la salida: entra como sobrante con motivo y queda por revisar.
+  def sobrante
+    autorizar!("salidas.recibir")
+    etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, "no se encontró la etiqueta «#{params[:codigo]}»"
+    motivo = params[:motivo].to_s.strip
+    @salida.recibir_sobrante!(etiqueta, motivo: motivo, usuario: usuario_actual)
+    revisar_si_hace_falta(etiqueta, nil, motivo: "Sobrante en #{@salida.folio} (no venía en la salida): #{motivo}",
+                          valor_centavos: Revision.valor(etiqueta.cantidad, etiqueta.producto, sucursal_actual))
+    redirect_to salida_path(@salida), notice: "#{etiqueta.codigo} recibida como sobrante; queda por revisar"
+  rescue ArgumentError, Inventario::SinExistencia => e
+    redirect_to salida_path(@salida), alert: e.message
   end
 
   def reportar

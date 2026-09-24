@@ -5,17 +5,20 @@ import { Bascula, basculaSimulada } from "kana"
 // sola lista de pesadas que se llena desde la báscula, a mano o con "N × peso"; por pieza solo
 // se dice cuántas piezas. Dos preferencias quietas (cerrar en caja, imprimir al vuelo) y una
 // acción: Registrar e imprimir. Los códigos los asigna el servidor; aquí nunca se inventan.
+// Contra un pedido, lo registrado entra solo a la salida de ese destino; si etiqueté mal, el
+// bote de cada renglón lo da de baja con motivo y lo saca de la salida.
 export default class extends Controller {
   static targets = [
     "aviso", "estado", "peso", "btnBascula", "btnCapturar",
-    "buscador", "resultados", "ficha",
+    "buscador", "resultados", "ficha", "fabrica", "codigoNuevo", "pesoFijoInput", "codigosLista",
     "panelKg", "manual", "qn", "qpeso", "qtotal", "qhint",
     "panelPieza", "piezas", "piezaNota", "btnCopias",
-    "panelLista", "resumen", "enCaja", "alVuelo", "alVueloLabel", "lista", "pin", "justificacion",
-    "btnRegistrar", "btnReimprimir", "resultado",
+    "panelLista", "resumen", "enCaja", "alVuelo", "alVueloLabel", "lista", "justificacion",
+    "btnRegistrar", "btnReimprimir", "resultado", "salida",
     "cfgAncho", "cfgAlto", "cfgLeyenda", "cfgBarras", "cfgLetra"
   ]
-  static values = { loteUrl: String, productosUrl: String, imprimirUrl: String, pedidoLineaId: String, produccionId: String, producto: Object, simulada: Boolean }
+  static values = { loteUrl: String, productosUrl: String, imprimirUrl: String, etiquetasUrl: String, adminProductosUrl: String,
+                    pedidoLineaId: String, produccionId: String, sustituto: Boolean, producto: Object, simulada: Boolean }
 
   CFG_CLAVE = "kobayashi:etiqueta_cfg"
   CFG_DEFAULT = { ancho: 55, alto: 45, leyenda: "", barras: 36, letra: 14 }
@@ -23,8 +26,9 @@ export default class extends Controller {
 
   connect() {
     this.producto = null
-    this.pesadas = []          // [{ cantidad, origen, id?, codigo? }]
-    this.caja = null           // caja registrada del lote actual
+    this.pesadas = []          // [{ cantidad, origen, id?, codigo?, baja? }]
+    this.caja = null           // caja registrada del lote actual { id, codigo, cantidad, baja? }
+    this.salida = null         // salida donde va cayendo lo registrado { id, folio, url, paquetes }
     this.registrado = false
     this.colaVuelo = Promise.resolve()
     this.ventana = null
@@ -44,6 +48,20 @@ export default class extends Controller {
   fmt(n) { return Number(n).toFixed(this.porPieza ? 0 : 3) }
   get porPieza() { return this.producto?.unidad === "pieza" }
   get unidad() { return this.porPieza ? "pz" : "kg" }
+  get pesoFijo() { return Number(this.producto?.peso_fijo || 0) }
+  get csrf() { return document.querySelector("meta[name=csrf-token]")?.content }
+
+  async pedir(url, metodo, cuerpo) {
+    const r = await fetch(url, {
+      method: metodo,
+      headers: { "Content-Type": "application/json", Accept: "application/json", "X-CSRF-Token": this.csrf },
+      body: cuerpo ? JSON.stringify(cuerpo) : undefined
+    })
+    const datos = r.status === 204 ? {} : await r.json().catch(() => ({}))
+    if (!r.ok) { this.avisar(datos.error || "No se pudo"); return null }
+    this.avisar("")
+    return datos
+  }
 
   // ---------------------------------------------------------------- producto
 
@@ -53,22 +71,22 @@ export default class extends Controller {
     if (!r.ok || this.buscadorTarget.value.trim() !== q) return
     this.candidatos = await r.json()
     this.resultadosTarget.innerHTML = this.candidatos.length
-      ? this.candidatos.map((p, i) => `<div class="cursor-pointer border-b border-slate-100 px-3 py-2 text-sm hover:bg-slate-100 ${i === 0 ? "bg-slate-100" : ""}" data-idx="${i}" data-action="mousedown->etiquetadora#elegirResultado"><span class="font-semibold">${this.esc(p.nombre)}</span> <span class="text-slate-500">${this.esc(p.clave)} · PLU ${p.plu} · ${p.unidad}</span></div>`).join("")
-      : `<div class="px-3 py-2 text-sm text-slate-500">Sin resultados</div>`
+      ? this.candidatos.map((p, i) => `<div class="cursor-pointer border-b border-stone-100 px-3 py-2 text-sm hover:bg-stone-100 ${i === 0 ? "bg-stone-100" : ""}" data-idx="${i}" data-action="mousedown->etiquetadora#elegirResultado"><span class="font-semibold">${this.esc(p.nombre)}</span> <span class="text-stone-500">${this.esc(p.clave)} · PLU ${p.plu} · ${p.unidad}</span></div>`).join("")
+      : `<div class="px-3 py-2 text-sm text-stone-500">Sin resultados</div>`
     this.resultadosTarget.classList.remove("hidden")
     if (this.candidatos.length === 1 && /^\d{8,}$/.test(q)) this.elegir(this.candidatos[0])
   }
 
   teclaBuscador(e) {
     const items = [ ...this.resultadosTarget.querySelectorAll("[data-idx]") ]
-    let i = items.findIndex(el => el.classList.contains("bg-slate-100"))
+    let i = items.findIndex(el => el.classList.contains("bg-stone-100"))
     if (e.key === "Escape") { this.resultadosTarget.classList.add("hidden"); return }
     if (e.key === "Enter") { e.preventDefault(); if (i >= 0) this.elegir(this.candidatos[i]); return }
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
     e.preventDefault()
     if (!items.length) return
     i = e.key === "ArrowDown" ? Math.min(i + 1, items.length - 1) : Math.max(i - 1, 0)
-    items.forEach(el => el.classList.remove("bg-slate-100")); items[i].classList.add("bg-slate-100"); items[i].scrollIntoView({ block: "nearest" })
+    items.forEach(el => el.classList.remove("bg-stone-100")); items[i].classList.add("bg-stone-100"); items[i].scrollIntoView({ block: "nearest" })
   }
 
   elegirResultado(e) { this.elegir(this.candidatos[Number(e.currentTarget.dataset.idx)]) }
@@ -78,13 +96,68 @@ export default class extends Controller {
     this.producto = p
     this.buscadorTarget.value = p.nombre
     this.resultadosTarget.classList.add("hidden")
-    this.limpiar()
-    const pf = Number(p.peso_fijo || 0)
-    const partes = [ `<strong>${this.esc(p.nombre)}</strong>`, this.esc(p.clave), `PLU ${p.plu}`, p.unidad ]
-    if (pf > 0) partes.push(`peso fijo ${pf.toFixed(3)} kg`)
-    partes.push(p.codigos.length ? `código de proveedor <code>${this.esc(p.codigos.join(", "))}</code>` : "sin código de proveedor")
-    this.fichaTarget.innerHTML = partes.join(" · ")
-    this.fichaTarget.classList.remove("hidden")
+    this.reiniciar()
+    this.pintarFicha()
+    this.acomodarPanel()
+  }
+
+  // Ficha con chips (clave, PLU, unidad, peso fijo, código de proveedor) y el plegable de fábrica.
+  pintarFicha() {
+    const p = this.producto
+    const chip = (texto, color = "bg-marca-50 text-marca-800") => `<span class="rounded px-2 py-0.5 text-xs font-semibold ${color}">${texto}</span>`
+    const chips = [ `<span class="text-base font-bold">${this.esc(p.nombre)}</span>`, chip(`ID ${this.esc(p.clave)}`), chip(`PLU ${p.plu}`), chip(`Unidad ${p.unidad}`) ]
+    if (this.pesoFijo > 0) chips.push(chip(`Peso fijo ${this.pesoFijo.toFixed(3)} kg`, "bg-blue-50 text-blue-700"))
+    if (p.codigos.length) chips.push(chip(`Código proveedor <code>${this.esc(p.codigos.join(", "))}</code>`, "bg-amber-50 text-amber-700"))
+    this.fichaTarget.innerHTML = chips.join("")
+    this.fichaTarget.classList.remove("hidden"); this.fichaTarget.classList.add("flex")
+    if (!this.hasFabricaTarget) return
+    this.fabricaTarget.classList.remove("hidden")
+    this.codigoNuevoTarget.value = ""
+    this.pesoFijoInputTarget.value = this.pesoFijo > 0 ? this.pesoFijo.toFixed(3) : ""
+    const detalle = p.codigos_detalle || p.codigos.map(c => ({ id: null, codigo: c }))
+    this.codigosListaTarget.innerHTML = detalle.length
+      ? detalle.map(c => `<li class="flex items-center gap-2"><code class="rounded bg-stone-100 px-2 py-0.5">${this.esc(c.codigo)}</code>${c.id ? `<button type="button" class="btn btn-ghost-danger btn-xs" data-id="${c.id}" data-action="etiquetadora#quitarCodigo">quitar</button>` : ""}</li>`).join("")
+      : `<li class="text-xs text-stone-500">Sin código fijo asignado.</li>`
+  }
+
+  // Vincula el código de fábrica y/o el peso por pieza (va a Admin → Productos por JSON).
+  async vincular() {
+    if (!this.producto) return
+    const codigo = this.codigoNuevoTarget.value.trim()
+    const peso = this.pesoFijoInputTarget.value.trim()
+    const pesoActual = this.pesoFijo > 0 ? this.pesoFijo.toFixed(3) : ""
+    if (!codigo && peso === pesoActual) { this.avisar("Escribe un código o cambia el peso fijo"); return }
+    const base = `${this.adminProductosUrlValue}/${this.producto.id}`
+    if (codigo) {
+      const d = await this.pedir(`${base}/codigos`, "POST", { codigo })
+      if (!d) return
+      this.producto.codigos.push(d.codigo)
+      this.producto.codigos_detalle = [ ...(this.producto.codigos_detalle || []), d ]
+    }
+    if (peso !== pesoActual) {
+      const d = await this.pedir(base, "PATCH", { producto: { peso_fijo: peso } })
+      if (!d) return
+      this.producto.peso_fijo = d.peso_fijo
+    }
+    this.resultadoTarget.textContent = "Vinculado"
+    this.pintarFicha()
+    this.acomodarPanel()
+  }
+
+  async quitarCodigo(e) {
+    const id = Number(e.currentTarget.dataset.id)
+    if (!confirm("¿Quitar este código del producto?")) return
+    const d = await this.pedir(`${this.adminProductosUrlValue}/${this.producto.id}/codigos/${id}`, "DELETE")
+    if (!d) return
+    this.producto.codigos_detalle = this.producto.codigos_detalle.filter(c => c.id !== id)
+    this.producto.codigos = this.producto.codigos_detalle.map(c => c.codigo)
+    this.pintarFicha()
+    this.acomodarPanel()
+  }
+
+  // La pantalla se acomoda a la unidad del producto: kilo = lista de pesadas; pieza = cuántas.
+  acomodarPanel() {
+    const p = this.producto
     this.panelKgTarget.classList.toggle("hidden", this.porPieza)
     this.panelPiezaTarget.classList.toggle("hidden", !this.porPieza)
     this.alVueloLabelTarget.classList.toggle("hidden", this.porPieza)
@@ -94,7 +167,7 @@ export default class extends Controller {
       this.btnCopiasTarget.classList.toggle("hidden", !p.codigos.length)
       this.piezasTarget.focus()
     } else {
-      if (pf > 0) this.qpesoTarget.value = pf.toFixed(3)
+      if (this.pesoFijo > 0) this.qpesoTarget.value = this.pesoFijo.toFixed(3)
       this.manualTarget.focus()
     }
     this.pintarLista()
@@ -133,22 +206,29 @@ export default class extends Controller {
 
   agregar(kg, origen, silencioso = false) {
     if (!this.producto) { this.avisar("Elige el producto primero"); return }
+    if (this.porPieza) return
     if (this.registrado) { this.pesadas = []; this.caja = null; this.registrado = false; this.resultadoTarget.textContent = "" }
     const pesada = { cantidad: Number(kg.toFixed(3)), origen }
     this.pesadas.push(pesada)
     this.avisar("")
     if (!silencioso) this.pintarLista()
-    if (this.alVueloTarget.checked && !this.porPieza) this.registrarAlVuelo(pesada)
+    if (this.alVueloTarget.checked) this.registrarAlVuelo(pesada)
   }
 
   quitar(e) {
     const p = this.pesadas[Number(e.currentTarget.dataset.idx)]
-    if (p.id) { this.avisar(`${p.codigo} ya está registrada; si sobra, dala de baja en Vivas`); return }
+    if (p.id) return
     this.pesadas.splice(Number(e.currentTarget.dataset.idx), 1)
     this.pintarLista()
   }
 
   limpiar() {
+    const vivas = this.pesadas.filter(p => p.id && !p.baja).length
+    if (vivas && !this.registrado && !confirm(`${vivas} pesada(s) ya están registradas (al vuelo). Limpiar la lista NO las borra. ¿Continuar?`)) return
+    this.reiniciar()
+  }
+
+  reiniciar() {
     this.pesadas = []; this.caja = null; this.registrado = false
     this.resultadoTarget.textContent = ""
     this.avisar("")
@@ -158,24 +238,75 @@ export default class extends Controller {
   pintarLista() {
     if (!this.producto) return
     const n = this.porPieza ? (parseInt(this.piezasTarget.value) || 0) : this.pesadas.length
-    const total = this.porPieza ? n : this.pesadas.reduce((a, p) => a + p.cantidad, 0)
-    const caja = this.enCajaTarget.checked
+    const total = this.porPieza ? n : this.pesadas.reduce((a, p) => a + (p.baja ? 0 : p.cantidad), 0)
+    const enCaja = this.enCajaTarget.checked
     this.resumenTarget.textContent = this.porPieza
-      ? (caja ? `Una caja de ${n} piezas` : `${n} etiquetas de 1 pieza`)
-      : (n ? `${n} pesadas · ${total.toFixed(3)} kg${caja ? " · en una caja" : " · sueltas"}` : "Sin pesadas")
-    const filas = this.porPieza
-      ? (caja ? [] : Array.from({ length: n }, (_, i) => ({ i, origen: "pieza", cantidad: 1 })))
-      : this.pesadas.map((p, i) => ({ i, ...p }))
-    this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-slate-100">
-        <td class="px-4 py-1 text-slate-400">${f.i + 1}</td>
-        <td class="px-2 py-1 text-slate-500">${f.origen}</td>
+      ? (enCaja ? `Una caja de ${n} piezas` : `${n} etiquetas de 1 pieza`)
+      : (n ? `${n} pesadas · ${total.toFixed(3)} kg${enCaja ? " · en una caja" : " · sueltas"}` : "Sin pesadas")
+    let filas
+    if (this.porPieza) {
+      filas = this.registrado
+        ? this.pesadas.map((p, i) => ({ i, ...p, origen: "pieza" }))
+        : (enCaja ? [] : Array.from({ length: n }, (_, i) => ({ i, origen: "pieza", cantidad: 1 })))
+    } else {
+      filas = this.pesadas.map((p, i) => ({ i, ...p }))
+    }
+    const cajaBaja = !!this.caja?.baja
+    const accion = f => {
+      if (f.baja || (f.id && cajaBaja)) return `<span class="badge" title="${this.esc(f.baja || this.caja?.baja)}">baja</span>`
+      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja">🗑</button>`
+      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar">✕</button>`
+    }
+    const tachada = f => (f.baja || (f.id && cajaBaja)) ? "line-through text-stone-400" : ""
+    this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-stone-100 ${tachada(f)}">
+        <td class="px-4 py-1 text-stone-400">${f.i + 1}</td>
+        <td class="px-2 py-1 text-stone-500">${f.origen}</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(f.cantidad)} ${this.unidad}</td>
-        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "text-slate-400"}">${f.codigo || "al registrar"}</td>
-        <td class="px-2 py-1 text-right">${this.porPieza ? "" : `<button type="button" class="text-slate-400 hover:text-red-700" data-idx="${f.i}" data-action="etiquetadora#quitar">✕</button>`}</td>
+        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "italic text-stone-400"}">${f.codigo || "al registrar"}</td>
+        <td class="px-2 py-1 text-right">${accion(f)}</td>
       </tr>`).join("")
-    if (this.caja) this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold"><td class="px-4 py-1">📦</td><td class="px-2 py-1">caja</td><td class="px-2 py-1 text-right font-mono">${this.fmt(this.caja.cantidad)} ${this.unidad}</td><td class="px-2 py-1 font-mono text-xs text-emerald-700">${this.caja.codigo}</td><td></td></tr>`)
+    if (this.caja) {
+      const c = this.caja
+      this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold ${cajaBaja ? "line-through text-stone-400" : ""}">
+        <td class="px-4 py-1">📦</td><td class="px-2 py-1">caja</td>
+        <td class="px-2 py-1 text-right font-mono">${this.fmt(c.cantidad)} ${this.unidad}</td>
+        <td class="px-2 py-1 font-mono text-xs text-amber-700">${c.codigo}</td>
+        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">baja</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja">🗑</button>`}</td>
+      </tr>`)
+    }
+    if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-stone-500">${this.porPieza && enCaja ? `La caja se registra con ${n} piezas, sin etiquetas individuales` : "Sin pesadas aún"}</td></tr>`
     this.btnRegistrarTarget.classList.toggle("hidden", this.registrado)
-    this.btnReimprimirTarget.classList.toggle("hidden", !this.registrado)
+    this.btnReimprimirTarget.classList.toggle("hidden", !this.registrado || cajaBaja)
+    this.pintarSalida()
+  }
+
+  pintarSalida() {
+    if (!this.hasSalidaTarget) return
+    const s = this.salida
+    this.salidaTarget.innerHTML = s ? `→ va en la salida <a href="${s.url}" class="chip-folio" target="_blank">${this.esc(s.folio)}</a> a ${this.esc(s.destino || "")} · ${s.paquetes} paquete${s.paquetes === 1 ? "" : "s"}` : ""
+  }
+
+  // Etiqueté mal: baja con motivo de una pesada o de la caja completa. El servidor la saca del
+  // renglón del pedido y de la salida que se está armando; ya sellada, lo rechaza.
+  async darDeBaja(e) {
+    const { id, tipo } = e.currentTarget.dataset
+    const motivo = prompt(`Dar de baja ${tipo === "caja" ? "la CAJA completa (y todas sus etiquetas)" : "esta etiqueta"}. ¿Motivo? (ej. peso mal capturado, producto equivocado)`)
+    if (motivo === null) return
+    if (motivo.trim().length < 3) { this.avisar("Escribe el motivo"); return }
+    const d = await this.pedir(`${this.etiquetasUrlValue}/${id}/baja`, "POST", { motivo: motivo.trim() })
+    if (!d) return
+    if (tipo === "caja") {
+      this.caja.baja = motivo
+      this.pesadas.forEach(p => { if (p.id) p.baja = p.baja || motivo })
+      this.resultadoTarget.textContent = `Caja ${d.codigo} dada de baja${d.hijas ? ` con ${d.hijas} etiquetas` : ""}`
+    } else {
+      this.pesadas.forEach(p => { if (p.id === Number(id)) p.baja = motivo })
+      if (d.padre && this.caja?.id === d.padre.id) { this.caja.cantidad = d.padre.cantidad; if (d.padre.estado === "baja") this.caja.baja = "sin paquetes" }
+      this.resultadoTarget.textContent = `Etiqueta ${d.codigo} dada de baja`
+    }
+    if (d.salida && this.salida) this.salida.paquetes = d.salida.paquetes
+    this.actualizarLleva(d.lleva)
+    this.pintarLista()
   }
 
   // ---------------------------------------------------------------- registrar e imprimir
@@ -223,7 +354,7 @@ export default class extends Controller {
   }
 
   reimprimir() {
-    const ids = [ this.caja?.id, ...this.pesadas.map(p => p.id) ].filter(Boolean)
+    const ids = [ this.caja?.baja ? null : this.caja?.id, ...this.pesadas.filter(p => !p.baja).map(p => p.id) ].filter(Boolean)
     if (!ids.length) { this.avisar("Nada registrado todavía"); return }
     this.imprimir({ ids: ids.join(",") })
   }
@@ -231,8 +362,7 @@ export default class extends Controller {
   copiasProveedor() {
     const n = parseInt(this.piezasTarget.value) || 0
     if (n < 1 || !this.producto?.codigos.length) return
-    const pf = Number(this.producto.peso_fijo || 0)
-    this.imprimir({ codigo: this.producto.codigos[0], n, nombre: this.producto.nombre, cantidad: pf > 0 ? `${pf.toFixed(3)} kg` : "1 pz" })
+    this.imprimir({ codigo: this.producto.codigos[0], n, nombre: this.producto.nombre, cantidad: this.pesoFijo > 0 ? `${this.pesoFijo.toFixed(3)} kg` : "1 pz" })
   }
 
   imprimir(extra) {
@@ -244,18 +374,13 @@ export default class extends Controller {
   }
 
   async enviar(cuerpo) {
-    const r = await fetch(this.loteUrlValue, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json", "X-CSRF-Token": document.querySelector("meta[name=csrf-token]")?.content },
-      body: JSON.stringify({
-        producto_id: this.producto.id, pedido_linea_id: this.pedidoLineaIdValue, produccion_id: this.produccionIdValue,
-        pin: this.hasPinTarget ? this.pinTarget.value : "", justificacion: this.hasJustificacionTarget ? this.justificacionTarget.value : "",
-        ...cuerpo
-      })
+    const datos = await this.pedir(this.loteUrlValue, "POST", {
+      producto_id: this.producto.id, pedido_linea_id: this.pedidoLineaIdValue, produccion_id: this.produccionIdValue,
+      sustituto: this.sustitutoValue ? "1" : "",
+      justificacion: this.hasJustificacionTarget ? this.justificacionTarget.value : "",
+      ...cuerpo
     })
-    const datos = await r.json()
-    if (!r.ok) { this.avisar(datos.error || "No se pudo registrar"); return null }
-    this.avisar("")
+    if (datos?.salida) this.salida = datos.salida
     return datos
   }
 
@@ -268,16 +393,18 @@ export default class extends Controller {
 
   iniciarBascula() {
     this.bascula = this.simuladaValue ? basculaSimulada() : new Bascula({ clave: "kobayashi:bascula" })
-    this.bascula.on("peso", p => { this.pesoTarget.textContent = p.kg.toFixed(3) })
+    const peso = (kg, color) => { this.pesoTarget.textContent = kg.toFixed(3); this.pesoTarget.className = `text-4xl font-extrabold leading-none ${color}` }
+    this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-stone-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `Pesando… ${p.kg.toFixed(3)} kg` })
     this.bascula.on("estable", p => {
-      this.estadoTarget.textContent = `estable ${p.kg.toFixed(3)} kg`
-      if (this.producto && !this.porPieza) this.agregar(p.kg, "báscula")
+      if (this.producto && !this.porPieza) { this.agregar(p.kg, "báscula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `Agregado: ${p.kg.toFixed(3)} kg ✓` }
+      else this.estadoTarget.textContent = `Estable ${p.kg.toFixed(3)} kg (elige un producto por kilo)`
     })
-    this.bascula.on("retirado", () => { this.pesoTarget.textContent = "0.000"; this.estadoTarget.textContent = "coloca paquete" })
+    this.bascula.on("retirado", () => { peso(0, "text-stone-500"); this.estadoTarget.textContent = "Coloca paquete" })
     this.bascula.on("estado", e => {
       const on = e.estado === "conectada"
       this.estadoTarget.textContent = e.mensaje || e.estado
-      this.btnBasculaTarget.textContent = on ? "desconectar" : "conectar"
+      this.btnBasculaTarget.textContent = on ? "Báscula conectada ✓" : "Conectar báscula"
+      this.btnBasculaTarget.className = on ? "rounded border border-emerald-700 px-3 py-1 text-sm text-emerald-800 hover:bg-emerald-50" : "rounded border border-red-700 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
       this.btnCapturarTarget.disabled = !on
     })
     this.bascula.on("aviso", a => { this.estadoTarget.textContent = a.mensaje || String(a) })
@@ -290,8 +417,10 @@ export default class extends Controller {
   }
 
   async alternarBascula() {
-    if (this.bascula.conectada) await this.bascula.desconectar()
-    else await this.bascula.conectar()
+    if (this.bascula.conectada) {
+      if (!confirm("¿Desconectar la báscula? La próxima vez habrá que elegir el puerto de nuevo.")) return
+      await this.bascula.desconectar()
+    } else await this.bascula.conectar()
   }
 
   simular() {

@@ -1,32 +1,13 @@
 <h1 class="mb-4 text-2xl font-bold">Abrir producción</h1>
 <%= form_with url: producciones_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <% if @pedido %>
-    <%= f.hidden_field :pedido_id, value: @pedido.id %>
-    <p class="text-sm">Para el pedido <%= link_to @pedido.folio, pedido_path(@pedido), class: "font-mono text-blue-700" %> · <strong><%= @pedido.destino %></strong></p>
-  <% else %>
-    <div>
-      <%= f.label :pedido_id, "Para el pedido", class: "block text-sm font-medium" %>
-      <%= f.select :pedido_id, @pedidos.map { |p| [ "#{p.folio} · #{p.destino}", p.id ] }, { include_blank: "— sin pedido (pide autorización) —" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
-    </div>
-  <% end %>
   <div>
     <%= f.label :producto_id, "Producto que entra", class: "block text-sm font-medium" %>
-    <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
   <div>
     <%= f.label :cantidad, "Cantidad que entra", class: "block text-sm font-medium" %>
-    <%= f.number_field :cantidad, step: "0.001", min: "0.001", required: true, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2 font-mono text-xl" %>
-    <p class="mt-1 text-xs text-slate-500">Se descuenta de la existencia al abrir. Al cerrar, lo etiquetado entra y el resto queda como merma.</p>
+    <%= f.number_field :cantidad, step: "0.001", min: "0.001", required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono text-xl" %>
+    <p class="mt-1 text-xs text-stone-500">Se descuenta de la existencia al abrir. Lo que sale se etiqueta bajo la producción; al cerrar, lo etiquetado entra y el resto queda como merma.</p>
   </div>
-  <% unless @pedido %>
-  <fieldset class="rounded border border-amber-300 bg-amber-50 p-3 text-sm">
-    <legend class="px-1 font-medium">Sin pedido</legend>
-    <div class="flex gap-3">
-      <%= f.text_field :justificacion, placeholder: "Motivo (obligatorio)", class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
-      <%= f.password_field :pin, placeholder: "PIN de quien autoriza (opcional)", inputmode: "numeric", autocomplete: "off", class: "w-52 rounded border border-slate-300 px-2 py-1" %>
-    </div>
-    <p class="mt-1 text-xs text-slate-600">Sin PIN se abre igual y queda por revisar al final del día.</p>
-  </fieldset>
-  <% end %>
-  <%= f.submit "Abrir producción", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+  <%= f.submit "Abrir producción", class: "btn btn-primary" %>
 <% end %>

@@ -1,22 +1,22 @@
 <h1 class="mb-4 text-2xl font-bold">Salidas en curso · <%= sucursal_actual %></h1>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Paquetes</th><th class="px-3 py-2">Abrió</th><th></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Paquetes</th><th class="px-3 py-2">Abrió</th><th></th></tr></thead>
   <tbody>
     <% @salidas.each do |s| %>
-      <tr class="border-t border-slate-100">
+      <tr class="border-t border-stone-100">
         <td class="px-3 py-2 font-mono"><%= s.folio %></td>
         <td class="px-3 py-2"><%= s.tipo %></td>
         <td class="px-3 py-2"><%= s.destino %></td>
         <td class="px-3 py-2"><%= s.estado %></td>
         <td class="px-3 py-2"><%= s.salida_etiquetas.count %></td>
         <td class="px-3 py-2"><%= s.usuario %> · <%= l s.created_at, format: :short %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Abrir", salida_path(s), class: "rounded bg-slate-900 px-3 py-1 text-white" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Abrir", salida_path(s), class: "btn btn-primary btn-sm" %></td>
       </tr>
     <% end %>
-    <% if @salidas.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">Nada en curso.</td></tr><% end %>
+    <% if @salidas.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-stone-500">Nada en curso.</td></tr><% end %>
   </tbody>
 </table>
 <% if @historial.any? %>
   <h2 class="mb-2 mt-8 font-semibold">Historial</h2>
-  <ul class="text-sm"><% @historial.each do |s| %><li class="border-t border-slate-200 py-1"><%= link_to s.folio, salida_path(s), class: "font-mono text-blue-700" %> · <%= s.destino %> · <%= s.estado %> · <%= l s.created_at.to_date, format: :short %></li><% end %></ul>
+  <ul class="text-sm"><% @historial.each do |s| %><li class="border-t border-stone-200 py-1"><%= link_to s.folio, salida_path(s), class: "chip-folio" %> · <%= s.destino %> · <%= s.estado %> · <%= l s.created_at.to_date, format: :short %></li><% end %></ul>
 <% end %>

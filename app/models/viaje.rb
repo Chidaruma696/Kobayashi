@@ -17,7 +17,7 @@ class Viaje < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :estado, inclusion: { in: ESTADOS }
   validates :fecha, presence: true
 

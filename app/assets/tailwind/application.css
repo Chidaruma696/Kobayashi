@@ -1,1 +1,64 @@
 @import "tailwindcss";
+
+/* La paleta sale de Kobayashi (Kobayashi-san Chi no Maid Dragon), muestreada del retrato oficial:
+   pelo salmón rosado #dd8082 (marca-400), sombra del pelo #ac635a, piel #fce4d0, ojos ámbar,
+   camisa blanca y la pared verdosa/crema de su departamento (fondo). */
+@theme {
+  --color-marca-50: #fdf3f3;
+  --color-marca-100: #fbe4e4;
+  --color-marca-200: #f5c6c7;
+  --color-marca-300: #eca4a5;
+  --color-marca-400: #dd8082;
+  --color-marca-500: #cf6568;
+  --color-marca-600: #b84f53;
+  --color-marca-700: #9b4044;
+  --color-marca-800: #7f3639;
+  --color-marca-900: #6a3033;
+  --color-marca-950: #3a1718;
+  --color-corbata-600: #a3323a;
+  --color-corbata-700: #8a2830;
+  --color-corbata-800: #6e1f26;
+  --color-piel: #fce4d0;
+  --color-fondo: #f7f5ee;
+  --color-pared: #e9eadd;
+}
+
+@layer base {
+  input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="search"], input[type="email"], select, textarea {
+    @apply rounded-md border border-stone-300 bg-white text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-marca-500 focus:ring-2 focus:ring-marca-200 disabled:bg-stone-100;
+  }
+  summary { @apply select-none; }
+  dialog::backdrop { @apply bg-stone-900/40; }
+}
+
+@layer components {
+  /* Botones: siempre con forma de botón, nunca un enlace pelón. */
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-md border border-transparent px-3 py-1.5 text-sm font-semibold leading-5 whitespace-nowrap shadow-sm transition-colors select-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-xs { @apply px-2 py-0.5 text-xs shadow-none; }
+  .btn-sm { @apply px-2.5 py-1 text-xs; }
+  .btn-lg { @apply px-5 py-3 text-lg; }
+  .btn-primary { @apply bg-marca-600 text-white hover:bg-marca-500 active:bg-marca-700; }
+  .btn-secondary { @apply border-stone-300 bg-white text-stone-800 hover:bg-stone-50 active:bg-stone-100; }
+  .btn-success { @apply bg-emerald-700 text-white hover:bg-emerald-600 active:bg-emerald-800; }
+  .btn-danger { @apply bg-corbata-700 text-white hover:bg-corbata-600 active:bg-corbata-800; }
+  .btn-outline-danger { @apply border-corbata-700 bg-white text-corbata-700 hover:bg-red-50; }
+  .btn-outline-success { @apply border-emerald-700 bg-white text-emerald-800 hover:bg-emerald-50; }
+  .btn-warning { @apply border-amber-400 bg-amber-50 text-amber-900 hover:bg-amber-100; }
+  .btn-ghost { @apply border-transparent bg-transparent text-stone-600 shadow-none hover:bg-stone-100 hover:text-stone-900; }
+  .btn-ghost-danger { @apply border-transparent bg-transparent text-corbata-700 shadow-none hover:bg-red-50; }
+  .btn-light { @apply border-white/60 bg-white/90 text-stone-900 hover:bg-white; }
+
+  /* Referencias a otros documentos (folios, productos): chip con fondo, se ve que se puede tocar. */
+  .enlace { @apply inline-flex items-center gap-1 rounded-md bg-marca-50 px-1.5 py-0.5 font-medium text-marca-800 transition-colors hover:bg-marca-100 hover:text-marca-900; }
+  .chip-folio { @apply inline-flex items-center gap-1 rounded-md bg-marca-50 px-1.5 py-0.5 font-mono font-medium text-marca-800 transition-colors hover:bg-marca-100 hover:text-marca-900; }
+
+  .card { @apply rounded-lg bg-white p-4 shadow-sm ring-1 ring-stone-200; }
+  .badge { @apply inline-block rounded-md bg-stone-200 px-2 py-0.5 text-xs font-semibold text-stone-700; }
+
+  .tabla { @apply w-full border-collapse overflow-hidden rounded-lg bg-white text-sm shadow-sm ring-1 ring-stone-200; }
+  .tabla thead th { @apply bg-stone-100 px-3 py-2 text-left text-xs font-semibold tracking-wide text-stone-600 uppercase; }
+  .tabla tbody tr { @apply border-t border-stone-100; }
+  .tabla tbody tr:hover { @apply bg-marca-50/40; }
+}

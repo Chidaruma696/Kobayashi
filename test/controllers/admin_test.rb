@@ -1,5 +1,27 @@
 require "test_helper"
 
+class CatalogoDesdeEtiquetadoraTest < ActionDispatch::IntegrationTest
+  setup { post entrar_path, params: { usuario: "admin", password: "secreto1" } }
+
+  test "la etiquetadora vincula códigos de fábrica y peso fijo por JSON" do
+    catsup = productos(:catsup)
+    post admin_producto_codigos_path(catsup), params: { codigo: "750 1000 12345 7" }, as: :json
+    assert_response :ok
+    assert_equal "7501000123457", response.parsed_body["codigo"]
+    post admin_producto_codigos_path(catsup), params: { codigo: "7501000123457" }, as: :json
+    assert_response :unprocessable_entity
+    patch admin_producto_path(catsup), params: { producto: { peso_fijo: "0.2" } }, as: :json
+    assert_response :ok
+    assert_equal BigDecimal("0.2"), catsup.reload.peso_fijo
+    get productos_etiquetas_path(q: "cats"), headers: { "Accept" => "application/json" }
+    assert_includes response.parsed_body.first["codigos_detalle"].map { |c| c["codigo"] }, "7501000123457"
+    assert_difference("catsup.codigos_barras.count", -1) do
+      delete admin_producto_codigo_path(catsup, catsup.codigos_barras.find_by(codigo: "7501000123457")), as: :json
+      assert_response :no_content
+    end
+  end
+end
+
 class AdminTest < ActionDispatch::IntegrationTest
   setup { post entrar_path, params: { usuario: "admin", password: "secreto1" } }
 
@@ -26,15 +48,15 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_select "input[name='precios[#{sucursales(:tienda).id}]'][value='80.0']"
   end
 
-  test "usuarios y roles: crear con PIN, cambiar rol, permisos con comodín" do
+  test "usuarios y roles: crear, cambiar rol, permisos con comodín" do
     post admin_roles_path, params: { rol: { nombre: "bodega", permisos: [ "", "etiquetas.*", "salidas.surtir" ] } }
     rol = Rol.find_by!(nombre: "bodega")
     assert rol.permite?("etiquetas.libre")
     assert_not rol.permite?("caja.vender")
-    post admin_usuarios_path, params: { usuario: { nombre: "Beto", usuario: "Beto", rol_id: rol.id, sucursal_id: sucursales(:matriz).id, password: "clave1234", pin: "5555", activo: "1" } }
+    post admin_usuarios_path, params: { usuario: { nombre: "Beto", usuario: "Beto", rol_id: rol.id, sucursal_id: sucursales(:matriz).id, password: "clave1234", activo: "1" } }
     u = Usuario.find_by!(usuario: "beto")
-    assert u.authenticate_pin("5555")
-    patch admin_usuario_path(u), params: { usuario: { nombre: "Beto", usuario: "beto", rol_id: roles(:cajero).id, sucursal_id: sucursales(:tienda).id, password: "", pin: "", activo: "1" } }
+    assert u.authenticate("clave1234")
+    patch admin_usuario_path(u), params: { usuario: { nombre: "Beto", usuario: "beto", rol_id: roles(:cajero).id, sucursal_id: sucursales(:tienda).id, password: "", activo: "1" } }
     assert u.reload.authenticate("clave1234"), "la contraseña no cambia si se deja vacía"
     assert_equal roles(:cajero), u.rol
     patch admin_rol_path(rol), params: { rol: { nombre: "bodega", permisos: [ "*" ] } }

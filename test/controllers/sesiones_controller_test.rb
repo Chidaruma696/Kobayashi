@@ -1,5 +1,21 @@
 require "test_helper"
 
+class AcercaDeTest < ActionDispatch::IntegrationTest
+  test "el logo de la cinta abre el Acerca de con versión, build y sesión" do
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    get root_path
+    assert_select "button[title='Acerca de Kobayashi'] img[alt=Kobayashi]"
+    assert_select "dialog[data-dialogo-target=dialogo]" do
+      assert_select "dd", /#{Regexp.escape(Kobayashi::VERSION)}/
+      assert_select "dd", /Rails #{Regexp.escape(Rails.version)}/
+      assert_select "dd", /Administrador/
+      assert_select "a[href='https://github.com/Chidaruma696/Kobayashi']"
+    end
+    get entrar_path
+    assert_response :redirect, "con sesión no vuelve al login"
+  end
+end
+
 class SesionesControllerTest < ActionDispatch::IntegrationTest
   test "sin sesión manda a entrar" do
     get root_path

@@ -1,16 +1,16 @@
-<div class="mb-4 flex items-center justify-between">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Roles</h1>
-  <%= link_to "Nuevo rol", new_admin_rol_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+  <%= link_to "Nuevo rol", new_admin_rol_path, class: "btn btn-primary btn-sm" %>
 </div>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Rol</th><th class="px-3 py-2">Permisos</th><th class="px-3 py-2">Usuarios</th><th></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Rol</th><th class="px-3 py-2">Permisos</th><th class="px-3 py-2">Usuarios</th><th></th></tr></thead>
   <tbody>
     <% @roles.each do |r| %>
-      <tr class="border-t border-slate-100 align-top">
+      <tr class="border-t border-stone-100 align-top">
         <td class="px-3 py-2 font-semibold"><%= r.nombre %></td>
         <td class="px-3 py-2 font-mono text-xs"><%= r.permisos.join(", ") %></td>
         <td class="px-3 py-2"><%= r.usuarios.size %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_rol_path(r), class: "text-blue-700" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_rol_path(r), class: "btn btn-secondary btn-xs" %></td>
       </tr>
     <% end %>
   </tbody>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_110001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -26,7 +26,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.integer "viaje_id"
     t.index ["cliente_id"], name: "index_abonos_on_cliente_id"
     t.index ["corte_id"], name: "index_abonos_on_corte_id"
-    t.index ["folio"], name: "index_abonos_on_folio", unique: true
+    t.index ["sucursal_id", "folio"], name: "index_abonos_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_abonos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_abonos_on_usuario_id"
     t.index ["viaje_id"], name: "index_abonos_on_viaje_id"
@@ -134,9 +134,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.integer "sucursal_id", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
-    t.index ["folio"], name: "index_conteos_on_folio", unique: true
     t.index ["responsable_id"], name: "index_conteos_on_responsable_id"
     t.index ["sucursal_id", "estado"], name: "index_conteos_on_sucursal_id_and_estado"
+    t.index ["sucursal_id", "folio"], name: "index_conteos_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_conteos_on_sucursal_id"
     t.index ["usuario_id"], name: "index_conteos_on_usuario_id"
     t.check_constraint "estado IN ('abierto', 'cerrado')", name: "conteos_estado"
@@ -171,8 +171,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.index ["cerrado_por_id"], name: "index_cortes_on_cerrado_por_id"
-    t.index ["folio"], name: "index_cortes_on_folio", unique: true
     t.index ["sucursal_id", "estado"], name: "index_cortes_on_sucursal_id_and_estado"
+    t.index ["sucursal_id", "folio"], name: "index_cortes_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_cortes_on_sucursal_id"
     t.index ["usuario_id"], name: "index_cortes_on_usuario_id"
     t.check_constraint "estado IN ('abierto', 'cerrado')", name: "cortes_estado"
@@ -202,7 +202,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.integer "usuario_id", null: false
     t.integer "venta_id", null: false
     t.index ["corte_id"], name: "index_devoluciones_on_corte_id"
-    t.index ["folio"], name: "index_devoluciones_on_folio", unique: true
+    t.index ["sucursal_id", "folio"], name: "index_devoluciones_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_devoluciones_on_sucursal_id"
     t.index ["usuario_id"], name: "index_devoluciones_on_usuario_id"
     t.index ["venta_id"], name: "index_devoluciones_on_venta_id"
@@ -362,9 +362,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.index ["cliente_id"], name: "index_pedidos_on_cliente_id"
-    t.index ["folio"], name: "index_pedidos_on_folio", unique: true
     t.index ["sucursal_destino_id"], name: "index_pedidos_on_sucursal_destino_id"
     t.index ["sucursal_origen_id", "estado"], name: "index_pedidos_on_sucursal_origen_id_and_estado"
+    t.index ["sucursal_origen_id", "folio"], name: "index_pedidos_on_sucursal_y_folio", unique: true
     t.index ["sucursal_origen_id"], name: "index_pedidos_on_sucursal_origen_id"
     t.index ["usuario_id"], name: "index_pedidos_on_usuario_id"
     t.check_constraint "estado IN ('solicitado', 'surtiendo', 'cerrado', 'cancelado')", name: "pedidos_estado"
@@ -396,9 +396,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.index ["autorizado_por_id"], name: "index_producciones_on_autorizado_por_id"
-    t.index ["folio"], name: "index_producciones_on_folio", unique: true
     t.index ["pedido_id"], name: "index_producciones_on_pedido_id"
     t.index ["producto_id"], name: "index_producciones_on_producto_id"
+    t.index ["sucursal_id", "folio"], name: "index_producciones_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_producciones_on_sucursal_id"
     t.index ["usuario_id"], name: "index_producciones_on_usuario_id"
     t.check_constraint "cantidad > 0", name: "producciones_cantidad"
@@ -521,7 +521,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.index ["salida_id", "estado"], name: "index_salida_etiquetas_on_salida_id_and_estado"
     t.index ["salida_id"], name: "index_salida_etiquetas_on_salida_id"
     t.index ["verificado_por_id"], name: "index_salida_etiquetas_on_verificado_por_id"
-    t.check_constraint "estado IN ('pendiente', 'recibida', 'faltante')", name: "salida_etiquetas_estado"
+    t.check_constraint "estado IN ('pendiente', 'recibida', 'faltante', 'sobrante')", name: "salida_etiquetas_estado"
   end
 
   create_table "salida_lineas", force: :cascade do |t|
@@ -561,11 +561,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.integer "verificado_por_id"
     t.integer "viaje_id"
     t.index ["cliente_id"], name: "index_salidas_on_cliente_id"
-    t.index ["folio"], name: "index_salidas_on_folio", unique: true
     t.index ["ruta_id"], name: "index_salidas_on_ruta_id"
     t.index ["sucursal_destino_id", "estado"], name: "index_salidas_on_sucursal_destino_id_and_estado"
     t.index ["sucursal_destino_id"], name: "index_salidas_on_sucursal_destino_id"
     t.index ["sucursal_origen_id", "estado"], name: "index_salidas_on_sucursal_origen_id_and_estado"
+    t.index ["sucursal_origen_id", "folio"], name: "index_salidas_on_sucursal_y_folio", unique: true
     t.index ["sucursal_origen_id"], name: "index_salidas_on_sucursal_origen_id"
     t.index ["usuario_id"], name: "index_salidas_on_usuario_id"
     t.index ["venta_id"], name: "index_salidas_on_venta_id"
@@ -655,7 +655,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.index ["codigo"], name: "index_ventas_on_codigo", unique: true
     t.index ["corte_id", "estado"], name: "index_ventas_on_corte_id_and_estado"
     t.index ["corte_id"], name: "index_ventas_on_corte_id"
-    t.index ["folio"], name: "index_ventas_on_folio", unique: true
+    t.index ["sucursal_id", "folio"], name: "index_ventas_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_ventas_on_sucursal_id"
     t.index ["usuario_id"], name: "index_ventas_on_usuario_id"
     t.check_constraint "estado IN ('por_cobrar', 'cobrada', 'a_credito', 'devuelta')", name: "ventas_estado"
@@ -692,9 +692,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
     t.index ["chofer_id"], name: "index_viajes_on_chofer_id"
-    t.index ["folio"], name: "index_viajes_on_folio", unique: true
     t.index ["liquidado_por_id"], name: "index_viajes_on_liquidado_por_id"
     t.index ["ruta_id"], name: "index_viajes_on_ruta_id"
+    t.index ["sucursal_id", "folio"], name: "index_viajes_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_viajes_on_sucursal_id"
     t.index ["usuario_id"], name: "index_viajes_on_usuario_id"
     t.check_constraint "estado IN ('armando', 'en_ruta', 'liquidado', 'cancelado')", name: "viajes_estado"
@@ -758,7 +758,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
   add_foreign_key "movimientos", "usuarios"
   add_foreign_key "movimientos_canastillas", "clientes"
   add_foreign_key "movimientos_canastillas", "sucursales"
-  add_foreign_key "movimientos_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
+  add_foreign_key "movimientos_canastillas", "tipos_canastilla"
   add_foreign_key "movimientos_canastillas", "usuarios"
   add_foreign_key "movimientos_canastillas", "usuarios", column: "chofer_id"
   add_foreign_key "movimientos_canastillas", "viajes"
@@ -788,7 +788,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
   add_foreign_key "revisiones", "usuarios", column: "revisado_por_id"
   add_foreign_key "rutas", "usuarios", column: "chofer_id"
   add_foreign_key "salida_canastillas", "salidas"
-  add_foreign_key "salida_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
+  add_foreign_key "salida_canastillas", "tipos_canastilla"
   add_foreign_key "salida_etiquetas", "etiquetas"
   add_foreign_key "salida_etiquetas", "etiquetas", column: "grupo_id"
   add_foreign_key "salida_etiquetas", "salidas"

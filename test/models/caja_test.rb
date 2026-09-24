@@ -35,6 +35,14 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal venta, Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t1", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ], pagos: [])
   end
 
+  test "un producto sin precio en la sucursal se recibe pero no se vende" do
+    @catsup.update!(precio_centavos: 0)
+    e = assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 1 } ]) }
+    assert_match "sin precio", e.message
+    @catsup.fijar_precio!(@tienda, "40")
+    assert_equal 4_000, cobrar([ { producto_id: @catsup.id, cantidad: 1 } ]).total_centavos
+  end
+
   test "pagos mixtos: lo que no es efectivo no puede pasarse del total y el cambio sale del efectivo" do
     venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t2", lineas: [ { producto_id: @catsup.id, cantidad: 3 } ],
                          pagos: [ { forma: "transferencia", monto_centavos: 10_000 }, { forma: "efectivo", monto_centavos: 5_000 } ])
@@ -64,9 +72,11 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal 0, Venta.count
   end
 
-  test "bajar el precio exige autorización y nunca baja de la mitad" do
+  test "bajar el precio queda a nombre de quien tiene el permiso (o sin nadie, por revisar) y nunca baja de la mitad" do
     linea = { producto_id: @catsup.id, cantidad: 1, precio_centavos: 3_000 }
-    assert_raises(Caja::Error) { cobrar([ linea ], [ { forma: "efectivo", monto_centavos: 3_000 } ]) }
+    sola = cobrar([ linea ], [ { forma: "efectivo", monto_centavos: 3_000 } ])
+    assert_nil sola.lineas.first.autorizado_por, "sin permiso se cobra igual; el controlador lo deja por revisar"
+    assert_equal 3_000, sola.lineas.first.precio_centavos
     venta = cobrar([ linea ], [ { forma: "efectivo", monto_centavos: 3_000 } ], autorizador: usuarios(:supervisora))
     assert_equal usuarios(:supervisora), venta.lineas.first.autorizado_por
     assert_equal 4_200, venta.lineas.first.catalogo_centavos
@@ -123,7 +133,7 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal 4_200, @catsup.reload.precio_centavos_en(@tienda)
   end
 
-  test "la caja aplica la promoción sola, la marca en la línea y el PIN se mide contra ella" do
+  test "la caja aplica la promoción sola, la marca en la línea y la rebaja se mide contra ella" do
     Inventario.mover!(sucursal: @tienda, producto: @catsup, tipo: "entrada", cantidad: 20, usuario: @cajera)
     promo = Promocion.create!(nombre: "Mayoreo", producto: @catsup, tipo: "por_cantidad", cantidad_minima: 3, precio_centavos: 3_500)
     venta = cobrar([ { producto_id: @catsup.id, cantidad: 3 } ])
@@ -135,7 +145,7 @@ class CajaTest < ActiveSupport::TestCase
     sin = cobrar([ { producto_id: @catsup.id, cantidad: 2 } ])
     assert_nil sin.lineas.first.promocion
     assert_equal 4_200, sin.lineas.first.precio_centavos
-    assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 3, precio_centavos: 3_400 } ]) }
+    assert_nil cobrar([ { producto_id: @catsup.id, cantidad: 3, precio_centavos: 3_400 } ]).lineas.first.autorizado_por
     con = cobrar([ { producto_id: @catsup.id, cantidad: 3, precio_centavos: 3_400 } ], nil, autorizador: usuarios(:supervisora))
     assert_nil con.lineas.first.promocion
     assert_equal usuarios(:supervisora), con.lineas.first.autorizado_por

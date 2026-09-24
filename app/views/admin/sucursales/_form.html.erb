@@ -1,10 +1,10 @@
 <%= form_with model: [ :admin, @sucursal ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div class="grid grid-cols-2 gap-4">
     <%= render "admin/campo", f: f, campo: :codigo, etiqueta: "Código", tipo: :text_field %>
-    <div><%= f.label :tipo, "Tipo", class: "block text-sm font-medium" %><%= f.select :tipo, [ [ "matriz", "matriz" ], [ "tienda", "tienda" ] ], {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :tipo, "Tipo", class: "block text-sm font-medium" %><%= f.select :tipo, [ [ "matriz", "matriz" ], [ "tienda", "tienda" ] ], {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
   </div>
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
   <%= render "admin/campo", f: f, campo: :limite_efectivo, etiqueta: "Efectivo máximo en gaveta antes de obligar retiro", tipo: :number_field, opciones: { step: "0.01", min: 1 } %>
   <label class="flex items-center gap-2 text-sm"><%= f.check_box :activa %> Activa</label>
-  <%= f.submit @sucursal.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+  <%= f.submit @sucursal.new_record? ? "Crear" : "Guardar", class: "btn btn-primary" %>
 <% end %>

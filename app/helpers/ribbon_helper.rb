@@ -20,8 +20,14 @@ module RibbonHelper
       { nombre: "Corte", botones: [ Boton.new("Corte", :caja_corte_path, "caja.abrir", "💵") ] }
     ] },
     { id: :pedidos, nombre: "Pedidos", grupos: [
-      { nombre: "Pedir", botones: [ Boton.new("Nuevo pedido", :new_pedido_path, "pedidos.solicitar", "＋") ] },
-      { nombre: "Surtir", botones: [ Boton.new("Cola", :pedidos_path, "pedidos.surtir", "☰") ] }
+      { nombre: "Pedir", botones: [
+        Boton.new("Nuevo pedido", :new_pedido_path, "pedidos.solicitar", "＋"),
+        Boton.new("Mis pedidos", :pedidos_path, "pedidos.solicitar", "☰")
+      ] },
+      { nombre: "Surtir", botones: [
+        Boton.new("Cola", :pedidos_path, "pedidos.surtir", "☰"),
+        Boton.new("Pendientes", :pendientes_pedidos_path, "pedidos.surtir", "🖨")
+      ] }
     ] },
     { id: :etiquetas, nombre: "Etiquetas", grupos: [
       { nombre: "Producir", botones: [

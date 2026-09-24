@@ -1,23 +1,23 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Orden de reparto · <%= @ruta %></h1>
-  <%= link_to "← editar ruta y zonas", edit_admin_ruta_path(@ruta), class: "text-sm text-blue-700 underline" %>
+  <%= link_to "← Editar ruta y zonas", edit_admin_ruta_path(@ruta), class: "btn btn-ghost btn-sm" %>
 </div>
-<p class="mb-4 text-sm text-slate-600">Cada cliente en su zona y con su número. Cuando se arma un viaje, las paradas se generan con este orden: primero por zona, luego por número.</p>
-<%= form_with url: orden_admin_ruta_path(@ruta), class: "rounded bg-white p-4 shadow-sm" do |f| %>
+<p class="mb-4 text-sm text-stone-600">Cada cliente en su zona y con su número. Cuando se arma un viaje, las paradas se generan con este orden: primero por zona, luego por número.</p>
+<%= form_with url: orden_admin_ruta_path(@ruta), class: "card" do |f| %>
   <table class="w-full text-sm">
-    <thead class="text-left text-slate-500"><tr><th class="py-1">#</th><th class="py-1">Cliente</th><th class="py-1">Dirección</th><th class="w-48 py-1">Zona</th><th class="w-24 py-1">Orden</th></tr></thead>
+    <thead class="text-left text-stone-500"><tr><th class="py-1">#</th><th class="py-1">Cliente</th><th class="py-1">Dirección</th><th class="w-48 py-1">Zona</th><th class="w-24 py-1">Orden</th></tr></thead>
     <tbody>
       <% @clientes.each_with_index do |c, i| %>
-        <tr class="border-t border-slate-100">
+        <tr class="border-t border-stone-100">
           <td class="py-1 font-mono"><%= i + 1 %></td>
           <td class="py-1"><%= c.nombre %></td>
-          <td class="py-1 text-slate-600"><%= c.direccion %></td>
-          <td class="py-1"><%= select_tag "clientes[#{c.id}][zona_id]", options_from_collection_for_select(@zonas, :id, :nombre, c.zona_id), include_blank: "— sin zona —", class: "w-full rounded border border-slate-300 px-2 py-1" %></td>
-          <td class="py-1"><%= number_field_tag "clientes[#{c.id}][orden]", c.orden, min: 0, class: "w-full rounded border border-slate-300 px-2 py-1 font-mono" %></td>
+          <td class="py-1 text-stone-600"><%= c.direccion %></td>
+          <td class="py-1"><%= select_tag "clientes[#{c.id}][zona_id]", options_from_collection_for_select(@zonas, :id, :nombre, c.zona_id), include_blank: "— sin zona —", class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
+          <td class="py-1"><%= number_field_tag "clientes[#{c.id}][orden]", c.orden, min: 0, class: "w-full rounded border border-stone-300 px-2 py-1 font-mono" %></td>
         </tr>
       <% end %>
-      <% if @clientes.empty? %><tr><td colspan="5" class="py-6 text-center text-slate-500">La ruta no tiene clientes.</td></tr><% end %>
+      <% if @clientes.empty? %><tr><td colspan="5" class="py-6 text-center text-stone-500">La ruta no tiene clientes.</td></tr><% end %>
     </tbody>
   </table>
-  <%= f.submit "Guardar orden", class: "mt-4 rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+  <%= f.submit "Guardar orden", class: "btn btn-primary mt-4" %>
 <% end %>

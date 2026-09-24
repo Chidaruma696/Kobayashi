@@ -7,7 +7,8 @@ class Venta < ApplicationRecord
   has_many :pagos, dependent: :restrict_with_error
   has_many :devoluciones, dependent: :restrict_with_error
 
-  validates :folio, :codigo, :clave, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
+  validates :codigo, :clave, presence: true, uniqueness: true
   validates :estado, inclusion: { in: %w[por_cobrar cobrada a_credito devuelta] }
   validates :total_centavos, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 

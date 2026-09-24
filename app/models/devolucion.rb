@@ -7,7 +7,7 @@ class Devolucion < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :motivo, presence: true
   validates :total_centavos, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 

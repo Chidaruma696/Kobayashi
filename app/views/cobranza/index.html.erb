@@ -1,21 +1,21 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Cobranza de ruta</h1>
-  <span class="text-sm text-slate-600">Saldo total en la calle: <strong class="font-mono"><%= pesos(@total) %></strong></span>
+  <span class="text-sm text-stone-600">Saldo total en la calle: <strong class="font-mono"><%= pesos(@total) %></strong></span>
 </div>
-<p class="mb-4 text-sm text-slate-600">Clientes con crédito o con saldo. El estado se calcula en vivo con la regla de su tipo de crédito; si pagan, se abren solos. El bloqueo manual de cobranza manda sobre la regla.</p>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Cliente</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Crédito</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2 text-right">0-30</th><th class="px-3 py-2 text-right">31-60</th><th class="px-3 py-2 text-right">61-90</th><th class="px-3 py-2 text-right">90+</th><th class="px-3 py-2">Estado</th></tr></thead>
+<p class="mb-4 text-sm text-stone-600">Clientes con crédito o con saldo. El estado se calcula en vivo con la regla de su tipo de crédito; si pagan, se abren solos. El bloqueo manual de cobranza manda sobre la regla.</p>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Cliente</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Crédito</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2 text-right">0-30</th><th class="px-3 py-2 text-right">31-60</th><th class="px-3 py-2 text-right">61-90</th><th class="px-3 py-2 text-right">90+</th><th class="px-3 py-2">Estado</th></tr></thead>
   <tbody>
     <% @clientes.each do |c, e, a| %>
-      <tr class="border-t border-slate-100 <%= 'bg-red-50' if e.bloqueado %>">
-        <td class="px-3 py-2"><%= link_to c.nombre, cobranza_cliente_path(c), class: "text-blue-700 hover:underline" %></td>
+      <tr class="border-t border-stone-100 <%= 'bg-red-50' if e.bloqueado %>">
+        <td class="px-3 py-2"><%= link_to c.nombre, cobranza_cliente_path(c), class: "enlace" %></td>
         <td class="px-3 py-2"><%= c.ruta %></td>
         <td class="px-3 py-2"><%= Credito::TIPOS[c.credito] %></td>
         <td class="px-3 py-2 text-right font-mono"><%= pesos(e.saldo_centavos) %></td>
-        <% a.each_value do |v| %><td class="px-3 py-2 text-right font-mono text-slate-600"><%= v.zero? ? "" : pesos(v) %></td><% end %>
-        <td class="px-3 py-2 <%= e.bloqueado ? 'text-red-700' : 'text-green-700' %>"><%= e.bloqueado ? "bloqueado" : (e.tipo == "contado" ? "contado" : "abierto") %><%= " (manual)" if e.manual %><% if e.motivo.present? %><div class="text-xs text-slate-500"><%= e.motivo %></div><% end %></td>
+        <% a.each_value do |v| %><td class="px-3 py-2 text-right font-mono text-stone-600"><%= v.zero? ? "" : pesos(v) %></td><% end %>
+        <td class="px-3 py-2 <%= e.bloqueado ? 'text-red-700' : 'text-green-700' %>"><%= e.bloqueado ? "bloqueado" : (e.tipo == "contado" ? "contado" : "abierto") %><%= " (manual)" if e.manual %><% if e.motivo.present? %><div class="text-xs text-stone-500"><%= e.motivo %></div><% end %></td>
       </tr>
     <% end %>
-    <% if @clientes.empty? %><tr><td colspan="9" class="px-3 py-6 text-center text-slate-500">Nadie debe nada.</td></tr><% end %>
+    <% if @clientes.empty? %><tr><td colspan="9" class="px-3 py-6 text-center text-stone-500">Nadie debe nada.</td></tr><% end %>
   </tbody>
 </table>

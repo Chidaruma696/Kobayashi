@@ -9,7 +9,7 @@ class Abono < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :monto_centavos, numericality: { only_integer: true, greater_than: 0 }
   validates :forma, inclusion: { in: Pago::FORMAS }
 

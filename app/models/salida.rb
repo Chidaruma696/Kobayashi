@@ -20,7 +20,7 @@ class Salida < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_origen_id }
   validates :tipo, inclusion: { in: TIPOS }
   validates :estado, inclusion: { in: ESTADOS }
   validates :motivo, presence: true, if: :devolucion?
@@ -49,6 +49,32 @@ class Salida < ApplicationRecord
     else
       tipo = origen.matriz? ? "traspaso" : "devolucion"
       create!(tipo: tipo, sucursal_origen: origen, sucursal_destino: destino, usuario: usuario, motivo: motivo)
+    end
+  end
+
+  # La salida que se está armando para el destino de un pedido; si no hay, la abre. Así la caja
+  # que nace de un renglón entra sola a la salida, sin volver a escanearla.
+  def self.para_pedido!(pedido, usuario:)
+    armandose_para(pedido) || nueva!(origen: pedido.sucursal_origen, destino: pedido.destino, usuario: usuario)
+  end
+
+  def self.armandose_para(pedido)
+    where(sucursal_origen: pedido.sucursal_origen, sucursal_destino_id: pedido.sucursal_destino_id, cliente_id: pedido.cliente_id, estado: "preparando").order(:created_at).first
+  end
+
+  # Mete una etiqueta recién registrada sin escanearla. Tolera lo que ya estaba: las pesadas que
+  # entraron al vuelo como sueltas y ahora se cerraron en caja se reagrupan bajo la caja.
+  # Devuelve cuántas hojas entraron nuevas.
+  def acomodar!(etiqueta)
+    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    hojas = Salida.hojas_de(etiqueta)
+    ajena = SalidaEtiqueta.joins(:salida).where(etiqueta: hojas, salidas: { estado: %w[preparando sellada enviada] }).where.not(salida_id: id).first
+    raise ArgumentError, "#{ajena.etiqueta.codigo} ya va en la salida #{ajena.salida.folio}" if ajena
+    transaction do
+      puestas = salida_etiquetas.where(etiqueta: hojas).to_a
+      puestas.each { |f| f.update!(grupo: (f.etiqueta_id == etiqueta.id ? nil : etiqueta)) }
+      (hojas - puestas.map(&:etiqueta)).each { |h| salida_etiquetas.create!(etiqueta: h, grupo: (h == etiqueta ? nil : etiqueta)) }
+      hojas.size - puestas.size
     end
   end
 
@@ -223,6 +249,33 @@ class Salida < ApplicationRecord
       desarmar_grupos_vacios!
     end
     filas.size
+  end
+
+  # Llegó un paquete que no venía en la salida (se etiquetó por fuera y nunca entró a ella). No se
+  # pierde ni se queda en el limbo: sale del origen, entra a la tienda como sobrante con motivo, y
+  # queda por revisar (la revisión la abre el controlador).
+  def recibir_sobrante!(etiqueta, motivo:, usuario:)
+    raise ArgumentError, "un reparto se cobra, no se recibe" if reparto?
+    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
+    raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, "#{etiqueta.codigo} está #{etiqueta.estado}" unless etiqueta.viva?
+    raise ArgumentError, "#{etiqueta.codigo} es una #{etiqueta.tipo}: escanea los paquetes" unless etiqueta.paquete? || (etiqueta.caja? && etiqueta.hijas.none?)
+    raise ArgumentError, "#{etiqueta.codigo} sí viene en esta salida: recíbela normal" if salida_etiquetas.exists?(etiqueta: etiqueta)
+    raise ArgumentError, "#{etiqueta.codigo} es de #{etiqueta.sucursal.nombre}, no de #{sucursal_origen.nombre}" unless etiqueta.sucursal_id == sucursal_origen_id
+    if (otra = SalidaEtiqueta.joins(:salida).where(etiqueta: etiqueta, salidas: { estado: %w[preparando sellada enviada] }).includes(:salida).first)
+      raise ArgumentError, "#{etiqueta.codigo} va en la salida #{otra.salida.folio}: recíbela allá"
+    end
+    transaction do
+      # El origen no lo descontó al enviar esta salida: se descuenta ahora, con el mismo rastro.
+      Inventario.mover!(sucursal: sucursal_origen, producto: etiqueta.producto, tipo: "salida", cantidad: etiqueta.cantidad,
+                        usuario: usuario, etiqueta: etiqueta, referencia: self, motivo: "#{folio} sobrante: #{motivo}")
+      Inventario.mover!(sucursal: sucursal_destino, producto: etiqueta.producto, tipo: "recepcion", cantidad: etiqueta.cantidad,
+                        usuario: usuario, etiqueta: etiqueta, referencia: self, motivo: "#{folio} sobrante: #{motivo}")
+      padre = etiqueta.padre
+      etiqueta.update!(sucursal_id: sucursal_destino_id, padre_id: nil)
+      padre&.recalcular_contenido!
+      salida_etiquetas.create!(etiqueta: etiqueta, estado: "sobrante", motivo: motivo, recibido_en: Time.current)
+    end
   end
 
   def recibir_lineas!(usuario:)

@@ -1,63 +1,63 @@
 <h1 class="mb-4 text-2xl font-bold">Canastillas</h1>
-<p class="mb-4 text-sm text-slate-600">Activo prestado. Salen del camión al cliente en la parada, vuelven cuando el cliente las devuelve (en la parada o en bodega) y el chofer las descarga al liquidar. Saldo por tipo.</p>
+<p class="mb-4 text-sm text-stone-600">Activo prestado. Salen del camión al cliente en la parada, vuelven cuando el cliente las devuelve (en la parada o en bodega) y el chofer las descarga al liquidar. Saldo por tipo.</p>
 <div class="mb-4 grid gap-4 md:grid-cols-2">
-  <div class="rounded bg-white p-4 shadow-sm">
+  <div class="card">
     <h2 class="mb-2 font-semibold">Clientes que deben canastillas</h2>
     <table class="w-full text-sm">
       <% @clientes.each do |c, saldos| %>
-        <tr class="border-t border-slate-100"><td class="py-1"><%= link_to c.nombre, cobranza_cliente_path(c), class: "text-blue-700 hover:underline" %></td>
+        <tr class="border-t border-stone-100"><td class="py-1"><%= link_to c.nombre, cobranza_cliente_path(c), class: "enlace" %></td>
           <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
       <% end %>
-      <% if @clientes.empty? %><tr><td class="py-3 text-center text-slate-500">Nadie debe canastillas.</td></tr><% end %>
+      <% if @clientes.empty? %><tr><td class="py-3 text-center text-stone-500">Nadie debe canastillas.</td></tr><% end %>
     </table>
   </div>
-  <div class="rounded bg-white p-4 shadow-sm">
+  <div class="card">
     <h2 class="mb-2 font-semibold">Canastillas en camiones (por chofer)</h2>
     <table class="w-full text-sm">
       <% @choferes.each do |u, saldos| %>
-        <tr class="border-t border-slate-100"><td class="py-1"><%= u %></td>
+        <tr class="border-t border-stone-100"><td class="py-1"><%= u %></td>
           <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
       <% end %>
-      <% if @choferes.empty? %><tr><td class="py-3 text-center text-slate-500">Todo en bodega.</td></tr><% end %>
+      <% if @choferes.empty? %><tr><td class="py-3 text-center text-stone-500">Todo en bodega.</td></tr><% end %>
     </table>
   </div>
 </div>
 <% if puede?("canastillas.ajustar") %>
   <div class="mb-4 grid gap-4 md:grid-cols-2">
-    <div class="rounded bg-white p-4 shadow-sm">
+    <div class="card">
       <h2 class="mb-2 font-semibold">Devolución en bodega</h2>
       <%= form_with url: canastillas_devolucion_path, class: "flex flex-wrap gap-2 text-sm" do |f| %>
-        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, {}, class: "rounded border border-slate-300 px-2 py-1" %>
-        <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "rounded border border-slate-300 px-2 py-1" %>
-        <%= f.number_field :cantidad, min: 1, placeholder: "cantidad", required: true, class: "w-24 rounded border border-slate-300 px-2 py-1 font-mono" %>
-        <%= f.submit "Registrar", class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, {}, class: "btn btn-secondary btn-xs" %>
+        <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "btn btn-secondary btn-xs" %>
+        <%= f.number_field :cantidad, min: 1, placeholder: "cantidad", required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
+        <%= f.submit "Registrar", class: "btn btn-primary btn-sm" %>
       <% end %>
     </div>
-    <div class="rounded bg-white p-4 shadow-sm">
+    <div class="card">
       <h2 class="mb-2 font-semibold">Ajuste (con signo y motivo)</h2>
       <%= form_with url: canastillas_ajuste_path, class: "flex flex-wrap gap-2 text-sm" do |f| %>
-        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, { include_blank: "— cliente —" }, class: "rounded border border-slate-300 px-2 py-1" %>
-        <%= f.select :chofer_id, @todos_choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: "— o chofer —" }, class: "rounded border border-slate-300 px-2 py-1" %>
-        <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "rounded border border-slate-300 px-2 py-1" %>
-        <%= f.number_field :cantidad, placeholder: "±cantidad", required: true, class: "w-24 rounded border border-slate-300 px-2 py-1 font-mono" %>
-        <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
+        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, { include_blank: "— cliente —" }, class: "btn btn-secondary btn-xs" %>
+        <%= f.select :chofer_id, @todos_choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: "— o chofer —" }, class: "btn btn-secondary btn-xs" %>
+        <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "btn btn-secondary btn-xs" %>
+        <%= f.number_field :cantidad, placeholder: "±cantidad", required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
+        <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
         <%= f.submit "Ajustar", class: "rounded border border-amber-400 px-3 py-1" %>
       <% end %>
     </div>
   </div>
 <% end %>
 <h2 class="mb-2 font-semibold">Últimos movimientos</h2>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Canastilla</th><th class="px-3 py-2">Cliente</th><th class="px-3 py-2 text-right">± cliente</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2 text-right">± camión</th><th class="px-3 py-2">Concepto</th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Canastilla</th><th class="px-3 py-2">Cliente</th><th class="px-3 py-2 text-right">± cliente</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2 text-right">± camión</th><th class="px-3 py-2">Concepto</th></tr></thead>
   <tbody>
     <% @movimientos.each do |m| %>
-      <tr class="border-t border-slate-100">
+      <tr class="border-t border-stone-100">
         <td class="px-3 py-1 whitespace-nowrap"><%= l m.fecha %></td><td class="px-3 py-1"><%= m.tipo %></td><td class="px-3 py-1"><%= m.tipo_canastilla %></td>
         <td class="px-3 py-1"><%= m.cliente %></td><td class="px-3 py-1 text-right font-mono"><%= m.cantidad_cliente unless m.cantidad_cliente.zero? %></td>
         <td class="px-3 py-1"><%= m.chofer %></td><td class="px-3 py-1 text-right font-mono"><%= m.cantidad_chofer unless m.cantidad_chofer.zero? %></td>
-        <td class="px-3 py-1 text-slate-600"><%= m.concepto %><%= " (#{m.usuario})" %></td>
+        <td class="px-3 py-1 text-stone-600"><%= m.concepto %><%= " (#{m.usuario})" %></td>
       </tr>
     <% end %>
-    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-slate-500">Sin movimientos.</td></tr><% end %>
+    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500">Sin movimientos.</td></tr><% end %>
   </tbody>
 </table>

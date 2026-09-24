@@ -1,5 +1,5 @@
 <%= form_with model: [ :admin, @convenio ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <div><%= f.label :cliente_id, "Cliente", class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %></div>
+  <div><%= f.label :cliente_id, "Cliente", class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
   <div class="grid gap-4 sm:grid-cols-2">
     <%= render "admin/campo", f: f, campo: :lineas, etiqueta: "Líneas de producto (separadas por coma)", tipo: :text_field, opciones: { placeholder: "Pollo, Rosticero", list: "lineas_producto" } %>
     <%= render "admin/campo", f: f, campo: :excluir, etiqueta: "Excluir productos cuyo nombre contenga", tipo: :text_field, opciones: { placeholder: "Avimarca" } %>
@@ -11,5 +11,5 @@
   </div>
   <%= render "admin/campo", f: f, campo: :notas, etiqueta: "Notas", tipo: :text_field %>
   <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
-  <%= f.submit @convenio.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+  <%= f.submit @convenio.new_record? ? "Crear" : "Guardar", class: "btn btn-primary" %>
 <% end %>

@@ -1,19 +1,31 @@
 <% if linea %>
-  <div class="mb-4 rounded border-l-4 border-blue-600 bg-blue-50 p-3 text-sm">
-    Pedido <strong><%= linea.pedido.folio %></strong> para <strong><%= linea.pedido.destino %></strong> ·
-    <%= linea.producto.nombre %>: pide <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span>,
-    lleva <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
-    · <%= link_to "volver al pedido", pedido_path(linea.pedido), class: "text-blue-700 underline" %>
+  <% pedido = linea.pedido %>
+  <div class="sticky top-0 z-20 mb-4 flex flex-wrap items-center gap-3 rounded-lg px-4 py-2 text-white shadow" style="background: <%= color_destino(pedido.destino) %>">
+    <span class="text-xl">🧺</span>
+    <div class="min-w-48 flex-1">
+      <div class="font-bold">
+        PARA <%= pedido.destino.to_s.upcase %> · <%= pedido.folio %> ·
+        <% if sustituto %>SUSTITUTO: <%= sustituto.nombre %> <span class="font-normal opacity-90">(en lugar de <%= linea.producto.nombre %>)</span>
+        <% else %><%= linea.producto.nombre %><% end %>
+      </div>
+      <div class="text-xs opacity-90">
+        pide <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
+        · llevas <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span>
+        <% if salida %> · armándose <%= link_to salida.folio, salida_path(salida), class: "font-mono underline", target: "_blank" %> (<%= salida.salida_etiquetas.count %> paquetes)<% end %>
+        <%= linea.producto.kg? ? "· genera la caja como siempre: se liga sola al pedido y entra a la salida" : "· caja fija: cuenta las piezas y registra" %>
+      </div>
+    </div>
+    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>">☰ Checklist</button>
+    <%= link_to "✕", new_etiqueta_path, class: "btn btn-light btn-sm", title: "Salir del pedido" %>
   </div>
 <% elsif produccion %>
   <div class="mb-4 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
     Producción <strong><%= produccion.folio %></strong> · entró <span class="font-mono"><%= number_with_precision(produccion.cantidad, precision: 3) %></span> de <%= produccion.producto.nombre %>,
     queda <span class="font-mono" id="lleva"><%= number_with_precision(produccion.disponible, precision: 3) %></span>
-    <%= "· pedido #{produccion.pedido.folio}" if produccion.pedido %>
-    · <%= link_to "ver producción", produccion_path(produccion), class: "text-emerald-800 underline" %>
+    · <%= link_to "Ver producción", produccion_path(produccion), class: "btn btn-secondary btn-xs" %>
   </div>
 <% else %>
   <div class="mb-4 rounded border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
-    <strong>Sin pedido ni producción.</strong> Solo se etiqueta con el PIN de quien pueda autorizarlo y un motivo. Lo normal es entrar desde un renglón del pedido o desde una producción.
+    <strong>Sin pedido ni producción.</strong> Se etiqueta con motivo y queda por revisar. Lo normal es entrar desde un renglón del pedido, con el botón <em>Pedidos por surtir</em>, o desde una producción.
   </div>
 <% end %>

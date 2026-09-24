@@ -1,14 +1,14 @@
-<div class="mb-4 flex items-center justify-between">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Tipos de canastilla</h1>
-  <%= link_to "Nuevo tipo", new_admin_tipo_canastilla_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+  <%= link_to "Nuevo tipo", new_admin_tipo_canastilla_path, class: "btn btn-primary btn-sm" %>
 </div>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Color</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Color</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
   <tbody>
     <% @tipos.each do |t| %>
-      <tr class="border-t border-slate-100 <%= 'text-slate-400' unless t.activo %>"><td class="px-3 py-2"><%= t.nombre %></td><td class="px-3 py-2"><%= t.color %></td><td class="px-3 py-2"><%= t.activo ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_tipo_canastilla_path(t), class: "text-blue-700" %></td></tr>
+      <tr class="border-t border-stone-100 <%= 'text-stone-400' unless t.activo %>"><td class="px-3 py-2"><%= t.nombre %></td><td class="px-3 py-2"><%= t.color %></td><td class="px-3 py-2"><%= t.activo ? "sí" : "no" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_tipo_canastilla_path(t), class: "btn btn-secondary btn-xs" %></td></tr>
     <% end %>
-    <% if @tipos.empty? %><tr><td colspan="4" class="px-3 py-6 text-center text-slate-500">Sin tipos. Crea al menos uno (por ejemplo "Rejilla" negra).</td></tr><% end %>
+    <% if @tipos.empty? %><tr><td colspan="4" class="px-3 py-6 text-center text-stone-500">Sin tipos. Crea al menos uno (por ejemplo "Rejilla" negra).</td></tr><% end %>
   </tbody>
 </table>

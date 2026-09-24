@@ -22,7 +22,7 @@ class InventarioController < ApplicationController
 
   def crear_movimiento
     return volver_con_error("Escribe el motivo") if params[:motivo].blank?
-    autoriza = autorizador_o_revision("inventario.ajustar", params[:pin])
+    autoriza = autorizador_o_revision("inventario.ajustar")
     producto = Producto.activos.find(params[:producto_id])
     tipo = params[:tipo].presence_in(%w[entrada ajuste_entrada ajuste_salida merma]) || "entrada"
     movimiento = Inventario.mover!(sucursal: @sucursal, producto: producto, tipo: tipo, cantidad: params[:cantidad], usuario: usuario_actual,

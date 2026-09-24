@@ -1,26 +1,25 @@
 <h1 class="mb-4 text-2xl font-bold">Producciones · <%= sucursal_actual %></h1>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Entró</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Salió</th><th class="px-3 py-2">Pedido</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2"></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Entró</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Salió</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2"></th></tr></thead>
   <tbody>
     <% @abiertas.each do |p| %>
-      <tr class="border-t border-slate-100">
+      <tr class="border-t border-stone-100">
         <td class="px-3 py-2 font-mono"><%= p.folio %></td>
         <td class="px-3 py-2"><%= p.producto.nombre %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(p.cantidad, precision: 3) %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(p.total_salidas, precision: 3) %></td>
-        <td class="px-3 py-2"><%= p.pedido&.folio || "autorizada" %></td>
         <td class="px-3 py-2"><%= p.usuario %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Abrir", produccion_path(p), class: "rounded bg-slate-900 px-3 py-1 text-white" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Abrir", produccion_path(p), class: "btn btn-primary btn-sm" %></td>
       </tr>
     <% end %>
-    <% if @abiertas.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">No hay producciones abiertas.</td></tr><% end %>
+    <% if @abiertas.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-stone-500">No hay producciones abiertas.</td></tr><% end %>
   </tbody>
 </table>
 <% if @cerradas.any? %>
   <h2 class="mb-2 mt-8 font-semibold">Cerradas</h2>
   <ul class="text-sm">
     <% @cerradas.each do |p| %>
-      <li class="border-t border-slate-200 py-1"><%= link_to p.folio, produccion_path(p), class: "font-mono text-blue-700" %> · <%= p.producto.nombre %> <%= number_with_precision(p.cantidad, precision: 3) %> · merma <%= number_with_precision(p.merma, precision: 3) %> · <%= l p.created_at.to_date, format: :short %></li>
+      <li class="border-t border-stone-200 py-1"><%= link_to p.folio, produccion_path(p), class: "chip-folio" %> · <%= p.producto.nombre %> <%= number_with_precision(p.cantidad, precision: 3) %> · merma <%= number_with_precision(p.merma, precision: 3) %> · <%= l p.created_at.to_date, format: :short %></li>
     <% end %>
   </ul>
 <% end %>

@@ -13,10 +13,13 @@ class EtiquetasController < ApplicationController
   # La etiquetadora: producto, lista de pesadas (o piezas), báscula, y Registrar e imprimir.
   def new
     cargar_contexto
-    producto = @linea&.producto || Producto.activos.find_by(id: params[:producto_id])
+    elegido = Producto.activos.find_by(id: params[:producto_id])
+    # Sustituto: se surte el renglón con otro producto (no hay pechuga, va pollo entero), a propósito.
+    @sustituto = params[:sustituto].present? && @linea && elegido && elegido.id != @linea.producto_id ? elegido : nil
+    producto = @sustituto || @linea&.producto || elegido
     @producto_json = producto && producto_json(producto)
-    @pendientes = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] }, estado: "pendiente")
-                             .includes(:producto, pedido: %i[sucursal_destino cliente]).order("pedidos.created_at")
+    @pendientes = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] }, estado: "pendiente").count
+    @salida = @linea && Salida.armandose_para(@linea.pedido)
   end
 
   # Alta de una etiqueta suelta desde un formulario normal (lo usa también la caja de la ficha).
@@ -53,7 +56,7 @@ class EtiquetasController < ApplicationController
     base = { producto: producto, sucursal: sucursal_actual, usuario: usuario_actual, pedido_linea: linea, produccion: @produccion,
              autorizado_por: autoriza, justificacion: params[:justificacion].presence }
     paquetes = []
-    caja = nil
+    caja = salida = nil
     Etiqueta.transaction do
       Array(params[:pesadas]).each do |p|
         p = p.respond_to?(:to_unsafe_h) ? p.to_unsafe_h : p.to_h
@@ -69,9 +72,14 @@ class EtiquetasController < ApplicationController
         caja = Etiqueta.cerrar_caja!(paquetes, usuario: usuario_actual)
       end
       dejar_por_revisar(paquetes.select(&:previously_new_record?) + [ caja ].compact.select(&:previously_new_record?).reject(&:agrupando), linea, autoriza)
+      # Contra un pedido, lo registrado entra solo a la salida que se arma para ese destino.
+      if linea
+        salida = Salida.para_pedido!(linea.pedido, usuario: usuario_actual)
+        (caja ? [ caja ] : paquetes.select { |p| p.padre_id.nil? }).each { |e| salida.acomodar!(e) }
+      end
     end
     render json: { etiquetas: paquetes.map { |e| etiqueta_json(e) }, caja: (etiqueta_json(caja) if caja),
-                   lleva: lleva_de(linea, @produccion, producto) }
+                   lleva: lleva_de(linea, @produccion, producto), salida: (salida_json(salida) if salida) }
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, ArgumentError => e
     mensaje = e.respond_to?(:record) ? e.record.errors.full_messages.join(", ") : e.message
     render json: { error: mensaje }, status: :unprocessable_entity
@@ -133,12 +141,28 @@ class EtiquetasController < ApplicationController
     agrupar { |hijas| Etiqueta.armar_tarima!(hijas, usuario: usuario_actual) }
   end
 
+  # Etiqueté mal: baja con motivo desde Vivas (HTML) o desde la etiquetadora (JSON, que devuelve
+  # cómo quedó la caja, el renglón y la salida de donde salió).
   def baja
     etiqueta = Etiqueta.where(sucursal: sucursal_actual).find(params[:id])
+    salida = SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ etiqueta.id ] + etiqueta.hijas_ids_profundas, salidas: { estado: "preparando" }).first&.salida
+    linea = etiqueta.pedido_linea || etiqueta.hijas.first&.pedido_linea
     etiqueta.dar_de_baja!(motivo: params[:motivo].to_s.strip, usuario: usuario_actual)
-    redirect_to etiquetas_path, notice: "#{etiqueta} dada de baja"
+    respond_to do |format|
+      format.html { redirect_to etiquetas_path, notice: "#{etiqueta} dada de baja" }
+      format.json do
+        padre = etiqueta.padre&.reload
+        render json: { id: etiqueta.id, codigo: etiqueta.codigo, tipo: etiqueta.tipo, hijas: etiqueta.hijas.count,
+                       padre: (padre && { id: padre.id, codigo: padre.codigo, cantidad: padre.cantidad.to_s("F"), estado: padre.estado }),
+                       salida: (salida && { folio: salida.folio, paquetes: salida.salida_etiquetas.count }),
+                       lleva: lleva_de(linea, nil, linea&.producto) }
+      end
+    end
   rescue ArgumentError => e
-    redirect_to etiquetas_path, alert: e.message
+    respond_to do |format|
+      format.html { redirect_to etiquetas_path, alert: e.message }
+      format.json { render json: { error: e.message }, status: :unprocessable_entity }
+    end
   end
 
   private
@@ -147,19 +171,19 @@ class EtiquetasController < ApplicationController
   def cargar_contexto
     @linea = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] })
                         .includes(:producto, :pedido).find_by(id: params[:pedido_linea_id])
-    @produccion = Produccion.abiertas.where(sucursal: sucursal_actual).includes(:producto, :pedido).find_by(id: params[:produccion_id])
+    @produccion = Produccion.abiertas.where(sucursal: sucursal_actual).includes(:producto).find_by(id: params[:produccion_id])
   end
 
   # [renglón, autorizador]: el renglón del pedido que corresponde a este producto, o quien autoriza
   # etiquetar sin pedido ni producción. Cambiar de producto dentro de un pedido cae en su renglón.
   def resolver_contexto(producto)
     linea = @linea
-    linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id
-    linea ||= @produccion&.pedido&.linea_de(producto)
+    # Otro producto dentro del pedido cae en su renglón; declarado como sustituto, se queda en este.
+    linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id && params[:sustituto].blank?
     raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion
-    raise ArgumentError, "sin pedido ni producción escribe el motivo (con PIN de quien autoriza, o queda por revisar)" if params[:justificacion].blank?
-    [ nil, autorizador_o_revision("etiquetas.libre", params[:pin]) ]
+    raise ArgumentError, "sin pedido ni producción escribe el motivo (queda por revisar)" if params[:justificacion].blank?
+    [ nil, autorizador_o_revision("etiquetas.libre") ]
   end
 
   # Etiquetas sueltas sin nadie que las autorizara: a la bandeja de revisión, cada una con lo que vale.
@@ -187,9 +211,14 @@ class EtiquetasController < ApplicationController
       unidad: e.producto&.unidad, svg: helpers.ean13_svg(e.codigo, alto: 36, modulo: 2) }
   end
 
+  def salida_json(s)
+    { id: s.id, folio: s.folio, destino: s.destino.to_s, paquetes: s.salida_etiquetas.count, url: salida_path(s) }
+  end
+
   def producto_json(p)
     { id: p.id, nombre: p.nombre, clave: p.clave, plu: p.plu, unidad: p.unidad, decimales: p.decimales,
-      peso_fijo: p.peso_fijo&.to_s("F"), codigos: p.codigos_barras.map(&:codigo) }
+      peso_fijo: p.peso_fijo&.to_s("F"), codigos: p.codigos_barras.map(&:codigo),
+      codigos_detalle: p.codigos_barras.map { |c| { id: c.id, codigo: c.codigo } } }
   end
 
   # Tamaño y textos de la etiqueta impresa; vienen del navegador (ajustes guardados) o valen los de fábrica.

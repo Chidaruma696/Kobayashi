@@ -14,9 +14,9 @@ roles.each do |nombre, permisos|
 end
 
 if Rails.env.development? && !Usuario.exists?(usuario: "admin")
-  Usuario.create!(nombre: "Administrador", usuario: "admin", password: "admin1234", pin: "1234",
+  Usuario.create!(nombre: "Administrador", usuario: "admin", password: "admin1234",
                   rol: Rol.find_by!(nombre: "administrador"), sucursal: matriz)
-  puts "Usuario de desarrollo: admin / admin1234 (PIN 1234)"
+  puts "Usuario de desarrollo: admin / admin1234"
 end
 
 if Rails.env.development? && Producto.none?

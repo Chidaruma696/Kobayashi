@@ -22,6 +22,7 @@ class CajaController < ApplicationController
     end
     p = r.producto
     catalogo = p.precio_centavos_en(sucursal_actual)
+    return render json: { error: "#{p.nombre}: sin precio en #{sucursal_actual.nombre}; pídelo a la matriz antes de venderlo" }, status: :unprocessable_entity unless catalogo.positive?
     promos = Promocion.para(p, sucursal_actual).select(&:vigente?).map do |pr|
       { tipo: pr.tipo, cantidad_minima: pr.cantidad_minima, precio_centavos: pr.precio_centavos, porcentaje: pr.porcentaje, nombre: pr.nombre }
     end
@@ -33,8 +34,13 @@ class CajaController < ApplicationController
     autorizar!("caja.vender")
     lineas = JSON.parse(params[:lineas].to_s).map { |l| l.symbolize_keys.slice(:etiqueta_id, :producto_id, :cantidad, :precio_centavos) }
     pagos = JSON.parse(params[:pagos].to_s).map(&:symbolize_keys)
-    venta = Caja.cobrar!(sucursal: sucursal_actual, usuario: usuario_actual, lineas: lineas, pagos: pagos, clave: params[:clave],
-                         autorizador: autorizador("caja.bajar_precio", params[:pin]))
+    autoriza = autorizador_o_revision("caja.bajar_precio")
+    venta = Caja.cobrar!(sucursal: sucursal_actual, usuario: usuario_actual, lineas: lineas, pagos: pagos, clave: params[:clave], autorizador: autoriza)
+    # Bajó precios sin tener el permiso: cada renglón queda por revisar con lo que dejó de cobrar.
+    venta.lineas.where(autorizado_por: nil).where("precio_centavos < catalogo_centavos").includes(:producto).each do |l|
+      revisar_si_hace_falta(l, nil, motivo: "Bajó #{l.producto.nombre} de #{Dinero.pesos(l.catalogo_centavos)} a #{Dinero.pesos(l.precio_centavos)} en #{venta.folio}",
+                            valor_centavos: Dinero.importe(l.cantidad, l.catalogo_centavos - l.precio_centavos))
+    end
     render json: { url: caja_ticket_path(venta, imprimir: 1), folio: venta.folio, cambio: Dinero.pesos(venta.cambio_centavos) }
   rescue Caja::Error, JSON::ParserError, ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
@@ -76,7 +82,7 @@ class CajaController < ApplicationController
 
   def retirar
     raise ArgumentError, "no hay caja abierta" unless @corte
-    autoriza = autorizador_o_revision("caja.retirar", params[:pin])
+    autoriza = autorizador_o_revision("caja.retirar")
     retiro = @corte.retirar!(monto_centavos: Dinero.centavos(params[:monto]), motivo: params[:motivo], usuario: usuario_actual, autorizado_por: autoriza)
     revisar_si_hace_falta(retiro, autoriza, motivo: retiro.motivo, valor_centavos: retiro.monto_centavos)
     redirect_to caja_corte_path, notice: "Retiro de #{Dinero.pesos(retiro.monto_centavos)} registrado#{'; queda por revisar' unless autoriza}"

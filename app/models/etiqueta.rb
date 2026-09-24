@@ -70,11 +70,31 @@ class Etiqueta < ApplicationRecord
     agrupar!("tarima", cajas, "caja", usuario)
   end
 
+  # Etiqueté mal. Se da de baja con motivo, con todo lo que lleva dentro; sale de la salida que se
+  # esté preparando (si ya se selló o viajó, se resuelve en la recepción) y la caja de la que sale
+  # se queda con lo que de verdad trae. El renglón del pedido se recalcula solo (after_save).
   def dar_de_baja!(motivo:, usuario:)
     raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, "#{self} ya está #{estado}" unless viva?
+    if (fila = SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, salidas: { estado: %w[sellada enviada] }).includes(:salida).first)
+      raise ArgumentError, "#{self} ya va en #{fila.salida.folio} #{fila.salida.estado}: resuélvelo en la recepción"
+    end
     transaction do
+      SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, salidas: { estado: "preparando" }).destroy_all
       update!(estado: "baja", motivo: motivo)
       hijas.vivas.each { |h| h.dar_de_baja!(motivo: motivo, usuario: usuario) }
+      padre&.recalcular_contenido!
+    end
+  end
+
+  # Una caja o tarima vale lo que suman sus hijas vivas; sin ninguna, ya no es nada.
+  def recalcular_contenido!
+    return unless viva?
+    vivas = hijas.vivas.to_a
+    if vivas.empty?
+      update!(estado: "baja", motivo: "sin paquetes: se dieron de baja todos")
+    else
+      update!(cantidad: vivas.sum(&:cantidad))
     end
   end
 

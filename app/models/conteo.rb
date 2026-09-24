@@ -11,7 +11,7 @@ class Conteo < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :estado, inclusion: { in: %w[abierto cerrado] }
 
   scope :abiertos, -> { where(estado: "abierto") }

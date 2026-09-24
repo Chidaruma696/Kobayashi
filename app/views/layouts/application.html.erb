@@ -8,13 +8,16 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%# El dragón tal cual: negro con el navegador en claro, blanco en oscuro %>
+    <link rel="icon" href="/icon-b.png" type="image/png" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="/icon-w.png" type="image/png" media="(prefers-color-scheme: dark)">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-100 text-slate-900">
+  <body class="min-h-screen bg-fondo text-stone-900" data-controller="dialogo">
     <%= render "layouts/ribbon" %>
+    <%= render "layouts/acerca" %>
     <% if flash[:notice] || flash[:alert] %>
       <div class="w-full px-4 pt-4">
         <% if flash[:notice] %><p class="rounded bg-green-50 px-3 py-2 text-sm text-green-800"><%= flash[:notice] %></p><% end %>

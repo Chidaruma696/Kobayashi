@@ -1,15 +1,15 @@
-<div class="mb-4 flex items-center justify-between">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Sucursales</h1>
-  <%= link_to "Nueva sucursal", new_admin_sucursal_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+  <%= link_to "Nueva sucursal", new_admin_sucursal_path, class: "btn btn-primary btn-sm" %>
 </div>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Código</th><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2 text-right">Límite en gaveta</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Código</th><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2 text-right">Límite en gaveta</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
   <tbody>
     <% @sucursales.each do |s| %>
-      <tr class="border-t border-slate-100">
+      <tr class="border-t border-stone-100">
         <td class="px-3 py-2 font-mono"><%= s.codigo %></td><td class="px-3 py-2"><%= s.nombre %></td><td class="px-3 py-2"><%= s.tipo %></td>
         <td class="px-3 py-2 text-right font-mono"><%= pesos(s.limite_efectivo_centavos) %></td><td class="px-3 py-2"><%= s.activa ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "editar", edit_admin_sucursal_path(s), class: "text-blue-700" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_sucursal_path(s), class: "btn btn-secondary btn-xs" %></td>
       </tr>
     <% end %>
   </tbody>
