@@ -49,7 +49,7 @@ export default class extends Controller {
     if (!d.pedidos.length) { this.cuerpoTarget.innerHTML = `<p class="py-6 text-center text-stone-500">No hay pedidos por surtir</p>`; return }
     this.cuerpoTarget.innerHTML = d.pedidos.map(p => `
       <div class="flex cursor-pointer items-center gap-3 border-b border-dashed border-stone-200 py-2 pl-3 hover:bg-stone-50" style="border-left:6px solid ${this.color(p.destino)}" data-action="click->pedidos-surtir#abrir" data-pedidos-surtir-id-param="${p.id}">
-        <span class="text-lg" style="color:${this.color(p.destino)}">🧺</span>
+        <span class="text-lg" style="color:${this.color(p.destino)}"><i class="bi bi-basket"></i></span>
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-2"><strong class="text-base">${this.esc(p.folio)}</strong> ${this.chip(p.destino, true)}
             <span class="text-xs text-stone-500">${this.esc(p.usuario)} · ${this.esc(p.creado)}</span></div>
@@ -79,10 +79,10 @@ export default class extends Controller {
     const bulto = (r, b) => {
       const enviada = b.salida && b.salida.estado !== "preparando"
       const badge = !b.salida ? `<span class="text-xs text-amber-700">sin salida</span>`
-        : enviada ? `<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-800">🚚 ${this.esc(b.salida.folio)} ${b.salida.estado}</span>`
-        : `<span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">📦 ${this.esc(b.salida.folio)} por enviar</span>`
+        : enviada ? `<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-800"><i class="bi bi-truck"></i> ${this.esc(b.salida.folio)} ${b.salida.estado}</span>`
+        : `<span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800"><i class="bi bi-box-seam"></i> ${this.esc(b.salida.folio)} por enviar</span>`
       const verif = b.verificada ? `<span class="text-xs text-emerald-700">✓ verificada</span>` : (b.salida && !enviada ? `<span class="text-xs text-amber-700">sin verificar</span>` : "")
-      const baja = abierto && !enviada ? `<button type="button" class="btn btn-ghost-danger btn-xs ml-auto" title="Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida" data-id="${b.id}" data-que="${b.tipo === "caja" ? "la caja completa" : "el paquete"}" data-action="pedidos-surtir#darDeBaja">🗑 Dar de baja</button>` : ""
+      const baja = abierto && !enviada ? `<button type="button" class="btn btn-ghost-danger btn-xs ml-auto" title="Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida" data-id="${b.id}" data-que="${b.tipo === "caja" ? "la caja completa" : "el paquete"}" data-action="pedidos-surtir#darDeBaja"><i class="bi bi-trash"></i> Dar de baja</button>` : ""
       return `<div class="flex flex-wrap items-center gap-2 py-0.5 pl-6 text-xs">
         <code>${this.esc(b.codigo)}</code>
         <span class="text-stone-500">${b.tipo}${b.paquetes ? ` · ${b.paquetes} paq` : ""} · ${this.esc(b.cantidad)} ${r.unidad}</span>
@@ -90,10 +90,10 @@ export default class extends Controller {
         ${badge} ${verif} ${baja}</div>`
     }
     const html = renglones.map(r => {
-      const ico = r.estado === "surtido" ? `<span class="text-emerald-600">✔</span>` : r.estado === "no_surtir" ? `<span class="text-stone-400">⊘</span>` : `<span class="text-amber-500">○</span>`
+      const ico = r.estado === "surtido" ? `<i class="bi bi-check-circle-fill text-emerald-600"></i>` : r.estado === "no_surtir" ? `<i class="bi bi-slash-circle text-stone-400"></i>` : `<i class="bi bi-circle text-amber-500"></i>`
       const acciones = !abierto ? "" : `<div class="mt-1 flex flex-wrap gap-2">
-        ${r.estado !== "no_surtir" ? `<a class="btn btn-primary btn-xs" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}">🏷 Surtir</a>
-          <button type="button" class="btn btn-warning btn-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto">⇄ Enviar sustituto</button>
+        ${r.estado !== "no_surtir" ? `<a class="btn btn-primary btn-xs" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}"><i class="bi bi-tag"></i> Surtir</a>
+          <button type="button" class="btn btn-warning btn-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto"><i class="bi bi-arrow-left-right"></i> Enviar sustituto</button>
           ${r.estado === "pendiente" ? `<button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#surtido" title="Darlo por surtido aunque falte">Dar por surtido</button>` : ""}` : ""}
         <button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#${r.estado === "no_surtir" ? "reabrir" : "noSurtir"}">${r.estado === "no_surtir" ? "Reactivar" : "No se va a surtir"}</button>
         </div>
@@ -118,7 +118,7 @@ export default class extends Controller {
     this.salidaLinkTarget.classList.toggle("hidden", !salida)
     if (salida) {
       this.salidaLinkTarget.href = salida.url
-      this.salidaLinkTarget.textContent = `🚚 ${salida.folio}: ${salida.sin_verificar ? `verificar (${salida.sin_verificar}) y enviar` : "sellar y enviar"}`
+      this.salidaLinkTarget.textContent = `<i class="bi bi-truck"></i> ${salida.folio}: ${salida.sin_verificar ? `verificar (${salida.sin_verificar}) y enviar` : "sellar y enviar"}`
     }
   }
 

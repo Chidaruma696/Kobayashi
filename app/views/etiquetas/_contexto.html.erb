@@ -1,7 +1,7 @@
 <% if linea %>
   <% pedido = linea.pedido %>
   <div class="sticky top-0 z-20 mb-4 flex flex-wrap items-center gap-3 rounded-lg px-4 py-2 text-white shadow" style="background: <%= color_destino(pedido.destino) %>">
-    <span class="text-xl">🧺</span>
+    <span class="text-xl"><i class="bi bi-basket"></i></span>
     <div class="min-w-48 flex-1">
       <div class="font-bold">
         PARA <%= pedido.destino.to_s.upcase %> · <%= pedido.folio %> ·
@@ -15,8 +15,8 @@
         <%= linea.producto.kg? ? "· genera la caja como siempre: se liga sola al pedido y entra a la salida" : "· caja fija: cuenta las piezas y registra" %>
       </div>
     </div>
-    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>">☰ Checklist</button>
-    <%= link_to "✕", new_etiqueta_path, class: "btn btn-light btn-sm", title: "Salir del pedido" %>
+    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>"><i class="bi bi-list-ul"></i> Checklist</button>
+    <%= link_to icono("x-lg"), new_etiqueta_path, class: "btn btn-light btn-sm", title: "Salir del pedido" %>
   </div>
 <% elsif produccion %>
   <div class="mb-4 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">

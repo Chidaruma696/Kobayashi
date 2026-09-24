@@ -1,7 +1,7 @@
 <% s = @salida %>
 <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
   <h1 class="text-2xl font-bold"><%= s.cliente %></h1>
-  <%= link_to "← Mi ruta", reparto_path, class: "btn btn-ghost btn-sm" %>
+  <%= link_to icono("arrow-left", "Mi ruta"), reparto_path, class: "btn btn-ghost btn-sm" %>
 </div>
 <p class="mb-4 text-sm text-stone-600"><%= s.cliente.direccion %><%= " · #{s.cliente.telefono}" if s.cliente.telefono.present? %> · salida <span class="font-mono"><%= s.folio %></span> · nota <span class="font-mono"><%= @venta.folio %></span> · <%= pesos(@venta.saldo_centavos) %></p>
 
@@ -107,7 +107,7 @@
                 <tr data-lineas-target="fila">
                   <td class="py-1 pr-2"><%= select_tag "pedido[lineas_attributes][#{i}][producto_id]", options_from_collection_for_select(@productos, :id, ->(p) { "#{p.nombre} (#{p.unidad})" }), include_blank: "—", class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
                   <td class="py-1 pr-2"><%= number_field_tag "pedido[lineas_attributes][#{i}][cantidad]", nil, step: "0.001", min: "0.001", inputmode: "decimal", class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %></td>
-                  <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700">✕</button></td>
+                  <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700"><i class="bi bi-x-lg"></i></button></td>
                 </tr>
               <% end %>
             </tbody>

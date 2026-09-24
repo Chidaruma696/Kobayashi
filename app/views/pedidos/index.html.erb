@@ -16,8 +16,8 @@
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
     <h1 class="text-2xl font-bold">Pedidos por surtir · <%= sucursal_actual %></h1>
     <div class="flex gap-2 text-sm">
-      <%= link_to "🖨 Pendientes consolidados", pendientes_pedidos_path, target: "_blank", class: "btn btn-outline-danger btn-sm", title: "Todo lo que falta por surtir, por producto, con los folios que lo piden" %>
-      <%= link_to "🏷 Etiquetar", new_etiqueta_path, class: "btn btn-primary btn-sm" if puede?("etiquetas.crear") %>
+      <%= link_to icono("printer", "Pendientes consolidados"), pendientes_pedidos_path, target: "_blank", class: "btn btn-outline-danger btn-sm", title: "Todo lo que falta por surtir, por producto, con los folios que lo piden" %>
+      <%= link_to icono("tag", "Etiquetar"), new_etiqueta_path, class: "btn btn-primary btn-sm" if puede?("etiquetas.crear") %>
     </div>
   </div>
   <table class="tabla">
@@ -32,7 +32,7 @@
           <td class="px-3 py-2"><%= avance.call(p) %></td>
           <td class="hidden px-3 py-2 text-xs text-stone-500 md:table-cell"><%= p.notas %></td>
           <td class="px-3 py-2 text-right whitespace-nowrap">
-            <%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs mr-1", title: "Hoja del pedido" %>
+            <%= link_to icono("printer"), hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs mr-1", title: "Hoja del pedido" %>
             <% if puede?("etiquetas.crear") %>
               <%= link_to "Surtir", new_etiqueta_path(pedido: p.id), class: "btn btn-primary btn-sm" %>
             <% else %>
@@ -56,7 +56,7 @@
           <td class="px-3 py-2 text-xs whitespace-nowrap"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
           <td class="px-3 py-2"><%= avance.call(p) %><div class="text-xs text-stone-500"><%= l p.updated_at, format: :short %><% if (d = detalle_apartado.call(p)).present? %> · <%= d %><% end %></div></td>
           <td class="hidden px-3 py-2 text-xs text-stone-500 md:table-cell"><%= p.notas %></td>
-          <td class="px-3 py-2 text-right"><%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs", title: "Hoja del pedido" %></td>
+          <td class="px-3 py-2 text-right"><%= link_to icono("printer"), hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs", title: "Hoja del pedido" %></td>
         </tr>
       <% end %>
       <% if @recientes.empty? %><tr><td colspan="6" class="px-3 py-4 text-center text-stone-500">Sin surtidos recientes.</td></tr><% end %>
@@ -68,7 +68,7 @@
   <%# La tienda que pide ve los suyos: cómo van, qué quedó sin surtir y en qué salida viajó cada renglón %>
   <div class="<%= 'mt-10' if puede?('pedidos.surtir') %> mb-4 flex flex-wrap items-center justify-between gap-3">
     <h1 class="text-2xl font-bold">Pedidos de <%= sucursal_actual %></h1>
-    <%= link_to "＋ Nuevo pedido", new_pedido_path, class: "btn btn-primary btn-sm" %>
+    <%= link_to icono("plus-lg", "Nuevo pedido"), new_pedido_path, class: "btn btn-primary btn-sm" %>
   </div>
   <% [ [ "Sin surtir", @mios_sin_surtir, "Todo lo pedido ya se surtió." ], [ "Surtidos", @mios_surtidos.first(30), "Sin pedidos surtidos." ] ].each do |titulo, pedidos, vacio| %>
     <h2 class="mb-2 mt-4 font-semibold"><%= titulo %></h2>
@@ -83,7 +83,7 @@
             <td class="px-3 py-2"><%= avance.call(p) %><% if (d = detalle_apartado.call(p)).present? && p.estado == "cerrado" %><div class="text-xs text-stone-500"><%= d %></div><% end %></td>
             <td class="hidden px-3 py-2 text-xs text-stone-500 md:table-cell"><%= p.notas %></td>
             <td class="px-3 py-2 text-right whitespace-nowrap">
-              <%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs mr-1", title: "Hoja del pedido" %>
+              <%= link_to icono("printer"), hoja_pedido_path(p), target: "_blank", class: "btn btn-secondary btn-xs mr-1", title: "Hoja del pedido" %>
               <%= link_to "Ver renglones", pedido_path(p), class: "btn btn-secondary btn-sm" %>
             </td>
           </tr>

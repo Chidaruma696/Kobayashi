@@ -15,7 +15,7 @@
         <tr data-lineas-target="fila">
           <td class="py-1 pr-2"><%= l.collection_select :producto_id, Producto.activos.order(:nombre), :id, ->(p) { "#{p.nombre} (#{p.unidad})" }, { include_blank: "—" }, class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
           <td class="py-1 pr-2"><%= l.number_field :cantidad, step: "0.001", min: "0.001", class: "w-full rounded border border-stone-300 px-2 py-1 font-mono" %></td>
-          <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700">✕</button></td>
+          <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700"><i class="bi bi-x-lg"></i></button></td>
         </tr>
       <% end %>
     </tbody>

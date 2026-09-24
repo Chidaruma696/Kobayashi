@@ -1,6 +1,6 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Orden de reparto · <%= @ruta %></h1>
-  <%= link_to "← Editar ruta y zonas", edit_admin_ruta_path(@ruta), class: "btn btn-ghost btn-sm" %>
+  <%= link_to icono("arrow-left", "Editar ruta y zonas"), edit_admin_ruta_path(@ruta), class: "btn btn-ghost btn-sm" %>
 </div>
 <p class="mb-4 text-sm text-stone-600">Cada cliente en su zona y con su número. Cuando se arma un viaje, las paradas se generan con este orden: primero por zona, luego por número.</p>
 <%= form_with url: orden_admin_ruta_path(@ruta), class: "card" do |f| %>

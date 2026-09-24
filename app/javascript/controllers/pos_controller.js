@@ -109,7 +109,7 @@ export default class extends Controller {
             : `<input type="number" value="${l.cantidad}" step="${l.unidad === "kg" ? "0.001" : "1"}" min="0" data-action="change->pos#cambiarCantidad" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"> ${l.unidad}`}</td>
           <td class="px-3 py-2 text-right font-mono"><input type="number" value="${(l.precio / 100).toFixed(2)}" step="0.01" min="0" data-action="change->pos#cambiarPrecio" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"></td>
           <td class="px-3 py-2 text-right font-mono" data-importe="${i}">${this.pesos(this.importe(l))}</td>
-          <td class="px-1"><button type="button" data-action="pos#quitar" data-pos-indice-param="${i}" class="px-2 text-red-700">✕</button></td>
+          <td class="px-1"><button type="button" data-action="pos#quitar" data-pos-indice-param="${i}" class="px-2 text-red-700"><i class="bi bi-x-lg"></i></button></td>
         </tr>`).join("")
     } else {
       this.lineas.forEach((l, i) => { const c = this.cuerpoTarget.querySelector(`[data-importe="${i}"]`); if (c) c.textContent = this.pesos(this.importe(l)) })

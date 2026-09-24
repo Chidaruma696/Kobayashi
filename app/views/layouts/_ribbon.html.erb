@@ -11,7 +11,7 @@
     <div class="flex min-w-0 flex-1 items-end gap-0.5 whitespace-nowrap max-lg:overflow-x-auto [scrollbar-width:none]">
       <% pestanas_visibles.each do |p| %>
         <%= link_to p[:nombre], ruta_de_pestana(p),
-              class: "shrink-0 border border-b-0 px-4 py-2 font-medium transition-colors #{p[:id] == activa[:id] ? 'border-stone-300 bg-fondo font-semibold text-marca-900 -mb-px pb-2.5' : 'border-transparent text-marca-950/80 hover:border-marca-300 hover:bg-marca-300/60 hover:text-marca-950'}" %>
+              class: "shrink-0 rounded-t-md border border-b-0 px-4 py-2 font-medium transition-colors #{p[:id] == activa[:id] ? 'border-stone-300 bg-fondo font-semibold text-marca-900 -mb-px pb-2.5' : 'border-transparent text-marca-950/80 hover:border-marca-300 hover:bg-marca-300/60 hover:text-marca-950'}" %>
       <% end %>
     </div>
     <span class="hidden shrink-0 pb-2 text-marca-950/80 lg:inline" title="<%= sucursal_actual %> · <%= usuario_actual %>"><%= sucursal_actual %> · <%= usuario_actual %></span>
@@ -28,7 +28,7 @@
           <% botones.each do |b| %>
             <% ruta = send(b.ruta) %>
             <%= link_to ruta, class: "flex w-20 flex-col items-center rounded-md px-1 py-1 text-center text-xs text-stone-700 transition-colors hover:bg-white hover:text-marca-900 #{'bg-white text-marca-900 shadow-sm ring-1 ring-marca-200' if current_page?(ruta)}" do %>
-              <span class="text-2xl leading-8"><%= b.icono %></span>
+              <i class="bi bi-<%= b.icono %> text-2xl leading-8"></i>
               <span class="leading-tight"><%= b.nombre %></span>
             <% end %>
           <% end %>

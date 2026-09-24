@@ -1,7 +1,7 @@
 <% c = @cliente %>
 <div class="mb-2 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold"><%= c.nombre %></h1>
-  <%= link_to "← Cobranza", cobranza_path, class: "btn btn-ghost btn-sm" %>
+  <%= link_to icono("arrow-left", "Cobranza"), cobranza_path, class: "btn btn-ghost btn-sm" %>
 </div>
 <p class="mb-4 text-sm text-stone-600"><%= c.ruta %><%= " · #{c.telefono}" if c.telefono.present? %> · <%= Credito::TIPOS[c.credito] %><%= " · límite #{pesos(c.limite_credito_centavos)}" if c.credito == "limite" %><%= " · corte los #{Credito::DIAS[c.dia_corte]}" if c.dia_corte %> · <%= link_to "editar", edit_admin_cliente_path(c), class: "enlace" if puede?("admin.catalogo") %></p>
 

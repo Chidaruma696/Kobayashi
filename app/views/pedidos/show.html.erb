@@ -1,8 +1,8 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <span class="rounded px-2 py-0.5 text-lg text-white" style="background: <%= color_destino(@pedido.destino) %>"><%= @pedido.destino %></span></h1>
   <div class="flex items-center gap-2">
-    <%= link_to "🖨 Hoja", hoja_pedido_path(@pedido), target: "_blank", class: "btn btn-secondary btn-sm" %>
-    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to "🏷 Surtir en la etiquetadora", new_etiqueta_path(pedido: @pedido.id), class: "btn btn-primary btn-sm" %><% end %>
+    <%= link_to icono("printer", "Hoja"), hoja_pedido_path(@pedido), target: "_blank", class: "btn btn-secondary btn-sm" %>
+    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to icono("tag", "Surtir en la etiquetadora"), new_etiqueta_path(pedido: @pedido.id), class: "btn btn-primary btn-sm" %><% end %>
     <span class="badge"><%= @pedido.estado %></span>
   </div>
 </div>

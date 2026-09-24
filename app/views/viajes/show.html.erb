@@ -2,7 +2,7 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Viaje <%= v.folio %> · <%= v.ruta %> · <%= l v.fecha %></h1>
   <div class="flex items-center gap-3 text-sm">
-    <%= link_to "🖨 Orden de reparto", hoja_viaje_path(v), target: "_blank", class: "btn btn-secondary btn-sm" %>
+    <%= link_to icono("printer", "Orden de reparto"), hoja_viaje_path(v), target: "_blank", class: "btn btn-secondary btn-sm" %>
     <span class="rounded bg-stone-200 px-3 py-1"><%= v.estado.humanize %></span>
   </div>
 </div>

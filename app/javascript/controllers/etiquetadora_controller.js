@@ -254,8 +254,8 @@ export default class extends Controller {
     const cajaBaja = !!this.caja?.baja
     const accion = f => {
       if (f.baja || (f.id && cajaBaja)) return `<span class="badge" title="${this.esc(f.baja || this.caja?.baja)}">baja</span>`
-      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja">🗑</button>`
-      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar">✕</button>`
+      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`
+      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar"><i class="bi bi-x-lg"></i></button>`
     }
     const tachada = f => (f.baja || (f.id && cajaBaja)) ? "line-through text-stone-400" : ""
     this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-stone-100 ${tachada(f)}">
@@ -268,10 +268,10 @@ export default class extends Controller {
     if (this.caja) {
       const c = this.caja
       this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold ${cajaBaja ? "line-through text-stone-400" : ""}">
-        <td class="px-4 py-1">📦</td><td class="px-2 py-1">caja</td>
+        <td class="px-4 py-1"><i class="bi bi-box-seam"></i></td><td class="px-2 py-1">caja</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(c.cantidad)} ${this.unidad}</td>
         <td class="px-2 py-1 font-mono text-xs text-amber-700">${c.codigo}</td>
-        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">baja</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja">🗑</button>`}</td>
+        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">baja</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`}</td>
       </tr>`)
     }
     if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-stone-500">${this.porPieza && enCaja ? `La caja se registra con ${n} piezas, sin etiquetas individuales` : "Sin pesadas aún"}</td></tr>`

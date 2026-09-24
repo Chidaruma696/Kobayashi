@@ -19,7 +19,7 @@
     <div class="flex items-center gap-2">
       <% if puede?("pedidos.surtir") %>
         <button type="button" data-action="pedidos-surtir#abrir" class="btn btn-outline-danger btn-sm">
-          🧺 Pedidos por surtir<% if @pendientes.positive? %> <span class="rounded-full bg-red-700 px-2 text-xs text-white"><%= @pendientes %></span><% end %>
+          <i class="bi bi-basket"></i> Pedidos por surtir<% if @pendientes.positive? %> <span class="rounded-full bg-red-700 px-2 text-xs text-white"><%= @pendientes %></span><% end %>
         </button>
       <% end %>
       <% if params[:simulada].present? %>
@@ -36,12 +36,12 @@
     <dialog class="m-auto w-full max-w-3xl rounded-lg p-0 shadow-xl backdrop:bg-black/40" data-pedidos-surtir-target="dialogo" data-action="click->pedidos-surtir#cerrarFuera">
       <div class="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3">
         <h2 class="flex items-center gap-2 text-lg font-bold" data-pedidos-surtir-target="titulo">Pedidos por surtir</h2>
-        <button type="button" class="text-xl text-stone-500 hover:text-stone-900" data-action="pedidos-surtir#cerrar" title="Cerrar">✕</button>
+        <button type="button" class="text-xl text-stone-500 hover:text-stone-900" data-action="pedidos-surtir#cerrar" title="Cerrar"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="max-h-[70vh] overflow-y-auto px-4 py-2" data-pedidos-surtir-target="cuerpo"></div>
       <div class="hidden flex-wrap items-center gap-2 border-t border-stone-200 px-4 py-3" data-pedidos-surtir-target="pie">
         <span class="mr-auto text-sm text-amber-700" data-pedidos-surtir-target="faltan"></span>
-        <button type="button" class="btn btn-secondary btn-sm" data-action="pedidos-surtir#lista">← Pedidos</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="pedidos-surtir#lista"><i class="bi bi-arrow-left"></i> Pedidos</button>
         <a class="hidden rounded bg-emerald-700 px-3 py-1 text-sm font-semibold text-white hover:bg-emerald-600" target="_blank" data-pedidos-surtir-target="salidaLink"></a>
       </div>
     </dialog>

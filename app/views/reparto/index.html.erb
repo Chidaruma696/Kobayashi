@@ -3,7 +3,7 @@
   <div class="mb-6 rounded bg-white p-4 shadow-sm">
     <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
       <h2 class="font-semibold">Viaje <%= viaje.folio %> · <%= viaje.ruta %> · <%= l viaje.fecha %></h2>
-      <span class="text-sm text-stone-600">Chofer <%= viaje.chofer %> · <%= link_to "🖨 Orden de reparto", hoja_viaje_path(viaje), target: "_blank", class: "btn btn-secondary btn-xs" %> · <%= link_to "viaje", viaje_path(viaje), class: "enlace" %></span>
+      <span class="text-sm text-stone-600">Chofer <%= viaje.chofer %> · <%= link_to icono("printer", "Orden de reparto"), hoja_viaje_path(viaje), target: "_blank", class: "btn btn-secondary btn-xs" %> · <%= link_to "viaje", viaje_path(viaje), class: "enlace" %></span>
     </div>
     <ol class="space-y-2">
       <% paradas.each do |s| %>
