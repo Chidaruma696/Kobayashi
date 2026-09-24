@@ -1,26 +1,95 @@
-<h1 class="mb-4 text-2xl font-bold">Pedidos por surtir · <%= sucursal_actual %></h1>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Pidió</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Avance</th><th class="px-3 py-2"></th></tr></thead>
-  <tbody>
-    <% @abiertos.each do |p| %>
-      <% resueltas = p.lineas.count { |l| !l.pendiente? } %>
-      <tr class="border-t border-slate-100">
-        <td class="px-3 py-2 font-mono"><%= p.folio %></td>
-        <td class="px-3 py-2"><%= p.destino %></td>
-        <td class="px-3 py-2"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
-        <td class="px-3 py-2"><%= p.estado %></td>
-        <td class="px-3 py-2"><%= resueltas %>/<%= p.lineas.size %> renglones</td>
-        <td class="px-3 py-2 text-right"><%= link_to "Surtir", pedido_path(p), class: "rounded bg-slate-900 px-3 py-1 text-white" %></td>
-      </tr>
-    <% end %>
-    <% if @abiertos.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-slate-500">Nada pendiente.</td></tr><% end %>
-  </tbody>
-</table>
-<% if @recientes.any? %>
-  <h2 class="mb-2 mt-8 font-semibold">Recientes</h2>
-  <ul class="text-sm">
-    <% @recientes.each do |p| %>
-      <li class="border-t border-slate-200 py-1"><%= link_to p.folio, pedido_path(p), class: "font-mono text-blue-700" %> · <%= p.destino %> · <%= p.estado %> · <%= l p.created_at.to_date, format: :short %></li>
-    <% end %>
-  </ul>
+<%# Cómo va un pedido: surtidos / no surtir / pendientes, como badge %>
+<% avance = lambda do |p|
+     surtidas = p.lineas.count { |l| l.estado == "surtido" }
+     apartadas = p.lineas.count { |l| l.estado == "no_surtir" }
+     pendientes = p.lineas.size - surtidas - apartadas
+     if p.estado == "cancelado" then content_tag(:span, "cancelado", class: "rounded bg-red-100 px-2 py-0.5 text-xs font-bold uppercase text-red-800")
+     elsif p.estado == "cerrado" && pendientes.zero? && apartadas.zero? then content_tag(:span, "COMPLETO #{surtidas}/#{p.lineas.size}", class: "rounded bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800")
+     elsif p.estado == "cerrado" && surtidas.zero? then content_tag(:span, "SIN SURTIR 0/#{p.lineas.size}", class: "rounded bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800")
+     elsif p.estado == "cerrado" then content_tag(:span, "PARCIAL #{surtidas}/#{p.lineas.size}", class: "rounded bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800")
+     else "#{surtidas}/#{p.lineas.size} renglones#{" · #{apartadas} no surtir" if apartadas.positive?}"
+     end
+   end %>
+<% detalle_apartado = lambda { |p| p.lineas.select { |l| l.estado != "surtido" }.map { |l| "#{l.producto.nombre}: #{l.estado == 'no_surtir' ? "no surtir (#{l.motivo})" : 'sin surtir'}" }.join(" · ") } %>
+
+<% if puede?("pedidos.surtir") %>
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold">Pedidos por surtir · <%= sucursal_actual %></h1>
+    <div class="flex gap-2 text-sm">
+      <%= link_to "🖨 Pendientes consolidados", pendientes_pedidos_path, target: "_blank", class: "rounded border border-red-700 px-3 py-1 text-red-700 hover:bg-red-50", title: "Todo lo que falta por surtir, por producto, con los folios que lo piden" %>
+      <%= link_to "🏷 Etiquetar", new_etiqueta_path, class: "rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700" if puede?("etiquetas.crear") %>
+    </div>
+  </div>
+  <table class="w-full border-collapse bg-white text-sm shadow-sm">
+    <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Pidió</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Surtido</th><th class="hidden px-3 py-2 md:table-cell">Notas</th><th class="px-3 py-2"></th></tr></thead>
+    <tbody>
+      <% @abiertos.each do |p| %>
+        <tr class="border-t border-slate-100" style="border-left: 6px solid <%= color_destino(p.destino) %>">
+          <td class="px-3 py-2 font-mono font-bold"><%= p.folio %></td>
+          <td class="px-3 py-2"><span class="rounded px-2 py-0.5 text-xs font-extrabold text-white" style="background: <%= color_destino(p.destino) %>"><%= p.destino.to_s.upcase %></span></td>
+          <td class="px-3 py-2 text-xs"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
+          <td class="px-3 py-2"><span class="rounded px-2 py-0.5 text-xs <%= p.estado == 'surtiendo' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800' %>"><%= p.estado %></span></td>
+          <td class="px-3 py-2"><%= avance.call(p) %></td>
+          <td class="hidden px-3 py-2 text-xs text-slate-500 md:table-cell"><%= p.notas %></td>
+          <td class="px-3 py-2 text-right whitespace-nowrap">
+            <%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "mr-1 rounded border border-slate-300 px-2 py-1", title: "Hoja del pedido" %>
+            <% if puede?("etiquetas.crear") %>
+              <%= link_to "Surtir", new_etiqueta_path(pedido: p.id), class: "rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700" %>
+            <% else %>
+              <%= link_to "Ver", pedido_path(p), class: "rounded border border-slate-300 px-3 py-1" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @abiertos.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">No hay pedidos por surtir.</td></tr><% end %>
+    </tbody>
+  </table>
+
+  <h2 class="mb-2 mt-8 font-semibold">Surtidos recientes</h2>
+  <table class="w-full border-collapse bg-white text-sm shadow-sm">
+    <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Para</th><th class="px-3 py-2">Pidió</th><th class="px-3 py-2">Surtido</th><th class="hidden px-3 py-2 md:table-cell">Notas</th><th class="px-3 py-2"></th></tr></thead>
+    <tbody>
+      <% @recientes.each do |p| %>
+        <tr class="border-t border-slate-100">
+          <td class="px-3 py-2 font-mono"><%= link_to p.folio, pedido_path(p), class: "text-blue-700" %></td>
+          <td class="px-3 py-2"><%= p.destino %></td>
+          <td class="px-3 py-2 text-xs"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
+          <td class="px-3 py-2"><%= avance.call(p) %><div class="text-xs text-slate-500"><%= l p.updated_at, format: :short %><% if (d = detalle_apartado.call(p)).present? %> · <%= d %><% end %></div></td>
+          <td class="hidden px-3 py-2 text-xs text-slate-500 md:table-cell"><%= p.notas %></td>
+          <td class="px-3 py-2 text-right"><%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "rounded border border-slate-300 px-2 py-1", title: "Hoja del pedido" %></td>
+        </tr>
+      <% end %>
+      <% if @recientes.empty? %><tr><td colspan="6" class="px-3 py-4 text-center text-slate-500">Sin surtidos recientes.</td></tr><% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if puede?("pedidos.solicitar") %>
+  <%# La tienda que pide ve los suyos: cómo van, qué quedó sin surtir y en qué salida viajó cada renglón %>
+  <div class="<%= 'mt-10' if puede?('pedidos.surtir') %> mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold">Pedidos de <%= sucursal_actual %></h1>
+    <%= link_to "＋ Nuevo pedido", new_pedido_path, class: "rounded bg-slate-900 px-3 py-1 text-sm text-white hover:bg-slate-700" %>
+  </div>
+  <% [ [ "Sin surtir", @mios_sin_surtir, "Todo lo pedido ya se surtió." ], [ "Surtidos", @mios_surtidos.first(30), "Sin pedidos surtidos." ] ].each do |titulo, pedidos, vacio| %>
+    <h2 class="mb-2 mt-4 font-semibold"><%= titulo %></h2>
+    <table class="w-full border-collapse bg-white text-sm shadow-sm">
+      <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Pidió</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Surtido</th><th class="hidden px-3 py-2 md:table-cell">Notas</th><th class="px-3 py-2"></th></tr></thead>
+      <tbody>
+        <% pedidos.each do |p| %>
+          <tr class="border-t border-slate-100">
+            <td class="px-3 py-2 font-mono font-bold"><%= p.folio %></td>
+            <td class="px-3 py-2 text-xs"><%= p.usuario %> · <%= l p.created_at, format: :short %></td>
+            <td class="px-3 py-2"><span class="rounded bg-slate-100 px-2 py-0.5 text-xs"><%= p.estado %></span></td>
+            <td class="px-3 py-2"><%= avance.call(p) %><% if (d = detalle_apartado.call(p)).present? && p.estado == "cerrado" %><div class="text-xs text-slate-500"><%= d %></div><% end %></td>
+            <td class="hidden px-3 py-2 text-xs text-slate-500 md:table-cell"><%= p.notas %></td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <%= link_to "🖨", hoja_pedido_path(p), target: "_blank", class: "mr-1 rounded border border-slate-300 px-2 py-1", title: "Hoja del pedido" %>
+              <%= link_to "Ver renglones", pedido_path(p), class: "rounded border border-slate-300 px-3 py-1" %>
+            </td>
+          </tr>
+        <% end %>
+        <% if pedidos.empty? %><tr><td colspan="6" class="px-3 py-4 text-center text-slate-500"><%= vacio %></td></tr><% end %>
+      </tbody>
+    </table>
+  <% end %>
 <% end %>

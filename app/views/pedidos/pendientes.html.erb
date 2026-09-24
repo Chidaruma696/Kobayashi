@@ -1,0 +1,17 @@
+<div class="ticket">
+  <div class="centro"><strong>PENDIENTES POR SURTIR</strong></div>
+  <div class="centro"><%= sucursal_actual %> · <%= l Time.current, format: :short %></div>
+  <div class="linea"></div>
+  <% if @pendientes.empty? %>
+    <div class="centro">Nada pendiente.</div>
+  <% else %>
+    <table>
+      <% @pendientes.each do |producto, falta, pedidos| %>
+        <tr><td><strong><%= producto.nombre %></strong></td><td class="der"><strong><%= number_with_precision(falta, precision: producto.decimales) %> <%= producto.unidad %></strong></td></tr>
+        <tr><td colspan="2"><%= pedidos.map { |p| "#{p.folio} #{p.destino}" }.join(" · ") %></td></tr>
+      <% end %>
+    </table>
+    <div class="linea"></div>
+    <div><%= @pendientes.size %> productos · <%= @pendientes.flat_map { |_, _, ps| ps }.uniq.size %> pedidos</div>
+  <% end %>
+</div>

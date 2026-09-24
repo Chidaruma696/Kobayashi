@@ -1,14 +1,41 @@
 class PedidosController < ApplicationController
   pestana :pedidos
 
+  # Quien surte ve su cola y lo surtido hace poco; quien pide ve cómo van los suyos.
   def index
-    autorizar!("pedidos.surtir")
-    @abiertos = Pedido.where(sucursal_origen: sucursal_actual).abiertos.includes(:sucursal_destino, :cliente, :usuario, lineas: %i[producto etiquetas]).order(:created_at)
-    @recientes = Pedido.where(sucursal_origen: sucursal_actual).where.not(estado: %w[solicitado surtiendo]).includes(:sucursal_destino, :cliente).recientes.limit(20)
+    raise SinPermiso, "pedidos.surtir" unless puede?("pedidos.surtir") || puede?("pedidos.solicitar")
+    if puede?("pedidos.surtir")
+      @abiertos = Pedido.where(sucursal_origen: sucursal_actual).abiertos.includes(:sucursal_destino, :cliente, :usuario, lineas: %i[producto etiquetas]).order(:created_at)
+      @recientes = Pedido.where(sucursal_origen: sucursal_actual).where.not(estado: %w[solicitado surtiendo]).includes(:sucursal_destino, :cliente, :usuario, lineas: %i[producto etiquetas]).recientes.limit(20)
+    end
+    if puede?("pedidos.solicitar")
+      mios = Pedido.where(sucursal_destino: sucursal_actual).includes(:sucursal_origen, :usuario, lineas: %i[producto etiquetas]).recientes.limit(60).to_a
+      # Sin surtir: abiertos, o cerrados que dejaron renglones pendientes o apartados.
+      @mios_sin_surtir, @mios_surtidos = mios.partition { |p| p.abierto? || (p.estado == "cerrado" && p.lineas.any? { |l| l.estado != "surtido" }) }
+    end
     respond_to do |format|
       format.html
-      format.json { render json: { pedidos: @abiertos.map { |p| resumen_json(p) } } }
+      format.json { render json: { pedidos: Array(@abiertos).map { |p| resumen_json(p) } } }
     end
+  end
+
+  # Hoja del pedido para imprimir (80 mm): lo que pidió y cómo va.
+  def hoja
+    @pedido = Pedido.includes(lineas: :producto).find(params[:id])
+    raise SinPermiso, "pedidos.surtir" unless [ @pedido.sucursal_origen_id, @pedido.sucursal_destino_id ].include?(sucursal_actual.id)
+    @titulo = "Pedido #{@pedido.folio}"
+    render layout: "ticket"
+  end
+
+  # Todo lo que falta por surtir, consolidado por producto, con los folios que lo piden.
+  def pendientes
+    autorizar!("pedidos.surtir")
+    lineas = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] }, estado: "pendiente")
+                        .includes(:producto, pedido: %i[sucursal_destino cliente]).order("pedidos.created_at")
+    @pendientes = lineas.group_by(&:producto).map { |producto, ls| [ producto, ls.sum(&:faltante), ls.map(&:pedido).uniq ] }
+                        .select { |_, falta, _| falta.positive? }.sort_by { |p, _, _| p.nombre }
+    @titulo = "Pendientes por surtir"
+    render layout: "ticket"
   end
 
   def new

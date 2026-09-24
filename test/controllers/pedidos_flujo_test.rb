@@ -10,13 +10,25 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     assert_equal sucursales(:matriz), pedido.sucursal_origen
     assert_equal sucursales(:tienda), pedido.sucursal_destino
     assert_equal 1, pedido.lineas.count
+    # La tienda que pide ve los suyos (sin surtir / surtidos), no la cola de la matriz.
     get pedidos_path
+    assert_response :ok
+    assert_select "h1", /Pedidos de Tienda 1/
+    assert_select "h1", { text: /por surtir/, count: 0 }
+    assert_select "td", /#{pedido.folio}/
+    get hoja_pedido_path(pedido)
+    assert_select "strong", /PEDIDO #{pedido.folio}/
+    get pendientes_pedidos_path
     assert_response :forbidden
 
     delete salir_path
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     get pedidos_path
     assert_select "td", /#{pedido.folio}/
+    assert_select "a[href=?]", new_etiqueta_path(pedido: pedido.id)
+    get pendientes_pedidos_path
+    assert_select "strong", /Pechuga de pollo/
+    assert_match "13,000 kg", response.body, "5 del pedido de prueba + 8 de este, consolidados"
     pollo = Producto.create!(clave: "POLLO", nombre: "Pollo entero", unidad: "kg", precio: 60)
     Inventario.mover!(sucursal: sucursales(:matriz), producto: pollo, tipo: "entrada", cantidad: 20, usuario: usuarios(:admin))
 
