@@ -6,7 +6,6 @@ class Pedido < ApplicationRecord
   belongs_to :cliente, optional: true
   belongs_to :usuario
   has_many :lineas, class_name: "PedidoLinea", dependent: :destroy, inverse_of: :pedido
-  has_many :producciones, dependent: :restrict_with_error
   accepts_nested_attributes_for :lineas, reject_if: ->(a) { a[:producto_id].blank? && a[:cantidad].blank? }
 
   before_validation :asignar_folio, on: :create

@@ -9,13 +9,12 @@ class ProduccionTest < ActiveSupport::TestCase
     Inventario.mover!(sucursal: @matriz, producto: @pollo, tipo: "entrada", cantidad: 50, usuario: @admin, motivo: "compra")
   end
 
-  def abrir(pedido: pedidos(:abierto), **extra)
-    Produccion.abrir!(sucursal: @matriz, producto: @pollo, cantidad: 50, usuario: @admin, pedido: pedido, **extra)
+  def abrir
+    Produccion.abrir!(sucursal: @matriz, producto: @pollo, cantidad: 50, usuario: @admin)
   end
 
   def salida(produccion, producto, cantidad)
-    Etiqueta.create!(tipo: "paquete", producto: producto, cantidad: cantidad, sucursal: @matriz, usuario: @admin,
-                     produccion: produccion, pedido_linea: produccion.pedido&.linea_de(producto))
+    Etiqueta.create!(tipo: "paquete", producto: producto, cantidad: cantidad, sucursal: @matriz, usuario: @admin, produccion: produccion)
   end
 
   test "abrir consume la entrada; cerrar da de alta las salidas y guarda la merma" do
@@ -30,7 +29,6 @@ class ProduccionTest < ActiveSupport::TestCase
     assert_equal BigDecimal("10"), p.merma
     assert_equal BigDecimal("30"), Existencia.de(@matriz, productos(:pechuga))
     assert_equal BigDecimal("10"), Existencia.de(@matriz, @ala)
-    assert_equal "surtido", pedido_lineas(:pechuga_5).reload.estado
     assert_raises(ArgumentError) { p.cerrar!(usuario: @admin) }
   end
 
@@ -46,10 +44,8 @@ class ProduccionTest < ActiveSupport::TestCase
     assert_not Etiqueta.new(tipo: "paquete", producto: @ala, cantidad: 1, sucursal: @matriz, usuario: @admin, produccion: p).valid?
   end
 
-  test "sin pedido hace falta autorización con motivo, y sin existencia no se abre" do
-    assert_raises(ActiveRecord::RecordInvalid) { abrir(pedido: nil) }
-    p = abrir(pedido: nil, autorizado_por: @admin, justificacion: "stock de mostrador")
-    assert p.persisted?
-    assert_raises(Inventario::SinExistencia) { abrir(pedido: nil, autorizado_por: @admin, justificacion: "otra") }
+  test "sin existencia no se abre" do
+    assert abrir.persisted?
+    assert_raises(Inventario::SinExistencia) { abrir }
   end
 end

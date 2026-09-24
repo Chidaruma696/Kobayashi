@@ -1,13 +1,13 @@
 # Entra un producto en una cantidad y salen las etiquetas que se crean bajo la producción.
-# Nunca sale más de lo que entró; la diferencia al cerrar es la merma.
+# Nunca sale más de lo que entró; la diferencia al cerrar es la merma. Eso es todo: no va contra
+# un pedido ni pide motivo. (Las columnas pedido_id, autorizado_por y justificacion quedan en la
+# tabla de cuando sí; ya no se usan.)
 class Produccion < ApplicationRecord
   self.table_name = "producciones"
 
   belongs_to :sucursal
-  belongs_to :pedido, optional: true
   belongs_to :producto
   belongs_to :usuario
-  belongs_to :autorizado_por, class_name: "Usuario", optional: true
   has_many :etiquetas, dependent: :restrict_with_error
 
   before_validation :asignar_folio, on: :create
@@ -15,17 +15,15 @@ class Produccion < ApplicationRecord
   validates :folio, presence: true, uniqueness: true
   validates :cantidad, numericality: { greater_than: 0 }
   validates :estado, inclusion: { in: %w[abierta cerrada] }
-  validate :pedido_o_autorizacion
 
   scope :abiertas, -> { where(estado: "abierta") }
 
   def abierta? = estado == "abierta"
 
   # Abre la producción consumiendo la entrada de la existencia de la sucursal.
-  def self.abrir!(sucursal:, producto:, cantidad:, usuario:, pedido: nil, autorizado_por: nil, justificacion: nil)
+  def self.abrir!(sucursal:, producto:, cantidad:, usuario:)
     transaction do
-      p = create!(sucursal: sucursal, producto: producto, cantidad: cantidad, usuario: usuario,
-                  pedido: pedido, autorizado_por: autorizado_por, justificacion: justificacion)
+      p = create!(sucursal: sucursal, producto: producto, cantidad: cantidad, usuario: usuario)
       Inventario.mover!(sucursal: sucursal, producto: producto, tipo: "consumo", cantidad: cantidad,
                         usuario: usuario, referencia: p, motivo: "Producción #{p.folio}")
       p
@@ -70,10 +68,5 @@ class Produccion < ApplicationRecord
 
   def asignar_folio
     self.folio ||= Folio.siguiente!(sucursal, "PR") if sucursal
-  end
-
-  def pedido_o_autorizacion
-    return if pedido.present?
-    errors.add(:base, "sin pedido hace falta el motivo") if justificacion.blank?
   end
 end

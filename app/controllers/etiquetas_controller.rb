@@ -73,8 +73,8 @@ class EtiquetasController < ApplicationController
       end
       dejar_por_revisar(paquetes.select(&:previously_new_record?) + [ caja ].compact.select(&:previously_new_record?).reject(&:agrupando), linea, autoriza)
       # Contra un pedido, lo registrado entra solo a la salida que se arma para ese destino.
-      if (pedido = linea&.pedido || @produccion&.pedido)
-        salida = Salida.para_pedido!(pedido, usuario: usuario_actual)
+      if linea
+        salida = Salida.para_pedido!(linea.pedido, usuario: usuario_actual)
         (caja ? [ caja ] : paquetes.select { |p| p.padre_id.nil? }).each { |e| salida.acomodar!(e) }
       end
     end
@@ -171,7 +171,7 @@ class EtiquetasController < ApplicationController
   def cargar_contexto
     @linea = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] })
                         .includes(:producto, :pedido).find_by(id: params[:pedido_linea_id])
-    @produccion = Produccion.abiertas.where(sucursal: sucursal_actual).includes(:producto, :pedido).find_by(id: params[:produccion_id])
+    @produccion = Produccion.abiertas.where(sucursal: sucursal_actual).includes(:producto).find_by(id: params[:produccion_id])
   end
 
   # [renglón, autorizador]: el renglón del pedido que corresponde a este producto, o quien autoriza
@@ -180,7 +180,6 @@ class EtiquetasController < ApplicationController
     linea = @linea
     # Otro producto dentro del pedido cae en su renglón; declarado como sustituto, se queda en este.
     linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id && params[:sustituto].blank?
-    linea ||= @produccion&.pedido&.linea_de(producto)
     raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion
     raise ArgumentError, "sin pedido ni producción escribe el motivo (con PIN de quien autoriza, o queda por revisar)" if params[:justificacion].blank?

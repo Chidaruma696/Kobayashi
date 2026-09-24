@@ -70,7 +70,6 @@ class PedidosController < ApplicationController
     @pedido = Pedido.includes(lineas: :producto).find(params[:id])
     raise SinPermiso, "pedidos.surtir" unless [ @pedido.sucursal_origen_id, @pedido.sucursal_destino_id ].include?(sucursal_actual.id) || puede?("admin.usuarios")
     @surtidor = @pedido.sucursal_origen_id == sucursal_actual.id && puede?("pedidos.surtir")
-    @producciones = @pedido.producciones.abiertas
     respond_to do |format|
       format.html
       format.json { render json: checklist_json(@pedido) }

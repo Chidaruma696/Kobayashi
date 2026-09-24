@@ -1,6 +1,6 @@
 require "test_helper"
 
-# Flujo completo: la tienda pide, la matriz abre producción para el pedido, etiqueta, cierra.
+# Flujo completo: la tienda pide, la matriz produce (por su cuenta), etiqueta, cierra.
 class PedidosFlujoTest < ActionDispatch::IntegrationTest
   test "la tienda pide y la matriz produce y surte sobre el pedido" do
     post entrar_path, params: { usuario: "cajera", password: "secreto1" }
@@ -32,17 +32,16 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     pollo = Producto.create!(clave: "POLLO", nombre: "Pollo entero", unidad: "kg", precio: 60)
     Inventario.mover!(sucursal: sucursales(:matriz), producto: pollo, tipo: "entrada", cantidad: 20, usuario: usuarios(:admin))
 
-    post producciones_path, params: { pedido_id: pedido.id, producto_id: pollo.id, cantidad: "20" }
+    # La producción no va contra el pedido: entra pollo, salen etiquetas de lo que se saque.
+    post producciones_path, params: { producto_id: pollo.id, cantidad: "20" }
     produccion = Produccion.last
     assert_redirected_to new_etiqueta_path(produccion_id: produccion.id)
     follow_redirect!
     assert_select "div", /Producción #{produccion.folio}/
 
-    linea = pedido.lineas.first
     post etiquetas_path, params: { produccion_id: produccion.id, producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "8" }
-    assert_equal linea, Etiqueta.last.pedido_linea
-    assert_equal "surtido", linea.reload.estado
-    assert_equal "surtiendo", pedido.reload.estado
+    assert_nil Etiqueta.last.pedido_linea
+    assert_equal produccion, Etiqueta.last.produccion
     post etiquetas_path, params: { produccion_id: produccion.id, producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "13" }
     assert_match "más de lo que entró", flash[:alert]
 
@@ -54,19 +53,16 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     assert_select "span", /cerrada/
   end
 
-  test "sin pedido la producción lleva motivo y sin PIN; el no surtir exige motivo" do
+  test "la producción no pide pedido ni motivo; el no surtir sí exige motivo" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     pollo = Producto.create!(clave: "POLLO", nombre: "Pollo entero", unidad: "kg", precio: 60)
     Inventario.mover!(sucursal: sucursales(:matriz), producto: pollo, tipo: "entrada", cantidad: 5, usuario: usuarios(:admin))
     get new_produccion_path
-    assert_select "input[name=pin]", 0, "el PIN se descartó: sin pedido va con motivo y a revisión"
+    assert_select "select[name=pedido_id]", 0
+    assert_select "input[name=pin]", 0
     post producciones_path, params: { producto_id: pollo.id, cantidad: "5" }
-    assert_redirected_to new_produccion_path
-    assert_match "motivo", flash[:alert]
-    assert_equal 0, Produccion.count
-    post producciones_path, params: { producto_id: pollo.id, cantidad: "5", justificacion: "mostrador" }
-    assert_equal usuarios(:admin), Produccion.last.autorizado_por
-    assert_equal 0, Revision.count, "el admin tiene el permiso: queda a su nombre, nada que revisar"
+    assert_redirected_to new_etiqueta_path(produccion_id: Produccion.last.id)
+    assert_equal 0, Revision.count
 
     linea = pedido_lineas(:catsup_10)
     post no_surtir_pedido_linea_path(linea.pedido, linea), params: { motivo: "" }
