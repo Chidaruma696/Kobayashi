@@ -1,13 +1,13 @@
-<h1 class="mb-4 text-2xl font-bold">Abrir producción</h1>
+<h1 class="mb-4 text-2xl font-bold"><%= t("produccion.abrir") %></h1>
 <%= form_with url: producciones_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div>
-    <%= f.label :producto_id, "Producto que entra", class: "block text-sm font-medium" %>
+    <%= f.label :producto_id, t("produccion.producto_que_entra"), class: "block text-sm font-medium" %>
     <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
   <div>
-    <%= f.label :cantidad, "Cantidad que entra", class: "block text-sm font-medium" %>
+    <%= f.label :cantidad, t("produccion.cantidad_que_entra"), class: "block text-sm font-medium" %>
     <%= f.number_field :cantidad, step: "0.001", min: "0.001", required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono text-xl" %>
-    <p class="mt-1 text-xs text-stone-500">Se descuenta de la existencia al abrir. Lo que sale se etiqueta bajo la producción; al cerrar, lo etiquetado entra y el resto queda como merma.</p>
+    <p class="mt-1 text-xs text-stone-500"><%= t("produccion.ayuda") %></p>
   </div>
-  <%= f.submit "Abrir producción", class: "btn btn-primary" %>
+  <%= f.submit t("produccion.abrir"), class: "btn btn-primary" %>
 <% end %>

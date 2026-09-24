@@ -88,6 +88,7 @@ en:
     quien: Who
     cuando: When
     codigo: Code
+    kg_cada_una: kg each
   cinta:
     menu: Menu
     salir: Sign out
@@ -194,6 +195,28 @@ en:
       un_destino: the order goes to a shop or to a customer, one of the two
       mismo_origen: cannot be the same branch that fulfils it
       sin_renglones: the order needs at least one line
+    mayor_que_cero: must be greater than zero
+    etiqueta:
+      no_esta_en_pedido: '%{producto} is not on order %{folio}'
+      sin_contexto_motivo: without an order or a production run, write the reason (it goes to review)
+      ya_esta: '%{etiqueta} is already %{estado}'
+      ya_viajo: '%{etiqueta} is already on %{folio} (%{estado}): sort it out at reception'
+      nada_que_agrupar: nothing to group
+      solo_vivos_sueltos: only live, loose %{tipo} can be grouped
+      sucursales_distintas: the labels belong to different branches
+      sin_codigos: no free codes left for this product
+      sin_contexto: labeling needs an order, a production run or a reason
+      produccion_cerrada: production run %{folio} is closed
+      mas_de_lo_que_entro: 'cannot take out more than came in: %{quedan} of %{de} left'
+      producto_obligatorio: required on a package
+      tarima_sin_producto: a pallet has no product
+      sin_paquetes: 'no packages: all were written off'
+    produccion:
+      ya_cerrada: the production run is already closed
+    barcode:
+      doce_digitos: 12 digits expected
+      plu_rango: PLU out of range
+      secuencia_rango: sequence out of range
   inicio:
     titulo: Home
     ventas: Sales
@@ -415,3 +438,174 @@ en:
       entregada: delivered
       rechazada: rejected
       cancelada: cancelled
+    etq:
+      unidad: Unit
+      peso_fijo: Fixed weight
+      codigo_proveedor: Supplier code
+      quitar: remove
+      sin_codigo_fijo: No fixed code assigned.
+      escribe_codigo_o_peso: Type a code or change the fixed weight
+      vinculado: Linked
+      confirmar_quitar_codigo: Remove this code from the product?
+      con_codigo_proveedor: 'With a supplier code: the register receives and sells the box by scanning that code.'
+      sin_codigo_proveedor: 'Without a supplier code: each piece needs its own label (turn off “Close in a box”).'
+      peso_mayor_cero: Enter a weight greater than zero
+      bascula_cero: The scale reads zero
+      kg_cu: kg each
+      cuantas_y_cuanto: Say how many and how much each
+      elige_producto: Pick the product first
+      confirmar_limpiar: weighing(s) are already recorded (on the fly). Clearing the list does NOT delete them. Continue?
+      una_caja_de: One box of
+      piezas: pieces
+      etiquetas_de_1_pieza: labels of 1 piece
+      pesadas: weighings
+      en_una_caja: in one box
+      sueltas: loose
+      sin_pesadas: No weighings
+      baja_etiqueta_ayuda: Write off this label (I labeled it wrong)
+      baja_caja_ayuda: Write off the whole box (I labeled it wrong)
+      al_registrar: on record
+      caja: box
+      baja: written off
+      origenes:
+        manual: manual
+        bascula: scale
+        pieza: piece
+      caja_sin_individuales_a: The box is recorded with
+      caja_sin_individuales_b: pieces, no individual labels
+      sin_pesadas_aun: No weighings yet
+      va_en_salida: goes on transfer
+      a: to
+      paquete: package
+      paquetes: packages
+      la_caja_completa_y_etiquetas: the WHOLE box (and all its labels)
+      esta_etiqueta: this label
+      motivo_ejemplo: Reason? (e.g. wrong weight, wrong product)
+      dada_de_baja: written off
+      con: with
+      etiquetas: labels
+      sin_paquetes: no packages
+      etiqueta: Label
+      cuantas_piezas: Say how many pieces
+      no_hay_pesadas: No weighings
+      registrada: recorded
+      etiquetas_registradas: labels recorded
+      nada_registrado: Nothing recorded yet
+      permite_popups: Allow pop-ups to print
+      pesando: Weighing…
+      agregado: Added
+      estable: Stable
+      elige_producto_kilo: pick a product sold by kg
+      coloca_paquete: Place package
+      bascula_conectada: Scale connected ✓
+      conectar_bascula: Connect scale
+      sin_web_serial: no Web Serial (use Chrome or Edge)
+      confirmar_desconectar: Disconnect the scale? Next time you will have to pick the port again.
+      pz: pc
+  etiquetas:
+    etiqueta: Label
+    etiquetar: Label
+    vivas: Live labels
+    n_etiquetas:
+      one: 1 label
+      other: '%{count} labels'
+    n_paquetes:
+      one: 1 package
+      other: '%{count} packages'
+    n_cajas:
+      one: 1 box
+      other: '%{count} boxes'
+    tipos:
+      paquete: package
+      caja: box
+      tarima: pallet
+    tipos_plural:
+      paquete: packages
+      caja: boxes
+      tarima: pallets
+    mixta: mixed
+    ultima: Last
+    creada: Label %{codigo} created
+    dada_de_baja: '%{etiqueta} written off'
+    grupo_creado: '%{tipo} %{codigo} created with %{n} labels'
+    volver_a_etiquetar: Back to labeling
+    simular: simulate weighing
+    conectar_bascula: Connect scale
+    buscar_producto: Name, key, PLU or scan its code
+    codigo_fabrica_y_peso: Factory code and fixed weight
+    codigo_fabrica: Factory code
+    escanear_o_teclear: Scan or type…
+    peso_por_pieza: Weight per piece (kg)
+    vincular: Link
+    vincular_ayuda: 'Link the code it comes with from the factory so the register recognizes it when scanned. If the manufacturer changes it, add the new one: all of them scan as this product.'
+    una_pesada: One weighing
+    agregar: Add
+    de_la_bascula: From the scale
+    de_la_bascula_ayuda: Take the weight the scale shows right now
+    bascula_ayuda: With the scale connected, every stable weight comes in by itself.
+    desconectada: Disconnected
+    varias_iguales: Several alike
+    kg_cada_una: kg each
+    o_reparte_total: or split a total of
+    copias: Only print copies of the code
+    copias_ayuda: Prints N labels with the supplier code, without recording anything
+    sin_pesadas: No weighings
+    cerrar_en_caja: Close in a box
+    imprimir_al_vuelo: Print on the fly
+    origen: Source
+    motivo_obligatorio: 'Reason (required: no order or production run)'
+    queda_por_revisar: It gets labeled anyway and goes to end-of-day review.
+    registrar_e_imprimir: Record and print
+    reimprimir: Reprint
+    limpiar: Clear
+    etiqueta_impresa: Printed label
+    cfg:
+      ancho: Width (mm)
+      alto: Height (mm)
+      leyenda: Caption
+      barras: Bar height (px)
+      letra: Name font size
+    se_guarda_en_navegador: Saved in this browser.
+    restablecer: Reset
+    en_lugar_de: instead of
+    llevas: so far
+    armandose: being assembled
+    ayuda_kg: 'make the box as usual: it links itself to the order and goes into the transfer'
+    ayuda_pieza: 'fixed box: count the pieces and record'
+    checklist: Checklist
+    salir_del_pedido: Leave the order
+    produccion_contexto_html: Production run %{folio} · %{entro} of %{producto} came in, %{queda} left
+    ver_produccion: View production run
+    sin_contexto: No order or production run.
+    sin_contexto_ayuda_html: Labeling needs a reason and goes to review. Normally you come in from an order line, with the %{boton} button, or from a production run.
+    paquetes_sueltos: Loose packages
+    cajas: Boxes
+    tarimas: Pallets
+    cerrar_caja_marcados: Close a box with the checked ones
+    armar_tarima_marcadas: Build a pallet with the checked ones
+    dar_de_baja: Write off
+    escanea_codigo: Scan the code
+    motivo_baja: Reason (shrinkage, dropped, mistake…)
+  produccion:
+    produccion: Production run
+    producciones: Production runs
+    abrir: Open production run
+    entro: In
+    salio: Out
+    disponible: Available
+    merma: Shrinkage
+    cerradas: Closed
+    cerrar: Close production run
+    sin_abiertas: No open production runs.
+    producto_que_entra: Product coming in
+    cantidad_que_entra: Quantity coming in
+    ayuda: What comes in to be processed. What comes out is labeled from the production run and the difference is shrinkage.
+    abrio_el: Opened by %{quien} on %{fecha}
+    salidas_etiquetadas: Labeled output
+    todavia_nada: Nothing out yet.
+    etiquetar_salidas: Label output
+    confirmar_cerrar: Close? The difference (%{cantidad}) is recorded as shrinkage.
+    abierta_aviso: 'Production run %{folio} opened: %{cantidad} of %{producto} came in'
+    cerrada_aviso: 'Production run closed: shrinkage %{merma}'
+  caja:
+    nueva_venta: New sale

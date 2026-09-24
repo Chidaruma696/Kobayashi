@@ -16,18 +16,18 @@
      data-etiquetadora-simulada-value="<%= params[:simulada].present? %>">
 
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-    <h1 class="text-2xl font-bold">Etiquetar · <%= sucursal_actual %></h1>
+    <h1 class="text-2xl font-bold"><%= t("etiquetas.etiquetar") %> · <%= sucursal_actual %></h1>
     <div class="flex items-center gap-2">
       <% if puede?("pedidos.surtir") %>
         <button type="button" data-action="pedidos-surtir#abrir" class="btn btn-outline-danger btn-sm">
-          <i class="bi bi-basket"></i> Pedidos por surtir<% if @pendientes.positive? %> <span class="rounded-full bg-red-700 px-2 text-xs text-white"><%= @pendientes %></span><% end %>
+          <i class="bi bi-basket"></i> <%= t("pedidos.por_surtir") %><% if @pendientes.positive? %> <span class="rounded-full bg-red-700 px-2 text-xs text-white"><%= @pendientes %></span><% end %>
         </button>
       <% end %>
       <% if params[:simulada].present? %>
-        <button type="button" data-action="etiquetadora#simular" class="btn btn-warning btn-sm">simular pesada</button>
+        <button type="button" data-action="etiquetadora#simular" class="btn btn-warning btn-sm"><%= t("etiquetas.simular") %></button>
       <% end %>
       <button type="button" data-action="etiquetadora#alternarBascula" data-etiquetadora-target="btnBascula"
-              class="btn btn-outline-danger btn-sm">Conectar báscula</button>
+              class="btn btn-outline-danger btn-sm"><%= t("etiquetas.conectar_bascula") %></button>
     </div>
   </div>
 
@@ -36,13 +36,13 @@
   <% if puede?("pedidos.surtir") %>
     <dialog class="m-auto w-full max-w-3xl rounded-lg p-0 shadow-xl backdrop:bg-black/40" data-pedidos-surtir-target="dialogo" data-action="click->pedidos-surtir#cerrarFuera">
       <div class="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3">
-        <h2 class="flex items-center gap-2 text-lg font-bold" data-pedidos-surtir-target="titulo">Pedidos por surtir</h2>
-        <button type="button" class="text-xl text-stone-500 hover:text-stone-900" data-action="pedidos-surtir#cerrar" title="Cerrar"><i class="bi bi-x-lg"></i></button>
+        <h2 class="flex items-center gap-2 text-lg font-bold" data-pedidos-surtir-target="titulo"><%= t("pedidos.por_surtir") %></h2>
+        <button type="button" class="text-xl text-stone-500 hover:text-stone-900" data-action="pedidos-surtir#cerrar" title="<%= t("comun.cerrar") %>"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="max-h-[70vh] overflow-y-auto px-4 py-2" data-pedidos-surtir-target="cuerpo"></div>
       <div class="hidden flex-wrap items-center gap-2 border-t border-stone-200 px-4 py-3" data-pedidos-surtir-target="pie">
         <span class="mr-auto text-sm text-amber-700" data-pedidos-surtir-target="faltan"></span>
-        <button type="button" class="btn btn-secondary btn-sm" data-action="pedidos-surtir#lista"><i class="bi bi-arrow-left"></i> Pedidos</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="pedidos-surtir#lista"><i class="bi bi-arrow-left"></i> <%= t("pedidos.pedidos") %></button>
         <a class="hidden rounded bg-emerald-700 px-3 py-1 text-sm font-semibold text-white hover:bg-emerald-600" target="_blank" data-pedidos-surtir-target="salidaLink"></a>
       </div>
     </dialog>
@@ -54,9 +54,9 @@
 
       <%# Producto: buscador, ficha con chips y, plegado, el código de fábrica %>
       <div class="card">
-        <div class="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500">Producto</div>
+        <div class="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("comun.producto") %></div>
         <div class="relative">
-          <input type="text" autocomplete="off" placeholder="Nombre, clave, PLU o escanea su código"
+          <input type="text" autocomplete="off" placeholder="<%= t("etiquetas.buscar_producto") %>"
                  class="w-full rounded border border-stone-300 px-3 py-3 text-lg"
                  data-etiquetadora-target="buscador"
                  data-action="input->etiquetadora#buscar focus->etiquetadora#buscar blur->etiquetadora#ocultarResultados keydown->etiquetadora#teclaBuscador">
@@ -65,18 +65,18 @@
         <div class="mt-3 hidden flex-wrap items-center gap-2 text-sm" data-etiquetadora-target="ficha"></div>
         <% if puede?("admin.catalogo") %>
           <details class="mt-3 hidden text-sm" data-etiquetadora-target="fabrica">
-            <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide text-stone-500">Código de fábrica y peso fijo</summary>
+            <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("etiquetas.codigo_fabrica_y_peso") %></summary>
             <div class="mt-2 flex flex-wrap items-end gap-2">
-              <label class="flex-1 text-xs text-stone-600">Código de fábrica
-                <input type="text" autocomplete="off" placeholder="Escanear o teclear…" class="mt-1 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="codigoNuevo" data-action="keydown.enter->etiquetadora#vincular">
+              <label class="flex-1 text-xs text-stone-600"><%= t("etiquetas.codigo_fabrica") %>
+                <input type="text" autocomplete="off" placeholder="<%= t("etiquetas.escanear_o_teclear") %>" class="mt-1 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="codigoNuevo" data-action="keydown.enter->etiquetadora#vincular">
               </label>
-              <label class="w-36 text-xs text-stone-600">Peso por pieza (kg)
-                <input type="number" step="0.001" min="0" placeholder="ej. 0.200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="pesoFijoInput" data-action="keydown.enter->etiquetadora#vincular">
+              <label class="w-36 text-xs text-stone-600"><%= t("etiquetas.peso_por_pieza") %>
+                <input type="number" step="0.001" min="0" placeholder="0.200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="pesoFijoInput" data-action="keydown.enter->etiquetadora#vincular">
               </label>
-              <button type="button" data-action="etiquetadora#vincular" class="btn btn-warning btn-sm">Vincular</button>
+              <button type="button" data-action="etiquetadora#vincular" class="btn btn-warning btn-sm"><%= t("etiquetas.vincular") %></button>
             </div>
             <ul class="mt-2 space-y-1" data-etiquetadora-target="codigosLista"></ul>
-            <p class="mt-1 text-xs text-stone-500">Vincula el código que trae de fábrica para que la caja lo reconozca al escanear. Si el fabricante lo cambia, agrega el nuevo: todos escanean este producto.</p>
+            <p class="mt-1 text-xs text-stone-500"><%= t("etiquetas.vincular_ayuda") %></p>
           </details>
         <% end %>
       </div>
@@ -85,27 +85,27 @@
       <div class="card hidden" data-etiquetadora-target="panelKg">
         <div class="grid gap-4 md:grid-cols-2">
           <div>
-            <div class="text-xs font-bold uppercase tracking-wide text-stone-500">Una pesada</div>
+            <div class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("etiquetas.una_pesada") %></div>
             <div class="mt-1 flex flex-wrap gap-2">
               <input type="number" step="0.001" min="0.001" placeholder="kg" class="w-32 rounded border border-stone-300 px-2 py-2 font-mono" data-etiquetadora-target="manual" data-action="keydown.enter->etiquetadora#agregarManual">
-              <button type="button" data-action="etiquetadora#agregarManual" class="btn btn-primary">Agregar</button>
-              <button type="button" data-action="etiquetadora#capturar" disabled class="btn btn-outline-success" data-etiquetadora-target="btnCapturar" title="Toma el peso que marca la báscula ahora">De la báscula</button>
+              <button type="button" data-action="etiquetadora#agregarManual" class="btn btn-primary"><%= t("etiquetas.agregar") %></button>
+              <button type="button" data-action="etiquetadora#capturar" disabled class="btn btn-outline-success" data-etiquetadora-target="btnCapturar" title="<%= t("etiquetas.de_la_bascula_ayuda") %>"><%= t("etiquetas.de_la_bascula") %></button>
             </div>
-            <p class="mt-1 text-xs text-stone-500">Con la báscula conectada cada peso estable entra solo.</p>
+            <p class="mt-1 text-xs text-stone-500"><%= t("etiquetas.bascula_ayuda") %></p>
             <div class="mt-2 rounded-lg border-2 border-stone-300 bg-stone-900 px-4 py-3 text-center font-mono">
               <div class="text-4xl font-extrabold leading-none text-stone-500" data-etiquetadora-target="peso">0.000</div>
-              <div class="mt-1 text-xs text-stone-400" data-etiquetadora-target="estado">Desconectada</div>
+              <div class="mt-1 text-xs text-stone-400" data-etiquetadora-target="estado"><%= t("etiquetas.desconectada") %></div>
             </div>
           </div>
           <div>
-            <div class="text-xs font-bold uppercase tracking-wide text-stone-500">Varias iguales</div>
+            <div class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("etiquetas.varias_iguales") %></div>
             <div class="mt-1 flex items-center gap-2">
               <input type="number" step="1" min="1" value="10" class="w-16 rounded border border-stone-300 px-2 py-2 font-mono" data-etiquetadora-target="qn" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
               <span>×</span>
-              <input type="number" step="0.001" min="0.001" placeholder="kg c/u" class="w-28 rounded border border-stone-300 px-2 py-2 font-mono" data-etiquetadora-target="qpeso" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
-              <button type="button" data-action="etiquetadora#agregarVarias" class="btn btn-primary">Agregar</button>
+              <input type="number" step="0.001" min="0.001" placeholder="<%= t("etiquetas.kg_cada_una") %>" class="w-28 rounded border border-stone-300 px-2 py-2 font-mono" data-etiquetadora-target="qpeso" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
+              <button type="button" data-action="etiquetadora#agregarVarias" class="btn btn-primary"><%= t("etiquetas.agregar") %></button>
             </div>
-            <label class="mt-1 flex items-center gap-2 text-xs text-stone-500">o reparte un total de
+            <label class="mt-1 flex items-center gap-2 text-xs text-stone-500"><%= t("etiquetas.o_reparte_total") %>
               <input type="number" step="0.001" min="0.001" placeholder="kg" class="w-24 rounded border border-stone-300 px-2 py-1 font-mono" data-etiquetadora-target="qtotal" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
               <span data-etiquetadora-target="qhint"></span>
             </label>
@@ -116,39 +116,39 @@
       <%# Piezas %>
       <div class="card hidden" data-etiquetadora-target="panelPieza">
         <div class="flex flex-wrap items-end gap-3">
-          <label class="text-sm">Piezas
+          <label class="text-sm"><%= t("comun.piezas").capitalize %>
             <input type="number" step="1" min="1" value="12" class="ml-2 w-24 rounded border border-stone-300 px-2 py-2 font-mono" data-etiquetadora-target="piezas" data-action="input->etiquetadora#pintarLista keydown.enter->etiquetadora#registrar">
           </label>
           <span class="text-sm text-stone-500" data-etiquetadora-target="piezaNota"></span>
-          <button type="button" class="hidden rounded border border-stone-300 px-3 py-2 text-sm" data-etiquetadora-target="btnCopias" data-action="etiquetadora#copiasProveedor" title="Imprime N etiquetas con el código de proveedor, sin registrar nada">Solo imprimir copias del código</button>
+          <button type="button" class="hidden rounded border border-stone-300 px-3 py-2 text-sm" data-etiquetadora-target="btnCopias" data-action="etiquetadora#copiasProveedor" title="<%= t("etiquetas.copias_ayuda") %>"><%= t("etiquetas.copias") %></button>
         </div>
       </div>
 
       <%# Lista + acción %>
       <div class="hidden rounded bg-white shadow-sm" data-etiquetadora-target="panelLista">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-4 py-3">
-          <div class="font-semibold" data-etiquetadora-target="resumen">Sin pesadas</div>
+          <div class="font-semibold" data-etiquetadora-target="resumen"><%= t("etiquetas.sin_pesadas") %></div>
           <div class="flex flex-wrap items-center gap-4 text-sm">
-            <label class="flex items-center gap-1"><input type="checkbox" data-etiquetadora-target="enCaja" data-action="etiquetadora#guardarPrefs etiquetadora#pintarLista"> Cerrar en caja</label>
-            <label class="flex items-center gap-1" data-etiquetadora-target="alVueloLabel"><input type="checkbox" data-etiquetadora-target="alVuelo" data-action="etiquetadora#guardarPrefs"> Imprimir al vuelo</label>
+            <label class="flex items-center gap-1"><input type="checkbox" data-etiquetadora-target="enCaja" data-action="etiquetadora#guardarPrefs etiquetadora#pintarLista"> <%= t("etiquetas.cerrar_en_caja") %></label>
+            <label class="flex items-center gap-1" data-etiquetadora-target="alVueloLabel"><input type="checkbox" data-etiquetadora-target="alVuelo" data-action="etiquetadora#guardarPrefs"> <%= t("etiquetas.imprimir_al_vuelo") %></label>
           </div>
         </div>
         <div class="max-h-96 overflow-y-auto">
           <table class="w-full text-sm">
-            <thead class="bg-stone-100 text-left text-xs uppercase text-stone-500"><tr><th class="px-4 py-1">#</th><th class="px-2 py-1">Origen</th><th class="px-2 py-1 text-right">Cantidad</th><th class="px-2 py-1">Código</th><th></th></tr></thead>
+            <thead class="bg-stone-100 text-left text-xs uppercase text-stone-500"><tr><th class="px-4 py-1">#</th><th class="px-2 py-1"><%= t("etiquetas.origen") %></th><th class="px-2 py-1 text-right"><%= t("comun.cantidad") %></th><th class="px-2 py-1"><%= t("comun.codigo") %></th><th></th></tr></thead>
             <tbody data-etiquetadora-target="lista"></tbody>
           </table>
         </div>
         <% if @linea.nil? && @produccion.nil? %>
           <div class="flex flex-wrap gap-3 border-t border-stone-200 px-4 py-3 text-sm">
-            <input type="text" placeholder="Motivo (obligatorio: no hay pedido ni producción)" class="flex-1 rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="justificacion">
-            <span class="w-full text-xs text-stone-500">Se etiqueta igual y queda por revisar al final del día.</span>
+            <input type="text" placeholder="<%= t("etiquetas.motivo_obligatorio") %>" class="flex-1 rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="justificacion">
+            <span class="w-full text-xs text-stone-500"><%= t("etiquetas.queda_por_revisar") %></span>
           </div>
         <% end %>
         <div class="flex flex-wrap items-center gap-3 border-t border-stone-200 px-4 py-3">
-          <button type="button" data-action="etiquetadora#registrar" data-etiquetadora-target="btnRegistrar" class="btn btn-success btn-lg">Registrar e imprimir</button>
-          <button type="button" data-action="etiquetadora#reimprimir" data-etiquetadora-target="btnReimprimir" class="hidden rounded border border-stone-300 px-4 py-3">Reimprimir</button>
-          <button type="button" data-action="etiquetadora#limpiar" class="btn btn-ghost btn-sm">Limpiar</button>
+          <button type="button" data-action="etiquetadora#registrar" data-etiquetadora-target="btnRegistrar" class="btn btn-success btn-lg"><%= t("etiquetas.registrar_e_imprimir") %></button>
+          <button type="button" data-action="etiquetadora#reimprimir" data-etiquetadora-target="btnReimprimir" class="hidden rounded border border-stone-300 px-4 py-3"><%= t("etiquetas.reimprimir") %></button>
+          <button type="button" data-action="etiquetadora#limpiar" class="btn btn-ghost btn-sm"><%= t("etiquetas.limpiar") %></button>
           <span class="text-sm text-emerald-800" data-etiquetadora-target="resultado"></span>
           <span class="w-full text-sm text-stone-600 empty:hidden" data-etiquetadora-target="salida"></span>
         </div>
@@ -157,15 +157,15 @@
 
     <div class="space-y-4">
       <details class="rounded bg-white p-4 text-sm shadow-sm">
-        <summary class="cursor-pointer font-semibold">Etiqueta impresa</summary>
+        <summary class="cursor-pointer font-semibold"><%= t("etiquetas.etiqueta_impresa") %></summary>
         <div class="mt-3 grid grid-cols-2 gap-2">
-          <label>Ancho (mm)<input type="number" min="20" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgAncho" data-action="change->etiquetadora#guardarCfg"></label>
-          <label>Alto (mm)<input type="number" min="15" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgAlto" data-action="change->etiquetadora#guardarCfg"></label>
-          <label class="col-span-2">Leyenda<input type="text" placeholder="ej. Select Meat" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgLeyenda" data-action="change->etiquetadora#guardarCfg"></label>
-          <label>Alto barras (px)<input type="number" min="20" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgBarras" data-action="change->etiquetadora#guardarCfg"></label>
-          <label>Letra nombre<input type="number" min="8" max="36" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgLetra" data-action="change->etiquetadora#guardarCfg"></label>
+          <label><%= t("etiquetas.cfg.ancho") %><input type="number" min="20" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgAncho" data-action="change->etiquetadora#guardarCfg"></label>
+          <label><%= t("etiquetas.cfg.alto") %><input type="number" min="15" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgAlto" data-action="change->etiquetadora#guardarCfg"></label>
+          <label class="col-span-2"><%= t("etiquetas.cfg.leyenda") %><input type="text" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgLeyenda" data-action="change->etiquetadora#guardarCfg"></label>
+          <label><%= t("etiquetas.cfg.barras") %><input type="number" min="20" max="200" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgBarras" data-action="change->etiquetadora#guardarCfg"></label>
+          <label><%= t("etiquetas.cfg.letra") %><input type="number" min="8" max="36" class="mt-1 w-full rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="cfgLetra" data-action="change->etiquetadora#guardarCfg"></label>
         </div>
-        <p class="mt-2 text-xs text-stone-500">Se guarda en este navegador. <button type="button" class="enlace" data-action="etiquetadora#restablecerCfg">Restablecer</button></p>
+        <p class="mt-2 text-xs text-stone-500"><%= t("etiquetas.se_guarda_en_navegador") %> <button type="button" class="enlace" data-action="etiquetadora#restablecerCfg"><%= t("etiquetas.restablecer") %></button></p>
       </details>
     </div>
   </div>

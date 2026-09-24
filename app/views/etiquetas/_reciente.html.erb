@@ -2,5 +2,5 @@
   <span class="font-mono text-xs"><%= etiqueta.codigo %></span>
   <span class="flex-1 truncate"><%= etiqueta.producto&.nombre %></span>
   <span class="font-mono"><%= number_with_precision(etiqueta.cantidad, precision: etiqueta.producto&.decimales || 3) %> <%= etiqueta.producto&.unidad %></span>
-  <%= link_to "Imprimir", etiqueta_path(etiqueta, imprimir: 1), target: "_blank", class: "btn btn-secondary btn-xs" %>
+  <%= link_to t("comun.imprimir"), etiqueta_path(etiqueta, imprimir: 1), target: "_blank", class: "btn btn-secondary btn-xs" %>
 </li>

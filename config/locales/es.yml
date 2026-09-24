@@ -88,6 +88,7 @@ es:
     quien: Quién
     cuando: Cuándo
     codigo: Código
+    kg_cada_una: kg c/u
   cinta:
     menu: Menú
     salir: Salir
@@ -194,6 +195,28 @@ es:
       un_destino: el pedido va a una tienda o a un cliente, uno de los dos
       mismo_origen: no puede ser la misma que surte
       sin_renglones: el pedido necesita al menos un renglón
+    mayor_que_cero: debe ser mayor que cero
+    etiqueta:
+      no_esta_en_pedido: '%{producto} no está en el pedido %{folio}'
+      sin_contexto_motivo: sin pedido ni producción escribe el motivo (queda por revisar)
+      ya_esta: '%{etiqueta} ya está %{estado}'
+      ya_viajo: '%{etiqueta} ya va en %{folio} %{estado}: resuélvelo en la recepción'
+      nada_que_agrupar: no hay nada que agrupar
+      solo_vivos_sueltos: solo se agrupan %{tipo} vivos y sueltos
+      sucursales_distintas: las etiquetas son de sucursales distintas
+      sin_codigos: no quedan códigos libres para este producto
+      sin_contexto: para etiquetar hace falta un pedido, una producción o un motivo
+      produccion_cerrada: la producción %{folio} está cerrada
+      mas_de_lo_que_entro: 'no puede salir más de lo que entró: quedan %{quedan} de %{de}'
+      producto_obligatorio: obligatorio en un paquete
+      tarima_sin_producto: una tarima no lleva producto
+      sin_paquetes: 'sin paquetes: se dieron de baja todos'
+    produccion:
+      ya_cerrada: la producción ya está cerrada
+    barcode:
+      doce_digitos: se esperan 12 dígitos
+      plu_rango: PLU fuera de rango
+      secuencia_rango: secuencia fuera de rango
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -415,3 +438,174 @@ es:
       entregada: entregada
       rechazada: rechazada
       cancelada: cancelada
+    etq:
+      unidad: Unidad
+      peso_fijo: Peso fijo
+      codigo_proveedor: Código proveedor
+      quitar: quitar
+      sin_codigo_fijo: Sin código fijo asignado.
+      escribe_codigo_o_peso: Escribe un código o cambia el peso fijo
+      vinculado: Vinculado
+      confirmar_quitar_codigo: ¿Quitar este código del producto?
+      con_codigo_proveedor: 'Con código de proveedor: la caja se recibe y se vende escaneando ese código.'
+      sin_codigo_proveedor: 'Sin código de proveedor: cada pieza necesita su etiqueta (apaga «Cerrar en caja»).'
+      peso_mayor_cero: Escribe un peso mayor que cero
+      bascula_cero: La báscula marca cero
+      kg_cu: kg c/u
+      cuantas_y_cuanto: Indica cuántas y de cuánto
+      elige_producto: Elige el producto primero
+      confirmar_limpiar: pesada(s) ya están registradas (al vuelo). Limpiar la lista NO las borra. ¿Continuar?
+      una_caja_de: Una caja de
+      piezas: piezas
+      etiquetas_de_1_pieza: etiquetas de 1 pieza
+      pesadas: pesadas
+      en_una_caja: en una caja
+      sueltas: sueltas
+      sin_pesadas: Sin pesadas
+      baja_etiqueta_ayuda: Dar de baja esta etiqueta (etiqueté mal)
+      baja_caja_ayuda: Dar de baja la caja completa (etiqueté mal)
+      al_registrar: al registrar
+      caja: caja
+      baja: baja
+      origenes:
+        manual: manual
+        bascula: báscula
+        pieza: pieza
+      caja_sin_individuales_a: La caja se registra con
+      caja_sin_individuales_b: piezas, sin etiquetas individuales
+      sin_pesadas_aun: Sin pesadas aún
+      va_en_salida: va en la salida
+      a: a
+      paquete: paquete
+      paquetes: paquetes
+      la_caja_completa_y_etiquetas: la CAJA completa (y todas sus etiquetas)
+      esta_etiqueta: esta etiqueta
+      motivo_ejemplo: ¿Motivo? (ej. peso mal capturado, producto equivocado)
+      dada_de_baja: dada de baja
+      con: con
+      etiquetas: etiquetas
+      sin_paquetes: sin paquetes
+      etiqueta: Etiqueta
+      cuantas_piezas: Indica cuántas piezas
+      no_hay_pesadas: No hay pesadas
+      registrada: registrada
+      etiquetas_registradas: etiquetas registradas
+      nada_registrado: Nada registrado todavía
+      permite_popups: Permite las ventanas emergentes para imprimir
+      pesando: Pesando…
+      agregado: Agregado
+      estable: Estable
+      elige_producto_kilo: elige un producto por kilo
+      coloca_paquete: Coloca paquete
+      bascula_conectada: Báscula conectada ✓
+      conectar_bascula: Conectar báscula
+      sin_web_serial: sin Web Serial (usa Chrome o Edge)
+      confirmar_desconectar: ¿Desconectar la báscula? La próxima vez habrá que elegir el puerto de nuevo.
+      pz: pz
+  etiquetas:
+    etiqueta: Etiqueta
+    etiquetar: Etiquetar
+    vivas: Etiquetas vivas
+    n_etiquetas:
+      one: 1 etiqueta
+      other: '%{count} etiquetas'
+    n_paquetes:
+      one: 1 paquete
+      other: '%{count} paquetes'
+    n_cajas:
+      one: 1 caja
+      other: '%{count} cajas'
+    tipos:
+      paquete: paquete
+      caja: caja
+      tarima: tarima
+    tipos_plural:
+      paquete: paquetes
+      caja: cajas
+      tarima: tarimas
+    mixta: mixta
+    ultima: Última
+    creada: Etiqueta %{codigo} creada
+    dada_de_baja: '%{etiqueta} dada de baja'
+    grupo_creado: '%{tipo} %{codigo} creada con %{n} etiquetas'
+    volver_a_etiquetar: Volver a etiquetar
+    simular: simular pesada
+    conectar_bascula: Conectar báscula
+    buscar_producto: Nombre, clave, PLU o escanea su código
+    codigo_fabrica_y_peso: Código de fábrica y peso fijo
+    codigo_fabrica: Código de fábrica
+    escanear_o_teclear: Escanear o teclear…
+    peso_por_pieza: Peso por pieza (kg)
+    vincular: Vincular
+    vincular_ayuda: 'Vincula el código que trae de fábrica para que la caja lo reconozca al escanear. Si el fabricante lo cambia, agrega el nuevo: todos escanean este producto.'
+    una_pesada: Una pesada
+    agregar: Agregar
+    de_la_bascula: De la báscula
+    de_la_bascula_ayuda: Toma el peso que marca la báscula ahora
+    bascula_ayuda: Con la báscula conectada cada peso estable entra solo.
+    desconectada: Desconectada
+    varias_iguales: Varias iguales
+    kg_cada_una: kg c/u
+    o_reparte_total: o reparte un total de
+    copias: Solo imprimir copias del código
+    copias_ayuda: Imprime N etiquetas con el código de proveedor, sin registrar nada
+    sin_pesadas: Sin pesadas
+    cerrar_en_caja: Cerrar en caja
+    imprimir_al_vuelo: Imprimir al vuelo
+    origen: Origen
+    motivo_obligatorio: 'Motivo (obligatorio: no hay pedido ni producción)'
+    queda_por_revisar: Se etiqueta igual y queda por revisar al final del día.
+    registrar_e_imprimir: Registrar e imprimir
+    reimprimir: Reimprimir
+    limpiar: Limpiar
+    etiqueta_impresa: Etiqueta impresa
+    cfg:
+      ancho: Ancho (mm)
+      alto: Alto (mm)
+      leyenda: Leyenda
+      barras: Alto barras (px)
+      letra: Letra nombre
+    se_guarda_en_navegador: Se guarda en este navegador.
+    restablecer: Restablecer
+    en_lugar_de: en lugar de
+    llevas: llevas
+    armandose: armándose
+    ayuda_kg: 'genera la caja como siempre: se liga sola al pedido y entra a la salida'
+    ayuda_pieza: 'caja fija: cuenta las piezas y registra'
+    checklist: Checklist
+    salir_del_pedido: Salir del pedido
+    produccion_contexto_html: Producción %{folio} · entró %{entro} de %{producto}, queda %{queda}
+    ver_produccion: Ver producción
+    sin_contexto: Sin pedido ni producción.
+    sin_contexto_ayuda_html: Se etiqueta con motivo y queda por revisar. Lo normal es entrar desde un renglón del pedido, con el botón %{boton}, o desde una producción.
+    paquetes_sueltos: Paquetes sueltos
+    cajas: Cajas
+    tarimas: Tarimas
+    cerrar_caja_marcados: Cerrar caja con los marcados
+    armar_tarima_marcadas: Armar tarima con las marcadas
+    dar_de_baja: Dar de baja
+    escanea_codigo: Escanea el código
+    motivo_baja: Motivo (mermó, se cayó, error…)
+  produccion:
+    produccion: Producción
+    producciones: Producciones
+    abrir: Abrir producción
+    entro: Entró
+    salio: Salió
+    disponible: Disponible
+    merma: Merma
+    cerradas: Cerradas
+    cerrar: Cerrar producción
+    sin_abiertas: No hay producciones abiertas.
+    producto_que_entra: Producto que entra
+    cantidad_que_entra: Cantidad que entra
+    ayuda: Lo que entra para procesar. Lo que salga se etiqueta desde la producción y la diferencia es la merma.
+    abrio_el: Abrió %{quien} el %{fecha}
+    salidas_etiquetadas: Salidas etiquetadas
+    todavia_nada: Todavía no sale nada.
+    etiquetar_salidas: Etiquetar salidas
+    confirmar_cerrar: ¿Cerrar? La diferencia (%{cantidad}) queda como merma.
+    abierta_aviso: 'Producción %{folio} abierta: entraron %{cantidad} de %{producto}'
+    cerrada_aviso: 'Producción cerrada: merma %{merma}'
+  caja:
+    nueva_venta: Nueva venta

@@ -4,28 +4,27 @@
     <span class="text-xl"><i class="bi bi-basket"></i></span>
     <div class="min-w-48 flex-1">
       <div class="font-bold">
-        PARA <%= pedido.destino.to_s.upcase %> · <%= pedido.folio %> ·
-        <% if sustituto %>SUSTITUTO: <%= sustituto.nombre %> <span class="font-normal opacity-90">(en lugar de <%= linea.producto.nombre %>)</span>
+        <%= t("pedidos.para").upcase %> <%= pedido.destino.to_s.upcase %> · <%= pedido.folio %> ·
+        <% if sustituto %><%= t("js.sustituto") %>: <%= sustituto.nombre %> <span class="font-normal opacity-90">(<%= t("etiquetas.en_lugar_de") %> <%= linea.producto.nombre %>)</span>
         <% else %><%= linea.producto.nombre %><% end %>
       </div>
       <div class="text-xs opacity-90">
-        pide <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
-        · llevas <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span>
-        <% if salida %> · armándose <%= link_to salida.folio, salida_path(salida), class: "font-mono underline", target: "_blank" %> (<%= salida.salida_etiquetas.count %> paquetes)<% end %>
-        <%= linea.producto.kg? ? "· genera la caja como siempre: se liga sola al pedido y entra a la salida" : "· caja fija: cuenta las piezas y registra" %>
+        <%= t("pedidos.pide").downcase %> <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
+        · <%= t("etiquetas.llevas") %> <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span>
+        <% if salida %> · <%= t("etiquetas.armandose") %> <%= link_to salida.folio, salida_path(salida), class: "font-mono underline", target: "_blank" %> (<%= t("etiquetas.n_paquetes", count: salida.salida_etiquetas.count) %>)<% end %>
+        · <%= linea.producto.kg? ? t("etiquetas.ayuda_kg") : t("etiquetas.ayuda_pieza") %>
       </div>
     </div>
-    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>"><i class="bi bi-list-ul"></i> Checklist</button>
-    <%= link_to icono("x-lg"), new_etiqueta_path, class: "btn btn-light btn-sm", title: "Salir del pedido" %>
+    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>"><i class="bi bi-list-ul"></i> <%= t("etiquetas.checklist") %></button>
+    <%= link_to icono("x-lg"), new_etiqueta_path, class: "btn btn-light btn-sm", title: t("etiquetas.salir_del_pedido") %>
   </div>
 <% elsif produccion %>
   <div class="mb-4 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
-    Producción <strong><%= produccion.folio %></strong> · entró <span class="font-mono"><%= number_with_precision(produccion.cantidad, precision: 3) %></span> de <%= produccion.producto.nombre %>,
-    queda <span class="font-mono" id="lleva"><%= number_with_precision(produccion.disponible, precision: 3) %></span>
-    · <%= link_to "Ver producción", produccion_path(produccion), class: "btn btn-secondary btn-xs" %>
+    <%= t("etiquetas.produccion_contexto_html", folio: content_tag(:strong, produccion.folio), entro: content_tag(:span, number_with_precision(produccion.cantidad, precision: 3), class: "font-mono"), producto: produccion.producto.nombre, queda: content_tag(:span, number_with_precision(produccion.disponible, precision: 3), class: "font-mono", id: "lleva")) %>
+    · <%= link_to t("etiquetas.ver_produccion"), produccion_path(produccion), class: "btn btn-secondary btn-xs" %>
   </div>
 <% else %>
   <div class="mb-4 rounded border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">
-    <strong>Sin pedido ni producción.</strong> Se etiqueta con motivo y queda por revisar. Lo normal es entrar desde un renglón del pedido, con el botón <em>Pedidos por surtir</em>, o desde una producción.
+    <strong><%= t("etiquetas.sin_contexto") %></strong> <%= t("etiquetas.sin_contexto_ayuda_html", boton: content_tag(:em, t("pedidos.por_surtir"))) %>
   </div>
 <% end %>

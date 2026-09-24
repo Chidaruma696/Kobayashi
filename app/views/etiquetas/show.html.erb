@@ -1,2 +1,2 @@
-<% content_for :title, "Etiqueta #{@etiqueta.codigo}" %>
+<% content_for :title, "#{t("etiquetas.etiqueta")} #{@etiqueta.codigo}" %>
 <%= render partial: "impresa", collection: @etiquetas, as: :etiqueta %>

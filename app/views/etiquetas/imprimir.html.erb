@@ -1,2 +1,2 @@
-<% content_for :title, "#{@etiquetas.size + @sueltas.size} etiquetas" %>
+<% content_for :title, t("etiquetas.n_etiquetas", count: @etiquetas.size + @sueltas.size) %>
 <%= render partial: "impresa", collection: @etiquetas + @sueltas, as: :etiqueta %>

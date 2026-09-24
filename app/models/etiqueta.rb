@@ -74,10 +74,10 @@ class Etiqueta < ApplicationRecord
   # esté preparando (si ya se selló o viajó, se resuelve en la recepción) y la caja de la que sale
   # se queda con lo que de verdad trae. El renglón del pedido se recalcula solo (after_save).
   def dar_de_baja!(motivo:, usuario:)
-    raise ArgumentError, "hace falta el motivo" if motivo.blank?
-    raise ArgumentError, "#{self} ya está #{estado}" unless viva?
+    raise ArgumentError, I18n.t("errores.hace_falta_motivo") if motivo.blank?
+    raise ArgumentError, I18n.t("errores.etiqueta.ya_esta", etiqueta: self, estado: I18n.t("estados.#{estado}")) unless viva?
     if (fila = SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, salidas: { estado: %w[sellada enviada] }).includes(:salida).first)
-      raise ArgumentError, "#{self} ya va en #{fila.salida.folio} #{fila.salida.estado}: resuélvelo en la recepción"
+      raise ArgumentError, I18n.t("errores.etiqueta.ya_viajo", etiqueta: self, folio: fila.salida.folio, estado: I18n.t("estados.#{fila.salida.estado}"))
     end
     transaction do
       SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ id ] + hijas_ids_profundas, salidas: { estado: "preparando" }).destroy_all
@@ -92,7 +92,7 @@ class Etiqueta < ApplicationRecord
     return unless viva?
     vivas = hijas.vivas.to_a
     if vivas.empty?
-      update!(estado: "baja", motivo: "sin paquetes: se dieron de baja todos")
+      update!(estado: "baja", motivo: I18n.t("errores.etiqueta.sin_paquetes"))
     else
       update!(cantidad: vivas.sum(&:cantidad))
     end
@@ -123,10 +123,10 @@ class Etiqueta < ApplicationRecord
 
   def self.agrupar!(tipo, hijas, tipo_hijas, usuario)
     hijas = Array(hijas)
-    raise ArgumentError, "no hay nada que agrupar" if hijas.empty?
-    raise ArgumentError, "solo se agrupan #{tipo_hijas}s vivos y sueltos" unless hijas.all? { |h| h.tipo == tipo_hijas && h.viva? && h.padre_id.nil? }
+    raise ArgumentError, I18n.t("errores.etiqueta.nada_que_agrupar") if hijas.empty?
+    raise ArgumentError, I18n.t("errores.etiqueta.solo_vivos_sueltos", tipo: I18n.t("etiquetas.tipos_plural.#{tipo_hijas}")) unless hijas.all? { |h| h.tipo == tipo_hijas && h.viva? && h.padre_id.nil? }
     sucursales = hijas.map(&:sucursal_id).uniq
-    raise ArgumentError, "las etiquetas son de sucursales distintas" if sucursales.size > 1
+    raise ArgumentError, I18n.t("errores.etiqueta.sucursales_distintas") if sucursales.size > 1
     productos = hijas.map(&:producto_id).uniq
     transaction do
       grupo = create!(tipo: tipo, sucursal_id: sucursales.first, usuario: usuario, agrupando: true,
@@ -149,7 +149,7 @@ class Etiqueta < ApplicationRecord
       self.codigo = candidato
       return
     end
-    errors.add(:codigo, "no quedan códigos libres para este producto")
+    errors.add(:codigo, I18n.t("errores.etiqueta.sin_codigos"))
   end
 
   # Una etiqueta nace de un renglón de pedido, de una producción, o con autorización registrada.
@@ -157,14 +157,14 @@ class Etiqueta < ApplicationRecord
   def contexto_obligatorio
     return if pedido_linea || produccion || justificacion.present?
     return if agrupando || tarima?
-    errors.add(:base, "para etiquetar hace falta un pedido, una producción o un motivo")
+    errors.add(:base, I18n.t("errores.etiqueta.sin_contexto"))
   end
 
   def cabe_en_la_produccion
     return unless produccion
-    errors.add(:base, "la producción #{produccion.folio} está cerrada") unless produccion.abierta?
+    errors.add(:base, I18n.t("errores.etiqueta.produccion_cerrada", folio: produccion.folio)) unless produccion.abierta?
     unless produccion.cabe?(cantidad.to_d)
-      errors.add(:cantidad, "no puede salir más de lo que entró: quedan #{produccion.disponible.to_s('F')} de #{produccion.cantidad.to_s('F')}")
+      errors.add(:cantidad, I18n.t("errores.etiqueta.mas_de_lo_que_entro", quedan: produccion.disponible.to_s("F"), de: produccion.cantidad.to_s("F")))
     end
   end
 
@@ -177,10 +177,10 @@ class Etiqueta < ApplicationRecord
   def contenido_coherente
     case tipo
     when "paquete"
-      errors.add(:producto, "obligatorio en un paquete") if producto.nil?
-      errors.add(:cantidad, "debe ser mayor que cero") unless cantidad.to_d.positive?
+      errors.add(:producto, I18n.t("errores.etiqueta.producto_obligatorio")) if producto.nil?
+      errors.add(:cantidad, I18n.t("errores.mayor_que_cero")) unless cantidad.to_d.positive?
     when "tarima"
-      errors.add(:producto, "una tarima no lleva producto") if producto.present?
+      errors.add(:producto, I18n.t("errores.etiqueta.tarima_sin_producto")) if producto.present?
     end
   end
 end

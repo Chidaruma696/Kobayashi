@@ -1,6 +1,6 @@
-<h1 class="mb-4 text-2xl font-bold">Producciones · <%= sucursal_actual %></h1>
+<h1 class="mb-4 text-2xl font-bold"><%= t("produccion.producciones") %> · <%= sucursal_actual %></h1>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Entró</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Salió</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2"></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.folio") %></th><th class="px-3 py-2"><%= t("produccion.entro") %></th><th class="px-3 py-2 text-right"><%= t("comun.cantidad") %></th><th class="px-3 py-2 text-right"><%= t("produccion.salio") %></th><th class="px-3 py-2"><%= t("comun.quien") %></th><th class="px-3 py-2"></th></tr></thead>
   <tbody>
     <% @abiertas.each do |p| %>
       <tr class="border-t border-stone-100">
@@ -9,17 +9,17 @@
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(p.cantidad, precision: 3) %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(p.total_salidas, precision: 3) %></td>
         <td class="px-3 py-2"><%= p.usuario %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Abrir", produccion_path(p), class: "btn btn-primary btn-sm" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to t("comun.abrir"), produccion_path(p), class: "btn btn-primary btn-sm" %></td>
       </tr>
     <% end %>
-    <% if @abiertas.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-stone-500">No hay producciones abiertas.</td></tr><% end %>
+    <% if @abiertas.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-stone-500"><%= t("produccion.sin_abiertas") %></td></tr><% end %>
   </tbody>
 </table>
 <% if @cerradas.any? %>
-  <h2 class="mb-2 mt-8 font-semibold">Cerradas</h2>
+  <h2 class="mb-2 mt-8 font-semibold"><%= t("produccion.cerradas") %></h2>
   <ul class="text-sm">
     <% @cerradas.each do |p| %>
-      <li class="border-t border-stone-200 py-1"><%= link_to p.folio, produccion_path(p), class: "chip-folio" %> · <%= p.producto.nombre %> <%= number_with_precision(p.cantidad, precision: 3) %> · merma <%= number_with_precision(p.merma, precision: 3) %> · <%= l p.created_at.to_date, format: :short %></li>
+      <li class="border-t border-stone-200 py-1"><%= link_to p.folio, produccion_path(p), class: "chip-folio" %> · <%= p.producto.nombre %> <%= number_with_precision(p.cantidad, precision: 3) %> · <%= t("produccion.merma").downcase %> <%= number_with_precision(p.merma, precision: 3) %> · <%= l p.created_at.to_date, format: :short %></li>
     <% end %>
   </ul>
 <% end %>

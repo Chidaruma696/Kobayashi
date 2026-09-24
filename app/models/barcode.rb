@@ -15,7 +15,7 @@ module Barcode
   end
 
   def self.ean13(doce)
-    raise ArgumentError, "se esperan 12 dígitos" unless doce.match?(/\A\d{12}\z/)
+    raise ArgumentError, I18n.t("errores.barcode.doce_digitos") unless doce.match?(/\A\d{12}\z/)
     doce + verificador(doce).to_s
   end
 
@@ -26,8 +26,8 @@ module Barcode
   # Código de identidad: prefijo del tipo (2) + PLU (5) + secuencia (5) + verificador.
   def self.identidad(tipo, plu, secuencia)
     prefijo = PREFIJOS.fetch(tipo)
-    raise ArgumentError, "PLU fuera de rango" unless (0..99_999).cover?(plu)
-    raise ArgumentError, "secuencia fuera de rango" unless (1..99_999).cover?(secuencia)
+    raise ArgumentError, I18n.t("errores.barcode.plu_rango") unless (0..99_999).cover?(plu)
+    raise ArgumentError, I18n.t("errores.barcode.secuencia_rango") unless (1..99_999).cover?(secuencia)
     ean13(format("%s%05d%05d", prefijo, plu, secuencia))
   end
 

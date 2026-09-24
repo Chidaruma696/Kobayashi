@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= I18n.locale %>">
   <head>
     <meta charset="utf-8">
     <title><%= @venta&.folio || @titulo %></title>
@@ -21,8 +21,8 @@
   <body>
     <%= yield %>
     <div class="acciones">
-      <button onclick="window.print()">Imprimir</button>
-      <% if @venta %><a href="<%= caja_path %>">Nueva venta</a><% end %>
+      <button onclick="window.print()"><%= t("comun.imprimir") %></button>
+      <% if @venta %><a href="<%= caja_path %>"><%= t("caja.nueva_venta") %></a><% end %>
     </div>
     <% if params[:imprimir] %><script>window.addEventListener("load", () => window.print());</script><% end %>
   </body>

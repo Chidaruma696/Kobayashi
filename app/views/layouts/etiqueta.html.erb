@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= I18n.locale %>">
   <head>
     <meta charset="utf-8">
-    <title><%= content_for(:title) || "Etiquetas" %></title>
+    <title><%= content_for(:title) || t("cinta.pestanas.etiquetas") %></title>
     <style>
       @page { size: <%= @ancho %>mm <%= @alto %>mm; margin: 0; }
       body { margin: 0; font-family: Arial, sans-serif; color: #000; }
@@ -23,8 +23,8 @@
   <body>
     <%= yield %>
     <div class="acciones">
-      <button onclick="window.print()">Imprimir</button>
-      <a href="<%= new_etiqueta_path(producto_id: @etiqueta&.producto_id) %>">Volver a etiquetar</a>
+      <button onclick="window.print()"><%= t("comun.imprimir") %></button>
+      <a href="<%= new_etiqueta_path(producto_id: @etiqueta&.producto_id) %>"><%= t("etiquetas.volver_a_etiquetar") %></a>
     </div>
     <% if params[:imprimir] %><script>window.addEventListener("load", () => window.print());</script><% end %>
   </body>

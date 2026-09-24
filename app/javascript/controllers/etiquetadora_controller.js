@@ -47,7 +47,7 @@ export default class extends Controller {
   esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])) }
   fmt(n) { return Number(n).toFixed(this.porPieza ? 0 : 3) }
   get porPieza() { return this.producto?.unidad === "pieza" }
-  get unidad() { return this.porPieza ? "pz" : "kg" }
+  get unidad() { return this.porPieza ? T.etq.pz : "kg" }
   get pesoFijo() { return Number(this.producto?.peso_fijo || 0) }
   get csrf() { return document.querySelector("meta[name=csrf-token]")?.content }
 
@@ -58,7 +58,7 @@ export default class extends Controller {
       body: cuerpo ? JSON.stringify(cuerpo) : undefined
     })
     const datos = r.status === 204 ? {} : await r.json().catch(() => ({}))
-    if (!r.ok) { this.avisar(datos.error || "No se pudo"); return null }
+    if (!r.ok) { this.avisar(datos.error || T.no_se_pudo); return null }
     this.avisar("")
     return datos
   }
@@ -72,7 +72,7 @@ export default class extends Controller {
     this.candidatos = await r.json()
     this.resultadosTarget.innerHTML = this.candidatos.length
       ? this.candidatos.map((p, i) => `<div class="cursor-pointer border-b border-stone-100 px-3 py-2 text-sm hover:bg-stone-100 ${i === 0 ? "bg-stone-100" : ""}" data-idx="${i}" data-action="mousedown->etiquetadora#elegirResultado"><span class="font-semibold">${this.esc(p.nombre)}</span> <span class="text-stone-500">${this.esc(p.clave)} · PLU ${p.plu} · ${p.unidad}</span></div>`).join("")
-      : `<div class="px-3 py-2 text-sm text-stone-500">Sin resultados</div>`
+      : `<div class="px-3 py-2 text-sm text-stone-500">${T.sin_resultados}</div>`
     this.resultadosTarget.classList.remove("hidden")
     if (this.candidatos.length === 1 && /^\d{8,}$/.test(q)) this.elegir(this.candidatos[0])
   }
@@ -105,9 +105,9 @@ export default class extends Controller {
   pintarFicha() {
     const p = this.producto
     const chip = (texto, color = "bg-marca-50 text-marca-800") => `<span class="rounded px-2 py-0.5 text-xs font-semibold ${color}">${texto}</span>`
-    const chips = [ `<span class="text-base font-bold">${this.esc(p.nombre)}</span>`, chip(`ID ${this.esc(p.clave)}`), chip(`PLU ${p.plu}`), chip(`Unidad ${p.unidad}`) ]
-    if (this.pesoFijo > 0) chips.push(chip(`Peso fijo ${this.pesoFijo.toFixed(3)} kg`, "bg-blue-50 text-blue-700"))
-    if (p.codigos.length) chips.push(chip(`Código proveedor <code>${this.esc(p.codigos.join(", "))}</code>`, "bg-amber-50 text-amber-700"))
+    const chips = [ `<span class="text-base font-bold">${this.esc(p.nombre)}</span>`, chip(`ID ${this.esc(p.clave)}`), chip(`PLU ${p.plu}`), chip(`${T.etq.unidad} ${p.unidad}`) ]
+    if (this.pesoFijo > 0) chips.push(chip(`${T.etq.peso_fijo} ${this.pesoFijo.toFixed(3)} kg`, "bg-blue-50 text-blue-700"))
+    if (p.codigos.length) chips.push(chip(`${T.etq.codigo_proveedor} <code>${this.esc(p.codigos.join(", "))}</code>`, "bg-amber-50 text-amber-700"))
     this.fichaTarget.innerHTML = chips.join("")
     this.fichaTarget.classList.remove("hidden"); this.fichaTarget.classList.add("flex")
     if (!this.hasFabricaTarget) return
@@ -116,8 +116,8 @@ export default class extends Controller {
     this.pesoFijoInputTarget.value = this.pesoFijo > 0 ? this.pesoFijo.toFixed(3) : ""
     const detalle = p.codigos_detalle || p.codigos.map(c => ({ id: null, codigo: c }))
     this.codigosListaTarget.innerHTML = detalle.length
-      ? detalle.map(c => `<li class="flex items-center gap-2"><code class="rounded bg-stone-100 px-2 py-0.5">${this.esc(c.codigo)}</code>${c.id ? `<button type="button" class="btn btn-ghost-danger btn-xs" data-id="${c.id}" data-action="etiquetadora#quitarCodigo">quitar</button>` : ""}</li>`).join("")
-      : `<li class="text-xs text-stone-500">Sin código fijo asignado.</li>`
+      ? detalle.map(c => `<li class="flex items-center gap-2"><code class="rounded bg-stone-100 px-2 py-0.5">${this.esc(c.codigo)}</code>${c.id ? `<button type="button" class="btn btn-ghost-danger btn-xs" data-id="${c.id}" data-action="etiquetadora#quitarCodigo">${T.etq.quitar}</button>` : ""}</li>`).join("")
+      : `<li class="text-xs text-stone-500">${T.etq.sin_codigo_fijo}</li>`
   }
 
   // Vincula el código de fábrica y/o el peso por pieza (va a Admin → Productos por JSON).
@@ -126,7 +126,7 @@ export default class extends Controller {
     const codigo = this.codigoNuevoTarget.value.trim()
     const peso = this.pesoFijoInputTarget.value.trim()
     const pesoActual = this.pesoFijo > 0 ? this.pesoFijo.toFixed(3) : ""
-    if (!codigo && peso === pesoActual) { this.avisar("Escribe un código o cambia el peso fijo"); return }
+    if (!codigo && peso === pesoActual) { this.avisar(T.etq.escribe_codigo_o_peso); return }
     const base = `${this.adminProductosUrlValue}/${this.producto.id}`
     if (codigo) {
       const d = await this.pedir(`${base}/codigos`, "POST", { codigo })
@@ -139,14 +139,14 @@ export default class extends Controller {
       if (!d) return
       this.producto.peso_fijo = d.peso_fijo
     }
-    this.resultadoTarget.textContent = "Vinculado"
+    this.resultadoTarget.textContent = T.etq.vinculado
     this.pintarFicha()
     this.acomodarPanel()
   }
 
   async quitarCodigo(e) {
     const id = Number(e.currentTarget.dataset.id)
-    if (!confirm("¿Quitar este código del producto?")) return
+    if (!confirm(T.etq.confirmar_quitar_codigo)) return
     const d = await this.pedir(`${this.adminProductosUrlValue}/${this.producto.id}/codigos/${id}`, "DELETE")
     if (!d) return
     this.producto.codigos_detalle = this.producto.codigos_detalle.filter(c => c.id !== id)
@@ -163,7 +163,7 @@ export default class extends Controller {
     this.alVueloLabelTarget.classList.toggle("hidden", this.porPieza)
     this.panelListaTarget.classList.remove("hidden")
     if (this.porPieza) {
-      this.piezaNotaTarget.textContent = p.codigos.length ? "Con código de proveedor: la caja se recibe y se vende escaneando ese código." : "Sin código de proveedor: cada pieza necesita su etiqueta (apaga «Cerrar en caja»)."
+      this.piezaNotaTarget.textContent = p.codigos.length ? T.etq.con_codigo_proveedor : T.etq.sin_codigo_proveedor
       this.btnCopiasTarget.classList.toggle("hidden", !p.codigos.length)
       this.piezasTarget.focus()
     } else {
@@ -177,35 +177,35 @@ export default class extends Controller {
 
   agregarManual() {
     const kg = Number(this.manualTarget.value) || 0
-    if (!(kg > 0)) { this.avisar("Escribe un peso mayor que cero"); return }
+    if (!(kg > 0)) { this.avisar(T.etq.peso_mayor_cero); return }
     this.manualTarget.value = ""
     this.agregar(kg, "manual")
   }
 
   capturar() {
     const kg = this.bascula.peso
-    if (!(kg > 0.02)) { this.avisar("La báscula marca cero"); return }
-    this.agregar(kg, "báscula")
+    if (!(kg > 0.02)) { this.avisar(T.etq.bascula_cero); return }
+    this.agregar(kg, "bascula")
   }
 
   recalcularQuick() {
     const n = parseInt(this.qnTarget.value) || 0
     const total = Number(this.qtotalTarget.value) || 0
-    if (total > 0 && n > 0) { this.qpesoTarget.value = (total / n).toFixed(3); this.qhintTarget.textContent = `= ${(total / n).toFixed(3)} kg c/u` }
+    if (total > 0 && n > 0) { this.qpesoTarget.value = (total / n).toFixed(3); this.qhintTarget.textContent = `= ${(total / n).toFixed(3)} ${T.etq.kg_cu}` }
     else this.qhintTarget.textContent = ""
   }
 
   agregarVarias() {
     const n = parseInt(this.qnTarget.value) || 0
     const kg = Number(this.qpesoTarget.value) || 0
-    if (n < 1 || !(kg > 0)) { this.avisar("Indica cuántas y de cuánto"); return }
+    if (n < 1 || !(kg > 0)) { this.avisar(T.etq.cuantas_y_cuanto); return }
     for (let i = 0; i < n; i++) this.agregar(kg, "manual", true)
     this.qtotalTarget.value = ""; this.qhintTarget.textContent = ""
     this.pintarLista()
   }
 
   agregar(kg, origen, silencioso = false) {
-    if (!this.producto) { this.avisar("Elige el producto primero"); return }
+    if (!this.producto) { this.avisar(T.etq.elige_producto); return }
     if (this.porPieza) return
     if (this.registrado) { this.pesadas = []; this.caja = null; this.registrado = false; this.resultadoTarget.textContent = "" }
     const pesada = { cantidad: Number(kg.toFixed(3)), origen }
@@ -224,7 +224,7 @@ export default class extends Controller {
 
   limpiar() {
     const vivas = this.pesadas.filter(p => p.id && !p.baja).length
-    if (vivas && !this.registrado && !confirm(`${vivas} pesada(s) ya están registradas (al vuelo). Limpiar la lista NO las borra. ¿Continuar?`)) return
+    if (vivas && !this.registrado && !confirm(`${vivas} ${T.etq.confirmar_limpiar}`)) return
     this.reiniciar()
   }
 
@@ -241,8 +241,8 @@ export default class extends Controller {
     const total = this.porPieza ? n : this.pesadas.reduce((a, p) => a + (p.baja ? 0 : p.cantidad), 0)
     const enCaja = this.enCajaTarget.checked
     this.resumenTarget.textContent = this.porPieza
-      ? (enCaja ? `Una caja de ${n} piezas` : `${n} etiquetas de 1 pieza`)
-      : (n ? `${n} pesadas · ${total.toFixed(3)} kg${enCaja ? " · en una caja" : " · sueltas"}` : "Sin pesadas")
+      ? (enCaja ? `${T.etq.una_caja_de} ${n} ${T.etq.piezas}` : `${n} ${T.etq.etiquetas_de_1_pieza}`)
+      : (n ? `${n} ${T.etq.pesadas} · ${total.toFixed(3)} kg${enCaja ? ` · ${T.etq.en_una_caja}` : ` · ${T.etq.sueltas}`}` : T.etq.sin_pesadas)
     let filas
     if (this.porPieza) {
       filas = this.registrado
@@ -253,28 +253,28 @@ export default class extends Controller {
     }
     const cajaBaja = !!this.caja?.baja
     const accion = f => {
-      if (f.baja || (f.id && cajaBaja)) return `<span class="badge" title="${this.esc(f.baja || this.caja?.baja)}">baja</span>`
-      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`
-      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar"><i class="bi bi-x-lg"></i></button>`
+      if (f.baja || (f.id && cajaBaja)) return `<span class="badge" title="${this.esc(f.baja || this.caja?.baja)}">${T.etq.baja}</span>`
+      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="${T.etq.baja_etiqueta_ayuda}" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`
+      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="${T.etq.quitar}" data-idx="${f.i}" data-action="etiquetadora#quitar"><i class="bi bi-x-lg"></i></button>`
     }
     const tachada = f => (f.baja || (f.id && cajaBaja)) ? "line-through text-stone-400" : ""
     this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-stone-100 ${tachada(f)}">
         <td class="px-4 py-1 text-stone-400">${f.i + 1}</td>
-        <td class="px-2 py-1 text-stone-500">${f.origen}</td>
+        <td class="px-2 py-1 text-stone-500">${T.etq.origenes[f.origen] || f.origen}</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(f.cantidad)} ${this.unidad}</td>
-        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "italic text-stone-400"}">${f.codigo || "al registrar"}</td>
+        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "italic text-stone-400"}">${f.codigo || T.etq.al_registrar}</td>
         <td class="px-2 py-1 text-right">${accion(f)}</td>
       </tr>`).join("")
     if (this.caja) {
       const c = this.caja
       this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold ${cajaBaja ? "line-through text-stone-400" : ""}">
-        <td class="px-4 py-1"><i class="bi bi-box-seam"></i></td><td class="px-2 py-1">caja</td>
+        <td class="px-4 py-1"><i class="bi bi-box-seam"></i></td><td class="px-2 py-1">${T.etq.caja}</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(c.cantidad)} ${this.unidad}</td>
         <td class="px-2 py-1 font-mono text-xs text-amber-700">${c.codigo}</td>
-        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">baja</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`}</td>
+        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">${T.etq.baja}</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="${T.etq.baja_caja_ayuda}" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja"><i class="bi bi-trash"></i></button>`}</td>
       </tr>`)
     }
-    if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-stone-500">${this.porPieza && enCaja ? `La caja se registra con ${n} piezas, sin etiquetas individuales` : "Sin pesadas aún"}</td></tr>`
+    if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-stone-500">${this.porPieza && enCaja ? `${T.etq.caja_sin_individuales_a} ${n} ${T.etq.caja_sin_individuales_b}` : T.etq.sin_pesadas_aun}</td></tr>`
     this.btnRegistrarTarget.classList.toggle("hidden", this.registrado)
     this.btnReimprimirTarget.classList.toggle("hidden", !this.registrado || cajaBaja)
     this.pintarSalida()
@@ -283,26 +283,26 @@ export default class extends Controller {
   pintarSalida() {
     if (!this.hasSalidaTarget) return
     const s = this.salida
-    this.salidaTarget.innerHTML = s ? `→ va en la salida <a href="${s.url}" class="chip-folio" target="_blank">${this.esc(s.folio)}</a> a ${this.esc(s.destino || "")} · ${s.paquetes} paquete${s.paquetes === 1 ? "" : "s"}` : ""
+    this.salidaTarget.innerHTML = s ? `→ ${T.etq.va_en_salida} <a href="${s.url}" class="chip-folio" target="_blank">${this.esc(s.folio)}</a> ${T.etq.a} ${this.esc(s.destino || "")} · ${s.paquetes} ${s.paquetes === 1 ? T.etq.paquete : T.etq.paquetes}` : ""
   }
 
   // Etiqueté mal: baja con motivo de una pesada o de la caja completa. El servidor la saca del
   // renglón del pedido y de la salida que se está armando; ya sellada, lo rechaza.
   async darDeBaja(e) {
     const { id, tipo } = e.currentTarget.dataset
-    const motivo = prompt(`Dar de baja ${tipo === "caja" ? "la CAJA completa (y todas sus etiquetas)" : "esta etiqueta"}. ¿Motivo? (ej. peso mal capturado, producto equivocado)`)
+    const motivo = prompt(`${T.dar_de_baja} ${tipo === "caja" ? T.etq.la_caja_completa_y_etiquetas : T.etq.esta_etiqueta}. ${T.etq.motivo_ejemplo}`)
     if (motivo === null) return
-    if (motivo.trim().length < 3) { this.avisar("Escribe el motivo"); return }
+    if (motivo.trim().length < 3) { this.avisar(T.escribe_motivo); return }
     const d = await this.pedir(`${this.etiquetasUrlValue}/${id}/baja`, "POST", { motivo: motivo.trim() })
     if (!d) return
     if (tipo === "caja") {
       this.caja.baja = motivo
       this.pesadas.forEach(p => { if (p.id) p.baja = p.baja || motivo })
-      this.resultadoTarget.textContent = `Caja ${d.codigo} dada de baja${d.hijas ? ` con ${d.hijas} etiquetas` : ""}`
+      this.resultadoTarget.textContent = `${T.etq.caja} ${d.codigo} ${T.etq.dada_de_baja}${d.hijas ? ` ${T.etq.con} ${d.hijas} ${T.etq.etiquetas}` : ""}`
     } else {
       this.pesadas.forEach(p => { if (p.id === Number(id)) p.baja = motivo })
-      if (d.padre && this.caja?.id === d.padre.id) { this.caja.cantidad = d.padre.cantidad; if (d.padre.estado === "baja") this.caja.baja = "sin paquetes" }
-      this.resultadoTarget.textContent = `Etiqueta ${d.codigo} dada de baja`
+      if (d.padre && this.caja?.id === d.padre.id) { this.caja.cantidad = d.padre.cantidad; if (d.padre.estado === "baja") this.caja.baja = T.etq.sin_paquetes }
+      this.resultadoTarget.textContent = `${T.etq.etiqueta} ${d.codigo} ${T.etq.dada_de_baja}`
     }
     if (d.salida && this.salida) this.salida.paquetes = d.salida.paquetes
     this.actualizarLleva(d.lleva)
@@ -317,10 +317,10 @@ export default class extends Controller {
     let cuerpo
     if (this.porPieza) {
       const n = parseInt(this.piezasTarget.value) || 0
-      if (n < 1) { this.avisar("Indica cuántas piezas"); return }
+      if (n < 1) { this.avisar(T.etq.cuantas_piezas); return }
       cuerpo = caja ? { caja_fija: n } : { pesadas: Array.from({ length: n }, () => ({ cantidad: 1 })) }
     } else {
-      if (!this.pesadas.length) { this.avisar("No hay pesadas"); return }
+      if (!this.pesadas.length) { this.avisar(T.etq.no_hay_pesadas); return }
       cuerpo = { pesadas: this.pesadas.map(p => p.id ? { id: p.id } : { cantidad: p.cantidad }), caja: caja ? "1" : "" }
     }
     this.btnRegistrarTarget.disabled = true
@@ -333,7 +333,7 @@ export default class extends Controller {
       this.caja = datos.caja
       this.registrado = true
       this.actualizarLleva(datos.lleva)
-      this.resultadoTarget.textContent = this.caja ? `Caja ${this.caja.codigo} registrada` : `${datos.etiquetas.length} etiquetas registradas`
+      this.resultadoTarget.textContent = this.caja ? `${T.etq.caja} ${this.caja.codigo} ${T.etq.registrada}` : `${datos.etiquetas.length} ${T.etq.etiquetas_registradas}`
       this.pintarLista()
       this.reimprimir()
     } finally {
@@ -355,14 +355,14 @@ export default class extends Controller {
 
   reimprimir() {
     const ids = [ this.caja?.baja ? null : this.caja?.id, ...this.pesadas.filter(p => !p.baja).map(p => p.id) ].filter(Boolean)
-    if (!ids.length) { this.avisar("Nada registrado todavía"); return }
+    if (!ids.length) { this.avisar(T.etq.nada_registrado); return }
     this.imprimir({ ids: ids.join(",") })
   }
 
   copiasProveedor() {
     const n = parseInt(this.piezasTarget.value) || 0
     if (n < 1 || !this.producto?.codigos.length) return
-    this.imprimir({ codigo: this.producto.codigos[0], n, nombre: this.producto.nombre, cantidad: this.pesoFijo > 0 ? `${this.pesoFijo.toFixed(3)} kg` : "1 pz" })
+    this.imprimir({ codigo: this.producto.codigos[0], n, nombre: this.producto.nombre, cantidad: this.pesoFijo > 0 ? `${this.pesoFijo.toFixed(3)} kg` : `1 ${T.etq.pz}` })
   }
 
   imprimir(extra) {
@@ -370,7 +370,7 @@ export default class extends Controller {
     const url = `${this.imprimirUrlValue}?${new URLSearchParams({ ...extra, ancho: c.ancho, alto: c.alto, leyenda: c.leyenda, bc: c.barras, fn: c.letra, imprimir: 1 })}`
     if (!this.ventana || this.ventana.closed) this.ventana = window.open(url, "kobayashi_etiquetas", "width=480,height=420,popup")
     else this.ventana.location.href = url
-    if (!this.ventana) this.avisar("Permite las ventanas emergentes para imprimir")
+    if (!this.ventana) this.avisar(T.etq.permite_popups)
   }
 
   async enviar(cuerpo) {
@@ -394,16 +394,16 @@ export default class extends Controller {
   iniciarBascula() {
     this.bascula = this.simuladaValue ? basculaSimulada() : new Bascula({ clave: "kobayashi:bascula" })
     const peso = (kg, color) => { this.pesoTarget.textContent = kg.toFixed(3); this.pesoTarget.className = `text-4xl font-extrabold leading-none ${color}` }
-    this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-stone-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `Pesando… ${p.kg.toFixed(3)} kg` })
+    this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-stone-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `${T.etq.pesando} ${p.kg.toFixed(3)} kg` })
     this.bascula.on("estable", p => {
-      if (this.producto && !this.porPieza) { this.agregar(p.kg, "báscula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `Agregado: ${p.kg.toFixed(3)} kg ✓` }
-      else this.estadoTarget.textContent = `Estable ${p.kg.toFixed(3)} kg (elige un producto por kilo)`
+      if (this.producto && !this.porPieza) { this.agregar(p.kg, "bascula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `${T.etq.agregado}: ${p.kg.toFixed(3)} kg ✓` }
+      else this.estadoTarget.textContent = `${T.etq.estable} ${p.kg.toFixed(3)} kg (${T.etq.elige_producto_kilo})`
     })
-    this.bascula.on("retirado", () => { peso(0, "text-stone-500"); this.estadoTarget.textContent = "Coloca paquete" })
+    this.bascula.on("retirado", () => { peso(0, "text-stone-500"); this.estadoTarget.textContent = T.etq.coloca_paquete })
     this.bascula.on("estado", e => {
       const on = e.estado === "conectada"
       this.estadoTarget.textContent = e.mensaje || e.estado
-      this.btnBasculaTarget.textContent = on ? "Báscula conectada ✓" : "Conectar báscula"
+      this.btnBasculaTarget.textContent = on ? T.etq.bascula_conectada : T.etq.conectar_bascula
       this.btnBasculaTarget.className = on ? "rounded border border-emerald-700 px-3 py-1 text-sm text-emerald-800 hover:bg-emerald-50" : "rounded border border-red-700 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
       this.btnCapturarTarget.disabled = !on
     })
@@ -413,12 +413,12 @@ export default class extends Controller {
       this.bascula.on("trama", t => { this.estadoTarget.textContent = JSON.stringify(t.texto); console.debug("[báscula]", t.texto) })
     }
     if (!this.simuladaValue && Bascula.soportada) this.bascula.reconectar().catch(() => {})
-    if (!this.simuladaValue && !Bascula.soportada) this.estadoTarget.textContent = "sin Web Serial (usa Chrome o Edge)"
+    if (!this.simuladaValue && !Bascula.soportada) this.estadoTarget.textContent = T.etq.sin_web_serial
   }
 
   async alternarBascula() {
     if (this.bascula.conectada) {
-      if (!confirm("¿Desconectar la báscula? La próxima vez habrá que elegir el puerto de nuevo.")) return
+      if (!confirm(T.etq.confirmar_desconectar)) return
       await this.bascula.desconectar()
     } else await this.bascula.conectar()
   }

@@ -1,28 +1,28 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Producción <%= @produccion.folio %> · <%= @produccion.producto.nombre %></h1>
-  <span class="badge"><%= @produccion.estado %></span>
+  <h1 class="text-2xl font-bold"><%= t("produccion.produccion") %> <%= @produccion.folio %> · <%= @produccion.producto.nombre %></h1>
+  <span class="badge"><%= t("estados.#{@produccion.estado}") %></span>
 </div>
 <div class="grid gap-4 sm:grid-cols-3">
-  <div class="card"><div class="text-xs uppercase text-stone-500">Entró</div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.cantidad, precision: 3) %> <%= @produccion.producto.unidad %></div></div>
-  <div class="card"><div class="text-xs uppercase text-stone-500">Salió</div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.total_salidas, precision: 3) %></div></div>
-  <div class="card"><div class="text-xs uppercase text-stone-500"><%= @produccion.abierta? ? "Disponible" : "Merma" %></div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.abierta? ? @produccion.disponible : @produccion.merma, precision: 3) %></div></div>
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("produccion.entro") %></div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.cantidad, precision: 3) %> <%= @produccion.producto.unidad %></div></div>
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("produccion.salio") %></div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.total_salidas, precision: 3) %></div></div>
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= @produccion.abierta? ? t("produccion.disponible") : t("produccion.merma") %></div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.abierta? ? @produccion.disponible : @produccion.merma, precision: 3) %></div></div>
 </div>
 <p class="mt-3 text-sm text-stone-600">
-  Abrió <%= @produccion.usuario %> el <%= l @produccion.created_at, format: :short %>
+  <%= t("produccion.abrio_el", quien: @produccion.usuario, fecha: l(@produccion.created_at, format: :short)) %>
 </p>
-<h2 class="mb-2 mt-6 font-semibold">Salidas etiquetadas</h2>
+<h2 class="mb-2 mt-6 font-semibold"><%= t("produccion.salidas_etiquetadas") %></h2>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Cantidad</th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.producto") %></th><th class="px-3 py-2 text-right"><%= t("comun.cantidad") %></th></tr></thead>
   <tbody>
     <% @salidas.each do |producto, cant| %>
       <tr class="border-t border-stone-100"><td class="px-3 py-2"><%= producto.nombre %></td><td class="px-3 py-2 text-right font-mono"><%= number_with_precision(cant, precision: producto.decimales) %> <%= producto.unidad %></td></tr>
     <% end %>
-    <% if @salidas.empty? %><tr><td colspan="2" class="px-3 py-4 text-center text-stone-500">Todavía nada.</td></tr><% end %>
+    <% if @salidas.empty? %><tr><td colspan="2" class="px-3 py-4 text-center text-stone-500"><%= t("produccion.todavia_nada") %></td></tr><% end %>
   </tbody>
 </table>
 <% if @produccion.abierta? %>
   <div class="mt-4 flex gap-3">
-    <%= link_to "Etiquetar salidas", new_etiqueta_path(produccion_id: @produccion.id), class: "btn btn-primary" %>
-    <%= button_to "Cerrar producción", cerrar_produccion_path(@produccion), class: "btn btn-secondary", form: { data: { turbo_confirm: "Al cerrar, #{number_with_precision(@produccion.disponible, precision: 3)} #{@produccion.producto.unidad} quedan como merma. ¿Cerrar?" } } %>
+    <%= link_to t("produccion.etiquetar_salidas"), new_etiqueta_path(produccion_id: @produccion.id), class: "btn btn-primary" %>
+    <%= button_to t("produccion.cerrar"), cerrar_produccion_path(@produccion), class: "btn btn-secondary", form: { data: { turbo_confirm: t("produccion.confirmar_cerrar", cantidad: "#{number_with_precision(@produccion.disponible, precision: 3)} #{@produccion.producto.unidad}") } } %>
   </div>
 <% end %>

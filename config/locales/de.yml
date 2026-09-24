@@ -88,6 +88,7 @@ de:
     quien: Wer
     cuando: Wann
     codigo: Code
+    kg_cada_una: kg je Stück
   cinta:
     menu: Menü
     salir: Abmelden
@@ -194,6 +195,28 @@ de:
       un_destino: die Bestellung geht an einen Laden oder an einen Kunden, eines von beiden
       mismo_origen: darf nicht dieselbe Filiale sein, die liefert
       sin_renglones: die Bestellung braucht mindestens eine Zeile
+    mayor_que_cero: muss größer als null sein
+    etiqueta:
+      no_esta_en_pedido: '%{producto} steht nicht auf Bestellung %{folio}'
+      sin_contexto_motivo: ohne Bestellung oder Produktion den Grund angeben (geht zur Prüfung)
+      ya_esta: '%{etiqueta} ist bereits %{estado}'
+      ya_viajo: '%{etiqueta} ist bereits in %{folio} (%{estado}): beim Wareneingang klären'
+      nada_que_agrupar: nichts zu gruppieren
+      solo_vivos_sueltos: nur aktive, lose %{tipo} lassen sich gruppieren
+      sucursales_distintas: die Etiketten gehören zu verschiedenen Filialen
+      sin_codigos: keine freien Codes mehr für dieses Produkt
+      sin_contexto: zum Etikettieren braucht es eine Bestellung, eine Produktion oder einen Grund
+      produccion_cerrada: Produktion %{folio} ist geschlossen
+      mas_de_lo_que_entro: 'es kann nicht mehr raus als reinkam: noch %{quedan} von %{de}'
+      producto_obligatorio: bei einem Paket Pflicht
+      tarima_sin_producto: eine Palette hat kein Produkt
+      sin_paquetes: 'keine Pakete: alle wurden abgeschrieben'
+    produccion:
+      ya_cerrada: die Produktion ist bereits geschlossen
+    barcode:
+      doce_digitos: 12 Ziffern erwartet
+      plu_rango: PLU außerhalb des Bereichs
+      secuencia_rango: Laufnummer außerhalb des Bereichs
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -415,3 +438,174 @@ de:
       entregada: zugestellt
       rechazada: abgelehnt
       cancelada: storniert
+    etq:
+      unidad: Einheit
+      peso_fijo: Festgewicht
+      codigo_proveedor: Lieferantencode
+      quitar: entfernen
+      sin_codigo_fijo: Kein fester Code zugewiesen.
+      escribe_codigo_o_peso: Code eingeben oder Festgewicht ändern
+      vinculado: Verknüpft
+      confirmar_quitar_codigo: Diesen Code vom Produkt entfernen?
+      con_codigo_proveedor: 'Mit Lieferantencode: die Kasse nimmt die Kiste an und verkauft sie durch Scannen dieses Codes.'
+      sin_codigo_proveedor: 'Ohne Lieferantencode: jedes Stück braucht ein eigenes Etikett („In Kiste schließen“ ausschalten).'
+      peso_mayor_cero: Gewicht größer als null eingeben
+      bascula_cero: Die Waage zeigt null
+      kg_cu: kg je Stück
+      cuantas_y_cuanto: Wie viele und wie schwer angeben
+      elige_producto: Zuerst das Produkt wählen
+      confirmar_limpiar: Wiegung(en) sind bereits erfasst (sofort). Die Liste zu leeren löscht sie NICHT. Fortfahren?
+      una_caja_de: Eine Kiste mit
+      piezas: Stück
+      etiquetas_de_1_pieza: Etiketten zu 1 Stück
+      pesadas: Wiegungen
+      en_una_caja: in einer Kiste
+      sueltas: lose
+      sin_pesadas: Keine Wiegungen
+      baja_etiqueta_ayuda: Dieses Etikett abschreiben (falsch etikettiert)
+      baja_caja_ayuda: Ganze Kiste abschreiben (falsch etikettiert)
+      al_registrar: beim Erfassen
+      caja: Kiste
+      baja: abgeschrieben
+      origenes:
+        manual: manuell
+        bascula: Waage
+        pieza: Stück
+      caja_sin_individuales_a: Die Kiste wird erfasst mit
+      caja_sin_individuales_b: Stück, ohne Einzeletiketten
+      sin_pesadas_aun: Noch keine Wiegungen
+      va_en_salida: geht mit Transfer
+      a: nach
+      paquete: Paket
+      paquetes: Pakete
+      la_caja_completa_y_etiquetas: die GANZE Kiste (und alle ihre Etiketten)
+      esta_etiqueta: dieses Etikett
+      motivo_ejemplo: Grund? (z. B. falsches Gewicht, falsches Produkt)
+      dada_de_baja: abgeschrieben
+      con: mit
+      etiquetas: Etiketten
+      sin_paquetes: keine Pakete
+      etiqueta: Etikett
+      cuantas_piezas: Stückzahl angeben
+      no_hay_pesadas: Keine Wiegungen
+      registrada: erfasst
+      etiquetas_registradas: Etiketten erfasst
+      nada_registrado: Noch nichts erfasst
+      permite_popups: Pop-ups zum Drucken erlauben
+      pesando: Wiegt…
+      agregado: Hinzugefügt
+      estable: Stabil
+      elige_producto_kilo: ein Kilo-Produkt wählen
+      coloca_paquete: Paket auflegen
+      bascula_conectada: Waage verbunden ✓
+      conectar_bascula: Waage verbinden
+      sin_web_serial: kein Web Serial (Chrome oder Edge verwenden)
+      confirmar_desconectar: Waage trennen? Beim nächsten Mal muss der Port neu gewählt werden.
+      pz: St.
+  etiquetas:
+    etiqueta: Etikett
+    etiquetar: Etikettieren
+    vivas: Aktive Etiketten
+    n_etiquetas:
+      one: 1 Etikett
+      other: '%{count} Etiketten'
+    n_paquetes:
+      one: 1 Paket
+      other: '%{count} Pakete'
+    n_cajas:
+      one: 1 Kiste
+      other: '%{count} Kisten'
+    tipos:
+      paquete: Paket
+      caja: Kiste
+      tarima: Palette
+    tipos_plural:
+      paquete: Pakete
+      caja: Kisten
+      tarima: Paletten
+    mixta: gemischt
+    ultima: Letztes
+    creada: Etikett %{codigo} erstellt
+    dada_de_baja: '%{etiqueta} abgeschrieben'
+    grupo_creado: '%{tipo} %{codigo} mit %{n} Etiketten erstellt'
+    volver_a_etiquetar: Zurück zum Etikettieren
+    simular: Wiegung simulieren
+    conectar_bascula: Waage verbinden
+    buscar_producto: Name, Schlüssel, PLU oder Code scannen
+    codigo_fabrica_y_peso: Werkscode und Festgewicht
+    codigo_fabrica: Werkscode
+    escanear_o_teclear: Scannen oder eintippen…
+    peso_por_pieza: Gewicht je Stück (kg)
+    vincular: Verknüpfen
+    vincular_ayuda: 'Verknüpfe den Werkscode, damit die Kasse ihn beim Scannen erkennt. Ändert ihn der Hersteller, füge den neuen hinzu: alle scannen als dieses Produkt.'
+    una_pesada: Eine Wiegung
+    agregar: Hinzufügen
+    de_la_bascula: Von der Waage
+    de_la_bascula_ayuda: Übernimmt das Gewicht, das die Waage gerade anzeigt
+    bascula_ayuda: Mit verbundener Waage kommt jedes stabile Gewicht von selbst rein.
+    desconectada: Nicht verbunden
+    varias_iguales: Mehrere gleiche
+    kg_cada_una: kg je Stück
+    o_reparte_total: oder verteile insgesamt
+    copias: Nur Kopien des Codes drucken
+    copias_ayuda: Druckt N Etiketten mit dem Lieferantencode, ohne etwas zu erfassen
+    sin_pesadas: Keine Wiegungen
+    cerrar_en_caja: In Kiste schließen
+    imprimir_al_vuelo: Sofort drucken
+    origen: Herkunft
+    motivo_obligatorio: 'Grund (Pflicht: keine Bestellung oder Produktion)'
+    queda_por_revisar: Wird trotzdem etikettiert und geht zur Tagesprüfung.
+    registrar_e_imprimir: Erfassen und drucken
+    reimprimir: Erneut drucken
+    limpiar: Leeren
+    etiqueta_impresa: Gedrucktes Etikett
+    cfg:
+      ancho: Breite (mm)
+      alto: Höhe (mm)
+      leyenda: Aufdruck
+      barras: Balkenhöhe (px)
+      letra: Schriftgröße Name
+    se_guarda_en_navegador: Wird in diesem Browser gespeichert.
+    restablecer: Zurücksetzen
+    en_lugar_de: anstelle von
+    llevas: bisher
+    armandose: im Aufbau
+    ayuda_kg: 'Kiste wie immer erstellen: sie hängt sich selbst an die Bestellung und kommt in den Transfer'
+    ayuda_pieza: 'feste Kiste: Stücke zählen und erfassen'
+    checklist: Checkliste
+    salir_del_pedido: Bestellung verlassen
+    produccion_contexto_html: Produktion %{folio} · %{entro} von %{producto} eingegangen, noch %{queda}
+    ver_produccion: Produktion ansehen
+    sin_contexto: Keine Bestellung oder Produktion.
+    sin_contexto_ayuda_html: Etikettieren braucht einen Grund und geht zur Prüfung. Normalerweise kommst du über eine Bestellzeile, mit der Schaltfläche %{boton}, oder über eine Produktion.
+    paquetes_sueltos: Lose Pakete
+    cajas: Kisten
+    tarimas: Paletten
+    cerrar_caja_marcados: Kiste mit den markierten schließen
+    armar_tarima_marcadas: Palette mit den markierten bauen
+    dar_de_baja: Abschreiben
+    escanea_codigo: Code scannen
+    motivo_baja: Grund (Schwund, heruntergefallen, Fehler…)
+  produccion:
+    produccion: Produktion
+    producciones: Produktionen
+    abrir: Produktion öffnen
+    entro: Eingang
+    salio: Ausgang
+    disponible: Verfügbar
+    merma: Schwund
+    cerradas: Geschlossen
+    cerrar: Produktion schließen
+    sin_abiertas: Keine offenen Produktionen.
+    producto_que_entra: Eingehendes Produkt
+    cantidad_que_entra: Eingehende Menge
+    ayuda: Was zur Verarbeitung reinkommt. Was rauskommt, wird aus der Produktion etikettiert; die Differenz ist Schwund.
+    abrio_el: Geöffnet von %{quien} am %{fecha}
+    salidas_etiquetadas: Etikettierter Ausgang
+    todavia_nada: Noch nichts raus.
+    etiquetar_salidas: Ausgang etikettieren
+    confirmar_cerrar: Schließen? Die Differenz (%{cantidad}) wird als Schwund gebucht.
+    abierta_aviso: 'Produktion %{folio} geöffnet: %{cantidad} von %{producto} eingegangen'
+    cerrada_aviso: 'Produktion geschlossen: Schwund %{merma}'
+  caja:
+    nueva_venta: Neuer Verkauf

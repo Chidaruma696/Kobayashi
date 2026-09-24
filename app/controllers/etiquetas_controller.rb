@@ -34,7 +34,7 @@ class EtiquetasController < ApplicationController
     dejar_por_revisar([ @etiqueta ], linea, autoriza)
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to new_etiqueta_path(contexto_params.merge(producto_id: producto.id)), notice: "Etiqueta #{@etiqueta.codigo} creada" }
+      format.html { redirect_to new_etiqueta_path(contexto_params.merge(producto_id: producto.id)), notice: t("etiquetas.creada", codigo: @etiqueta.codigo) }
     end
   rescue ActiveRecord::RecordInvalid, ArgumentError => e
     mensaje = e.respond_to?(:record) ? e.record.errors.full_messages.join(", ") : e.message
@@ -149,7 +149,7 @@ class EtiquetasController < ApplicationController
     linea = etiqueta.pedido_linea || etiqueta.hijas.first&.pedido_linea
     etiqueta.dar_de_baja!(motivo: params[:motivo].to_s.strip, usuario: usuario_actual)
     respond_to do |format|
-      format.html { redirect_to etiquetas_path, notice: "#{etiqueta} dada de baja" }
+      format.html { redirect_to etiquetas_path, notice: t("etiquetas.dada_de_baja", etiqueta: etiqueta) }
       format.json do
         padre = etiqueta.padre&.reload
         render json: { id: etiqueta.id, codigo: etiqueta.codigo, tipo: etiqueta.tipo, hijas: etiqueta.hijas.count,
@@ -180,9 +180,9 @@ class EtiquetasController < ApplicationController
     linea = @linea
     # Otro producto dentro del pedido cae en su renglón; declarado como sustituto, se queda en este.
     linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id && params[:sustituto].blank?
-    raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
+    raise ArgumentError, t("errores.etiqueta.no_esta_en_pedido", producto: producto.nombre, folio: @linea.pedido.folio) if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion
-    raise ArgumentError, "sin pedido ni producción escribe el motivo (queda por revisar)" if params[:justificacion].blank?
+    raise ArgumentError, t("errores.etiqueta.sin_contexto_motivo") if params[:justificacion].blank?
     [ nil, autorizador_o_revision("etiquetas.libre") ]
   end
 
@@ -233,7 +233,7 @@ class EtiquetasController < ApplicationController
   def agrupar
     hijas = Etiqueta.where(sucursal: sucursal_actual, id: Array(params[:ids])).to_a
     grupo = yield(hijas)
-    redirect_to etiqueta_path(grupo), notice: "#{grupo.tipo.capitalize} #{grupo.codigo} creada con #{hijas.size} etiquetas"
+    redirect_to etiqueta_path(grupo), notice: t("etiquetas.grupo_creado", tipo: t("etiquetas.tipos.#{grupo.tipo}").capitalize, codigo: grupo.codigo, n: hijas.size)
   rescue ArgumentError => e
     redirect_to etiquetas_path, alert: e.message
   end

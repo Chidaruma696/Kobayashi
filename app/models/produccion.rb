@@ -50,7 +50,7 @@ class Produccion < ApplicationRecord
 
   # Cierra: las salidas entran a la existencia y la merma queda registrada en la producción.
   def cerrar!(usuario:)
-    raise ArgumentError, "la producción ya está cerrada" unless abierta?
+    raise ArgumentError, I18n.t("errores.produccion.ya_cerrada") unless abierta?
     transaction do
       salidas.each do |producto, cant|
         Inventario.mover!(sucursal: sucursal, producto: producto, tipo: "produccion", cantidad: cant,
