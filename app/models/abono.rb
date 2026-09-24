@@ -14,10 +14,10 @@ class Abono < ApplicationRecord
   validates :forma, inclusion: { in: Pago::FORMAS }
 
   def self.registrar!(cliente:, sucursal:, monto_centavos:, forma:, usuario:, viaje: nil, notas: nil)
-    raise ArgumentError, "el abono debe ser mayor que cero" unless monto_centavos.to_i.positive?
+    raise ArgumentError, I18n.t("errores.abono.mayor_que_cero") unless monto_centavos.to_i.positive?
     corte = nil
     unless viaje
-      corte = Corte.abierto_en(sucursal) or raise ArgumentError, "no hay caja abierta en #{sucursal.nombre} para recibir el abono"
+      corte = Corte.abierto_en(sucursal) or raise ArgumentError, I18n.t("errores.abono.sin_caja", sucursal: sucursal.nombre)
     end
     transaction do
       abono = create!(cliente: cliente, sucursal: sucursal, monto_centavos: monto_centavos.to_i, forma: forma, usuario: usuario,

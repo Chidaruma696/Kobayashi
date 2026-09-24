@@ -19,7 +19,7 @@ class Conteo < ApplicationRecord
   def abierto? = estado == "abierto"
 
   def self.abrir!(sucursal:, usuario:, responsable:)
-    raise ArgumentError, "ya hay un conteo abierto en #{sucursal.nombre}" if abiertos.exists?(sucursal: sucursal)
+    raise ArgumentError, I18n.t("errores.conteo.ya_abierto", sucursal: sucursal.nombre) if abiertos.exists?(sucursal: sucursal)
     transaction do
       c = create!(sucursal: sucursal, usuario: usuario, responsable: responsable)
       Existencia.where(sucursal: sucursal).where("cantidad > 0").includes(:producto).each do |e|
@@ -35,10 +35,10 @@ class Conteo < ApplicationRecord
 
   # Escanear una etiqueta: se cuentan sus hojas vivas, cada una una sola vez.
   def escanear!(etiqueta)
-    raise ArgumentError, "el conteo está cerrado" unless abierto?
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} no está viva (#{etiqueta.estado})" unless etiqueta.viva?
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} es de otra sucursal" unless etiqueta.sucursal_id == sucursal_id
-    raise ArgumentError, "la etiqueta #{etiqueta.codigo} está en tránsito" if etiqueta.en_transito?
+    raise ArgumentError, I18n.t("errores.conteo.cerrado") unless abierto?
+    raise ArgumentError, I18n.t("errores.caja.etiqueta_no_viva", codigo: etiqueta.codigo, estado: I18n.t("estados.#{etiqueta.estado}")) unless etiqueta.viva?
+    raise ArgumentError, I18n.t("errores.caja.etiqueta_otra_sucursal", codigo: etiqueta.codigo) unless etiqueta.sucursal_id == sucursal_id
+    raise ArgumentError, I18n.t("errores.conteo.en_transito", codigo: etiqueta.codigo) if etiqueta.en_transito?
     nuevas = 0
     transaction do
       etiqueta.hojas_vivas.each do |h|
@@ -48,15 +48,15 @@ class Conteo < ApplicationRecord
         nuevas += 1
       end
     end
-    raise ArgumentError, "#{etiqueta.codigo} ya estaba contada" if nuevas.zero?
+    raise ArgumentError, I18n.t("errores.conteo.ya_contada", codigo: etiqueta.codigo) if nuevas.zero?
     nuevas
   end
 
   # Lo que no lleva etiqueta se teclea; sustituye el valor anterior, no lo suma.
   def contar_manual!(producto, cantidad)
-    raise ArgumentError, "el conteo está cerrado" unless abierto?
+    raise ArgumentError, I18n.t("errores.conteo.cerrado") unless abierto?
     cantidad = BigDecimal(cantidad.to_s).round(3)
-    raise ArgumentError, "cantidad inválida" if cantidad.negative?
+    raise ArgumentError, I18n.t("errores.conteo.cantidad_invalida") if cantidad.negative?
     linea_de(producto).update!(manual: cantidad)
   end
 
@@ -66,14 +66,14 @@ class Conteo < ApplicationRecord
   end
 
   def cerrar!(usuario:)
-    raise ArgumentError, "el conteo ya está cerrado" unless abierto?
+    raise ArgumentError, I18n.t("errores.conteo.ya_cerrado") unless abierto?
     faltante = 0
     sobrante = 0
     detalle = []
     transaction do
       # Lo que tenía etiqueta y no apareció, muere aquí (y su producto queda fuera del sistema).
       etiquetas_no_vistas.each do |e|
-        e.update!(estado: "baja", motivo: "no apareció en el conteo #{folio}", padre_id: nil)
+        e.update!(estado: "baja", motivo: I18n.t("conteos.avisos.no_aparecio", folio: folio), padre_id: nil)
       end
       lineas.includes(:producto).each do |l|
         sistema = Existencia.de(sucursal, l.producto)

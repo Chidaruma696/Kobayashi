@@ -9,12 +9,12 @@ class Cargo < ApplicationRecord
 
   validates :monto_centavos, numericality: { only_integer: true, greater_than: 0 }
   validates :estado, inclusion: { in: %w[pendiente cobrado perdonado] }
-  validate { errors.add(:base, "el cargo viene de un conteo, de una revisión o de un viaje") if conteo.nil? && revision.nil? && viaje.nil? }
+  validate { errors.add(:base, I18n.t("errores.cargo.sin_origen")) if conteo.nil? && revision.nil? && viaje.nil? }
 
   scope :pendientes, -> { where(estado: "pendiente") }
 
   def resolver!(estado, usuario:)
-    raise ArgumentError, "el cargo ya está #{self.estado}" unless self.estado == "pendiente"
+    raise ArgumentError, I18n.t("errores.cargo.ya_esta", estado: I18n.t("estados.#{self.estado}")) unless self.estado == "pendiente"
     update!(estado: estado, resuelto_por: usuario, resuelto_en: Time.current)
   end
 end

@@ -6,14 +6,14 @@ module Inventario
 
   def self.mover!(sucursal:, producto:, tipo:, cantidad:, usuario:, etiqueta: nil, referencia: nil, motivo: nil, fecha: Date.current)
     cantidad = BigDecimal(cantidad.to_s).round(3)
-    raise ArgumentError, "la cantidad debe ser mayor que cero" unless cantidad.positive?
+    raise ArgumentError, I18n.t("errores.inventario.cantidad_cero") unless cantidad.positive?
     delta = Movimiento.signo(tipo) * cantidad
 
     Movimiento.transaction do
       existencia = Existencia.lock.find_or_create_by!(sucursal: sucursal, producto: producto)
       nuevo = existencia.cantidad + delta
       if nuevo.negative?
-        raise SinExistencia, "Existencia insuficiente de #{producto.nombre} en #{sucursal.nombre}: hay #{existencia.cantidad.to_s('F')}, se piden #{cantidad.to_s('F')}"
+        raise SinExistencia, I18n.t("errores.inventario.insuficiente", producto: producto.nombre, sucursal: sucursal.nombre, hay: existencia.cantidad.to_s("F"), piden: cantidad.to_s("F"))
       end
       existencia.update!(cantidad: nuevo)
       Movimiento.create!(sucursal: sucursal, producto: producto, tipo: tipo, cantidad: cantidad, saldo: nuevo,

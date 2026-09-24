@@ -18,6 +18,10 @@ module Credito
   }.freeze
   DIAS = %w[lunes martes miércoles jueves viernes sábado domingo].freeze
 
+  # Nombre del tipo de crédito y del día de corte en el idioma en curso.
+  def self.nombre(tipo) = I18n.t("credito.tipos.#{tipo}", default: TIPOS[tipo])
+  def self.dia(n) = n && I18n.t("credito.dias")[n]
+
   Estado = Struct.new(:tipo, :saldo_centavos, :bloqueado, :motivo, :regla, :vencido_centavos, :manual, keyword_init: true) do
     def permite_credito? = tipo != "contado" && !bloqueado
   end
@@ -32,12 +36,12 @@ module Credito
     when "bloqueado"
       estado.bloqueado = true
       estado.manual = true
-      estado.motivo = "Bloqueado por cobranza: #{cliente.bloqueo_motivo}"
+      estado.motivo = I18n.t("credito.bloqueado_por_cobranza", motivo: cliente.bloqueo_motivo)
     when "desbloqueado"
       if estado.bloqueado
         estado.bloqueado = false
         estado.manual = true
-        estado.motivo = "Desbloqueado por cobranza: #{cliente.bloqueo_motivo}"
+        estado.motivo = I18n.t("credito.desbloqueado_por_cobranza", motivo: cliente.bloqueo_motivo)
       end
     end
     estado
@@ -85,27 +89,27 @@ module Credito
     saldo = e.saldo_centavos
     case cliente.credito
     when "contado"
-      e.regla = "Contado: el crédito no aplica"
+      e.regla = I18n.t("credito.reglas.contado")
     when "nota_x_nota"
-      e.regla = "Paga la nota anterior para sacar la nueva"
-      bloquear(e, saldo, "debe #{Dinero.pesos(saldo)}: paga la nota anterior") if saldo.positive?
+      e.regla = I18n.t("credito.reglas.nota_x_nota")
+      bloquear(e, saldo, I18n.t("credito.bloqueos.nota_x_nota", saldo: Dinero.pesos(saldo))) if saldo.positive?
     when "limite"
       lim = cliente.limite_credito_centavos
-      e.regla = lim.positive? ? "Límite de crédito #{Dinero.pesos(lim)}" : "Límite sin configurar"
-      bloquear(e, saldo, "tope de crédito: debe #{Dinero.pesos(saldo)} de #{Dinero.pesos(lim)}") if lim.positive? && saldo >= lim
+      e.regla = lim.positive? ? I18n.t("credito.reglas.limite", limite: Dinero.pesos(lim)) : I18n.t("credito.reglas.limite_sin_configurar")
+      bloquear(e, saldo, I18n.t("credito.bloqueos.limite", saldo: Dinero.pesos(saldo), limite: Dinero.pesos(lim))) if lim.positive? && saldo >= lim
     when "semanal", "especial"
       if cliente.credito == "especial" && cliente.dia_corte.nil?
-        e.regla = "Especial sin día de corte: solo bloqueo manual"
+        e.regla = I18n.t("credito.reglas.especial_sin_dia")
         return
       end
       corte = fecha_corte(hoy, cliente.dia_corte)
-      e.regla = cliente.dia_corte ? "Paga al corte de los #{DIAS[cliente.dia_corte]}" : "Paga su semana (lunes a sábado)"
+      e.regla = cliente.dia_corte ? I18n.t("credito.reglas.semanal_dia", dia: dia(cliente.dia_corte)) : I18n.t("credito.reglas.semanal")
       vencido = vivos.select { |fecha, _| cliente.dia_corte ? fecha <= corte : fecha < corte }.sum { |_, r| r }
-      bloquear(e, vencido, "llegó el corte con #{Dinero.pesos(vencido)} sin pagar") if vencido.positive?
+      bloquear(e, vencido, I18n.t("credito.bloqueos.semanal", monto: Dinero.pesos(vencido))) if vencido.positive?
     when "contado_abonando"
-      e.regla = "Crédito solo si abona cada 7 días"
+      e.regla = I18n.t("credito.reglas.contado_abonando")
       if saldo.positive? && (ultimo_abono.nil? || ultimo_abono < hoy - 7)
-        bloquear(e, saldo, "dejó de abonar (#{ultimo_abono ? "último abono #{I18n.l(ultimo_abono)}" : 'sin abonos'}) y debe #{Dinero.pesos(saldo)}")
+        bloquear(e, saldo, I18n.t("credito.bloqueos.contado_abonando", ultimo: ultimo_abono ? I18n.t("credito.ultimo_abono", fecha: I18n.l(ultimo_abono)) : I18n.t("credito.sin_abonos"), saldo: Dinero.pesos(saldo)))
       end
     end
   end

@@ -1,9 +1,9 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Kardex · <%= @sucursal %><%= " · #{@producto.nombre}" if @producto %></h1>
+  <h1 class="text-2xl font-bold"><%= t("inventario.kardex") %> · <%= @sucursal %><%= " · #{@producto.nombre}" if @producto %></h1>
   <%= render "selector_sucursal" %>
 </div>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2">Etiqueta</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2">Motivo</th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.fecha") %></th><th class="px-3 py-2"><%= t("comun.producto") %></th><th class="px-3 py-2"><%= t("salidas.tipo") %></th><th class="px-3 py-2 text-right"><%= t("comun.cantidad") %></th><th class="px-3 py-2 text-right"><%= t("cobranza.saldo") %></th><th class="px-3 py-2"><%= t("etiquetas.etiqueta") %></th><th class="px-3 py-2"><%= t("comun.quien") %></th><th class="px-3 py-2"><%= t("comun.motivo") %></th></tr></thead>
   <tbody>
     <% @movimientos.each do |m| %>
       <tr class="border-t border-stone-100">
@@ -17,6 +17,6 @@
         <td class="px-3 py-2 text-stone-600"><%= m.motivo %></td>
       </tr>
     <% end %>
-    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500">Sin movimientos.</td></tr><% end %>
+    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500"><%= t("inventario.sin_movimientos") %></td></tr><% end %>
   </tbody>
 </table>

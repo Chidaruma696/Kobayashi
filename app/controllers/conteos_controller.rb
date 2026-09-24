@@ -15,7 +15,7 @@ class ConteosController < ApplicationController
 
   def create
     conteo = Conteo.abrir!(sucursal: sucursal_actual, usuario: usuario_actual, responsable: Usuario.activos.find(params[:responsable_id]))
-    redirect_to conteo_path(conteo), notice: "Conteo #{conteo.folio} abierto: escanea todo lo que hay"
+    redirect_to conteo_path(conteo), notice: t("conteos.avisos.abierto", folio: conteo.folio)
   rescue ArgumentError => e
     redirect_to new_conteo_path, alert: e.message
   end
@@ -29,7 +29,7 @@ class ConteosController < ApplicationController
   def escanear
     etiqueta = Etiqueta.buscar(params[:codigo]) or raise ArgumentError, "no se encontró «#{params[:codigo]}»"
     n = @conteo.escanear!(etiqueta)
-    redirect_to conteo_path(@conteo), notice: "#{n} paquetes contados"
+    redirect_to conteo_path(@conteo), notice: t("conteos.avisos.contados", n: n)
   rescue ArgumentError => e
     redirect_to conteo_path(@conteo), alert: e.message
   end

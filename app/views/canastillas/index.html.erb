@@ -1,63 +1,63 @@
-<h1 class="mb-4 text-2xl font-bold">Canastillas</h1>
-<p class="mb-4 text-sm text-stone-600">Activo prestado. Salen del camión al cliente en la parada, vuelven cuando el cliente las devuelve (en la parada o en bodega) y el chofer las descarga al liquidar. Saldo por tipo.</p>
+<h1 class="mb-4 text-2xl font-bold"><%= t("viajes.canastillas") %></h1>
+<p class="mb-4 text-sm text-stone-600"><%= t("canastillas.intro") %></p>
 <div class="mb-4 grid gap-4 md:grid-cols-2">
   <div class="card">
-    <h2 class="mb-2 font-semibold">Clientes que deben canastillas</h2>
+    <h2 class="mb-2 font-semibold"><%= t("canastillas.clientes_deben") %></h2>
     <table class="w-full text-sm">
       <% @clientes.each do |c, saldos| %>
         <tr class="border-t border-stone-100"><td class="py-1"><%= link_to c.nombre, cobranza_cliente_path(c), class: "enlace" %></td>
           <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
       <% end %>
-      <% if @clientes.empty? %><tr><td class="py-3 text-center text-stone-500">Nadie debe canastillas.</td></tr><% end %>
+      <% if @clientes.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("canastillas.nadie_debe") %></td></tr><% end %>
     </table>
   </div>
   <div class="card">
-    <h2 class="mb-2 font-semibold">Canastillas en camiones (por chofer)</h2>
+    <h2 class="mb-2 font-semibold"><%= t("canastillas.en_camiones") %></h2>
     <table class="w-full text-sm">
       <% @choferes.each do |u, saldos| %>
         <tr class="border-t border-stone-100"><td class="py-1"><%= u %></td>
           <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
       <% end %>
-      <% if @choferes.empty? %><tr><td class="py-3 text-center text-stone-500">Todo en bodega.</td></tr><% end %>
+      <% if @choferes.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("canastillas.todo_en_bodega") %></td></tr><% end %>
     </table>
   </div>
 </div>
 <% if puede?("canastillas.ajustar") %>
   <div class="mb-4 grid gap-4 md:grid-cols-2">
     <div class="card">
-      <h2 class="mb-2 font-semibold">Devolución en bodega</h2>
+      <h2 class="mb-2 font-semibold"><%= t("canastillas.devolucion_bodega") %></h2>
       <%= form_with url: canastillas_devolucion_path, class: "flex flex-wrap gap-2 text-sm" do |f| %>
         <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, {}, class: "btn btn-secondary btn-xs" %>
         <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "btn btn-secondary btn-xs" %>
-        <%= f.number_field :cantidad, min: 1, placeholder: "cantidad", required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
-        <%= f.submit "Registrar", class: "btn btn-primary btn-sm" %>
+        <%= f.number_field :cantidad, min: 1, placeholder: t("comun.cantidad").downcase, required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
+        <%= f.submit t("canastillas.registrar"), class: "btn btn-primary btn-sm" %>
       <% end %>
     </div>
     <div class="card">
-      <h2 class="mb-2 font-semibold">Ajuste (con signo y motivo)</h2>
+      <h2 class="mb-2 font-semibold"><%= t("canastillas.ajuste") %></h2>
       <%= form_with url: canastillas_ajuste_path, class: "flex flex-wrap gap-2 text-sm" do |f| %>
-        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, { include_blank: "— cliente —" }, class: "btn btn-secondary btn-xs" %>
-        <%= f.select :chofer_id, @todos_choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: "— o chofer —" }, class: "btn btn-secondary btn-xs" %>
+        <%= f.select :cliente_id, @todos_clientes.map { |c| [ c.nombre, c.id ] }, { include_blank: t("canastillas.cliente_blank") }, class: "btn btn-secondary btn-xs" %>
+        <%= f.select :chofer_id, @todos_choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: t("canastillas.chofer_blank") }, class: "btn btn-secondary btn-xs" %>
         <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "btn btn-secondary btn-xs" %>
-        <%= f.number_field :cantidad, placeholder: "±cantidad", required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
-        <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
-        <%= f.submit "Ajustar", class: "rounded border border-amber-400 px-3 py-1" %>
+        <%= f.number_field :cantidad, placeholder: "±#{t("comun.cantidad").downcase}", required: true, class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %>
+        <%= f.text_field :motivo, placeholder: t("comun.motivo").downcase, required: true, class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
+        <%= f.submit t("canastillas.ajustar"), class: "rounded border border-amber-400 px-3 py-1" %>
       <% end %>
     </div>
   </div>
 <% end %>
-<h2 class="mb-2 font-semibold">Últimos movimientos</h2>
+<h2 class="mb-2 font-semibold"><%= t("canastillas.ultimos_movimientos") %></h2>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2">Canastilla</th><th class="px-3 py-2">Cliente</th><th class="px-3 py-2 text-right">± cliente</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2 text-right">± camión</th><th class="px-3 py-2">Concepto</th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.fecha") %></th><th class="px-3 py-2"><%= t("salidas.tipo") %></th><th class="px-3 py-2"><%= t("canastillas.canastilla") %></th><th class="px-3 py-2"><%= t("caja.cliente") %></th><th class="px-3 py-2 text-right">± <%= t("caja.cliente").downcase %></th><th class="px-3 py-2"><%= t("salidas.chofer") %></th><th class="px-3 py-2 text-right">± <%= t("canastillas.camion") %></th><th class="px-3 py-2"><%= t("canastillas.concepto") %></th></tr></thead>
   <tbody>
     <% @movimientos.each do |m| %>
       <tr class="border-t border-stone-100">
-        <td class="px-3 py-1 whitespace-nowrap"><%= l m.fecha %></td><td class="px-3 py-1"><%= m.tipo %></td><td class="px-3 py-1"><%= m.tipo_canastilla %></td>
+        <td class="px-3 py-1 whitespace-nowrap"><%= l m.fecha %></td><td class="px-3 py-1"><%= t("canastillas.tipos.#{m.tipo}") %></td><td class="px-3 py-1"><%= m.tipo_canastilla %></td>
         <td class="px-3 py-1"><%= m.cliente %></td><td class="px-3 py-1 text-right font-mono"><%= m.cantidad_cliente unless m.cantidad_cliente.zero? %></td>
         <td class="px-3 py-1"><%= m.chofer %></td><td class="px-3 py-1 text-right font-mono"><%= m.cantidad_chofer unless m.cantidad_chofer.zero? %></td>
         <td class="px-3 py-1 text-stone-600"><%= m.concepto %><%= " (#{m.usuario})" %></td>
       </tr>
     <% end %>
-    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500">Sin movimientos.</td></tr><% end %>
+    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500"><%= t("inventario.sin_movimientos") %></td></tr><% end %>
   </tbody>
 </table>

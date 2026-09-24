@@ -17,8 +17,8 @@ class CanastillasController < ApplicationController
   def devolucion
     autorizar!("canastillas.ajustar")
     Canastillas.mover!(tipo: "devolucion", tipo_canastilla: TipoCanastilla.find(params[:tipo_canastilla_id]), cantidad: params[:cantidad],
-                       sucursal: sucursal_actual, usuario: usuario_actual, cliente: Cliente.find(params[:cliente_id]), concepto: "Devolución en bodega")
-    redirect_to canastillas_path, notice: "Devolución registrada"
+                       sucursal: sucursal_actual, usuario: usuario_actual, cliente: Cliente.find(params[:cliente_id]), concepto: t("canastillas.devolucion_bodega"))
+    redirect_to canastillas_path, notice: t("canastillas.avisos.devolucion")
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to canastillas_path, alert: e.message
   end
@@ -28,7 +28,7 @@ class CanastillasController < ApplicationController
     Canastillas.ajustar!(tipo_canastilla: TipoCanastilla.find(params[:tipo_canastilla_id]), cantidad: params[:cantidad], motivo: params[:motivo].to_s.strip,
                          sucursal: sucursal_actual, usuario: usuario_actual,
                          cliente: Cliente.find_by(id: params[:cliente_id].presence), chofer: Usuario.find_by(id: params[:chofer_id].presence))
-    redirect_to canastillas_path, notice: "Ajuste registrado"
+    redirect_to canastillas_path, notice: t("canastillas.avisos.ajuste")
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to canastillas_path, alert: e.message
   end

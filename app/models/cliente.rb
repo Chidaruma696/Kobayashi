@@ -34,12 +34,12 @@ class Cliente < ApplicationRecord
   end
 
   def bloquear!(motivo:, usuario:)
-    raise ArgumentError, "escribe el motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.escribe_motivo") if motivo.blank?
     update!(bloqueo_manual: "bloqueado", bloqueo_motivo: motivo, bloqueo_por: usuario)
   end
 
   def desbloquear!(motivo:, usuario:)
-    raise ArgumentError, "escribe el motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.escribe_motivo") if motivo.blank?
     update!(bloqueo_manual: "desbloqueado", bloqueo_motivo: motivo, bloqueo_por: usuario)
   end
 

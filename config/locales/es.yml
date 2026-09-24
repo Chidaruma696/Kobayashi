@@ -293,6 +293,36 @@ es:
       falta_dinero: 'falta dinero: el ticket es %{total} y se pagan %{pago}'
       no_efectivo_excede: una transferencia o depósito no puede pasarse del total
       sin_ticket_devolucion: 'Sin ticket ni etiqueta no hay devolución: no se encontró «%{codigo}»'
+    escribe_motivo: escribe el motivo
+    viaje:
+      sin_chofer: 'la ruta %{ruta} no tiene chofer: elige uno'
+      ya_salio: el viaje ya salió
+      esta: el viaje está %{estado}
+      parada_ajena: esa parada no es de este viaje
+      sin_repartos: el viaje no lleva repartos
+      faltan_sellar: 'faltan por sellar: %{folios}'
+      sin_caja: no hay caja abierta en %{sucursal} para recibir el dinero
+      solo_cancela_antes: solo se cancela antes de salir
+    reparto:
+      por_que_no_escaneo: escribe por qué no se escaneó
+    conteo:
+      ya_abierto: ya hay un conteo abierto en %{sucursal}
+      cerrado: el conteo está cerrado
+      en_transito: la etiqueta %{codigo} está en tránsito
+      ya_contada: '%{codigo} ya estaba contada'
+      cantidad_invalida: cantidad inválida
+      ya_cerrado: el conteo ya está cerrado
+    cargo:
+      sin_origen: el cargo viene de un conteo, de una revisión o de un viaje
+      ya_esta: el cargo ya está %{estado}
+    inventario:
+      cantidad_cero: la cantidad debe ser mayor que cero
+      insuficiente: 'Existencia insuficiente de %{producto} en %{sucursal}: hay %{hay}, se piden %{piden}'
+    abono:
+      mayor_que_cero: el abono debe ser mayor que cero
+      sin_caja: no hay caja abierta en %{sucursal} para recibir el abono
+    revision:
+      ya_esta: la revisión ya está %{estado}
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -336,6 +366,13 @@ es:
     aprobada: Aprobada
     observada_sin_cargo: Observada, sin cargo
     observada_cargada: 'Observada y cargada a %{quien}: %{monto}'
+    desc:
+      etiqueta: 'Etiqueta %{codigo}: %{cantidad}'
+      produccion: 'Producción %{folio}: entraron %{cantidad}'
+      salida_linea: 'Renglón sin etiqueta en %{folio}: %{cantidad}'
+      movimiento: '%{tipo} de %{cantidad}'
+      retiro: Retiro de %{monto} del corte %{folio}
+      venta_linea: 'Precio bajado en %{folio}: %{producto} a %{precio} (catálogo %{catalogo})'
   estados:
     pendiente: pendiente
     aprobada: aprobada
@@ -371,6 +408,7 @@ es:
     bloqueado: bloqueado
     perdonado: perdonado
     cobrado: cobrado
+    desbloqueado: desbloqueado
   movimientos:
     entrada: Entrada
     produccion: Producción
@@ -875,3 +913,267 @@ es:
       sobrante: '%{codigo} recibida como sobrante; queda por revisar'
       recibida: Salida %{folio} recibida
       desarmada: '%{folio}: desarmada al recibir'
+  credito:
+    tipos:
+      contado: Contado (sin crédito)
+      nota_x_nota: Nota por nota
+      limite: Límite de crédito
+      semanal: Semanal (paga al corte)
+      contado_abonando: Contado abonando (7 días)
+      especial: Especial (día de corte propio)
+    dias:
+    - lunes
+    - martes
+    - miércoles
+    - jueves
+    - viernes
+    - sábado
+    - domingo
+    bloqueado_por_cobranza: 'Bloqueado por cobranza: %{motivo}'
+    desbloqueado_por_cobranza: 'Desbloqueado por cobranza: %{motivo}'
+    ultimo_abono: último abono %{fecha}
+    sin_abonos: sin abonos
+    reglas:
+      contado: 'Contado: el crédito no aplica'
+      nota_x_nota: Paga la nota anterior para sacar la nueva
+      limite: Límite de crédito %{limite}
+      limite_sin_configurar: Límite sin configurar
+      especial_sin_dia: 'Especial sin día de corte: solo bloqueo manual'
+      semanal_dia: Paga al corte de los %{dia}
+      semanal: Paga su semana (lunes a sábado)
+      contado_abonando: Crédito solo si abona cada 7 días
+    bloqueos:
+      nota_x_nota: 'debe %{saldo}: paga la nota anterior'
+      limite: 'tope de crédito: debe %{saldo} de %{limite}'
+      semanal: llegó el corte con %{monto} sin pagar
+      contado_abonando: dejó de abonar (%{ultimo}) y debe %{saldo}
+  viajes:
+    viaje: Viaje
+    viajes_de_reparto: Viajes de reparto
+    orden_de_reparto: Orden de reparto
+    tel: Tel.
+    debe: Debe
+    canastillas: Canastillas
+    n_bultos:
+      one: 1 bulto
+      other: '%{count} bultos'
+    nota: Nota
+    cobrado: Cobrado
+    firma: Firma
+    total_paradas: Total paradas
+    a_cobrar: A cobrar
+    paradas: Paradas
+    cerradas: cerradas
+    liquidar: Liquidar
+    armar: Armar
+    ninguno_abierto: Ningún viaje abierto.
+    liquidados: Liquidados
+    por: por
+    nuevo: Nuevo viaje de reparto
+    el_de_la_ruta: — el de la ruta —
+    solo_con_permiso: Solo aparecen usuarios con permiso de repartir.
+    nuevo_ayuda: Los repartos de la ruta que ya estén sellados suben solos al viaje; los demás se agregan desde la ficha del viaje o de la salida.
+    armar_viaje: Armar viaje
+    armo: armó
+    salio: salió
+    parada: Parada
+    zona: Zona
+    bultos: Bultos
+    sin_repartos: Sin repartos todavía.
+    repartos_para_subir: Repartos que se pueden subir
+    subir: Subir
+    sin_repartos_abiertos: No hay repartos abiertos sin viaje.
+    nueva_salida_cliente: Nueva salida a un cliente
+    despachar: Despachar
+    despachar_ayuda: Todas las paradas deben estar selladas. Al salir, cada reparto cierra su nota por cobrar y baja el inventario. Hace falta caja abierta en %{sucursal}.
+    sale_el_camion: Sale el camión
+    confirmar_despachar: ¿Despachar el viaje %{folio} con %{n} paradas?
+    cancelar_viaje: Cancelar viaje
+    confirmar_cancelar: ¿Cancelar el viaje?
+    dinero_del_viaje: Dinero del viaje
+    cobrado_efectivo: Cobrado en efectivo (notas y abonos)
+    cambio_dado: Cambio dado
+    a_credito: A crédito (a la cuenta del cliente)
+    transferencias_depositos: Transferencias y depósitos
+    gastos_chofer: Gastos del chofer
+    efectivo_a_entregar: Efectivo que debe entregar
+    entrego: Entregó
+    cargadas: cargadas
+    quedan_en_camion: quedan en camión
+    a_bordo: a bordo
+    gasto_placeholder: gasto (gasolina, caseta…)
+    agregar_gasto: Agregar gasto
+    liquidar_el_viaje: Liquidar el viaje
+    liquidar_ayuda: Cuenta el efectivo que trae el chofer. Las paradas que sigan abiertas se dan por no entregadas y su mercancía vuelve. Lo cobrado entra a la caja abierta; si falta dinero se le carga al chofer.
+    confirmar_liquidar: ¿Liquidar el viaje %{folio}?
+    efectivo_entregado: Efectivo entregado
+    que_regresan: '%{tipo} que regresan'
+    avisos:
+      armado: Viaje %{folio} armado con %{n} repartos
+      agregado: Reparto agregado
+      quitado: Reparto quitado del viaje
+      en_ruta: 'Viaje %{folio} en ruta: %{n} notas por cobrar'
+      gasto: Gasto registrado
+      liquidado: 'Viaje liquidado: esperaba %{esperaba}, entregó %{entrego}'
+      cargo: ; cargo de %{monto} a %{chofer}
+      cancelado: Viaje cancelado
+      carga: Carga del viaje %{folio}
+      descarga: Descarga del viaje %{folio}
+      gasto_de_ruta: 'Gasto de ruta %{folio}: %{concepto}'
+  reparto:
+    mi_ruta: Mi ruta
+    entregar: Entregar
+    entregada_y_cobrada: Entregada y cobrada
+    efectivo_que_llevas: 'Efectivo que llevas: %{monto} (cobrado menos cambio y gastos).'
+    sin_viaje: No tienes ningún viaje en ruta.
+    credito_bloqueado: 'CRÉDITO BLOQUEADO: cobra todo de contado'
+    solo_contado: solo de contado
+    puede_credito: puede llevarse la nota a crédito
+    convenio: Convenio
+    usadas_semana: Usadas esta semana
+    entregar_escanea: 'Entregar: escanea cada caja, tarima o paquete que bajas'
+    codigo_bulto: Código del bulto
+    entregados_de_html: Entregados %{n} de %{total} · pendientes %{pendientes}
+    sin_etiqueta_no_se_escanea: 'Sin etiqueta (no se escanea):'
+    rechazar: rechazar
+    entregar_todo_sin_escanear: Entregar todo sin escanear (queda por revisar)
+    por_que_no_se_escaneo: por qué no se escaneó
+    dar_por_entregado: Dar por entregado
+    cerrar_y_cobrar: Cerrar parada y cobrar
+    cerrar_ayuda: Lo que no escaneaste se rechaza y vuelve al camión. Cobra el resto de contado.
+    motivo_rechazo_pendientes: motivo del rechazo de los %{n} pendientes
+    motivo_si_rechazas: motivo si rechazas algo
+    resto_a_credito: Lo que no pague va a su cuenta (crédito)
+    nota_vale: La nota vale %{monto} si se entrega todo; el sistema descuenta lo rechazado.
+    no_se_entrego: No se entregó
+    confirmar_no_entregado: Todo vuelve al camión y la nota queda en cero. ¿Seguro?
+    motivo_no_entregado: cerrado, no quiso, no estaba…
+    no_entregado: No entregado
+    van: Van
+    devuelve: devuelve
+    devolvio: Devolvió
+    abono_a_cuenta: Abono a cuenta
+    abono_ayuda: Paga algo de lo que debía. Lo traes tú hasta liquidar.
+    abonar: Abonar
+    pedido_proxima_visita: Pedido para la próxima visita
+    pedir: Pedir
+    avisos:
+      devolvio_en_parada: Devolvió en la parada %{folio}
+      canastillas_devueltas: Canastillas devueltas anotadas
+      entregados:
+        one: 1 bulto entregado
+        other: '%{count} bultos entregados'
+      entrego_sin_escanear: 'Entregó %{n} bultos sin escanear: %{motivo}'
+      dados_por_entregados: '%{n} bultos dados por entregados; queda por revisar'
+      rechazada: Parada %{destino} rechazada completa
+      a_credito: 'Parada %{destino}: pagó %{pago}, a crédito %{credito}'
+      cobrada: 'Parada %{destino} cobrada: %{monto}'
+      no_entregado_motivo: 'no entregado: %{motivo}'
+      no_entregada: 'Parada %{destino} no entregada: todo vuelve'
+  canastillas:
+    intro: Activo prestado. Salen del camión al cliente en la parada, vuelven cuando el cliente las devuelve (en la parada o en bodega) y el chofer las descarga al liquidar. Saldo por tipo.
+    clientes_deben: Clientes que deben canastillas
+    nadie_debe: Nadie debe canastillas.
+    en_camiones: Canastillas en camiones (por chofer)
+    todo_en_bodega: Todo en bodega.
+    devolucion_bodega: Devolución en bodega
+    registrar: Registrar
+    ajuste: Ajuste (con signo y motivo)
+    cliente_blank: — cliente —
+    chofer_blank: — o chofer —
+    ajustar: Ajustar
+    ultimos_movimientos: Últimos movimientos
+    canastilla: Canastilla
+    camion: camión
+    concepto: Concepto
+    tipos:
+      carga: carga
+      entrega: entrega
+      devolucion: devolución
+      descarga: descarga
+      ajuste: ajuste
+    avisos:
+      devolucion: Devolución registrada
+      ajuste: Ajuste registrado
+  cobranza:
+    cobranza: Cobranza
+    cobranza_de_ruta: Cobranza de ruta
+    saldo_en_la_calle: Saldo total en la calle
+    intro: Clientes con crédito o con saldo. El estado se calcula en vivo con la regla de su tipo de crédito; si pagan, se abren solos. El bloqueo manual de cobranza manda sobre la regla.
+    credito: Crédito
+    saldo: Saldo
+    contado: contado
+    abierto: abierto
+    manual: manual
+    nadie_debe: Nadie debe nada.
+    limite: Límite
+    corte_los: corte los %{dia}
+    credito_bloqueado: Crédito bloqueado
+    sin_credito: Sin crédito
+    credito_abierto: Crédito abierto
+    dias: días
+    abono_oficina: Abono en oficina
+    entra_a_caja: Entra a la caja abierta de %{sucursal}.
+    bloqueo_manual: Bloqueo manual
+    hoy: Hoy
+    bloquear: Bloquear
+    desbloquear: Desbloquear
+    quitar_manual: Quitar manual
+    estado_de_cuenta: Estado de cuenta
+    movimiento: Movimiento
+    detalle: Detalle
+    cargo: Cargo
+    abono: Abono
+    tipos:
+      cargo: cargo
+      abono: abono
+      devolucion: devolución
+      ajuste: ajuste
+    avisos:
+      credito_de: 'Crédito de %{cliente}: %{estado}'
+  conteos:
+    conteos: Conteos
+    conteo: Conteo
+    supervisor: Supervisor
+    responsable: Responsable
+    faltante: Faltante
+    sobrante: Sobrante
+    sin_conteos: Sin conteos.
+    nuevo: Nuevo conteo
+    ya_hay_abierto: 'Ya hay un conteo abierto:'
+    cierralo_antes: Ciérralo antes de abrir otro.
+    responsable_ayuda: Responsable de la caja (a quien se carga el faltante)
+    nuevo_ayuda: 'Al abrir se toma la existencia del sistema. Escanea todo lo que haya; lo que no lleve etiqueta se teclea. Al cerrar, el conteo manda: el inventario se ajusta, las etiquetas que no aparecieron se dan de baja y el faltante se carga al responsable.'
+    abrir: Abrir conteo
+    escanear: Escanear
+    etiqueta_placeholder: Etiqueta (paquete, caja o tarima)
+    contar: Contar
+    sin_escanear_todavia: 'Sin escanear todavía: %{n} etiquetas vivas.'
+    contar_a_mano: Contar a mano (lo que no lleva etiqueta)
+    cerrar: Cerrar conteo
+    confirmar_cerrar: 'El conteo manda: se ajusta el inventario, las etiquetas no vistas se dan de baja y el faltante se carga a %{responsable}. ¿Cerrar?'
+    sistema: Sistema
+    escaneado: Escaneado
+    a_mano: A mano
+    contado: Contado
+    no_aparecen: Etiquetas que aún no aparecen
+    avisos:
+      abierto: 'Conteo %{folio} abierto: escanea todo lo que hay'
+      contados: '%{n} paquetes contados'
+      no_aparecio: no apareció en el conteo %{folio}
+  cargos:
+    cargos: Cargos
+    revision: revisión
+    cobrado: Cobrado
+    perdonar: Perdonar
+    sin_cargos: Sin cargos.
+    avisos:
+      marcado: Cargo de %{quien} marcado como %{estado}
+  inventario:
+    existencias: Existencias
+    kardex: Kardex
+    sin_existencias: Sin existencias todavía.
+    sin_movimientos: Sin movimientos.
+    entrada_o_ajuste: Entrada o ajuste
+    queda_por_revisar: Se registra igual y queda por revisar al final del día.
+    registrar: Registrar

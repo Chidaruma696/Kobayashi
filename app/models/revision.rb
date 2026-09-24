@@ -50,12 +50,12 @@ class Revision < ApplicationRecord
   # Qué fue lo que se hizo, en una línea.
   def descripcion
     case revisable
-    when Etiqueta then "Etiqueta #{revisable.codigo}: #{cantidad_de(revisable)}"
-    when Produccion then "Producción #{revisable.folio}: entraron #{cantidad_de(revisable)}"
-    when SalidaLinea then "Renglón sin etiqueta en #{revisable.salida.folio}: #{cantidad_de(revisable)}"
-    when Movimiento then "#{revisable.nombre_tipo} de #{cantidad_de(revisable)}"
-    when Retiro then "Retiro de #{Dinero.pesos(revisable.monto_centavos)} del corte #{revisable.corte.folio}"
-    when VentaLinea then "Precio bajado en #{revisable.venta.folio}: #{revisable.producto.nombre} a #{Dinero.pesos(revisable.precio_centavos)} (catálogo #{Dinero.pesos(revisable.catalogo_centavos)})"
+    when Etiqueta then I18n.t("revisiones.desc.etiqueta", codigo: revisable.codigo, cantidad: cantidad_de(revisable))
+    when Produccion then I18n.t("revisiones.desc.produccion", folio: revisable.folio, cantidad: cantidad_de(revisable))
+    when SalidaLinea then I18n.t("revisiones.desc.salida_linea", folio: revisable.salida.folio, cantidad: cantidad_de(revisable))
+    when Movimiento then I18n.t("revisiones.desc.movimiento", tipo: revisable.nombre_tipo, cantidad: cantidad_de(revisable))
+    when Retiro then I18n.t("revisiones.desc.retiro", monto: Dinero.pesos(revisable.monto_centavos), folio: revisable.corte.folio)
+    when VentaLinea then I18n.t("revisiones.desc.venta_linea", folio: revisable.venta.folio, producto: revisable.producto.nombre, precio: Dinero.pesos(revisable.precio_centavos), catalogo: Dinero.pesos(revisable.catalogo_centavos))
     else "#{revisable_type} #{revisable_id}"
     end
   end
@@ -63,7 +63,7 @@ class Revision < ApplicationRecord
   private
 
   def resolver!(nuevo_estado, usuario:, nota:)
-    raise ArgumentError, "la revisión ya está #{estado}" unless pendiente?
+    raise ArgumentError, I18n.t("errores.revision.ya_esta", estado: I18n.t("estados.#{estado}")) unless pendiente?
     update!(estado: nuevo_estado, revisado_por: usuario, revisado_en: Time.current, nota: nota)
   end
 

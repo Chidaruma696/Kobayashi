@@ -1,37 +1,37 @@
 <% c = @conteo %>
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Conteo <%= c.folio %> · <%= c.sucursal %></h1>
-  <span class="badge"><%= c.estado %></span>
+  <h1 class="text-2xl font-bold"><%= t("conteos.conteo") %> <%= c.folio %> · <%= c.sucursal %></h1>
+  <span class="badge"><%= t("estados.#{c.estado}") %></span>
 </div>
-<p class="mb-4 text-sm text-stone-600">Supervisor <%= c.usuario %> · responsable <%= c.responsable %> · <%= l c.created_at, format: :short %><%= " · cerrado #{l c.cerrado_en, format: :short}" if c.cerrado_en %></p>
+<p class="mb-4 text-sm text-stone-600"><%= t("conteos.supervisor") %> <%= c.usuario %> · <%= t("conteos.responsable").downcase %> <%= c.responsable %> · <%= l c.created_at, format: :short %><%= " · #{t("estados.cerrado")} #{l c.cerrado_en, format: :short}" if c.cerrado_en %></p>
 <% if c.abierto? %>
   <div class="mb-4 grid gap-4 md:grid-cols-2">
     <div class="card">
-      <h2 class="mb-2 font-semibold">Escanear</h2>
+      <h2 class="mb-2 font-semibold"><%= t("conteos.escanear") %></h2>
       <%= form_with url: escanear_conteo_path(c), class: "flex gap-2" do |f| %>
-        <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: "Etiqueta (paquete, caja o tarima)", class: "flex-1 rounded border border-stone-300 px-3 py-2 font-mono" %>
-        <%= f.submit "Contar", class: "btn btn-primary" %>
+        <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: t("conteos.etiqueta_placeholder"), class: "flex-1 rounded border border-stone-300 px-3 py-2 font-mono" %>
+        <%= f.submit t("conteos.contar"), class: "btn btn-primary" %>
       <% end %>
-      <p class="mt-2 text-sm text-stone-600">Sin escanear todavía: <%= @no_vistas.size %> etiquetas vivas.</p>
+      <p class="mt-2 text-sm text-stone-600"><%= t("conteos.sin_escanear_todavia", n: @no_vistas.size) %></p>
     </div>
     <div class="card">
-      <h2 class="mb-2 font-semibold">Contar a mano (lo que no lleva etiqueta)</h2>
+      <h2 class="mb-2 font-semibold"><%= t("conteos.contar_a_mano") %></h2>
       <%= form_with url: manual_conteo_path(c), class: "flex gap-2" do |f| %>
         <%= f.select :producto_id, @productos.map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "flex-1 rounded border border-stone-300 px-2 py-2" %>
         <%= f.number_field :cantidad, step: "0.001", min: 0, required: true, class: "w-28 rounded border border-stone-300 px-2 py-2 font-mono" %>
-        <%= f.submit "Guardar", class: "btn btn-primary" %>
+        <%= f.submit t("comun.guardar"), class: "btn btn-primary" %>
       <% end %>
-      <%= button_to "Cerrar conteo", cerrar_conteo_path(c), class: "mt-4 rounded bg-red-700 px-4 py-2 text-white", form: { data: { turbo_confirm: "El conteo manda: se ajusta el inventario, las etiquetas no vistas se dan de baja y el faltante se carga a #{c.responsable}. ¿Cerrar?" } } %>
+      <%= button_to t("conteos.cerrar"), cerrar_conteo_path(c), class: "mt-4 rounded bg-red-700 px-4 py-2 text-white", form: { data: { turbo_confirm: t("conteos.confirmar_cerrar", responsable: c.responsable) } } %>
     </div>
   </div>
 <% else %>
   <div class="mb-4 grid gap-4 sm:grid-cols-2">
-    <div class="card"><div class="text-xs uppercase text-stone-500">Faltante</div><div class="font-mono text-2xl text-red-700"><%= pesos(c.faltante_centavos) %></div></div>
-    <div class="card"><div class="text-xs uppercase text-stone-500">Sobrante</div><div class="font-mono text-2xl text-green-700"><%= pesos(c.sobrante_centavos) %></div></div>
+    <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("conteos.faltante") %></div><div class="font-mono text-2xl text-red-700"><%= pesos(c.faltante_centavos) %></div></div>
+    <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("conteos.sobrante") %></div><div class="font-mono text-2xl text-green-700"><%= pesos(c.sobrante_centavos) %></div></div>
   </div>
 <% end %>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Sistema</th><th class="px-3 py-2 text-right">Escaneado</th><th class="px-3 py-2 text-right">A mano</th><th class="px-3 py-2 text-right">Contado</th><th class="px-3 py-2 text-right">Diferencia</th><th class="px-3 py-2 text-right">$</th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.producto") %></th><th class="px-3 py-2 text-right"><%= t("conteos.sistema") %></th><th class="px-3 py-2 text-right"><%= t("conteos.escaneado") %></th><th class="px-3 py-2 text-right"><%= t("conteos.a_mano") %></th><th class="px-3 py-2 text-right"><%= t("conteos.contado") %></th><th class="px-3 py-2 text-right"><%= t("caja.diferencia") %></th><th class="px-3 py-2 text-right">$</th></tr></thead>
   <tbody>
     <% @lineas.each do |l| %>
       <% dif = c.abierto? ? l.contado - l.sistema : l.diferencia %>
@@ -48,7 +48,7 @@
   </tbody>
 </table>
 <% if c.abierto? && @no_vistas.any? %>
-  <h2 class="mb-2 mt-6 font-semibold">Etiquetas que aún no aparecen</h2>
+  <h2 class="mb-2 mt-6 font-semibold"><%= t("conteos.no_aparecen") %></h2>
   <ul class="grid gap-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
     <% @no_vistas.each do |e| %><li class="rounded bg-white px-3 py-1 shadow-sm"><span class="font-mono text-xs"><%= e.codigo %></span> · <%= e.producto.nombre %> · <%= cantidad(e.cantidad, e.producto) %></li><% end %>
   </ul>

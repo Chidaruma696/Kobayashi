@@ -19,12 +19,12 @@ class ViajesController < ApplicationController
   def create
     autorizar!("rutas.armar")
     ruta = Ruta.activas.find(params[:ruta_id])
-    chofer = Usuario.activos.find_by(id: params[:chofer_id].presence || ruta.chofer_id) or raise ArgumentError, "la ruta #{ruta} no tiene chofer: elige uno"
+    chofer = Usuario.activos.find_by(id: params[:chofer_id].presence || ruta.chofer_id) or raise ArgumentError, t("errores.viaje.sin_chofer", ruta: ruta)
     viaje = Viaje.create!(sucursal: sucursal_actual, ruta: ruta, chofer: chofer, usuario: usuario_actual,
                           fecha: (Date.parse(params[:fecha]) rescue Date.current), notas: params[:notas].presence)
     # Los repartos sellados de la ruta que aún no van en ningún viaje suben solos.
     Salida.where(sucursal_origen: sucursal_actual, tipo: "reparto", ruta: ruta, viaje_id: nil, estado: "sellada").find_each { |s| viaje.agregar!(s) }
-    redirect_to viaje_path(viaje), notice: "Viaje #{viaje.folio} armado con #{viaje.salidas.count} repartos"
+    redirect_to viaje_path(viaje), notice: t("viajes.avisos.armado", folio: viaje.folio, n: viaje.salidas.count)
   rescue ArgumentError, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
     redirect_to new_viaje_path, alert: e.message
   end
@@ -40,7 +40,7 @@ class ViajesController < ApplicationController
   def hoja
     autorizar_alguno!("rutas.armar", "rutas.liquidar", "rutas.repartir")
     @paradas = @viaje.paradas
-    @titulo = "Orden de reparto #{@viaje.folio}"
+    @titulo = "#{t("viajes.orden_de_reparto")} #{@viaje.folio}"
     render layout: "ticket"
   end
 
@@ -57,7 +57,7 @@ class ViajesController < ApplicationController
   def agregar
     autorizar!("rutas.armar")
     @viaje.agregar!(Salida.where(sucursal_origen: @viaje.sucursal).find(params[:salida_id]))
-    volver("Reparto agregado")
+    volver(t("viajes.avisos.agregado"))
   rescue ArgumentError => e
     volver(nil, e.message)
   end
@@ -65,7 +65,7 @@ class ViajesController < ApplicationController
   def quitar
     autorizar!("rutas.armar")
     @viaje.quitar!(Salida.find(params[:salida_id]))
-    volver("Reparto quitado del viaje")
+    volver(t("viajes.avisos.quitado"))
   rescue ArgumentError => e
     volver(nil, e.message)
   end
@@ -81,7 +81,7 @@ class ViajesController < ApplicationController
   def salir
     autorizar!("rutas.armar")
     @viaje.salir!(usuario: usuario_actual)
-    volver("Viaje #{@viaje.folio} en ruta: #{@viaje.salidas.count} notas por cobrar")
+    volver(t("viajes.avisos.en_ruta", folio: @viaje.folio, n: @viaje.salidas.count))
   rescue ArgumentError, Caja::Error => e
     volver(nil, e.message)
   end
@@ -89,7 +89,7 @@ class ViajesController < ApplicationController
   def gasto
     autorizar_alguno!("rutas.liquidar", "rutas.repartir")
     @viaje.agregar_gasto!(concepto: params[:concepto].to_s.strip, monto_centavos: Dinero.centavos(params[:monto]), usuario: usuario_actual)
-    volver("Gasto registrado")
+    volver(t("viajes.avisos.gasto"))
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     volver(nil, e.message)
   end
@@ -98,8 +98,8 @@ class ViajesController < ApplicationController
     autorizar!("rutas.liquidar")
     @viaje.liquidar!(efectivo_entregado_centavos: Dinero.centavos(params[:entregado]), usuario: usuario_actual,
                      canastillas_regresan: (params[:canastillas]&.to_unsafe_h || {}))
-    aviso = "Viaje liquidado: esperaba #{Dinero.pesos(@viaje.efectivo_esperado_centavos)}, entregó #{Dinero.pesos(@viaje.efectivo_entregado_centavos)}"
-    aviso += "; cargo de #{Dinero.pesos(-@viaje.diferencia_centavos)} a #{@viaje.chofer}" if @viaje.diferencia_centavos.negative?
+    aviso = t("viajes.avisos.liquidado", esperaba: Dinero.pesos(@viaje.efectivo_esperado_centavos), entrego: Dinero.pesos(@viaje.efectivo_entregado_centavos))
+    aviso += t("viajes.avisos.cargo", monto: Dinero.pesos(-@viaje.diferencia_centavos), chofer: @viaje.chofer) if @viaje.diferencia_centavos.negative?
     volver(aviso)
   rescue ArgumentError, Caja::Error, ActiveRecord::RecordInvalid => e
     volver(nil, e.message)
@@ -108,7 +108,7 @@ class ViajesController < ApplicationController
   def cancelar
     autorizar!("rutas.armar")
     @viaje.cancelar!
-    volver("Viaje cancelado")
+    volver(t("viajes.avisos.cancelado"))
   rescue ArgumentError => e
     volver(nil, e.message)
   end

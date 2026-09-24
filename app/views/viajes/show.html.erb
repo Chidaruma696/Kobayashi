@@ -1,17 +1,17 @@
 <% v = @viaje %>
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Viaje <%= v.folio %> · <%= v.ruta %> · <%= l v.fecha %></h1>
+  <h1 class="text-2xl font-bold"><%= t("viajes.viaje") %> <%= v.folio %> · <%= v.ruta %> · <%= l v.fecha %></h1>
   <div class="flex items-center gap-3 text-sm">
-    <%= link_to icono("printer", "Orden de reparto"), hoja_viaje_path(v), target: "_blank", class: "btn btn-secondary btn-sm" %>
-    <span class="rounded bg-stone-200 px-3 py-1"><%= v.estado.humanize %></span>
+    <%= link_to icono("printer", t("viajes.orden_de_reparto")), hoja_viaje_path(v), target: "_blank", class: "btn btn-secondary btn-sm" %>
+    <span class="rounded bg-stone-200 px-3 py-1"><%= t("estados.#{v.estado}").capitalize %></span>
   </div>
 </div>
-<p class="mb-4 text-sm text-stone-600">Chofer <strong><%= v.chofer %></strong> · armó <%= v.usuario %><%= " · salió #{l v.salido_en, format: :short}" if v.salido_en %><%= " · #{v.notas}" if v.notas.present? %></p>
+<p class="mb-4 text-sm text-stone-600"><%= t("salidas.chofer") %> <strong><%= v.chofer %></strong> · <%= t("viajes.armo") %> <%= v.usuario %><%= " · #{t("viajes.salio")} #{l v.salido_en, format: :short}" if v.salido_en %><%= " · #{v.notas}" if v.notas.present? %></p>
 
 <div class="card mb-4">
-  <h2 class="mb-2 font-semibold">Orden de reparto</h2>
+  <h2 class="mb-2 font-semibold"><%= t("viajes.orden_de_reparto") %></h2>
   <table class="w-full text-sm">
-    <thead class="text-left text-stone-500"><tr><th class="px-2 py-1">Parada</th><th class="px-2 py-1">Zona</th><th class="px-2 py-1">Cliente</th><th class="px-2 py-1">Salida</th><th class="px-2 py-1">Bultos</th><th class="px-2 py-1">Canastillas</th><th class="px-2 py-1 text-right">Nota</th><th class="px-2 py-1">Estado</th><th></th></tr></thead>
+    <thead class="text-left text-stone-500"><tr><th class="px-2 py-1"><%= t("viajes.parada") %></th><th class="px-2 py-1"><%= t("viajes.zona") %></th><th class="px-2 py-1"><%= t("caja.cliente") %></th><th class="px-2 py-1"><%= t("salidas.titulos.traspaso") %></th><th class="px-2 py-1"><%= t("viajes.bultos") %></th><th class="px-2 py-1"><%= t("viajes.canastillas") %></th><th class="px-2 py-1 text-right"><%= t("viajes.nota") %></th><th class="px-2 py-1"><%= t("comun.estado") %></th><th></th></tr></thead>
     <tbody>
       <% @paradas.each do |s| %>
         <tr class="border-t border-stone-100 <%= 'bg-green-50' if s.entregada? %> <%= 'bg-red-50' if s.rechazada? %>">
@@ -22,15 +22,15 @@
           <td class="px-2 py-1"><%= link_to s.folio, salida_path(s), class: "chip-folio" %></td>
           <td class="px-2 py-1"><%= s.salida_etiquetas.count %></td>
           <td class="px-2 py-1 text-xs"><%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ") %></td>
-          <td class="px-2 py-1 text-right font-mono"><% if s.venta %><%= pesos(s.venta.saldo_centavos) %><span class="text-xs text-stone-500"> <%= s.venta.estado.humanize.downcase %></span><% end %></td>
-          <td class="px-2 py-1"><%= s.estado %></td>
+          <td class="px-2 py-1 text-right font-mono"><% if s.venta %><%= pesos(s.venta.saldo_centavos) %><span class="text-xs text-stone-500"> <%= t("estados.#{s.venta.estado}") %></span><% end %></td>
+          <td class="px-2 py-1"><%= t("estados.#{s.estado}") %></td>
           <td class="px-2 py-1 text-right">
-            <% if v.armando? %><%= button_to "Quitar", quitar_viaje_path(v, salida_id: s.id), class: "btn btn-ghost-danger btn-xs" %><% end %>
-            <% if v.en_ruta? && s.enviada? && puede?("rutas.repartir") %><%= link_to "Parada", reparto_parada_path(s), class: "btn btn-primary btn-xs" %><% end %>
+            <% if v.armando? %><%= button_to t("salidas.quitar"), quitar_viaje_path(v, salida_id: s.id), class: "btn btn-ghost-danger btn-xs" %><% end %>
+            <% if v.en_ruta? && s.enviada? && puede?("rutas.repartir") %><%= link_to t("viajes.parada"), reparto_parada_path(s), class: "btn btn-primary btn-xs" %><% end %>
           </td>
         </tr>
       <% end %>
-      <% if @paradas.empty? %><tr><td colspan="9" class="py-3 text-center text-stone-500">Sin repartos todavía.</td></tr><% end %>
+      <% if @paradas.empty? %><tr><td colspan="9" class="py-3 text-center text-stone-500"><%= t("viajes.sin_repartos") %></td></tr><% end %>
     </tbody>
   </table>
 </div>
@@ -38,25 +38,25 @@
 <% if v.armando? && puede?("rutas.armar") %>
   <div class="mb-4 grid gap-4 md:grid-cols-2">
     <div class="card">
-      <h2 class="mb-2 font-semibold">Repartos que se pueden subir</h2>
+      <h2 class="mb-2 font-semibold"><%= t("viajes.repartos_para_subir") %></h2>
       <% if @candidatas.any? %>
         <ul class="text-sm">
           <% @candidatas.each do |s| %>
             <li class="flex items-center justify-between border-t border-stone-100 py-1">
-              <span><span class="font-mono"><%= s.folio %></span> · <%= s.cliente %><%= " · #{s.ruta}" if s.ruta %> · <%= s.estado %></span>
-              <%= button_to "Subir", agregar_viaje_path(v, salida_id: s.id), class: "btn btn-secondary btn-xs" %>
+              <span><span class="font-mono"><%= s.folio %></span> · <%= s.cliente %><%= " · #{s.ruta}" if s.ruta %> · <%= t("estados.#{s.estado}") %></span>
+              <%= button_to t("viajes.subir"), agregar_viaje_path(v, salida_id: s.id), class: "btn btn-secondary btn-xs" %>
             </li>
           <% end %>
         </ul>
       <% else %>
-        <p class="text-sm text-stone-500">No hay repartos abiertos sin viaje. <%= link_to "Nueva salida a un cliente", new_salida_path, class: "btn btn-primary btn-xs" %>.</p>
+        <p class="text-sm text-stone-500"><%= t("viajes.sin_repartos_abiertos") %> <%= link_to t("viajes.nueva_salida_cliente"), new_salida_path, class: "btn btn-primary btn-xs" %>.</p>
       <% end %>
     </div>
     <div class="card">
-      <h2 class="mb-2 font-semibold">Despachar</h2>
-      <p class="mb-3 text-sm text-stone-600">Todas las paradas deben estar selladas. Al salir, cada reparto cierra su nota por cobrar y baja el inventario. Hace falta caja abierta en <%= v.sucursal %>.</p>
-      <%= button_to "Sale el camión", salir_viaje_path(v), class: "btn btn-success", form: { data: { turbo_confirm: "¿Despachar el viaje #{v.folio} con #{@paradas.size} paradas?" } } %>
-      <%= button_to "Cancelar viaje", cancelar_viaje_path(v), class: "btn btn-ghost-danger btn-sm mt-4", form: { data: { turbo_confirm: "¿Cancelar el viaje?" } } %>
+      <h2 class="mb-2 font-semibold"><%= t("viajes.despachar") %></h2>
+      <p class="mb-3 text-sm text-stone-600"><%= t("viajes.despachar_ayuda", sucursal: v.sucursal) %></p>
+      <%= button_to t("viajes.sale_el_camion"), salir_viaje_path(v), class: "btn btn-success", form: { data: { turbo_confirm: t("viajes.confirmar_despachar", folio: v.folio, n: @paradas.size) } } %>
+      <%= button_to t("viajes.cancelar_viaje"), cancelar_viaje_path(v), class: "btn btn-ghost-danger btn-sm mt-4", form: { data: { turbo_confirm: t("viajes.confirmar_cancelar") } } %>
     </div>
   </div>
 <% end %>
@@ -65,17 +65,17 @@
   <% cobrado = v.cobrado_centavos %>
   <div class="mb-4 grid gap-4 md:grid-cols-2">
     <div class="card">
-      <h2 class="mb-2 font-semibold">Dinero del viaje</h2>
+      <h2 class="mb-2 font-semibold"><%= t("viajes.dinero_del_viaje") %></h2>
       <table class="w-full text-sm">
-        <tr><td class="px-2 py-1">Cobrado en efectivo (notas y abonos)</td><td class="px-2 py-1 text-right font-mono"><%= pesos(cobrado["efectivo"] || 0) %></td></tr>
-        <tr><td class="px-2 py-1">Cambio dado</td><td class="px-2 py-1 text-right font-mono">−<%= pesos(v.cambio_centavos) %></td></tr>
-        <tr><td class="px-2 py-1">A crédito (a la cuenta del cliente)</td><td class="px-2 py-1 text-right font-mono text-stone-500"><%= pesos(v.credito_centavos) %></td></tr>
-        <tr><td class="px-2 py-1">Transferencias y depósitos</td><td class="px-2 py-1 text-right font-mono"><%= pesos((cobrado["transferencia"] || 0) + (cobrado["deposito"] || 0)) %></td></tr>
-        <tr><td class="px-2 py-1">Gastos del chofer</td><td class="px-2 py-1 text-right font-mono">−<%= pesos(v.gastos_centavos) %></td></tr>
-        <tr class="border-t border-stone-300 font-semibold"><td class="px-2 py-1">Efectivo que debe entregar</td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.liquidado? ? v.efectivo_esperado_centavos : v.efectivo_por_entregar_centavos) %></td></tr>
+        <tr><td class="px-2 py-1"><%= t("viajes.cobrado_efectivo") %></td><td class="px-2 py-1 text-right font-mono"><%= pesos(cobrado["efectivo"] || 0) %></td></tr>
+        <tr><td class="px-2 py-1"><%= t("viajes.cambio_dado") %></td><td class="px-2 py-1 text-right font-mono">−<%= pesos(v.cambio_centavos) %></td></tr>
+        <tr><td class="px-2 py-1"><%= t("viajes.a_credito") %></td><td class="px-2 py-1 text-right font-mono text-stone-500"><%= pesos(v.credito_centavos) %></td></tr>
+        <tr><td class="px-2 py-1"><%= t("viajes.transferencias_depositos") %></td><td class="px-2 py-1 text-right font-mono"><%= pesos((cobrado["transferencia"] || 0) + (cobrado["deposito"] || 0)) %></td></tr>
+        <tr><td class="px-2 py-1"><%= t("viajes.gastos_chofer") %></td><td class="px-2 py-1 text-right font-mono">−<%= pesos(v.gastos_centavos) %></td></tr>
+        <tr class="border-t border-stone-300 font-semibold"><td class="px-2 py-1"><%= t("viajes.efectivo_a_entregar") %></td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.liquidado? ? v.efectivo_esperado_centavos : v.efectivo_por_entregar_centavos) %></td></tr>
         <% if v.liquidado? %>
-          <tr><td class="px-2 py-1">Entregó</td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.efectivo_entregado_centavos) %></td></tr>
-          <tr class="font-semibold <%= v.diferencia_centavos.negative? ? 'text-red-700' : 'text-green-700' %>"><td class="px-2 py-1">Diferencia</td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.diferencia_centavos) %></td></tr>
+          <tr><td class="px-2 py-1"><%= t("viajes.entrego") %></td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.efectivo_entregado_centavos) %></td></tr>
+          <tr class="font-semibold <%= v.diferencia_centavos.negative? ? 'text-red-700' : 'text-green-700' %>"><td class="px-2 py-1"><%= t("caja.diferencia") %></td><td class="px-2 py-1 text-right font-mono"><%= pesos(v.diferencia_centavos) %></td></tr>
         <% end %>
       </table>
       <% if v.gastos.any? %>
@@ -84,32 +84,32 @@
         </ul>
       <% end %>
       <% if @tipos.any? %>
-        <h3 class="mt-4 text-sm font-semibold">Canastillas</h3>
+        <h3 class="mt-4 text-sm font-semibold"><%= t("viajes.canastillas") %></h3>
         <table class="w-full text-sm">
           <% cargadas = v.canastillas_cargadas; a_bordo = v.canastillas_a_bordo %>
           <% @tipos.each do |t| %>
-            <tr><td class="px-2 py-1"><%= t %></td><td class="px-2 py-1 text-right font-mono">cargadas <%= cargadas[t.id] || 0 %></td><td class="px-2 py-1 text-right font-mono"><%= v.liquidado? ? "quedan en camión #{a_bordo[t.id] || 0}" : "a bordo #{a_bordo[t.id] || 0}" %></td></tr>
+            <tr><td class="px-2 py-1"><%= t %></td><td class="px-2 py-1 text-right font-mono"><%= t("viajes.cargadas") %> <%= cargadas[t.id] || 0 %></td><td class="px-2 py-1 text-right font-mono"><%= v.liquidado? ? "#{t("viajes.quedan_en_camion")} #{a_bordo[t.id] || 0}" : "#{t("viajes.a_bordo")} #{a_bordo[t.id] || 0}" %></td></tr>
           <% end %>
         </table>
       <% end %>
       <% unless v.liquidado? %>
         <%= form_with url: gasto_viaje_path(v), class: "mt-3 flex flex-wrap gap-2 text-sm" do |f| %>
-          <%= f.text_field :concepto, placeholder: "gasto (gasolina, caseta…)", required: true, class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
-          <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: "monto", required: true, class: "w-28 rounded border border-stone-300 px-2 py-1 font-mono" %>
-          <%= f.submit "Agregar gasto", class: "btn btn-secondary btn-sm" %>
+          <%= f.text_field :concepto, placeholder: t("viajes.gasto_placeholder"), required: true, class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
+          <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: t("caja.monto").downcase, required: true, class: "w-28 rounded border border-stone-300 px-2 py-1 font-mono" %>
+          <%= f.submit t("viajes.agregar_gasto"), class: "btn btn-secondary btn-sm" %>
         <% end %>
       <% end %>
     </div>
     <% if v.en_ruta? && puede?("rutas.liquidar") %>
       <div class="card">
-        <h2 class="mb-2 font-semibold">Liquidar el viaje</h2>
-        <p class="mb-3 text-sm text-stone-600">Cuenta el efectivo que trae el chofer. Las paradas que sigan abiertas se dan por no entregadas y su mercancía vuelve. Lo cobrado entra a la caja abierta; si falta dinero se le carga al chofer.</p>
-        <%= form_with url: liquidar_viaje_path(v), class: "flex flex-wrap items-end gap-3 text-sm", data: { turbo_confirm: "¿Liquidar el viaje #{v.folio}?" } do |f| %>
-          <div><%= f.label :entregado, "Efectivo entregado", class: "block" %><%= f.number_field :entregado, step: "0.01", min: "0", value: v.efectivo_por_entregar_centavos / 100.0, required: true, class: "w-40 rounded border border-stone-300 px-2 py-2 text-right font-mono text-xl" %></div>
+        <h2 class="mb-2 font-semibold"><%= t("viajes.liquidar_el_viaje") %></h2>
+        <p class="mb-3 text-sm text-stone-600"><%= t("viajes.liquidar_ayuda") %></p>
+        <%= form_with url: liquidar_viaje_path(v), class: "flex flex-wrap items-end gap-3 text-sm", data: { turbo_confirm: t("viajes.confirmar_liquidar", folio: v.folio) } do |f| %>
+          <div><%= f.label :entregado, t("viajes.efectivo_entregado"), class: "block" %><%= f.number_field :entregado, step: "0.01", min: "0", value: v.efectivo_por_entregar_centavos / 100.0, required: true, class: "w-40 rounded border border-stone-300 px-2 py-2 text-right font-mono text-xl" %></div>
           <% v.canastillas_a_bordo.each do |tipo_id, n| %>
-            <div><%= label_tag "canastillas_#{tipo_id}", "#{TipoCanastilla.find(tipo_id)} que regresan", class: "block" %><%= number_field_tag "canastillas[#{tipo_id}]", n, min: 0, id: "canastillas_#{tipo_id}", class: "w-32 rounded border border-stone-300 px-2 py-2 text-right font-mono" %></div>
+            <div><%= label_tag "canastillas_#{tipo_id}", t("viajes.que_regresan", tipo: TipoCanastilla.find(tipo_id)), class: "block" %><%= number_field_tag "canastillas[#{tipo_id}]", n, min: 0, id: "canastillas_#{tipo_id}", class: "w-32 rounded border border-stone-300 px-2 py-2 text-right font-mono" %></div>
           <% end %>
-          <%= f.submit "Liquidar", class: "btn btn-success" %>
+          <%= f.submit t("viajes.liquidar"), class: "btn btn-success" %>
         <% end %>
       </div>
     <% end %>

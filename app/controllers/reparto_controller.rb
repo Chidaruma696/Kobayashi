@@ -27,8 +27,8 @@ class RepartoController < ApplicationController
   def canastillas
     Canastillas.mover!(tipo: "devolucion", tipo_canastilla: TipoCanastilla.find(params[:tipo_canastilla_id]), cantidad: params[:cantidad],
                        sucursal: @salida.sucursal_origen, usuario: usuario_actual, cliente: @salida.cliente, chofer: @salida.viaje.chofer,
-                       viaje: @salida.viaje, concepto: "Devolvió en la parada #{@salida.folio}")
-    volver("Canastillas devueltas anotadas")
+                       viaje: @salida.viaje, concepto: t("reparto.avisos.devolvio_en_parada", folio: @salida.folio))
+    volver(t("reparto.avisos.canastillas_devueltas"))
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     volver(nil, e.message)
   end
@@ -43,18 +43,18 @@ class RepartoController < ApplicationController
   end
 
   def entregar
-    n = @salida.entregar!(Etiqueta.buscar(params[:codigo].to_s.strip) || raise(ArgumentError, "no encuentro la etiqueta #{params[:codigo]}"), usuario: usuario_actual)
-    volver("#{n} #{n == 1 ? 'bulto entregado' : 'bultos entregados'}")
+    n = @salida.entregar!(Etiqueta.buscar(params[:codigo].to_s.strip) || raise(ArgumentError, t("errores.etiqueta.no_encontrada", codigo: params[:codigo])), usuario: usuario_actual)
+    volver(t("reparto.avisos.entregados", count: n))
   rescue ArgumentError => e
     volver(nil, e.message)
   end
 
   # Entregar sin escanear: se puede, pero queda por revisar a nombre del chofer.
   def entregar_todo
-    raise ArgumentError, "escribe por qué no se escaneó" if params[:motivo].blank?
+    raise ArgumentError, t("errores.reparto.por_que_no_escaneo") if params[:motivo].blank?
     n = @salida.entregar_todo!
-    revisar_si_hace_falta(@salida, nil, motivo: "Entregó #{n} bultos sin escanear: #{params[:motivo]}", valor_centavos: @salida.venta&.saldo_centavos.to_i)
-    volver("#{n} bultos dados por entregados; queda por revisar")
+    revisar_si_hace_falta(@salida, nil, motivo: t("reparto.avisos.entrego_sin_escanear", n: n, motivo: params[:motivo]), valor_centavos: @salida.venta&.saldo_centavos.to_i)
+    volver(t("reparto.avisos.dados_por_entregados", n: n))
   rescue ArgumentError => e
     volver(nil, e.message)
   end
@@ -64,9 +64,9 @@ class RepartoController < ApplicationController
     @salida.cerrar_parada!(usuario: usuario_actual, motivo_rechazo: params[:motivo_rechazo].presence, pagos: pagos,
                            a_credito: params[:a_credito] == "1", rechazar_lineas: Array(params[:rechazar_lineas]))
     venta = @salida.venta
-    aviso = if @salida.rechazada? then "Parada #{@salida.destino} rechazada completa"
-    elsif venta.a_credito? then "Parada #{@salida.destino}: pagó #{Dinero.pesos(venta.pagado_centavos)}, a crédito #{Dinero.pesos(venta.credito_centavos)}"
-    else "Parada #{@salida.destino} cobrada: #{Dinero.pesos(venta.saldo_centavos)}"
+    aviso = if @salida.rechazada? then t("reparto.avisos.rechazada", destino: @salida.destino)
+    elsif venta.a_credito? then t("reparto.avisos.a_credito", destino: @salida.destino, pago: Dinero.pesos(venta.pagado_centavos), credito: Dinero.pesos(venta.credito_centavos))
+    else t("reparto.avisos.cobrada", destino: @salida.destino, monto: Dinero.pesos(venta.saldo_centavos))
     end
     redirect_to reparto_path, notice: aviso
   rescue ArgumentError, Caja::Error => e
@@ -74,9 +74,9 @@ class RepartoController < ApplicationController
   end
 
   def no_entregado
-    raise ArgumentError, "escribe el motivo" if params[:motivo].blank?
-    @salida.cerrar_parada!(usuario: usuario_actual, motivo_rechazo: "no entregado: #{params[:motivo]}")
-    redirect_to reparto_path, notice: "Parada #{@salida.destino} no entregada: todo vuelve"
+    raise ArgumentError, t("errores.escribe_motivo") if params[:motivo].blank?
+    @salida.cerrar_parada!(usuario: usuario_actual, motivo_rechazo: t("reparto.avisos.no_entregado_motivo", motivo: params[:motivo]))
+    redirect_to reparto_path, notice: t("reparto.avisos.no_entregada", destino: @salida.destino)
   rescue ArgumentError, Caja::Error => e
     volver(nil, e.message)
   end

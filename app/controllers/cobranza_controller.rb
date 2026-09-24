@@ -34,7 +34,7 @@ class CobranzaController < ApplicationController
     when "desbloquear" then @cliente.desbloquear!(motivo: params[:motivo].to_s.strip, usuario: usuario_actual)
     else @cliente.quitar_bloqueo_manual!
     end
-    redirect_to cobranza_cliente_path(@cliente), notice: "Crédito de #{@cliente}: #{@cliente.estado_credito.bloqueado ? 'bloqueado' : 'abierto'}"
+    redirect_to cobranza_cliente_path(@cliente), notice: t("cobranza.avisos.credito_de", cliente: @cliente, estado: @cliente.estado_credito.bloqueado ? t("estados.bloqueado") : t("cobranza.abierto"))
   rescue ArgumentError => e
     redirect_to cobranza_cliente_path(@cliente), alert: e.message
   end

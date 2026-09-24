@@ -293,6 +293,36 @@ en:
       falta_dinero: 'not enough money: the ticket is %{total} and %{pago} is being paid'
       no_efectivo_excede: a transfer or deposit cannot exceed the total
       sin_ticket_devolucion: 'No refund without a ticket or a label: “%{codigo}” not found'
+    escribe_motivo: write the reason
+    viaje:
+      sin_chofer: 'route %{ruta} has no driver: pick one'
+      ya_salio: the trip already left
+      esta: the trip is %{estado}
+      parada_ajena: that stop is not on this trip
+      sin_repartos: the trip has no deliveries
+      faltan_sellar: 'still unsealed: %{folios}'
+      sin_caja: no register open at %{sucursal} to take the money
+      solo_cancela_antes: it can only be cancelled before leaving
+    reparto:
+      por_que_no_escaneo: write why it was not scanned
+    conteo:
+      ya_abierto: there is already an open count at %{sucursal}
+      cerrado: the count is closed
+      en_transito: label %{codigo} is in transit
+      ya_contada: '%{codigo} was already counted'
+      cantidad_invalida: invalid quantity
+      ya_cerrado: the count is already closed
+    cargo:
+      sin_origen: a charge comes from a count, a review or a trip
+      ya_esta: the charge is already %{estado}
+    inventario:
+      cantidad_cero: the quantity must be greater than zero
+      insuficiente: 'Not enough stock of %{producto} at %{sucursal}: there is %{hay}, %{piden} requested'
+    abono:
+      mayor_que_cero: the payment must be greater than zero
+      sin_caja: no register open at %{sucursal} to take the payment
+    revision:
+      ya_esta: the review is already %{estado}
   inicio:
     titulo: Home
     ventas: Sales
@@ -336,6 +366,13 @@ en:
     aprobada: Approved
     observada_sin_cargo: Flagged, no charge
     observada_cargada: 'Flagged and charged to %{quien}: %{monto}'
+    desc:
+      etiqueta: 'Label %{codigo}: %{cantidad}'
+      produccion: 'Production run %{folio}: %{cantidad} came in'
+      salida_linea: 'Line without a label on %{folio}: %{cantidad}'
+      movimiento: '%{tipo} of %{cantidad}'
+      retiro: Cash drop of %{monto} from session %{folio}
+      venta_linea: 'Price lowered on %{folio}: %{producto} to %{precio} (catalog %{catalogo})'
   estados:
     pendiente: pending
     aprobada: approved
@@ -371,6 +408,7 @@ en:
     bloqueado: blocked
     perdonado: forgiven
     cobrado: charged
+    desbloqueado: unblocked
   movimientos:
     entrada: Entry
     produccion: Production
@@ -875,3 +913,267 @@ en:
       sobrante: '%{codigo} received as surplus; goes to review'
       recibida: Transfer %{folio} received
       desarmada: '%{folio}: broken up on reception'
+  credito:
+    tipos:
+      contado: Cash (no credit)
+      nota_x_nota: Note by note
+      limite: Credit limit
+      semanal: Weekly (pays at cutoff)
+      contado_abonando: Cash with payments (7 days)
+      especial: Special (own cutoff day)
+    dias:
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+    - Sunday
+    bloqueado_por_cobranza: 'Blocked by collections: %{motivo}'
+    desbloqueado_por_cobranza: 'Unblocked by collections: %{motivo}'
+    ultimo_abono: last payment %{fecha}
+    sin_abonos: no payments
+    reglas:
+      contado: 'Cash: credit does not apply'
+      nota_x_nota: Pays the previous note to get a new one
+      limite: Credit limit %{limite}
+      limite_sin_configurar: Limit not set
+      especial_sin_dia: 'Special without a cutoff day: manual block only'
+      semanal_dia: Pays at the %{dia} cutoff
+      semanal: Pays the week (Monday to Saturday)
+      contado_abonando: Credit only if they pay every 7 days
+    bloqueos:
+      nota_x_nota: 'owes %{saldo}: pay the previous note'
+      limite: 'credit cap: owes %{saldo} of %{limite}'
+      semanal: cutoff came with %{monto} unpaid
+      contado_abonando: stopped paying (%{ultimo}) and owes %{saldo}
+  viajes:
+    viaje: Trip
+    viajes_de_reparto: Delivery trips
+    orden_de_reparto: Delivery sheet
+    tel: Tel.
+    debe: Owes
+    canastillas: Crates
+    n_bultos:
+      one: 1 item
+      other: '%{count} items'
+    nota: Note
+    cobrado: Collected
+    firma: Signature
+    total_paradas: Total stops
+    a_cobrar: To collect
+    paradas: Stops
+    cerradas: closed
+    liquidar: Settle
+    armar: Assemble
+    ninguno_abierto: No open trips.
+    liquidados: Settled
+    por: by
+    nuevo: New delivery trip
+    el_de_la_ruta: — the route's —
+    solo_con_permiso: Only users with the deliver permission are listed.
+    nuevo_ayuda: Deliveries on the route that are already sealed go onto the trip by themselves; the rest are added from the trip or the transfer page.
+    armar_viaje: Assemble trip
+    armo: assembled by
+    salio: left
+    parada: Stop
+    zona: Zone
+    bultos: Items
+    sin_repartos: No deliveries yet.
+    repartos_para_subir: Deliveries that can go on
+    subir: Put on
+    sin_repartos_abiertos: No open deliveries without a trip.
+    nueva_salida_cliente: New transfer to a customer
+    despachar: Dispatch
+    despachar_ayuda: All stops must be sealed. On leaving, each delivery closes its pending-payment note and reduces inventory. A register must be open at %{sucursal}.
+    sale_el_camion: Truck leaves
+    confirmar_despachar: Dispatch trip %{folio} with %{n} stops?
+    cancelar_viaje: Cancel trip
+    confirmar_cancelar: Cancel the trip?
+    dinero_del_viaje: Trip money
+    cobrado_efectivo: Collected in cash (notes and payments)
+    cambio_dado: Change given
+    a_credito: On credit (to the customer's account)
+    transferencias_depositos: Transfers and deposits
+    gastos_chofer: Driver expenses
+    efectivo_a_entregar: Cash to hand over
+    entrego: Handed over
+    cargadas: loaded
+    quedan_en_camion: left on truck
+    a_bordo: on board
+    gasto_placeholder: expense (fuel, toll…)
+    agregar_gasto: Add expense
+    liquidar_el_viaje: Settle the trip
+    liquidar_ayuda: Count the cash the driver brings. Stops still open are taken as not delivered and their goods come back. What was collected goes into the open register; if money is missing it is charged to the driver.
+    confirmar_liquidar: Settle trip %{folio}?
+    efectivo_entregado: Cash handed over
+    que_regresan: '%{tipo} coming back'
+    avisos:
+      armado: Trip %{folio} assembled with %{n} deliveries
+      agregado: Delivery added
+      quitado: Delivery taken off the trip
+      en_ruta: 'Trip %{folio} on the road: %{n} notes to collect'
+      gasto: Expense recorded
+      liquidado: 'Trip settled: expected %{esperaba}, handed over %{entrego}'
+      cargo: ; charge of %{monto} to %{chofer}
+      cancelado: Trip cancelled
+      carga: Trip %{folio} loading
+      descarga: Trip %{folio} unloading
+      gasto_de_ruta: 'Route expense %{folio}: %{concepto}'
+  reparto:
+    mi_ruta: My route
+    entregar: Deliver
+    entregada_y_cobrada: Delivered and collected
+    efectivo_que_llevas: 'Cash you carry: %{monto} (collected minus change and expenses).'
+    sin_viaje: You have no trip on the road.
+    credito_bloqueado: 'CREDIT BLOCKED: collect everything in cash'
+    solo_contado: cash only
+    puede_credito: may take the note on credit
+    convenio: Agreement
+    usadas_semana: Used this week
+    entregar_escanea: 'Deliver: scan every box, pallet or package you unload'
+    codigo_bulto: Item code
+    entregados_de_html: Delivered %{n} of %{total} · pending %{pendientes}
+    sin_etiqueta_no_se_escanea: 'No label (not scanned):'
+    rechazar: reject
+    entregar_todo_sin_escanear: Deliver everything without scanning (goes to review)
+    por_que_no_se_escaneo: why it was not scanned
+    dar_por_entregado: Mark as delivered
+    cerrar_y_cobrar: Close stop and collect
+    cerrar_ayuda: What you did not scan is rejected and goes back on the truck. Collect the rest in cash.
+    motivo_rechazo_pendientes: reason for rejecting the %{n} pending
+    motivo_si_rechazas: reason if you reject anything
+    resto_a_credito: Whatever is not paid goes to their account (credit)
+    nota_vale: The note is %{monto} if everything is delivered; the system deducts what is rejected.
+    no_se_entrego: Not delivered
+    confirmar_no_entregado: Everything goes back on the truck and the note is zeroed. Sure?
+    motivo_no_entregado: closed, refused, not there…
+    no_entregado: Not delivered
+    van: Going
+    devuelve: returns
+    devolvio: Returned
+    abono_a_cuenta: Payment on account
+    abono_ayuda: Pays part of what was owed. You carry it until settlement.
+    abonar: Pay
+    pedido_proxima_visita: Order for the next visit
+    pedir: Order
+    avisos:
+      devolvio_en_parada: Returned at stop %{folio}
+      canastillas_devueltas: Returned crates noted
+      entregados:
+        one: 1 item delivered
+        other: '%{count} items delivered'
+      entrego_sin_escanear: 'Delivered %{n} items without scanning: %{motivo}'
+      dados_por_entregados: '%{n} items marked delivered; goes to review'
+      rechazada: Stop %{destino} fully rejected
+      a_credito: 'Stop %{destino}: paid %{pago}, on credit %{credito}'
+      cobrada: 'Stop %{destino} collected: %{monto}'
+      no_entregado_motivo: 'not delivered: %{motivo}'
+      no_entregada: 'Stop %{destino} not delivered: everything comes back'
+  canastillas:
+    intro: Loaned asset. They go from the truck to the customer at the stop, come back when the customer returns them (at the stop or at the warehouse) and the driver unloads them at settlement. Balance by type.
+    clientes_deben: Customers who owe crates
+    nadie_debe: Nobody owes crates.
+    en_camiones: Crates on trucks (by driver)
+    todo_en_bodega: Everything in the warehouse.
+    devolucion_bodega: Return at warehouse
+    registrar: Record
+    ajuste: Adjustment (signed, with reason)
+    cliente_blank: — customer —
+    chofer_blank: — or driver —
+    ajustar: Adjust
+    ultimos_movimientos: Latest movements
+    canastilla: Crate
+    camion: truck
+    concepto: Concept
+    tipos:
+      carga: loading
+      entrega: delivery
+      devolucion: return
+      descarga: unloading
+      ajuste: adjustment
+    avisos:
+      devolucion: Return recorded
+      ajuste: Adjustment recorded
+  cobranza:
+    cobranza: Collections
+    cobranza_de_ruta: Route collections
+    saldo_en_la_calle: Total balance outstanding
+    intro: Customers with credit or with a balance. Status is computed live from their credit type's rule; when they pay, they open by themselves. A manual collections block overrides the rule.
+    credito: Credit
+    saldo: Balance
+    contado: cash
+    abierto: open
+    manual: manual
+    nadie_debe: Nobody owes anything.
+    limite: Limit
+    corte_los: cutoff on %{dia}
+    credito_bloqueado: Credit blocked
+    sin_credito: No credit
+    credito_abierto: Credit open
+    dias: days
+    abono_oficina: Payment at the office
+    entra_a_caja: Goes into the open register at %{sucursal}.
+    bloqueo_manual: Manual block
+    hoy: Today
+    bloquear: Block
+    desbloquear: Unblock
+    quitar_manual: Remove manual
+    estado_de_cuenta: Account statement
+    movimiento: Movement
+    detalle: Detail
+    cargo: Charge
+    abono: Payment
+    tipos:
+      cargo: charge
+      abono: payment
+      devolucion: refund
+      ajuste: adjustment
+    avisos:
+      credito_de: 'Credit for %{cliente}: %{estado}'
+  conteos:
+    conteos: Counts
+    conteo: Count
+    supervisor: Supervisor
+    responsable: Responsible
+    faltante: Shortage
+    sobrante: Surplus
+    sin_conteos: No counts.
+    nuevo: New count
+    ya_hay_abierto: 'There is already an open count:'
+    cierralo_antes: Close it before opening another.
+    responsable_ayuda: Person responsible for the stock (the shortage is charged to them)
+    nuevo_ayuda: 'Opening takes the system stock. Scan everything there is; whatever has no label is typed in. On closing, the count rules: inventory is adjusted, labels that did not show up are written off and the shortage is charged to the responsible person.'
+    abrir: Open count
+    escanear: Scan
+    etiqueta_placeholder: Label (package, box or pallet)
+    contar: Count
+    sin_escanear_todavia: 'Not scanned yet: %{n} live labels.'
+    contar_a_mano: Count by hand (what has no label)
+    cerrar: Close count
+    confirmar_cerrar: 'The count rules: inventory is adjusted, unseen labels are written off and the shortage is charged to %{responsable}. Close?'
+    sistema: System
+    escaneado: Scanned
+    a_mano: By hand
+    contado: Counted
+    no_aparecen: Labels not seen yet
+    avisos:
+      abierto: 'Count %{folio} opened: scan everything there is'
+      contados: '%{n} packages counted'
+      no_aparecio: did not show up in count %{folio}
+  cargos:
+    cargos: Charges
+    revision: review
+    cobrado: Collected
+    perdonar: Forgive
+    sin_cargos: No charges.
+    avisos:
+      marcado: Charge to %{quien} marked as %{estado}
+  inventario:
+    existencias: Stock
+    kardex: Ledger
+    sin_existencias: No stock yet.
+    sin_movimientos: No movements.
+    entrada_o_ajuste: Receipt or adjustment
+    queda_por_revisar: It is recorded anyway and goes to end-of-day review.
+    registrar: Record

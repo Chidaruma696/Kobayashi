@@ -293,6 +293,36 @@ de:
       falta_dinero: 'Geld fehlt: das Ticket ist %{total} und gezahlt werden %{pago}'
       no_efectivo_excede: Überweisung oder Einzahlung dürfen die Summe nicht übersteigen
       sin_ticket_devolucion: 'Ohne Ticket oder Etikett keine Erstattung: „%{codigo}“ nicht gefunden'
+    escribe_motivo: Grund angeben
+    viaje:
+      sin_chofer: 'Tour %{ruta} hat keinen Fahrer: einen wählen'
+      ya_salio: die Fahrt ist schon losgefahren
+      esta: die Fahrt ist %{estado}
+      parada_ajena: dieser Halt gehört nicht zu dieser Fahrt
+      sin_repartos: die Fahrt hat keine Lieferungen
+      faltan_sellar: 'noch nicht versiegelt: %{folios}'
+      sin_caja: keine Kasse offen in %{sucursal}, um das Geld anzunehmen
+      solo_cancela_antes: nur vor der Abfahrt stornierbar
+    reparto:
+      por_que_no_escaneo: angeben, warum nicht gescannt wurde
+    conteo:
+      ya_abierto: in %{sucursal} ist bereits eine Zählung offen
+      cerrado: die Zählung ist geschlossen
+      en_transito: Etikett %{codigo} ist unterwegs
+      ya_contada: '%{codigo} wurde schon gezählt'
+      cantidad_invalida: ungültige Menge
+      ya_cerrado: die Zählung ist bereits geschlossen
+    cargo:
+      sin_origen: eine Belastung stammt aus einer Zählung, einer Prüfung oder einer Fahrt
+      ya_esta: die Belastung ist bereits %{estado}
+    inventario:
+      cantidad_cero: die Menge muss größer als null sein
+      insuficiente: 'Nicht genug Bestand von %{producto} in %{sucursal}: vorhanden %{hay}, angefragt %{piden}'
+    abono:
+      mayor_que_cero: die Zahlung muss größer als null sein
+      sin_caja: keine Kasse offen in %{sucursal}, um die Zahlung anzunehmen
+    revision:
+      ya_esta: die Prüfung ist bereits %{estado}
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -336,6 +366,13 @@ de:
     aprobada: Freigegeben
     observada_sin_cargo: Beanstandet, ohne Belastung
     observada_cargada: 'Beanstandet und %{quien} belastet: %{monto}'
+    desc:
+      etiqueta: 'Etikett %{codigo}: %{cantidad}'
+      produccion: 'Produktion %{folio}: %{cantidad} eingegangen'
+      salida_linea: 'Zeile ohne Etikett in %{folio}: %{cantidad}'
+      movimiento: '%{tipo} über %{cantidad}'
+      retiro: Abschöpfung von %{monto} aus Abschnitt %{folio}
+      venta_linea: 'Preis gesenkt in %{folio}: %{producto} auf %{precio} (Katalog %{catalogo})'
   estados:
     pendiente: offen
     aprobada: freigegeben
@@ -371,6 +408,7 @@ de:
     bloqueado: gesperrt
     perdonado: erlassen
     cobrado: eingezogen
+    desbloqueado: freigegeben
   movimientos:
     entrada: Eingang
     produccion: Produktion
@@ -875,3 +913,267 @@ de:
       sobrante: '%{codigo} als Überschuss empfangen; geht zur Prüfung'
       recibida: Transfer %{folio} empfangen
       desarmada: '%{folio}: beim Empfang aufgelöst'
+  credito:
+    tipos:
+      contado: Bar (kein Kredit)
+      nota_x_nota: Schein für Schein
+      limite: Kreditlimit
+      semanal: Wöchentlich (zahlt am Stichtag)
+      contado_abonando: Bar mit Teilzahlungen (7 Tage)
+      especial: Speziell (eigener Stichtag)
+    dias:
+    - Montag
+    - Dienstag
+    - Mittwoch
+    - Donnerstag
+    - Freitag
+    - Samstag
+    - Sonntag
+    bloqueado_por_cobranza: 'Vom Inkasso gesperrt: %{motivo}'
+    desbloqueado_por_cobranza: 'Vom Inkasso freigegeben: %{motivo}'
+    ultimo_abono: letzte Zahlung %{fecha}
+    sin_abonos: keine Zahlungen
+    reglas:
+      contado: 'Bar: Kredit gilt nicht'
+      nota_x_nota: Zahlt den vorigen Schein, um einen neuen zu bekommen
+      limite: Kreditlimit %{limite}
+      limite_sin_configurar: Limit nicht gesetzt
+      especial_sin_dia: 'Speziell ohne Stichtag: nur manuelle Sperre'
+      semanal_dia: Zahlt am Stichtag %{dia}
+      semanal: Zahlt die Woche (Montag bis Samstag)
+      contado_abonando: Kredit nur bei Zahlung alle 7 Tage
+    bloqueos:
+      nota_x_nota: 'schuldet %{saldo}: den vorigen Schein zahlen'
+      limite: 'Kreditgrenze: schuldet %{saldo} von %{limite}'
+      semanal: Stichtag mit %{monto} unbezahlt erreicht
+      contado_abonando: zahlt nicht mehr (%{ultimo}) und schuldet %{saldo}
+  viajes:
+    viaje: Fahrt
+    viajes_de_reparto: Lieferfahrten
+    orden_de_reparto: Lieferliste
+    tel: Tel.
+    debe: Schuldet
+    canastillas: Körbe
+    n_bultos:
+      one: 1 Stück
+      other: '%{count} Stücke'
+    nota: Lieferschein
+    cobrado: Kassiert
+    firma: Unterschrift
+    total_paradas: Halte gesamt
+    a_cobrar: Zu kassieren
+    paradas: Halte
+    cerradas: geschlossen
+    liquidar: Abrechnen
+    armar: Zusammenstellen
+    ninguno_abierto: Keine offene Fahrt.
+    liquidados: Abgerechnet
+    por: von
+    nuevo: Neue Lieferfahrt
+    el_de_la_ruta: — der der Tour —
+    solo_con_permiso: Nur Benutzer mit Lieferberechtigung erscheinen.
+    nuevo_ayuda: Bereits versiegelte Lieferungen der Tour kommen von selbst auf die Fahrt; die übrigen werden aus der Fahrt oder dem Transfer hinzugefügt.
+    armar_viaje: Fahrt zusammenstellen
+    armo: zusammengestellt von
+    salio: losgefahren
+    parada: Halt
+    zona: Zone
+    bultos: Stücke
+    sin_repartos: Noch keine Lieferungen.
+    repartos_para_subir: Lieferungen, die aufgeladen werden können
+    subir: Aufladen
+    sin_repartos_abiertos: Keine offenen Lieferungen ohne Fahrt.
+    nueva_salida_cliente: Neuer Transfer an einen Kunden
+    despachar: Abfertigen
+    despachar_ayuda: Alle Halte müssen versiegelt sein. Bei der Abfahrt schließt jede Lieferung ihren offenen Lieferschein und der Bestand sinkt. In %{sucursal} muss eine Kasse offen sein.
+    sale_el_camion: Lkw fährt los
+    confirmar_despachar: Fahrt %{folio} mit %{n} Halten abfertigen?
+    cancelar_viaje: Fahrt stornieren
+    confirmar_cancelar: Fahrt stornieren?
+    dinero_del_viaje: Geld der Fahrt
+    cobrado_efectivo: Bar kassiert (Scheine und Zahlungen)
+    cambio_dado: Rückgeld gegeben
+    a_credito: Auf Kredit (Kundenkonto)
+    transferencias_depositos: Überweisungen und Einzahlungen
+    gastos_chofer: Ausgaben des Fahrers
+    efectivo_a_entregar: Abzuliefernder Barbetrag
+    entrego: Abgeliefert
+    cargadas: geladen
+    quedan_en_camion: bleiben im Lkw
+    a_bordo: an Bord
+    gasto_placeholder: Ausgabe (Benzin, Maut…)
+    agregar_gasto: Ausgabe hinzufügen
+    liquidar_el_viaje: Fahrt abrechnen
+    liquidar_ayuda: Zähle das Bargeld, das der Fahrer bringt. Noch offene Halte gelten als nicht zugestellt und ihre Ware kommt zurück. Das Kassierte geht in die offene Kasse; fehlt Geld, wird es dem Fahrer belastet.
+    confirmar_liquidar: Fahrt %{folio} abrechnen?
+    efectivo_entregado: Abgeliefertes Bargeld
+    que_regresan: '%{tipo}, die zurückkommen'
+    avisos:
+      armado: Fahrt %{folio} mit %{n} Lieferungen zusammengestellt
+      agregado: Lieferung hinzugefügt
+      quitado: Lieferung von der Fahrt genommen
+      en_ruta: 'Fahrt %{folio} unterwegs: %{n} Lieferscheine zu kassieren'
+      gasto: Ausgabe erfasst
+      liquidado: 'Fahrt abgerechnet: erwartet %{esperaba}, abgeliefert %{entrego}'
+      cargo: ; Belastung von %{monto} an %{chofer}
+      cancelado: Fahrt storniert
+      carga: Beladung Fahrt %{folio}
+      descarga: Entladung Fahrt %{folio}
+      gasto_de_ruta: 'Tourausgabe %{folio}: %{concepto}'
+  reparto:
+    mi_ruta: Meine Tour
+    entregar: Zustellen
+    entregada_y_cobrada: Zugestellt und kassiert
+    efectivo_que_llevas: 'Bargeld bei dir: %{monto} (kassiert minus Rückgeld und Ausgaben).'
+    sin_viaje: Du hast keine Fahrt unterwegs.
+    credito_bloqueado: 'KREDIT GESPERRT: alles bar kassieren'
+    solo_contado: nur bar
+    puede_credito: darf den Schein auf Kredit nehmen
+    convenio: Vereinbarung
+    usadas_semana: Diese Woche verbraucht
+    entregar_escanea: 'Zustellen: jede Kiste, Palette oder jedes Paket scannen, das du ablädst'
+    codigo_bulto: Code des Stücks
+    entregados_de_html: Zugestellt %{n} von %{total} · offen %{pendientes}
+    sin_etiqueta_no_se_escanea: 'Ohne Etikett (wird nicht gescannt):'
+    rechazar: ablehnen
+    entregar_todo_sin_escanear: Alles ohne Scan zustellen (geht zur Prüfung)
+    por_que_no_se_escaneo: warum nicht gescannt wurde
+    dar_por_entregado: Als zugestellt markieren
+    cerrar_y_cobrar: Halt schließen und kassieren
+    cerrar_ayuda: Was du nicht gescannt hast, wird abgelehnt und geht zurück in den Lkw. Den Rest bar kassieren.
+    motivo_rechazo_pendientes: Grund für die Ablehnung der %{n} offenen
+    motivo_si_rechazas: Grund, falls du etwas ablehnst
+    resto_a_credito: Was nicht gezahlt wird, geht auf sein Konto (Kredit)
+    nota_vale: Der Schein beträgt %{monto} bei voller Lieferung; das System zieht Abgelehntes ab.
+    no_se_entrego: Nicht zugestellt
+    confirmar_no_entregado: Alles geht zurück in den Lkw und der Schein steht auf null. Sicher?
+    motivo_no_entregado: geschlossen, wollte nicht, war nicht da…
+    no_entregado: Nicht zugestellt
+    van: Mit dabei
+    devuelve: gibt zurück
+    devolvio: Zurückgegeben
+    abono_a_cuenta: Zahlung aufs Konto
+    abono_ayuda: Zahlt einen Teil der Schulden. Du trägst es bis zur Abrechnung.
+    abonar: Zahlen
+    pedido_proxima_visita: Bestellung für den nächsten Besuch
+    pedir: Bestellen
+    avisos:
+      devolvio_en_parada: Am Halt %{folio} zurückgegeben
+      canastillas_devueltas: Zurückgegebene Körbe vermerkt
+      entregados:
+        one: 1 Stück zugestellt
+        other: '%{count} Stücke zugestellt'
+      entrego_sin_escanear: '%{n} Stücke ohne Scan zugestellt: %{motivo}'
+      dados_por_entregados: '%{n} Stücke als zugestellt markiert; geht zur Prüfung'
+      rechazada: Halt %{destino} komplett abgelehnt
+      a_credito: 'Halt %{destino}: gezahlt %{pago}, auf Kredit %{credito}'
+      cobrada: 'Halt %{destino} kassiert: %{monto}'
+      no_entregado_motivo: 'nicht zugestellt: %{motivo}'
+      no_entregada: 'Halt %{destino} nicht zugestellt: alles kommt zurück'
+  canastillas:
+    intro: Leihgut. Sie gehen am Halt vom Lkw zum Kunden, kommen zurück, wenn der Kunde sie zurückgibt (am Halt oder im Lager), und der Fahrer entlädt sie bei der Abrechnung. Saldo je Typ.
+    clientes_deben: Kunden, die Körbe schulden
+    nadie_debe: Niemand schuldet Körbe.
+    en_camiones: Körbe in Lkws (je Fahrer)
+    todo_en_bodega: Alles im Lager.
+    devolucion_bodega: Rückgabe im Lager
+    registrar: Erfassen
+    ajuste: Korrektur (mit Vorzeichen und Grund)
+    cliente_blank: — Kunde —
+    chofer_blank: — oder Fahrer —
+    ajustar: Korrigieren
+    ultimos_movimientos: Letzte Bewegungen
+    canastilla: Korb
+    camion: Lkw
+    concepto: Vorgang
+    tipos:
+      carga: Beladung
+      entrega: Lieferung
+      devolucion: Rückgabe
+      descarga: Entladung
+      ajuste: Korrektur
+    avisos:
+      devolucion: Rückgabe erfasst
+      ajuste: Korrektur erfasst
+  cobranza:
+    cobranza: Inkasso
+    cobranza_de_ruta: Tour-Inkasso
+    saldo_en_la_calle: Offener Gesamtsaldo
+    intro: Kunden mit Kredit oder Saldo. Der Status wird live nach der Regel ihres Kredittyps berechnet; zahlen sie, öffnen sie sich von selbst. Die manuelle Inkasso-Sperre geht vor.
+    credito: Kredit
+    saldo: Saldo
+    contado: bar
+    abierto: offen
+    manual: manuell
+    nadie_debe: Niemand schuldet etwas.
+    limite: Limit
+    corte_los: Stichtag %{dia}
+    credito_bloqueado: Kredit gesperrt
+    sin_credito: Kein Kredit
+    credito_abierto: Kredit offen
+    dias: Tage
+    abono_oficina: Zahlung im Büro
+    entra_a_caja: Geht in die offene Kasse von %{sucursal}.
+    bloqueo_manual: Manuelle Sperre
+    hoy: Heute
+    bloquear: Sperren
+    desbloquear: Freigeben
+    quitar_manual: Manuell entfernen
+    estado_de_cuenta: Kontoauszug
+    movimiento: Bewegung
+    detalle: Detail
+    cargo: Belastung
+    abono: Zahlung
+    tipos:
+      cargo: Belastung
+      abono: Zahlung
+      devolucion: Erstattung
+      ajuste: Korrektur
+    avisos:
+      credito_de: 'Kredit von %{cliente}: %{estado}'
+  conteos:
+    conteos: Zählungen
+    conteo: Zählung
+    supervisor: Aufsicht
+    responsable: Verantwortlich
+    faltante: Fehlbestand
+    sobrante: Überschuss
+    sin_conteos: Keine Zählungen.
+    nuevo: Neue Zählung
+    ya_hay_abierto: 'Es ist bereits eine Zählung offen:'
+    cierralo_antes: Erst schließen, dann eine neue öffnen.
+    responsable_ayuda: Verantwortlich für den Bestand (dem der Fehlbestand belastet wird)
+    nuevo_ayuda: 'Beim Öffnen wird der Systembestand übernommen. Alles scannen; was kein Etikett hat, wird eingetippt. Beim Schließen zählt die Zählung: der Bestand wird angepasst, nicht gesehene Etiketten werden abgeschrieben und der Fehlbestand dem Verantwortlichen belastet.'
+    abrir: Zählung öffnen
+    escanear: Scannen
+    etiqueta_placeholder: Etikett (Paket, Kiste oder Palette)
+    contar: Zählen
+    sin_escanear_todavia: 'Noch nicht gescannt: %{n} aktive Etiketten.'
+    contar_a_mano: Von Hand zählen (was kein Etikett hat)
+    cerrar: Zählung schließen
+    confirmar_cerrar: 'Die Zählung zählt: Bestand wird angepasst, nicht gesehene Etiketten abgeschrieben und der Fehlbestand %{responsable} belastet. Schließen?'
+    sistema: System
+    escaneado: Gescannt
+    a_mano: Von Hand
+    contado: Gezählt
+    no_aparecen: Noch nicht gesehene Etiketten
+    avisos:
+      abierto: 'Zählung %{folio} geöffnet: alles scannen, was da ist'
+      contados: '%{n} Pakete gezählt'
+      no_aparecio: in Zählung %{folio} nicht aufgetaucht
+  cargos:
+    cargos: Belastungen
+    revision: Prüfung
+    cobrado: Eingezogen
+    perdonar: Erlassen
+    sin_cargos: Keine Belastungen.
+    avisos:
+      marcado: Belastung von %{quien} als %{estado} markiert
+  inventario:
+    existencias: Bestand
+    kardex: Lagerbuch
+    sin_existencias: Noch kein Bestand.
+    sin_movimientos: Keine Bewegungen.
+    entrada_o_ajuste: Eingang oder Korrektur
+    queda_por_revisar: Wird trotzdem erfasst und geht zur Tagesprüfung.
+    registrar: Erfassen

@@ -1,6 +1,6 @@
-<h1 class="mb-4 text-2xl font-bold">Conteos · <%= sucursal_actual %></h1>
+<h1 class="mb-4 text-2xl font-bold"><%= t("conteos.conteos") %> · <%= sucursal_actual %></h1>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Folio</th><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Supervisor</th><th class="px-3 py-2">Responsable</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2 text-right">Faltante</th><th class="px-3 py-2 text-right">Sobrante</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.folio") %></th><th class="px-3 py-2"><%= t("comun.fecha") %></th><th class="px-3 py-2"><%= t("conteos.supervisor") %></th><th class="px-3 py-2"><%= t("conteos.responsable") %></th><th class="px-3 py-2"><%= t("comun.estado") %></th><th class="px-3 py-2 text-right"><%= t("conteos.faltante") %></th><th class="px-3 py-2 text-right"><%= t("conteos.sobrante") %></th><th></th></tr></thead>
   <tbody>
     <% @conteos.each do |c| %>
       <tr class="border-t border-stone-100">
@@ -8,12 +8,12 @@
         <td class="px-3 py-2"><%= l c.created_at, format: :short %></td>
         <td class="px-3 py-2"><%= c.usuario %></td>
         <td class="px-3 py-2"><%= c.responsable %></td>
-        <td class="px-3 py-2"><%= c.estado %></td>
+        <td class="px-3 py-2"><%= t("estados.#{c.estado}") %></td>
         <td class="px-3 py-2 text-right font-mono text-red-700"><%= pesos(c.faltante_centavos) if c.faltante_centavos %></td>
         <td class="px-3 py-2 text-right font-mono text-green-700"><%= pesos(c.sobrante_centavos) if c.sobrante_centavos %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Abrir", conteo_path(c), class: "btn btn-primary btn-sm" %></td>
+        <td class="px-3 py-2 text-right"><%= link_to t("comun.abrir"), conteo_path(c), class: "btn btn-primary btn-sm" %></td>
       </tr>
     <% end %>
-    <% if @conteos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500">Sin conteos.</td></tr><% end %>
+    <% if @conteos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500"><%= t("conteos.sin_conteos") %></td></tr><% end %>
   </tbody>
 </table>

@@ -1,63 +1,63 @@
 <% c = @cliente %>
 <div class="mb-2 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold"><%= c.nombre %></h1>
-  <%= link_to icono("arrow-left", "Cobranza"), cobranza_path, class: "btn btn-ghost btn-sm" %>
+  <%= link_to icono("arrow-left", t("cobranza.cobranza")), cobranza_path, class: "btn btn-ghost btn-sm" %>
 </div>
-<p class="mb-4 text-sm text-stone-600"><%= c.ruta %><%= " · #{c.telefono}" if c.telefono.present? %> · <%= Credito::TIPOS[c.credito] %><%= " · límite #{pesos(c.limite_credito_centavos)}" if c.credito == "limite" %><%= " · corte los #{Credito::DIAS[c.dia_corte]}" if c.dia_corte %> · <%= link_to "editar", edit_admin_cliente_path(c), class: "enlace" if puede?("admin.catalogo") %></p>
+<p class="mb-4 text-sm text-stone-600"><%= c.ruta %><%= " · #{c.telefono}" if c.telefono.present? %> · <%= Credito.nombre(c.credito) %><%= " · #{t("cobranza.limite").downcase} #{pesos(c.limite_credito_centavos)}" if c.credito == "limite" %><%= " · #{t("cobranza.corte_los", dia: Credito.dia(c.dia_corte))}" if c.dia_corte %> · <%= link_to t("comun.editar").downcase, edit_admin_cliente_path(c), class: "enlace" if puede?("admin.catalogo") %></p>
 
 <div class="mb-4 grid gap-4 md:grid-cols-3">
   <div class="card">
-    <div class="text-xs uppercase text-stone-500">Saldo</div>
+    <div class="text-xs uppercase text-stone-500"><%= t("cobranza.saldo") %></div>
     <div class="font-mono text-3xl"><%= pesos(@estado.saldo_centavos) %></div>
-    <div class="mt-2 text-sm <%= @estado.bloqueado ? 'text-red-700' : 'text-green-700' %>"><%= @estado.bloqueado ? "Crédito bloqueado" : (@estado.tipo == "contado" ? "Sin crédito" : "Crédito abierto") %><%= " (manual)" if @estado.manual %></div>
+    <div class="mt-2 text-sm <%= @estado.bloqueado ? 'text-red-700' : 'text-green-700' %>"><%= @estado.bloqueado ? t("cobranza.credito_bloqueado") : (@estado.tipo == "contado" ? t("cobranza.sin_credito") : t("cobranza.credito_abierto")) %><%= " (#{t("cobranza.manual")})" if @estado.manual %></div>
     <div class="text-xs text-stone-500"><%= @estado.regla %><%= ". #{@estado.motivo}" if @estado.motivo.present? %></div>
-    <% if (sc = c.saldo_canastillas).any? %><div class="mt-2 text-xs text-stone-600">Canastillas: <%= sc.map { |t, n| "#{n} #{TipoCanastilla.find(t)}" }.join(", ") %></div><% end %>
+    <% if (sc = c.saldo_canastillas).any? %><div class="mt-2 text-xs text-stone-600"><%= t("viajes.canastillas") %>: <%= sc.map { |t, n| "#{n} #{TipoCanastilla.find(t)}" }.join(", ") %></div><% end %>
     <table class="mt-3 w-full text-xs text-stone-600">
-      <% @aging.each do |k, v| %><tr><td><%= k %> días</td><td class="text-right font-mono"><%= pesos(v) %></td></tr><% end %>
+      <% @aging.each do |k, v| %><tr><td><%= k %> <%= t("cobranza.dias") %></td><td class="text-right font-mono"><%= pesos(v) %></td></tr><% end %>
     </table>
   </div>
   <% if puede?("cobranza.abonar") %>
     <div class="card">
-      <h2 class="mb-2 font-semibold">Abono en oficina</h2>
-      <p class="mb-2 text-xs text-stone-500">Entra a la caja abierta de <%= sucursal_actual %>.</p>
+      <h2 class="mb-2 font-semibold"><%= t("cobranza.abono_oficina") %></h2>
+      <p class="mb-2 text-xs text-stone-500"><%= t("cobranza.entra_a_caja", sucursal: sucursal_actual) %></p>
       <%= form_with url: cobranza_abonar_path(c), class: "space-y-2 text-sm" do |f| %>
-        <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: "Monto", required: true, class: "w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
-        <%= f.select :forma, Pago::FORMAS.map { |x| [ x.humanize, x ] }, {}, class: "w-full rounded border border-stone-300 px-3 py-2" %>
-        <%= f.text_field :notas, placeholder: "notas", class: "w-full rounded border border-stone-300 px-3 py-2" %>
-        <%= f.submit "Abonar", class: "btn btn-success" %>
+        <%= f.number_field :monto, step: "0.01", min: "0.01", placeholder: t("caja.monto"), required: true, class: "w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
+        <%= f.select :forma, Pago::FORMAS.map { |x| [ t("formas_pago.#{x}"), x ] }, {}, class: "w-full rounded border border-stone-300 px-3 py-2" %>
+        <%= f.text_field :notas, placeholder: t("comun.notas").downcase, class: "w-full rounded border border-stone-300 px-3 py-2" %>
+        <%= f.submit t("reparto.abonar"), class: "btn btn-success" %>
       <% end %>
     </div>
   <% end %>
   <% if puede?("cobranza.bloquear") %>
     <div class="card">
-      <h2 class="mb-2 font-semibold">Bloqueo manual</h2>
-      <% if c.bloqueo_manual %><p class="mb-2 text-xs text-stone-600">Hoy: <strong><%= c.bloqueo_manual %></strong> por <%= c.bloqueo_por %> · <%= c.bloqueo_motivo %></p><% end %>
+      <h2 class="mb-2 font-semibold"><%= t("cobranza.bloqueo_manual") %></h2>
+      <% if c.bloqueo_manual %><p class="mb-2 text-xs text-stone-600"><%= t("cobranza.hoy") %>: <strong><%= t("estados.#{c.bloqueo_manual}") %></strong> <%= t("viajes.por") %> <%= c.bloqueo_por %> · <%= c.bloqueo_motivo %></p><% end %>
       <%= form_with url: cobranza_bloquear_path(c), class: "space-y-2 text-sm" do |f| %>
-        <%= f.text_field :motivo, placeholder: "motivo", class: "w-full rounded border border-stone-300 px-3 py-2" %>
+        <%= f.text_field :motivo, placeholder: t("comun.motivo").downcase, class: "w-full rounded border border-stone-300 px-3 py-2" %>
         <div class="flex flex-wrap gap-2">
-          <%= f.button "Bloquear", name: "accion", value: "bloquear", class: "rounded border border-red-400 px-3 py-1 text-red-700" %>
-          <%= f.button "Desbloquear", name: "accion", value: "desbloquear", class: "rounded border border-green-500 px-3 py-1 text-green-700" %>
-          <%= f.button "Quitar manual", name: "accion", value: "quitar", class: "btn btn-secondary btn-sm" %>
+          <%= f.button t("cobranza.bloquear"), name: "accion", value: "bloquear", class: "rounded border border-red-400 px-3 py-1 text-red-700" %>
+          <%= f.button t("cobranza.desbloquear"), name: "accion", value: "desbloquear", class: "rounded border border-green-500 px-3 py-1 text-green-700" %>
+          <%= f.button t("cobranza.quitar_manual"), name: "accion", value: "quitar", class: "btn btn-secondary btn-sm" %>
         </div>
       <% end %>
     </div>
   <% end %>
 </div>
 
-<h2 class="mb-2 font-semibold">Estado de cuenta</h2>
+<h2 class="mb-2 font-semibold"><%= t("cobranza.estado_de_cuenta") %></h2>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Movimiento</th><th class="px-3 py-2">Detalle</th><th class="px-3 py-2 text-right">Cargo</th><th class="px-3 py-2 text-right">Abono</th><th class="px-3 py-2">Quién</th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.fecha") %></th><th class="px-3 py-2"><%= t("cobranza.movimiento") %></th><th class="px-3 py-2"><%= t("cobranza.detalle") %></th><th class="px-3 py-2 text-right"><%= t("cobranza.cargo") %></th><th class="px-3 py-2 text-right"><%= t("cobranza.abono") %></th><th class="px-3 py-2"><%= t("comun.quien") %></th></tr></thead>
   <tbody>
     <% @movimientos.each do |m| %>
       <tr class="border-t border-stone-100">
         <td class="px-3 py-1 whitespace-nowrap"><%= l m.fecha %></td>
-        <td class="px-3 py-1"><%= m.tipo %></td>
+        <td class="px-3 py-1"><%= t("cobranza.tipos.#{m.tipo}") %></td>
         <td class="px-3 py-1 text-stone-600"><%= m.motivo %></td>
         <td class="px-3 py-1 text-right font-mono"><%= pesos(m.monto_centavos) if m.monto_centavos.positive? %></td>
         <td class="px-3 py-1 text-right font-mono text-green-700"><%= pesos(-m.monto_centavos) if m.monto_centavos.negative? %></td>
         <td class="px-3 py-1"><%= m.usuario %></td>
       </tr>
     <% end %>
-    <% if @movimientos.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-stone-500">Sin movimientos.</td></tr><% end %>
+    <% if @movimientos.empty? %><tr><td colspan="6" class="px-3 py-6 text-center text-stone-500"><%= t("inventario.sin_movimientos") %></td></tr><% end %>
   </tbody>
 </table>

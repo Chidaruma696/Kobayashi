@@ -34,7 +34,7 @@ class Viaje < ApplicationRecord
   end
 
   def agregar!(salida)
-    raise ArgumentError, "el viaje ya #{estado == 'en_ruta' ? 'salió' : "está #{estado}"}" unless armando?
+    raise ArgumentError, (estado == "en_ruta" ? I18n.t("errores.viaje.ya_salio") : I18n.t("errores.viaje.esta", estado: I18n.t("estados.#{estado}"))) unless armando?
     raise ArgumentError, "#{salida.folio} no es un reparto" unless salida.reparto?
     raise ArgumentError, "#{salida.folio} ya va en el viaje #{salida.viaje.folio}" if salida.viaje_id && salida.viaje_id != id
     raise ArgumentError, "#{salida.folio} está #{salida.estado}" unless salida.abierta?
@@ -45,7 +45,7 @@ class Viaje < ApplicationRecord
   end
 
   def quitar!(salida)
-    raise ArgumentError, "el viaje ya salió" unless armando?
+    raise ArgumentError, I18n.t("errores.viaje.ya_salio") unless armando?
     transaction do
       salida.update!(viaje: nil, parada: nil) if salida.viaje_id == id
       generar_orden!
@@ -59,9 +59,9 @@ class Viaje < ApplicationRecord
 
   # Mueve una parada un lugar arriba (−1) o abajo (+1) antes de salir.
   def mover!(salida, paso)
-    raise ArgumentError, "el viaje ya salió" unless armando?
+    raise ArgumentError, I18n.t("errores.viaje.ya_salio") unless armando?
     lista = paradas
-    i = lista.index(salida) or raise ArgumentError, "esa parada no es de este viaje"
+    i = lista.index(salida) or raise ArgumentError, I18n.t("errores.viaje.parada_ajena")
     j = i + paso
     return if j.negative? || j >= lista.size
     lista[i], lista[j] = lista[j], lista[i]
@@ -75,15 +75,15 @@ class Viaje < ApplicationRecord
 
   # Sale el camión: cada reparto se envía (nace su nota por cobrar) y el viaje queda en ruta.
   def salir!(usuario:)
-    raise ArgumentError, "el viaje está #{estado}" unless armando?
-    raise ArgumentError, "el viaje no lleva repartos" if salidas.none?
+    raise ArgumentError, I18n.t("errores.viaje.esta", estado: I18n.t("estados.#{estado}")) unless armando?
+    raise ArgumentError, I18n.t("errores.viaje.sin_repartos") if salidas.none?
     sin_sellar = salidas.reject(&:sellada?)
-    raise ArgumentError, "faltan por sellar: #{sin_sellar.map(&:folio).join(', ')}" if sin_sellar.any?
+    raise ArgumentError, I18n.t("errores.viaje.faltan_sellar", folios: sin_sellar.map(&:folio).join(", ")) if sin_sellar.any?
     transaction do
       salidas.each { |s| s.enviar!(usuario: usuario) }
       canastillas_cargadas.each do |tipo_id, n|
         Canastillas.mover!(tipo: "carga", tipo_canastilla: TipoCanastilla.find(tipo_id), cantidad: n, sucursal: sucursal, usuario: usuario,
-                           chofer: chofer, viaje: self, concepto: "Carga del viaje #{folio}")
+                           chofer: chofer, viaje: self, concepto: I18n.t("viajes.avisos.carga", folio: folio))
       end
       update!(estado: "en_ruta", salido_en: Time.current)
     end
@@ -121,7 +121,7 @@ class Viaje < ApplicationRecord
   end
 
   def agregar_gasto!(concepto:, monto_centavos:, usuario:)
-    raise ArgumentError, "el viaje está #{estado}" if liquidado? || estado == "cancelado"
+    raise ArgumentError, I18n.t("errores.viaje.esta", estado: I18n.t("estados.#{estado}")) if liquidado? || estado == "cancelado"
     gastos.create!(concepto: concepto, monto_centavos: monto_centavos, usuario: usuario)
   end
 
@@ -134,20 +134,20 @@ class Viaje < ApplicationRecord
   end
 
   def liquidar!(efectivo_entregado_centavos:, usuario:, canastillas_regresan: {})
-    raise ArgumentError, "el viaje está #{estado}" unless en_ruta?
-    corte = Corte.abierto_en(sucursal) or raise ArgumentError, "no hay caja abierta en #{sucursal.nombre} para recibir el dinero"
+    raise ArgumentError, I18n.t("errores.viaje.esta", estado: I18n.t("estados.#{estado}")) unless en_ruta?
+    corte = Corte.abierto_en(sucursal) or raise ArgumentError, I18n.t("errores.viaje.sin_caja", sucursal: sucursal.nombre)
     transaction do
       canastillas_regresan.each do |tipo_id, n|
         next unless n.to_i.positive?
         Canastillas.mover!(tipo: "descarga", tipo_canastilla: TipoCanastilla.find(tipo_id), cantidad: n, sucursal: sucursal, usuario: usuario,
-                           chofer: chofer, viaje: self, concepto: "Descarga del viaje #{folio}")
+                           chofer: chofer, viaje: self, concepto: I18n.t("viajes.avisos.descarga", folio: folio))
       end
       salidas.where(estado: "enviada").each { |s| s.cerrar_parada!(usuario: usuario, motivo_rechazo: "no se entregó (viaje #{folio} liquidado)") }
       esperado = efectivo_por_entregar_centavos
       ventas_en_ruta.find_each { |v| v.update!(en_ruta: false, corte: corte) }
       abonos.where(en_ruta: true).find_each { |a| a.update!(en_ruta: false, corte: corte) }
       gastos.each do |g|
-        corte.retiros.create!(monto_centavos: g.monto_centavos, motivo: "Gasto de ruta #{folio}: #{g.concepto}", usuario: chofer, autorizado_por: usuario)
+        corte.retiros.create!(monto_centavos: g.monto_centavos, motivo: I18n.t("viajes.avisos.gasto_de_ruta", folio: folio, concepto: g.concepto), usuario: chofer, autorizado_por: usuario)
       end
       diferencia = efectivo_entregado_centavos.to_i - esperado
       update!(estado: "liquidado", liquidado_en: Time.current, liquidado_por: usuario, efectivo_esperado_centavos: esperado,
@@ -161,7 +161,7 @@ class Viaje < ApplicationRecord
   end
 
   def cancelar!
-    raise ArgumentError, "solo se cancela antes de salir" unless armando?
+    raise ArgumentError, I18n.t("errores.viaje.solo_cancela_antes") unless armando?
     transaction do
       salidas.update_all(viaje_id: nil)
       update!(estado: "cancelado")
