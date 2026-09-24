@@ -49,3 +49,6 @@ Cada tienda numera lo suyo (su B-00001, su C-00001), como el sistema anterior, p
 
 ## La paleta es Kobayashi (24 sept 2026)
 El sistema se llama como ella, así que los colores salen de ella: el rosa salmón claro de su pelo es la marca (la cinta va en ese rosa; los botones en un rosa más hondo para que se lea), el granate de la corbata es el acento de peligro y los grises son cálidos como su oficina. Y una regla de interfaz: nada de enlaces pelones; lo que hace algo es un botón, y lo que apunta a otro documento (un folio, un cliente) es un chip con fondo. Los estilos viven en `app/assets/tailwind/application.css` como clases (`btn`, `enlace`, `chip-folio`, `card`, `tabla`, `badge`) para no repetir utilidades en cada vista.
+
+## Apache 2.0 en vez de MIT (24 sept 2026)
+Quiero que se use, se cambie y hasta se venda; lo único que pido es el crédito. MIT solo obliga a conservar el aviso en el código; Apache 2.0 obliga además a conservar el NOTICE y a marcar lo que se cambie, y es estándar. En el NOTICE va la forma del crédito.

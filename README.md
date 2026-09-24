@@ -17,7 +17,7 @@
 ![Rails 8.1](https://img.shields.io/badge/rails-8.1-cc0000?style=for-the-badge&logo=rubyonrails&logoColor=white)
 ![Ruby 3.4](https://img.shields.io/badge/ruby-3.4-cc342d?style=for-the-badge&logo=ruby&logoColor=white)
 ![SQLite](https://img.shields.io/badge/sqlite-single%20server-003b57?style=for-the-badge&logo=sqlite&logoColor=white)
-![MIT License](https://img.shields.io/badge/license-MIT-1b150d?style=for-the-badge)
+![Apache 2.0 License](https://img.shields.io/badge/license-Apache_2.0-1b150d?style=for-the-badge)
 
 <br/>
 
@@ -112,4 +112,6 @@ Kobayashi, Kana and Tohru take their names from *Miss Kobayashi's Dragon Maid* b
 
 ## 📄 License
 
-MIT. See [LICENSE](LICENSE).
+Apache 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Use it, change it, sell it; the only thing I ask is that you keep the notice and give visible credit: *based on Kobayashi, by Chidaruma696*.
