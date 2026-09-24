@@ -8,7 +8,7 @@
   <div class="rounded bg-white p-4 shadow-sm"><div class="text-xs uppercase text-slate-500"><%= @produccion.abierta? ? "Disponible" : "Merma" %></div><div class="font-mono text-2xl"><%= number_with_precision(@produccion.abierta? ? @produccion.disponible : @produccion.merma, precision: 3) %></div></div>
 </div>
 <p class="mt-3 text-sm text-slate-600">
-  <%= link_to "Pedido #{@produccion.pedido.folio}", pedido_path(@produccion.pedido), class: "text-blue-700" %>
+  <%= @produccion.pedido ? link_to("Pedido #{@produccion.pedido.folio}", pedido_path(@produccion.pedido), class: "text-blue-700") : "Sin pedido · autorizó #{@produccion.autorizado_por} · #{@produccion.justificacion}" %>
   · abrió <%= @produccion.usuario %> el <%= l @produccion.created_at, format: :short %>
 </p>
 <h2 class="mb-2 mt-6 font-semibold">Salidas etiquetadas</h2>

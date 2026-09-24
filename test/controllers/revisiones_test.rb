@@ -47,7 +47,7 @@ class RevisionesTest < ActionDispatch::IntegrationTest
     assert_equal 0, Cargo.count
   end
 
-  test "el renglón manual de una devolución también queda por revisar" do
+  test "el renglón manual de una devolución y la producción sin pedido también quedan por revisar" do
     post entrar_path, params: { usuario: "supervisora", password: "secreto1" }
     Inventario.mover!(sucursal: @tienda, producto: productos(:catsup), tipo: "entrada", cantidad: 4, usuario: usuarios(:supervisora))
     post salidas_path, params: { destino: "sucursal:#{sucursales(:matriz).id}", motivo: "devolución" }
@@ -58,8 +58,11 @@ class RevisionesTest < ActionDispatch::IntegrationTest
     assert_equal usuarios(:supervisora), linea.usuario
     assert_equal linea, Revision.last.revisable
     assert_equal 8_400, Revision.last.valor_centavos
+    post producciones_path, params: { producto_id: productos(:catsup).id, cantidad: "1", justificacion: "reempaque" }
+    assert_equal Produccion.last, Revision.last.revisable
     get revisiones_path
     assert_select "td", /Renglón sin etiqueta en DV-/
-    assert_equal 2, Revision.pendientes.count
+    assert_select "td", /Producción PR-/
+    assert_equal 3, Revision.pendientes.count
   end
 end
