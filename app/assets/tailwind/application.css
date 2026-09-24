@@ -1,19 +1,20 @@
 @import "tailwindcss";
 
-/* La paleta sale de Kobayashi (Kobayashi-san Chi no Maid Dragon): el cobrizo de su pelo es la
-   marca; el granate de su corbata, el acento; el resto son grises cálidos, como su oficina. */
+/* La paleta sale de Kobayashi (Kobayashi-san Chi no Maid Dragon): el rosa salmón claro de su pelo es
+   la marca (la cinta va en ese rosa, los botones en un tono más hondo para que se lea); el granate de
+   su corbata, el acento de peligro; el resto son grises cálidos, como su oficina. */
 @theme {
-  --color-marca-50: #fbf4f0;
-  --color-marca-100: #f6e4dc;
-  --color-marca-200: #ecc6b7;
-  --color-marca-300: #dea08a;
-  --color-marca-400: #cd775c;
-  --color-marca-500: #b9563b;
-  --color-marca-600: #a3442d;
-  --color-marca-700: #863626;
-  --color-marca-800: #6e2f24;
-  --color-marca-900: #5a2a21;
-  --color-marca-950: #30140e;
+  --color-marca-50: #fff6f5;
+  --color-marca-100: #ffe8e6;
+  --color-marca-200: #fdd0cc;
+  --color-marca-300: #f8b0ab;
+  --color-marca-400: #ef8683;
+  --color-marca-500: #e35f60;
+  --color-marca-600: #cc4249;
+  --color-marca-700: #aa323b;
+  --color-marca-800: #8c2b33;
+  --color-marca-900: #75282e;
+  --color-marca-950: #401115;
   --color-corbata-600: #8c2434;
   --color-corbata-700: #731c2a;
   --color-corbata-800: #5c1622;
