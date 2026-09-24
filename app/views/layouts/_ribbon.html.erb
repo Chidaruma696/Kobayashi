@@ -1,22 +1,21 @@
 <% activa = pestana_activa %>
-<%# La barra lleva el salmón del pelo de Kobayashi con letra oscura. Las pestañas son tiras
-    sueltas con las cuatro esquinas redondas, como las de Firefox: la activa flota en blanco,
-    no se pega a la fila de abajo. %>
+<%# La barra lleva el salmón del pelo de Kobayashi con letra oscura. Las pestañas son las
+    clásicas del Office viejo: rectangulares, y la activa se pega a la cinta de abajo. %>
 <div class="bg-marca-400 text-marca-950">
-  <nav class="flex w-full items-center gap-3 px-4 py-1.5 text-sm">
+  <nav class="flex w-full items-end gap-3 px-4 pt-1.5 text-sm">
     <%# El logo (el dragón, en blanco sobre el salmón) abre el "Acerca de" %>
-    <button type="button" data-action="dialogo#abrir" title="Acerca de Kobayashi" class="flex shrink-0 items-center rounded-md p-0.5 opacity-95 transition hover:opacity-100 hover:bg-white/15 focus:outline-none focus:bg-white/20">
+    <button type="button" data-action="dialogo#abrir" title="Acerca de Kobayashi" class="mb-1.5 flex shrink-0 items-center rounded-md p-0.5 opacity-95 transition hover:opacity-100 hover:bg-white/15 focus:outline-none focus:bg-white/20">
       <%= image_tag "logo-w.png", alt: "Kobayashi", class: "h-8 w-8" %>
     </button>
     <%# En pantalla chica las pestañas se deslizan de lado en vez de apilarse %>
-    <div class="flex min-w-0 flex-1 items-center gap-1.5 whitespace-nowrap max-lg:overflow-x-auto [scrollbar-width:none]">
+    <div class="flex min-w-0 flex-1 items-end gap-0.5 whitespace-nowrap max-lg:overflow-x-auto [scrollbar-width:none]">
       <% pestanas_visibles.each do |p| %>
         <%= link_to p[:nombre], ruta_de_pestana(p),
-              class: "shrink-0 rounded-full px-4 py-1.5 font-medium transition-colors #{p[:id] == activa[:id] ? 'bg-white font-semibold text-marca-900 shadow-sm' : 'text-marca-950/80 hover:bg-white/25 hover:text-marca-950'}" %>
+              class: "shrink-0 border border-b-0 px-4 py-2 font-medium transition-colors #{p[:id] == activa[:id] ? 'border-stone-300 bg-fondo font-semibold text-marca-900 -mb-px pb-2.5' : 'border-transparent text-marca-950/80 hover:border-marca-300 hover:bg-marca-300/60 hover:text-marca-950'}" %>
       <% end %>
     </div>
-    <span class="hidden shrink-0 text-marca-950/80 lg:inline" title="<%= sucursal_actual %> · <%= usuario_actual %>"><%= sucursal_actual %> · <%= usuario_actual %></span>
-    <%= button_to "Salir", salir_path, method: :delete, class: "btn btn-sm shrink-0 border-marca-700/40 bg-marca-800 text-white shadow-none hover:bg-marca-700", title: "#{sucursal_actual} · #{usuario_actual}" %>
+    <span class="hidden shrink-0 pb-2 text-marca-950/80 lg:inline" title="<%= sucursal_actual %> · <%= usuario_actual %>"><%= sucursal_actual %> · <%= usuario_actual %></span>
+    <%= button_to "Salir", salir_path, method: :delete, class: "btn btn-sm mb-1.5 shrink-0 border-marca-700/40 bg-marca-800 text-white shadow-none hover:bg-marca-700", title: "#{sucursal_actual} · #{usuario_actual}" %>
   </nav>
 </div>
 <div class="border-b border-stone-300 bg-fondo">
