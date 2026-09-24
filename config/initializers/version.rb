@@ -1,6 +1,6 @@
 # Versión de la aplicación y de qué commit salió, para el "Acerca de".
 module Kobayashi
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
   COMMIT = begin
     `git -C #{Rails.root} rev-parse --short HEAD 2>/dev/null`.strip.presence || "?"
   rescue StandardError
