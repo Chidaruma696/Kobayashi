@@ -30,7 +30,7 @@ class InventarioController < ApplicationController
     revisar_si_hace_falta(movimiento, autoriza, motivo: params[:motivo], sucursal: @sucursal,
                           valor_centavos: Revision.valor(movimiento.cantidad, producto, @sucursal))
     redirect_to kardex_inventario_path(producto_id: producto.id, sucursal_id: @sucursal.id),
-                notice: "#{Movimiento::NOMBRES[tipo]} de #{producto.nombre} registrada#{'; queda por revisar' unless autoriza}"
+                notice: "#{I18n.t("movimientos.#{tipo}")} de #{producto.nombre} registrada#{'; queda por revisar' unless autoriza}"
   rescue Inventario::SinExistencia, ArgumentError => e
     volver_con_error(e.message)
   end

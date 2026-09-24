@@ -17,10 +17,10 @@ class RevisionesController < ApplicationController
     raise SinPermiso, "revisiones.resolver" unless revision.sucursal_id == sucursal_actual.id || sucursal_actual.matriz?
     if params[:estado] == "observada"
       revision.observar!(usuario: usuario_actual, nota: params[:nota].presence, cargo_centavos: Dinero.centavos(params[:cargo]))
-      aviso = revision.cargo ? "Observada y cargada a #{revision.usuario}: #{Dinero.pesos(revision.cargo.monto_centavos)}" : "Observada, sin cargo"
+      aviso = revision.cargo ? t("revisiones.observada_cargada", quien: revision.usuario, monto: Dinero.pesos(revision.cargo.monto_centavos)) : t("revisiones.observada_sin_cargo")
     else
       revision.aprobar!(usuario: usuario_actual, nota: params[:nota].presence)
-      aviso = "Aprobada"
+      aviso = t("revisiones.aprobada")
     end
     redirect_to revisiones_path(sucursal_id: params[:sucursal_id]), notice: aviso
   rescue ArgumentError, ActiveRecord::RecordInvalid => e

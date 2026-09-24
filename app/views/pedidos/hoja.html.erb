@@ -1,17 +1,17 @@
 <% p = @pedido %>
 <div class="ticket">
-  <div class="centro"><strong>PEDIDO <%= p.folio %></strong></div>
-  <div class="centro">para <%= p.destino %> · surte <%= p.sucursal_origen %></div>
-  <div class="centro">pidió <%= p.usuario %> · <%= l p.created_at, format: :short %></div>
-  <div class="centro">estado: <%= p.estado %></div>
-  <% if p.notas.present? %><div>Notas: <%= p.notas %></div><% end %>
+  <div class="centro"><strong><%= t("pedidos.pedido").upcase %> <%= p.folio %></strong></div>
+  <div class="centro"><%= t("pedidos.para_min") %> <%= p.destino %> · <%= t("pedidos.surte") %> <%= p.sucursal_origen %></div>
+  <div class="centro"><%= t("pedidos.pidio_el", quien: p.usuario, fecha: l(p.created_at, format: :short)).downcase %></div>
+  <div class="centro"><%= t("comun.estado").downcase %>: <%= t("estados.#{p.estado}") %></div>
+  <% if p.notas.present? %><div><%= t("comun.notas") %>: <%= p.notas %></div><% end %>
   <div class="linea"></div>
   <table>
-    <tr><td><strong>Producto</strong></td><td class="der"><strong>Pide</strong></td><td class="der"><strong>Lleva</strong></td></tr>
+    <tr><td><strong><%= t("comun.producto") %></strong></td><td class="der"><strong><%= t("pedidos.pide") %></strong></td><td class="der"><strong><%= t("pedidos.lleva") %></strong></td></tr>
     <% p.lineas.each do |l| %>
       <% d = l.producto.decimales %>
       <tr>
-        <td><%= l.producto.nombre %><%= " (#{l.estado == 'no_surtir' ? "no surtir: #{l.motivo}" : l.estado})" unless l.pendiente? %></td>
+        <td><%= l.producto.nombre %><%= " (#{l.estado == 'no_surtir' ? "#{t('estados.no_surtir')}: #{l.motivo}" : t("estados.#{l.estado}")})" unless l.pendiente? %></td>
         <td class="der"><%= number_with_precision(l.cantidad, precision: d) %> <%= l.producto.unidad %></td>
         <td class="der"><%= number_with_precision(l.cantidad_surtida, precision: d) %></td>
       </tr>
@@ -19,6 +19,6 @@
   </table>
   <div class="linea"></div>
   <% salidas = Salida.where(id: SalidaEtiqueta.where(etiqueta_id: Etiqueta.where(pedido_linea_id: p.lineas.map(&:id)).select(:id)).select(:salida_id)).order(:created_at) %>
-  <% if salidas.any? %><div>Salidas: <%= salidas.map { |s| "#{s.folio} (#{s.estado})" }.join(", ") %></div><% end %>
-  <div><%= p.lineas.size %> renglones · <%= p.lineas.count { |l| l.estado == "surtido" } %> surtidos</div>
+  <% if salidas.any? %><div><%= t("pedidos.salidas") %>: <%= salidas.map { |s| "#{s.folio} (#{t("estados.#{s.estado}")})" }.join(", ") %></div><% end %>
+  <div><%= p.lineas.size %> <%= t("pedidos.renglones") %> · <%= p.lineas.count { |l| l.estado == "surtido" } %> <%= t("pedidos.surtidos").downcase %></div>
 </div>

@@ -57,7 +57,7 @@ class PedidosController < ApplicationController
     end
     if @pedido.save
       volver = params[:volver].to_s
-      redirect_to (volver.start_with?("/") ? volver : pedido_path(@pedido)), notice: "Pedido #{@pedido.folio} enviado a #{@pedido.sucursal_origen}"
+      redirect_to (volver.start_with?("/") ? volver : pedido_path(@pedido)), notice: t("pedidos.enviado", folio: @pedido.folio, a: @pedido.sucursal_origen)
     else
       cargar_destinos
       flash.now[:alert] = @pedido.errors.full_messages.join(", ")
@@ -85,7 +85,7 @@ class PedidosController < ApplicationController
     autorizar!("pedidos.solicitar")
     pedido = Pedido.find(params[:id])
     pedido.cancelar!
-    redirect_to pedido_path(pedido), notice: "Pedido cancelado"
+    redirect_to pedido_path(pedido), notice: t("pedidos.cancelado")
   rescue ArgumentError => e
     redirect_to pedido_path(params[:id]), alert: e.message
   end

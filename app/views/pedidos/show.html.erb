@@ -1,15 +1,15 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <span class="rounded px-2 py-0.5 text-lg text-white" style="background: <%= color_destino(@pedido.destino) %>"><%= @pedido.destino %></span></h1>
+  <h1 class="text-2xl font-bold"><%= t("pedidos.pedido") %> <%= @pedido.folio %> · <%= t("pedidos.para_min") %> <span class="rounded px-2 py-0.5 text-lg text-white" style="background: <%= color_destino(@pedido.destino) %>"><%= @pedido.destino %></span></h1>
   <div class="flex items-center gap-2">
-    <%= link_to icono("printer", "Hoja"), hoja_pedido_path(@pedido), target: "_blank", class: "btn btn-secondary btn-sm" %>
-    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to icono("tag", "Surtir en la etiquetadora"), new_etiqueta_path(pedido: @pedido.id), class: "btn btn-primary btn-sm" %><% end %>
-    <span class="badge"><%= @pedido.estado %></span>
+    <%= link_to icono("printer", t("pedidos.hoja_corta")), hoja_pedido_path(@pedido), target: "_blank", class: "btn btn-secondary btn-sm" %>
+    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to icono("tag", t("pedidos.surtir_en_etiquetadora")), new_etiqueta_path(pedido: @pedido.id), class: "btn btn-primary btn-sm" %><% end %>
+    <span class="badge"><%= t("estados.#{@pedido.estado}") %></span>
   </div>
 </div>
-<p class="mb-4 text-sm text-stone-600">Pidió <%= @pedido.usuario %> el <%= l @pedido.created_at, format: :short %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
+<p class="mb-4 text-sm text-stone-600"><%= t("pedidos.pidio_el", quien: @pedido.usuario, fecha: l(@pedido.created_at, format: :short)) %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
 <% salidas_por_linea = SalidaEtiqueta.joins(:etiqueta, :salida).where(etiquetas: { pedido_linea_id: @pedido.lineas.map(&:id) }).includes(:salida).group_by { |f| f.etiqueta.pedido_linea_id }.transform_values { |fs| fs.map(&:salida).uniq } %>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Pide</th><th class="px-3 py-2 text-right">Lleva</th><th class="px-3 py-2 text-right">Falta</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Salida</th><% if @surtidor && @pedido.abierto? %><th class="px-3 py-2">Acciones</th><% end %></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.producto") %></th><th class="px-3 py-2 text-right"><%= t("pedidos.pide") %></th><th class="px-3 py-2 text-right"><%= t("pedidos.lleva") %></th><th class="px-3 py-2 text-right"><%= t("pedidos.falta") %></th><th class="px-3 py-2"><%= t("comun.estado") %></th><th class="px-3 py-2"><%= t("pedidos.salida") %></th><% if @surtidor && @pedido.abierto? %><th class="px-3 py-2"><%= t("comun.acciones") %></th><% end %></tr></thead>
   <tbody>
     <% @pedido.lineas.each do |l| %>
       <% d = l.producto.decimales %>
@@ -18,20 +18,20 @@
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad, precision: d) %> <%= l.producto.unidad %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad_surtida, precision: d) %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.faltante, precision: d) %></td>
-        <td class="px-3 py-2"><%= l.estado.humanize %><%= " · #{l.motivo}" if l.motivo.present? %></td>
-        <td class="px-3 py-2 text-xs"><%= safe_join((salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{s.estado})", salida_path(s), class: "chip-folio") }, ", ") %></td>
+        <td class="px-3 py-2"><%= t("estados.#{l.estado}") %><%= " · #{l.motivo}" if l.motivo.present? %></td>
+        <td class="px-3 py-2 text-xs"><%= safe_join((salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{t("estados.#{s.estado}")})", salida_path(s), class: "chip-folio") }, ", ") %></td>
         <% if @surtidor && @pedido.abierto? %>
           <td class="px-3 py-2">
             <div class="flex flex-wrap items-center gap-2">
               <% if l.pendiente? %>
-                <%= link_to "Etiquetar", new_etiqueta_path(pedido_linea_id: l.id), class: "btn btn-primary btn-xs" %>
-                <%= button_to "Dar por surtido", surtido_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
+                <%= link_to t("cinta.botones.etiquetar"), new_etiqueta_path(pedido_linea_id: l.id), class: "btn btn-primary btn-xs" %>
+                <%= button_to t("pedidos.dar_por_surtido"), surtido_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
                 <%= form_with url: no_surtir_pedido_linea_path(@pedido, l), class: "flex gap-1" do |f| %>
-                  <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "w-28 rounded border border-stone-300 px-2 py-1" %>
-                  <%= f.submit "No surtir", class: "rounded border border-amber-400 px-2 py-1" %>
+                  <%= f.text_field :motivo, placeholder: t("comun.motivo").downcase, required: true, class: "w-28 rounded border border-stone-300 px-2 py-1" %>
+                  <%= f.submit t("pedidos.no_surtir"), class: "btn btn-warning btn-xs" %>
                 <% end %>
               <% else %>
-                <%= button_to "Reabrir", reabrir_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
+                <%= button_to t("pedidos.reabrir"), reabrir_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
               <% end %>
             </div>
           </td>
@@ -42,9 +42,9 @@
 </table>
 <% if @surtidor && @pedido.abierto? %>
   <div class="mt-4 flex gap-3 text-sm">
-    <%= link_to "Nueva salida a #{@pedido.destino}", new_salida_path(pedido_id: @pedido.id), class: "btn btn-secondary" if puede?("salidas.surtir") %>
+    <%= link_to t("pedidos.nueva_salida_a", destino: @pedido.destino), new_salida_path(pedido_id: @pedido.id), class: "btn btn-secondary" if puede?("salidas.surtir") %>
   </div>
 <% end %>
 <% if @pedido.abierto? && puede?("pedidos.solicitar") %>
-  <%= button_to "Cancelar pedido", cancelar_pedido_path(@pedido), class: "btn btn-ghost-danger btn-sm mt-6", form: { data: { turbo_confirm: "¿Cancelar el pedido #{@pedido.folio}?" } } %>
+  <%= button_to t("pedidos.cancelar_pedido"), cancelar_pedido_path(@pedido), class: "btn btn-ghost-danger btn-sm mt-6", form: { data: { turbo_confirm: t("pedidos.confirmar_cancelar", folio: @pedido.folio) } } %>
 <% end %>

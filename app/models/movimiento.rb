@@ -33,6 +33,6 @@ class Movimiento < ApplicationRecord
   end
 
   def nombre_tipo
-    NOMBRES[tipo]
+    I18n.t("movimientos.#{tipo}", default: NOMBRES[tipo])
   end
 end

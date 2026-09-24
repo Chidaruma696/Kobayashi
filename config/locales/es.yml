@@ -46,3 +46,372 @@ es:
       caja:
         piso_precio: Piso de precio (% del catálogo)
         limite_gaveta: Tope de gaveta para sucursales nuevas ($)
+  comun:
+    cerrar: Cerrar
+    guardar: Guardar
+    editar: Editar
+    ver: Ver
+    buscar: Buscar
+    si: sí
+    'no': 'no'
+    folio: Folio
+    producto: Producto
+    cantidad: Cantidad
+    estado: Estado
+    notas: Notas
+    nota: nota
+    motivo: Motivo
+    importe: Importe
+    clave: Clave
+    sucursal: Sucursal
+    matriz: matriz
+    desde: Desde
+    hasta: Hasta
+    todas: Todas
+    todas_las_sucursales: todas las sucursales
+    de: de
+    fecha: Fecha
+    cancelar: Cancelar
+    volver: Volver
+    nombre: Nombre
+    unidad: Unidad
+    precio: Precio
+    total: Total
+    acciones: Acciones
+    kg: kg
+    pieza: pieza
+    piezas: piezas
+    abrir: Abrir
+    imprimir: Imprimir
+    nada: Nada.
+    activo: Activo
+    quien: Quién
+    cuando: Cuándo
+    codigo: Código
+  cinta:
+    menu: Menú
+    salir: Salir
+    pestanas:
+      inicio: Inicio
+      caja: Caja
+      pedidos: Pedidos
+      etiquetas: Etiquetas
+      salidas: Salidas
+      rutas: Rutas
+      conteos: Conteos
+      inventario: Inventario
+      admin: Admin
+      ajustes: Ajustes
+    grupos:
+      ver: Ver
+      revisar: Revisar
+      ajustes: Ajustes
+      vender: Vender
+      corte: Corte
+      pedir: Pedir
+      surtir: Surtir
+      producir: Producir
+      etiquetar: Etiquetar
+      enviar: Enviar
+      recibir: Recibir
+      viajes: Viajes
+      chofer: Chofer
+      oficina: Oficina
+      contar: Contar
+      cargos: Cargos
+      consultar: Consultar
+      capturar: Capturar
+      catalogo: Catálogo
+      reparto: Reparto
+      gente: Gente
+    botones:
+      inicio: Inicio
+      ventas_por_producto: Ventas por producto
+      por_revisar: Por revisar
+      ajustes: Ajustes
+      vender: Vender
+      ventas: Ventas
+      devolucion: Devolución
+      corte: Corte
+      nuevo_pedido: Nuevo pedido
+      mis_pedidos: Mis pedidos
+      cola: Cola
+      pendientes: Pendientes
+      produccion: Producción
+      abiertas: Abiertas
+      etiquetar: Etiquetar
+      vivas: Vivas
+      nueva_salida: Nueva salida
+      en_curso: En curso
+      por_recibir: Por recibir
+      nuevo_viaje: Nuevo viaje
+      viajes: Viajes
+      mi_ruta: Mi ruta
+      liquidar: Liquidar
+      cobranza: Cobranza
+      canastillas: Canastillas
+      nuevo_conteo: Nuevo conteo
+      conteos: Conteos
+      cargos: Cargos
+      existencias: Existencias
+      kardex: Kardex
+      entrada_ajuste: Entrada / ajuste
+      productos: Productos
+      promociones: Promociones
+      clientes: Clientes
+      rutas: Rutas
+      convenios: Convenios
+      tipos_canastilla: Canastillas
+      usuarios: Usuarios
+      roles: Roles
+      sucursales: Sucursales
+  acerca:
+    titulo: Acerca de Kobayashi
+    lema: Punto de venta y trastienda para la matriz y sus tiendas
+    version: Versión
+    motor: Motor
+    sesion: Sesión
+    servidor: Servidor
+    creditos_html: Kobayashi, Kana y Tohru toman su nombre de <em>Kobayashi-san Chi no Maid Dragon</em>, de Coolkyousinnjya; la paleta sale de ella. Nada de esto tiene relación con la autora ni con las editoriales.
+    tecnologia: 'Báscula por Web Serial vía Kana. Hecho con Rails, Hotwire y Tailwind. Código abierto bajo licencia Apache 2.0: úsalo con crédito a Chidaruma696.'
+    codigo: Código en GitHub
+    reportar: Reportar un problema
+  sesion:
+    usuario: Usuario
+    contrasena: Contraseña
+    entrar: Entrar
+    hola: Hola, %{nombre}
+    incorrectos: Usuario o contraseña incorrectos
+    cerrada: Sesión cerrada
+  errores:
+    sin_permiso:
+      titulo: Sin permiso
+      texto_html: Tu rol no incluye %{clave}. Pide a alguien con permiso que lo haga o que te autorice.
+    hace_falta_motivo: hace falta el motivo
+    pedido:
+      solo_abierto: solo se cancela un pedido abierto
+      ya_surtido: ya tiene etiquetas surtidas; no se puede cancelar
+      un_destino: el pedido va a una tienda o a un cliente, uno de los dos
+      mismo_origen: no puede ser la misma que surte
+      sin_renglones: el pedido necesita al menos un renglón
+  inicio:
+    titulo: Inicio
+    ventas: Ventas
+    tickets: Tickets
+    ticket_promedio: Ticket promedio
+    devoluciones: Devoluciones
+    efectivo: Efectivo
+    transferencias: Transferencias
+    depositos: Depósitos
+    inventario_valorizado: Inventario valorizado
+    lo_mas_vendido: Lo más vendido
+    sin_ventas: Sin ventas en el rango.
+    cortes_cerrados: Cortes cerrados
+    sin_cortes: Sin cortes en el rango.
+    mermas: Mermas de producción
+    sin_producciones: Sin producciones cerradas.
+    conteos: Conteos
+    sin_conteos: Sin conteos en el rango.
+    ventas_por_producto: Ventas por producto
+    descargar_csv: Descargar CSV
+    lineas: Líneas
+    revisar: Revisar
+    por_revisar_html:
+      one: '%{n} operación hecha sin autorización espera revisión.'
+      other: '%{n} operaciones hechas sin autorización esperan revisión.'
+  revisiones:
+    titulo: Por revisar
+    solo_esta: Solo %{sucursal}
+    explicacion: Operaciones que alguien hizo sin quien las autorizara en ese momento. Se hicieron y quedaron a su nombre; aquí decides qué pasa con cada una. Al observar puedes cargarle el monto al responsable.
+    cuando: Cuándo
+    quien: Quién
+    que: Qué
+    vale: Vale
+    decidir: Decidir
+    aprobar: Aprobar
+    observar_y_cargar: Observar y cargar
+    nada: Nada por revisar.
+    sin_cargar: Para observar sin cargar, deja el monto en 0.
+    revisadas: Revisadas
+    cargo: cargo
+    aprobada: Aprobada
+    observada_sin_cargo: Observada, sin cargo
+    observada_cargada: 'Observada y cargada a %{quien}: %{monto}'
+  estados:
+    pendiente: pendiente
+    aprobada: aprobada
+    observada: observada
+    solicitado: solicitado
+    surtiendo: surtiendo
+    cerrado: cerrado
+    cancelado: cancelado
+    surtido: surtido
+    no_surtir: no surtir
+    preparando: preparando
+    sellada: sellada
+    enviada: enviada
+    recibida: recibida
+    entregada: entregada
+    rechazada: rechazada
+    cancelada: cancelada
+    abierta: abierta
+    cerrada: cerrada
+    abierto: abierto
+    armando: armando
+    en_ruta: en ruta
+    liquidado: liquidado
+    viva: viva
+    vendida: vendida
+    baja: baja
+    faltante: faltante
+    sobrante: sobrante
+    por_cobrar: por cobrar
+    cobrada: cobrada
+    a_credito: a crédito
+    devuelta: devuelta
+    bloqueado: bloqueado
+    perdonado: perdonado
+    cobrado: cobrado
+  movimientos:
+    entrada: Entrada
+    produccion: Producción
+    recepcion: Recepción
+    devolucion_cliente: Devolución de cliente
+    ajuste_entrada: Ajuste (+)
+    venta: Venta
+    salida: Salida
+    consumo: Consumo de producción
+    merma: Merma
+    ajuste_salida: Ajuste (−)
+  permisos:
+    caja.vender: Vender en caja
+    caja.abrir: Abrir y cerrar caja
+    caja.retirar: Retirar efectivo a caja fuerte
+    caja.bajar_precio: Autorizar un precio por debajo del catálogo
+    caja.devolver: Recibir devoluciones de clientes
+    etiquetas.crear: Etiquetar paquetes, cajas y tarimas (sobre pedido o producción)
+    etiquetas.libre: Autorizar etiquetar sin pedido
+    pedidos.solicitar: Pedir mercancía a la matriz
+    pedidos.surtir: Surtir pedidos y cerrar renglones
+    produccion.abrir: Abrir y cerrar producciones
+    inventario.ver: Ver existencias y movimientos
+    inventario.ajustar: Ajustar existencias con justificación
+    salidas.surtir: Surtir salidas a ruta o tienda
+    salidas.verificar: Verificar la carga antes de salir
+    salidas.recibir: Recibir salidas en tienda
+    rutas.armar: Armar viajes de reparto y despacharlos
+    rutas.repartir: 'Repartir: entregar, rechazar y cobrar en la parada (chofer)'
+    rutas.liquidar: Liquidar el viaje del chofer al volver
+    cobranza.ver: Ver saldos, antigüedad y estados de cuenta
+    cobranza.abonar: Registrar abonos de clientes en oficina
+    cobranza.bloquear: Bloquear o desbloquear el crédito a mano
+    canastillas.ver: Ver saldos de canastillas por cliente y chofer
+    canastillas.ajustar: Registrar devoluciones y ajustes de canastillas
+    conteos.hacer: Hacer conteos físicos y cargar faltantes
+    conteos.cargos: Cobrar o perdonar cargos
+    reportes.ver: Ver el tablero y los reportes
+    revisiones.resolver: Revisar lo que se hizo sin autorización (aprobar, observar, cargar)
+    admin.catalogo: Administrar productos y códigos
+    admin.usuarios: Administrar usuarios, roles y sucursales
+  pedidos:
+    pedido: Pedido
+    pedidos: Pedidos
+    por_surtir: Pedidos por surtir
+    pendientes_consolidados: Pendientes consolidados
+    pendientes_ayuda: Todo lo que falta por surtir, por producto, con los folios que lo piden
+    para: Para
+    para_min: para
+    pidio: Pidió
+    pidio_el: Pidió %{quien} el %{fecha}
+    surtido: Surtido
+    surtidos: Surtidos
+    hoja: Hoja del pedido
+    hoja_corta: Hoja
+    surtir: Surtir
+    surtir_en_etiquetadora: Surtir en la etiquetadora
+    nada_por_surtir: No hay pedidos por surtir.
+    surtidos_recientes: Surtidos recientes
+    sin_recientes: Sin surtidos recientes.
+    de_sucursal: Pedidos de %{sucursal}
+    sin_surtir_titulo: Sin surtir
+    sin_surtir: sin surtir
+    sin_surtir_badge: SIN SURTIR
+    completo: COMPLETO
+    parcial: PARCIAL
+    renglones: renglones
+    renglon: renglón
+    todo_surtido: Todo lo pedido ya se surtió.
+    sin_surtidos: Sin pedidos surtidos.
+    ver_renglones: Ver renglones
+    pide: Pide
+    lleva: Lleva
+    falta: Falta
+    salida: Salida
+    salidas: Salidas
+    dar_por_surtido: Dar por surtido
+    no_surtir: No surtir
+    reabrir: Reabrir
+    nueva_salida_a: Nueva salida a %{destino}
+    cancelar_pedido: Cancelar pedido
+    confirmar_cancelar: ¿Cancelar el pedido %{folio}?
+    nuevo: Nuevo pedido
+    nuevo_a_matriz: Nuevo pedido a la matriz
+    tiendas: Tiendas
+    clientes_de_ruta: Clientes de ruta
+    enviar_pedido: Enviar pedido
+    surte: surte
+    pendientes_por_surtir: Pendientes por surtir
+    nada_pendiente: Nada pendiente.
+    productos: productos
+    enviado: Pedido %{folio} enviado a %{a}
+    cancelado: Pedido cancelado
+    renglon_surtido: Renglón marcado como surtido
+    renglon_apartado: 'Renglón apartado: no se va a surtir'
+    renglon_reabierto: Renglón reabierto
+  js:
+    pedidos_por_surtir: Pedidos por surtir
+    cargando: Cargando…
+    sin_pedidos: No hay pedidos por surtir
+    no_se_pudo: No se pudo
+    sin_salida: sin salida
+    por_enviar: por enviar
+    verificada: verificada
+    sin_verificar: sin verificar
+    baja_ayuda: 'Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida'
+    la_caja_completa: la caja completa
+    el_paquete: el paquete
+    dar_de_baja: Dar de baja
+    paq: paq
+    sustituto: SUSTITUTO
+    surtir: Surtir
+    enviar_sustituto: Enviar sustituto
+    dar_por_surtido: Dar por surtido
+    dar_por_surtido_ayuda: Darlo por surtido aunque falte
+    reactivar: Reactivar
+    no_se_va_a_surtir: No se va a surtir
+    buscar_sustituto: Buscar el producto SUSTITUTO (ej. pollo entero)…
+    sin_renglones: Pedido sin renglones
+    sin_surtir: sin surtir
+    bulto: bulto
+    bultos: bultos
+    todo_listo: 'Todo surtido y verificado: ya se puede sellar y enviar.'
+    verificar: verificar
+    y_enviar: y enviar
+    sellar_y_enviar: sellar y enviar
+    por_que_no_surtir: ¿Por qué no se va a surtir este renglón?
+    confirmar_surtido: ¿Dar el renglón por surtido aunque falte?
+    motivo_pregunta: ¿Motivo?
+    escribe_motivo: Escribe el motivo
+    sin_resultados: Sin resultados
+    estados:
+      solicitado: solicitado
+      surtiendo: surtiendo
+      cerrado: cerrado
+      cancelado: cancelado
+      preparando: preparando
+      sellada: sellada
+      enviada: enviada
+      recibida: recibida
+      entregada: entregada
+      rechazada: rechazada
+      cancelada: cancelada

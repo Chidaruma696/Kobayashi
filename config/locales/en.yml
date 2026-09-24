@@ -46,3 +46,372 @@ en:
       caja:
         piso_precio: Price floor (% of list price)
         limite_gaveta: Drawer limit for new branches ($)
+  comun:
+    cerrar: Close
+    guardar: Save
+    editar: Edit
+    ver: View
+    buscar: Search
+    si: 'yes'
+    'no': 'no'
+    folio: Number
+    producto: Product
+    cantidad: Quantity
+    estado: Status
+    notas: Notes
+    nota: note
+    motivo: Reason
+    importe: Amount
+    clave: Code
+    sucursal: Branch
+    matriz: headquarters
+    desde: From
+    hasta: To
+    todas: All
+    todas_las_sucursales: all branches
+    de: of
+    fecha: Date
+    cancelar: Cancel
+    volver: Back
+    nombre: Name
+    unidad: Unit
+    precio: Price
+    total: Total
+    acciones: Actions
+    kg: kg
+    pieza: piece
+    piezas: pieces
+    abrir: Open
+    imprimir: Print
+    nada: Nothing.
+    activo: Active
+    quien: Who
+    cuando: When
+    codigo: Code
+  cinta:
+    menu: Menu
+    salir: Sign out
+    pestanas:
+      inicio: Home
+      caja: Register
+      pedidos: Orders
+      etiquetas: Labels
+      salidas: Shipments
+      rutas: Routes
+      conteos: Counts
+      inventario: Inventory
+      admin: Admin
+      ajustes: Settings
+    grupos:
+      ver: View
+      revisar: Review
+      ajustes: Settings
+      vender: Sell
+      corte: Cash-up
+      pedir: Order
+      surtir: Fulfil
+      producir: Produce
+      etiquetar: Label
+      enviar: Ship
+      recibir: Receive
+      viajes: Trips
+      chofer: Driver
+      oficina: Office
+      contar: Count
+      cargos: Charges
+      consultar: Look up
+      capturar: Enter
+      catalogo: Catalogue
+      reparto: Delivery
+      gente: People
+    botones:
+      inicio: Home
+      ventas_por_producto: Sales by product
+      por_revisar: To review
+      ajustes: Settings
+      vender: Sell
+      ventas: Sales
+      devolucion: Return
+      corte: Cash-up
+      nuevo_pedido: New order
+      mis_pedidos: My orders
+      cola: Queue
+      pendientes: Pending
+      produccion: Production
+      abiertas: Open
+      etiquetar: Label
+      vivas: Live
+      nueva_salida: New shipment
+      en_curso: In progress
+      por_recibir: To receive
+      nuevo_viaje: New trip
+      viajes: Trips
+      mi_ruta: My route
+      liquidar: Settle
+      cobranza: Collections
+      canastillas: Crates
+      nuevo_conteo: New count
+      conteos: Counts
+      cargos: Charges
+      existencias: Stock
+      kardex: Ledger
+      entrada_ajuste: Entry / adjustment
+      productos: Products
+      promociones: Promotions
+      clientes: Customers
+      rutas: Routes
+      convenios: Agreements
+      tipos_canastilla: Crates
+      usuarios: Users
+      roles: Roles
+      sucursales: Branches
+  acerca:
+    titulo: About Kobayashi
+    lema: Point of sale and back office for the headquarters and its shops
+    version: Version
+    motor: Engine
+    sesion: Session
+    servidor: Server
+    creditos_html: Kobayashi, Kana and Tohru take their names from <em>Miss Kobayashi's Dragon Maid</em> by Coolkyousinnjya; the palette comes from her. None of this is related to the author or the publishers.
+    tecnologia: 'Scale over Web Serial via Kana. Built with Rails, Hotwire and Tailwind. Open source under the Apache 2.0 license: use it with credit to Chidaruma696.'
+    codigo: Code on GitHub
+    reportar: Report a problem
+  sesion:
+    usuario: User
+    contrasena: Password
+    entrar: Sign in
+    hola: Hi, %{nombre}
+    incorrectos: Wrong user or password
+    cerrada: Signed out
+  errores:
+    sin_permiso:
+      titulo: No permission
+      texto_html: Your role does not include %{clave}. Ask someone with permission to do it or to authorise you.
+    hace_falta_motivo: a reason is required
+    pedido:
+      solo_abierto: only an open order can be cancelled
+      ya_surtido: it already has fulfilled labels; it cannot be cancelled
+      un_destino: the order goes to a shop or to a customer, one of the two
+      mismo_origen: cannot be the same branch that fulfils it
+      sin_renglones: the order needs at least one line
+  inicio:
+    titulo: Home
+    ventas: Sales
+    tickets: Receipts
+    ticket_promedio: Average receipt
+    devoluciones: Returns
+    efectivo: Cash
+    transferencias: Transfers
+    depositos: Deposits
+    inventario_valorizado: Inventory value
+    lo_mas_vendido: Top sellers
+    sin_ventas: No sales in the range.
+    cortes_cerrados: Closed cash-ups
+    sin_cortes: No cash-ups in the range.
+    mermas: Production waste
+    sin_producciones: No closed productions.
+    conteos: Counts
+    sin_conteos: No counts in the range.
+    ventas_por_producto: Sales by product
+    descargar_csv: Download CSV
+    lineas: Lines
+    revisar: Review
+    por_revisar_html:
+      one: '%{n} operation done without authorisation awaits review.'
+      other: '%{n} operations done without authorisation await review.'
+  revisiones:
+    titulo: To review
+    solo_esta: Only %{sucursal}
+    explicacion: Operations someone did without anyone to authorise them at the time. They went through and were recorded under their name; here you decide what happens with each one. When flagging, you can charge the amount to the person responsible.
+    cuando: When
+    quien: Who
+    que: What
+    vale: Worth
+    decidir: Decide
+    aprobar: Approve
+    observar_y_cargar: Flag and charge
+    nada: Nothing to review.
+    sin_cargar: To flag without charging, leave the amount at 0.
+    revisadas: Reviewed
+    cargo: charge
+    aprobada: Approved
+    observada_sin_cargo: Flagged, no charge
+    observada_cargada: 'Flagged and charged to %{quien}: %{monto}'
+  estados:
+    pendiente: pending
+    aprobada: approved
+    observada: flagged
+    solicitado: requested
+    surtiendo: fulfilling
+    cerrado: closed
+    cancelado: cancelled
+    surtido: fulfilled
+    no_surtir: not fulfilling
+    preparando: preparing
+    sellada: sealed
+    enviada: shipped
+    recibida: received
+    entregada: delivered
+    rechazada: rejected
+    cancelada: cancelled
+    abierta: open
+    cerrada: closed
+    abierto: open
+    armando: assembling
+    en_ruta: on the road
+    liquidado: settled
+    viva: live
+    vendida: sold
+    baja: written off
+    faltante: missing
+    sobrante: surplus
+    por_cobrar: to collect
+    cobrada: paid
+    a_credito: on credit
+    devuelta: returned
+    bloqueado: blocked
+    perdonado: forgiven
+    cobrado: charged
+  movimientos:
+    entrada: Entry
+    produccion: Production
+    recepcion: Receipt
+    devolucion_cliente: Customer return
+    ajuste_entrada: Adjustment (+)
+    venta: Sale
+    salida: Shipment
+    consumo: Production consumption
+    merma: Waste
+    ajuste_salida: Adjustment (−)
+  permisos:
+    caja.vender: Sell at the register
+    caja.abrir: Open and close the register
+    caja.retirar: Move cash to the safe
+    caja.bajar_precio: Authorise a price below list
+    caja.devolver: Take customer returns
+    etiquetas.crear: Label packages, boxes and pallets (against an order or a production)
+    etiquetas.libre: Authorise labelling without an order
+    pedidos.solicitar: Order goods from headquarters
+    pedidos.surtir: Fulfil orders and close lines
+    produccion.abrir: Open and close productions
+    inventario.ver: See stock and movements
+    inventario.ajustar: Adjust stock with a reason
+    salidas.surtir: Pick shipments to route or shop
+    salidas.verificar: Verify the load before it leaves
+    salidas.recibir: Receive shipments at the shop
+    rutas.armar: Assemble delivery trips and dispatch them
+    rutas.repartir: 'Deliver: hand over, reject and collect at the stop (driver)'
+    rutas.liquidar: Settle the driver's trip on return
+    cobranza.ver: See balances, ageing and statements
+    cobranza.abonar: Record customer payments at the office
+    cobranza.bloquear: Block or unblock credit by hand
+    canastillas.ver: See crate balances by customer and driver
+    canastillas.ajustar: Record crate returns and adjustments
+    conteos.hacer: Do physical counts and charge shortages
+    conteos.cargos: Collect or forgive charges
+    reportes.ver: See the board and the reports
+    revisiones.resolver: Review what was done without authorisation (approve, flag, charge)
+    admin.catalogo: Manage products and codes
+    admin.usuarios: Manage users, roles and branches
+  pedidos:
+    pedido: Order
+    pedidos: Orders
+    por_surtir: Orders to fulfil
+    pendientes_consolidados: Consolidated pending
+    pendientes_ayuda: Everything still to fulfil, by product, with the orders that ask for it
+    para: For
+    para_min: for
+    pidio: Ordered by
+    pidio_el: Ordered by %{quien} on %{fecha}
+    surtido: Fulfilled
+    surtidos: Fulfilled
+    hoja: Order sheet
+    hoja_corta: Sheet
+    surtir: Fulfil
+    surtir_en_etiquetadora: Fulfil in the labeler
+    nada_por_surtir: No orders to fulfil.
+    surtidos_recientes: Recently fulfilled
+    sin_recientes: Nothing fulfilled recently.
+    de_sucursal: Orders from %{sucursal}
+    sin_surtir_titulo: Not fulfilled
+    sin_surtir: not fulfilled
+    sin_surtir_badge: NOT FULFILLED
+    completo: COMPLETE
+    parcial: PARTIAL
+    renglones: lines
+    renglon: line
+    todo_surtido: Everything ordered has been fulfilled.
+    sin_surtidos: No fulfilled orders.
+    ver_renglones: See lines
+    pide: Asks
+    lleva: Has
+    falta: Missing
+    salida: Shipment
+    salidas: Shipments
+    dar_por_surtido: Mark as fulfilled
+    no_surtir: Don't fulfil
+    reabrir: Reopen
+    nueva_salida_a: New shipment to %{destino}
+    cancelar_pedido: Cancel order
+    confirmar_cancelar: Cancel order %{folio}?
+    nuevo: New order
+    nuevo_a_matriz: New order to headquarters
+    tiendas: Shops
+    clientes_de_ruta: Route customers
+    enviar_pedido: Send order
+    surte: fulfilled by
+    pendientes_por_surtir: Pending to fulfil
+    nada_pendiente: Nothing pending.
+    productos: products
+    enviado: Order %{folio} sent to %{a}
+    cancelado: Order cancelled
+    renglon_surtido: Line marked as fulfilled
+    renglon_apartado: 'Line set aside: it won''t be fulfilled'
+    renglon_reabierto: Line reopened
+  js:
+    pedidos_por_surtir: Orders to fulfil
+    cargando: Loading…
+    sin_pedidos: No orders to fulfil
+    no_se_pudo: Could not do it
+    sin_salida: no shipment
+    por_enviar: to ship
+    verificada: verified
+    sin_verificar: unverified
+    baja_ayuda: 'Mislabelled: writes off the item and takes it out of the order and the shipment'
+    la_caja_completa: the whole box
+    el_paquete: the package
+    dar_de_baja: Write off
+    paq: pkg
+    sustituto: SUBSTITUTE
+    surtir: Fulfil
+    enviar_sustituto: Send substitute
+    dar_por_surtido: Mark as fulfilled
+    dar_por_surtido_ayuda: Mark it fulfilled even if short
+    reactivar: Reactivate
+    no_se_va_a_surtir: Won't be fulfilled
+    buscar_sustituto: Search the SUBSTITUTE product (e.g. whole chicken)…
+    sin_renglones: Order without lines
+    sin_surtir: not fulfilled
+    bulto: item
+    bultos: items
+    todo_listo: 'All fulfilled and verified: it can be sealed and shipped.'
+    verificar: verify
+    y_enviar: and ship
+    sellar_y_enviar: seal and ship
+    por_que_no_surtir: Why won't this line be fulfilled?
+    confirmar_surtido: Mark the line as fulfilled even if short?
+    motivo_pregunta: Reason?
+    escribe_motivo: Write the reason
+    sin_resultados: No results
+    estados:
+      solicitado: requested
+      surtiendo: fulfilling
+      cerrado: closed
+      cancelado: cancelled
+      preparando: preparing
+      sellada: sealed
+      enviada: shipped
+      recibida: received
+      entregada: delivered
+      rechazada: rejected
+      cancelada: cancelled

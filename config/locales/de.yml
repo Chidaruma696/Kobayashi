@@ -46,3 +46,372 @@ de:
       caja:
         piso_precio: Preisuntergrenze (% des Listenpreises)
         limite_gaveta: Ladenlimit für neue Filialen ($)
+  comun:
+    cerrar: Schließen
+    guardar: Speichern
+    editar: Bearbeiten
+    ver: Ansehen
+    buscar: Suchen
+    si: ja
+    'no': nein
+    folio: Nummer
+    producto: Produkt
+    cantidad: Menge
+    estado: Status
+    notas: Notizen
+    nota: Notiz
+    motivo: Grund
+    importe: Betrag
+    clave: Kürzel
+    sucursal: Filiale
+    matriz: Zentrale
+    desde: Von
+    hasta: Bis
+    todas: Alle
+    todas_las_sucursales: alle Filialen
+    de: von
+    fecha: Datum
+    cancelar: Abbrechen
+    volver: Zurück
+    nombre: Name
+    unidad: Einheit
+    precio: Preis
+    total: Gesamt
+    acciones: Aktionen
+    kg: kg
+    pieza: Stück
+    piezas: Stück
+    abrir: Öffnen
+    imprimir: Drucken
+    nada: Nichts.
+    activo: Aktiv
+    quien: Wer
+    cuando: Wann
+    codigo: Code
+  cinta:
+    menu: Menü
+    salir: Abmelden
+    pestanas:
+      inicio: Start
+      caja: Kasse
+      pedidos: Bestellungen
+      etiquetas: Etiketten
+      salidas: Lieferungen
+      rutas: Touren
+      conteos: Zählungen
+      inventario: Bestand
+      admin: Verwaltung
+      ajustes: Einstellungen
+    grupos:
+      ver: Ansehen
+      revisar: Prüfen
+      ajustes: Einstellungen
+      vender: Verkaufen
+      corte: Kassenabschluss
+      pedir: Bestellen
+      surtir: Kommissionieren
+      producir: Produzieren
+      etiquetar: Etikettieren
+      enviar: Versenden
+      recibir: Annehmen
+      viajes: Fahrten
+      chofer: Fahrer
+      oficina: Büro
+      contar: Zählen
+      cargos: Belastungen
+      consultar: Nachsehen
+      capturar: Erfassen
+      catalogo: Katalog
+      reparto: Auslieferung
+      gente: Personen
+    botones:
+      inicio: Start
+      ventas_por_producto: Verkäufe je Produkt
+      por_revisar: Zu prüfen
+      ajustes: Einstellungen
+      vender: Verkaufen
+      ventas: Verkäufe
+      devolucion: Rückgabe
+      corte: Kassenabschluss
+      nuevo_pedido: Neue Bestellung
+      mis_pedidos: Meine Bestellungen
+      cola: Warteschlange
+      pendientes: Offen
+      produccion: Produktion
+      abiertas: Offene
+      etiquetar: Etikettieren
+      vivas: Aktive
+      nueva_salida: Neue Lieferung
+      en_curso: Laufende
+      por_recibir: Anzunehmen
+      nuevo_viaje: Neue Fahrt
+      viajes: Fahrten
+      mi_ruta: Meine Tour
+      liquidar: Abrechnen
+      cobranza: Forderungen
+      canastillas: Kisten
+      nuevo_conteo: Neue Zählung
+      conteos: Zählungen
+      cargos: Belastungen
+      existencias: Bestände
+      kardex: Bewegungen
+      entrada_ajuste: Eingang / Korrektur
+      productos: Produkte
+      promociones: Aktionen
+      clientes: Kunden
+      rutas: Touren
+      convenios: Vereinbarungen
+      tipos_canastilla: Kisten
+      usuarios: Benutzer
+      roles: Rollen
+      sucursales: Filialen
+  acerca:
+    titulo: Über Kobayashi
+    lema: Kasse und Backoffice für die Zentrale und ihre Läden
+    version: Version
+    motor: Technik
+    sesion: Sitzung
+    servidor: Server
+    creditos_html: Kobayashi, Kana und Tohru sind nach <em>Kobayashi-san Chi no Maid Dragon</em> von Coolkyousinnjya benannt; die Farbpalette stammt von ihr. Nichts davon steht in Verbindung mit der Autorin oder den Verlagen.
+    tecnologia: 'Waage über Web Serial mit Kana. Gebaut mit Rails, Hotwire und Tailwind. Open Source unter der Apache-2.0-Lizenz: nutze es mit Nennung von Chidaruma696.'
+    codigo: Code auf GitHub
+    reportar: Problem melden
+  sesion:
+    usuario: Benutzer
+    contrasena: Passwort
+    entrar: Anmelden
+    hola: Hallo, %{nombre}
+    incorrectos: Benutzer oder Passwort falsch
+    cerrada: Abgemeldet
+  errores:
+    sin_permiso:
+      titulo: Keine Berechtigung
+      texto_html: Deine Rolle enthält %{clave} nicht. Bitte jemanden mit Berechtigung, es zu tun oder dich freizugeben.
+    hace_falta_motivo: ein Grund ist nötig
+    pedido:
+      solo_abierto: nur eine offene Bestellung kann storniert werden
+      ya_surtido: sie hat schon kommissionierte Etiketten; sie kann nicht storniert werden
+      un_destino: die Bestellung geht an einen Laden oder an einen Kunden, eines von beiden
+      mismo_origen: darf nicht dieselbe Filiale sein, die liefert
+      sin_renglones: die Bestellung braucht mindestens eine Zeile
+  inicio:
+    titulo: Start
+    ventas: Verkäufe
+    tickets: Bons
+    ticket_promedio: Durchschnittsbon
+    devoluciones: Rückgaben
+    efectivo: Bargeld
+    transferencias: Überweisungen
+    depositos: Einzahlungen
+    inventario_valorizado: Bestandswert
+    lo_mas_vendido: Meistverkauft
+    sin_ventas: Keine Verkäufe im Zeitraum.
+    cortes_cerrados: Abgeschlossene Kassen
+    sin_cortes: Keine Abschlüsse im Zeitraum.
+    mermas: Produktionsschwund
+    sin_producciones: Keine abgeschlossenen Produktionen.
+    conteos: Zählungen
+    sin_conteos: Keine Zählungen im Zeitraum.
+    ventas_por_producto: Verkäufe je Produkt
+    descargar_csv: CSV herunterladen
+    lineas: Zeilen
+    revisar: Prüfen
+    por_revisar_html:
+      one: '%{n} Vorgang ohne Freigabe wartet auf Prüfung.'
+      other: '%{n} Vorgänge ohne Freigabe warten auf Prüfung.'
+  revisiones:
+    titulo: Zu prüfen
+    solo_esta: Nur %{sucursal}
+    explicacion: Vorgänge, die jemand ausgeführt hat, ohne dass gerade jemand sie freigeben konnte. Sie wurden durchgeführt und auf seinen Namen verbucht; hier entscheidest du, was mit jedem passiert. Beim Beanstanden kannst du den Betrag dem Verantwortlichen belasten.
+    cuando: Wann
+    quien: Wer
+    que: Was
+    vale: Wert
+    decidir: Entscheiden
+    aprobar: Freigeben
+    observar_y_cargar: Beanstanden und belasten
+    nada: Nichts zu prüfen.
+    sin_cargar: Um ohne Belastung zu beanstanden, lass den Betrag auf 0.
+    revisadas: Geprüft
+    cargo: Belastung
+    aprobada: Freigegeben
+    observada_sin_cargo: Beanstandet, ohne Belastung
+    observada_cargada: 'Beanstandet und %{quien} belastet: %{monto}'
+  estados:
+    pendiente: offen
+    aprobada: freigegeben
+    observada: beanstandet
+    solicitado: angefragt
+    surtiendo: in Kommissionierung
+    cerrado: abgeschlossen
+    cancelado: storniert
+    surtido: kommissioniert
+    no_surtir: nicht liefern
+    preparando: in Vorbereitung
+    sellada: versiegelt
+    enviada: versendet
+    recibida: angenommen
+    entregada: zugestellt
+    rechazada: abgelehnt
+    cancelada: storniert
+    abierta: offen
+    cerrada: geschlossen
+    abierto: offen
+    armando: in Zusammenstellung
+    en_ruta: unterwegs
+    liquidado: abgerechnet
+    viva: aktiv
+    vendida: verkauft
+    baja: ausgebucht
+    faltante: fehlend
+    sobrante: überzählig
+    por_cobrar: offen
+    cobrada: bezahlt
+    a_credito: auf Kredit
+    devuelta: zurückgegeben
+    bloqueado: gesperrt
+    perdonado: erlassen
+    cobrado: eingezogen
+  movimientos:
+    entrada: Eingang
+    produccion: Produktion
+    recepcion: Annahme
+    devolucion_cliente: Kundenrückgabe
+    ajuste_entrada: Korrektur (+)
+    venta: Verkauf
+    salida: Lieferung
+    consumo: Produktionsverbrauch
+    merma: Schwund
+    ajuste_salida: Korrektur (−)
+  permisos:
+    caja.vender: An der Kasse verkaufen
+    caja.abrir: Kasse öffnen und abschließen
+    caja.retirar: Bargeld in den Tresor legen
+    caja.bajar_precio: Preis unter Liste freigeben
+    caja.devolver: Kundenrückgaben annehmen
+    etiquetas.crear: Pakete, Kisten und Paletten etikettieren (auf Bestellung oder Produktion)
+    etiquetas.libre: Etikettieren ohne Bestellung freigeben
+    pedidos.solicitar: Ware bei der Zentrale bestellen
+    pedidos.surtir: Bestellungen kommissionieren und Zeilen schließen
+    produccion.abrir: Produktionen öffnen und schließen
+    inventario.ver: Bestände und Bewegungen sehen
+    inventario.ajustar: Bestände mit Begründung korrigieren
+    salidas.surtir: Lieferungen an Tour oder Laden kommissionieren
+    salidas.verificar: Ladung vor Abfahrt prüfen
+    salidas.recibir: Lieferungen im Laden annehmen
+    rutas.armar: Auslieferfahrten zusammenstellen und abfertigen
+    rutas.repartir: 'Ausliefern: übergeben, ablehnen und kassieren (Fahrer)'
+    rutas.liquidar: Fahrt des Fahrers bei Rückkehr abrechnen
+    cobranza.ver: Salden, Fälligkeiten und Kontoauszüge sehen
+    cobranza.abonar: Kundenzahlungen im Büro erfassen
+    cobranza.bloquear: Kredit von Hand sperren oder freigeben
+    canastillas.ver: Kistensalden je Kunde und Fahrer sehen
+    canastillas.ajustar: Kistenrückgaben und -korrekturen erfassen
+    conteos.hacer: Inventuren durchführen und Fehlmengen belasten
+    conteos.cargos: Belastungen einziehen oder erlassen
+    reportes.ver: Übersicht und Berichte sehen
+    revisiones.resolver: Prüfen, was ohne Freigabe geschah (freigeben, beanstanden, belasten)
+    admin.catalogo: Produkte und Codes verwalten
+    admin.usuarios: Benutzer, Rollen und Filialen verwalten
+  pedidos:
+    pedido: Bestellung
+    pedidos: Bestellungen
+    por_surtir: Zu kommissionierende Bestellungen
+    pendientes_consolidados: Offene Mengen gesamt
+    pendientes_ayuda: Alles, was noch fehlt, je Produkt, mit den Bestellungen, die es anfordern
+    para: Für
+    para_min: für
+    pidio: Bestellt von
+    pidio_el: Bestellt von %{quien} am %{fecha}
+    surtido: Kommissioniert
+    surtidos: Kommissionierte
+    hoja: Bestellblatt
+    hoja_corta: Blatt
+    surtir: Kommissionieren
+    surtir_en_etiquetadora: Im Etikettierer kommissionieren
+    nada_por_surtir: Keine Bestellungen zu kommissionieren.
+    surtidos_recientes: Kürzlich kommissioniert
+    sin_recientes: Nichts kürzlich kommissioniert.
+    de_sucursal: Bestellungen von %{sucursal}
+    sin_surtir_titulo: Nicht kommissioniert
+    sin_surtir: nicht kommissioniert
+    sin_surtir_badge: NICHT KOMMISSIONIERT
+    completo: VOLLSTÄNDIG
+    parcial: TEILWEISE
+    renglones: Zeilen
+    renglon: Zeile
+    todo_surtido: Alles Bestellte wurde kommissioniert.
+    sin_surtidos: Keine kommissionierten Bestellungen.
+    ver_renglones: Zeilen ansehen
+    pide: Bestellt
+    lleva: Hat
+    falta: Fehlt
+    salida: Lieferung
+    salidas: Lieferungen
+    dar_por_surtido: Als kommissioniert markieren
+    no_surtir: Nicht liefern
+    reabrir: Wieder öffnen
+    nueva_salida_a: Neue Lieferung an %{destino}
+    cancelar_pedido: Bestellung stornieren
+    confirmar_cancelar: Bestellung %{folio} stornieren?
+    nuevo: Neue Bestellung
+    nuevo_a_matriz: Neue Bestellung an die Zentrale
+    tiendas: Läden
+    clientes_de_ruta: Tourkunden
+    enviar_pedido: Bestellung senden
+    surte: liefert
+    pendientes_por_surtir: Offen zu kommissionieren
+    nada_pendiente: Nichts offen.
+    productos: Produkte
+    enviado: Bestellung %{folio} an %{a} gesendet
+    cancelado: Bestellung storniert
+    renglon_surtido: Zeile als kommissioniert markiert
+    renglon_apartado: 'Zeile zurückgestellt: wird nicht geliefert'
+    renglon_reabierto: Zeile wieder geöffnet
+  js:
+    pedidos_por_surtir: Zu kommissionierende Bestellungen
+    cargando: Lädt…
+    sin_pedidos: Keine Bestellungen zu kommissionieren
+    no_se_pudo: Nicht möglich
+    sin_salida: ohne Lieferung
+    por_enviar: zu versenden
+    verificada: geprüft
+    sin_verificar: ungeprüft
+    baja_ayuda: 'Falsch etikettiert: bucht das Kollo aus und nimmt es aus Bestellung und Lieferung'
+    la_caja_completa: die ganze Kiste
+    el_paquete: das Paket
+    dar_de_baja: Ausbuchen
+    paq: Pak.
+    sustituto: ERSATZ
+    surtir: Kommissionieren
+    enviar_sustituto: Ersatz senden
+    dar_por_surtido: Als kommissioniert markieren
+    dar_por_surtido_ayuda: Als kommissioniert markieren, auch wenn etwas fehlt
+    reactivar: Reaktivieren
+    no_se_va_a_surtir: Wird nicht geliefert
+    buscar_sustituto: ERSATZPRODUKT suchen (z. B. ganzes Hähnchen)…
+    sin_renglones: Bestellung ohne Zeilen
+    sin_surtir: nicht kommissioniert
+    bulto: Kollo
+    bultos: Kolli
+    todo_listo: 'Alles kommissioniert und geprüft: kann versiegelt und versendet werden.'
+    verificar: prüfen
+    y_enviar: und versenden
+    sellar_y_enviar: versiegeln und versenden
+    por_que_no_surtir: Warum wird diese Zeile nicht geliefert?
+    confirmar_surtido: Zeile als kommissioniert markieren, obwohl etwas fehlt?
+    motivo_pregunta: Grund?
+    escribe_motivo: Schreib den Grund
+    sin_resultados: Keine Treffer
+    estados:
+      solicitado: angefragt
+      surtiendo: in Kommissionierung
+      cerrado: abgeschlossen
+      cancelado: storniert
+      preparando: in Vorbereitung
+      sellada: versiegelt
+      enviada: versendet
+      recibida: angenommen
+      entregada: zugestellt
+      rechazada: abgelehnt
+      cancelada: storniert

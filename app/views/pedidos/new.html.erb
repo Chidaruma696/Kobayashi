@@ -1,15 +1,15 @@
-<h1 class="mb-4 text-2xl font-bold"><%= sucursal_actual.matriz? ? "Nuevo pedido" : "Nuevo pedido a la matriz" %></h1>
+<h1 class="mb-4 text-2xl font-bold"><%= sucursal_actual.matriz? ? t("pedidos.nuevo") : t("pedidos.nuevo_a_matriz") %></h1>
 <%= form_with model: @pedido, url: pedidos_path, data: { controller: "lineas" }, class: "max-w-4xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <% if sucursal_actual.matriz? %>
     <div>
-      <%= f.label :destino, "Para", class: "block text-sm font-medium" %>
-      <%= f.select :destino, grouped_options_for_select({ "Tiendas" => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, "Clientes de ruta" => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }), {}, class: "mt-1 rounded border border-stone-300 px-3 py-2" %>
+      <%= f.label :destino, t("pedidos.para"), class: "block text-sm font-medium" %>
+      <%= f.select :destino, grouped_options_for_select({ t("pedidos.tiendas") => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, t("pedidos.clientes_de_ruta") => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }), {}, class: "mt-1 rounded border border-stone-300 px-3 py-2" %>
     </div>
   <% else %>
-    <p class="text-sm text-stone-600">Para <strong><%= sucursal_actual %></strong></p>
+    <p class="text-sm text-stone-600"><%= t("pedidos.para") %> <strong><%= sucursal_actual %></strong></p>
   <% end %>
   <table class="w-full text-sm">
-    <thead><tr class="text-left text-stone-500"><th class="py-1">Producto</th><th class="py-1 w-40">Cantidad</th><th></th></tr></thead>
+    <thead><tr class="text-left text-stone-500"><th class="py-1"><%= t("comun.producto") %></th><th class="py-1 w-40"><%= t("comun.cantidad") %></th><th></th></tr></thead>
     <tbody data-lineas-target="cuerpo">
       <%= f.fields_for :lineas do |l| %>
         <tr data-lineas-target="fila">
@@ -20,10 +20,10 @@
       <% end %>
     </tbody>
   </table>
-  <button type="button" data-action="lineas#agregar" class="btn btn-secondary btn-sm">+ renglón</button>
+  <button type="button" data-action="lineas#agregar" class="btn btn-secondary btn-sm">+ <%= t("pedidos.renglon") %></button>
   <div>
-    <%= f.label :notas, "Notas", class: "block text-sm font-medium" %>
+    <%= f.label :notas, t("comun.notas"), class: "block text-sm font-medium" %>
     <%= f.text_area :notas, rows: 2, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
-  <%= f.submit "Enviar pedido", class: "btn btn-primary" %>
+  <%= f.submit t("pedidos.enviar_pedido"), class: "btn btn-primary" %>
 <% end %>

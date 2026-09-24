@@ -31,7 +31,7 @@ class PedidoLinea < ApplicationRecord
   end
 
   def no_surtir!(motivo)
-    raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, I18n.t("errores.hace_falta_motivo") if motivo.blank?
     update!(estado: "no_surtir", motivo: motivo)
   end
 

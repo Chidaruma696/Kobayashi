@@ -39,8 +39,8 @@ class Pedido < ApplicationRecord
   end
 
   def cancelar!
-    raise ArgumentError, "solo se cancela un pedido abierto" unless abierto?
-    raise ArgumentError, "ya tiene etiquetas surtidas; no se puede cancelar" if lineas.any? { |l| l.cantidad_surtida.positive? }
+    raise ArgumentError, I18n.t("errores.pedido.solo_abierto") unless abierto?
+    raise ArgumentError, I18n.t("errores.pedido.ya_surtido") if lineas.any? { |l| l.cantidad_surtida.positive? }
     update!(estado: "cancelado")
   end
 
@@ -56,12 +56,12 @@ class Pedido < ApplicationRecord
 
   def un_solo_destino
     if cliente.nil? && sucursal_destino.nil? || cliente && sucursal_destino
-      errors.add(:base, "el pedido va a una tienda o a un cliente, uno de los dos")
+      errors.add(:base, I18n.t("errores.pedido.un_destino"))
     end
-    errors.add(:sucursal_destino, "no puede ser la misma que surte") if sucursal_destino && sucursal_origen_id == sucursal_destino_id
+    errors.add(:sucursal_destino, I18n.t("errores.pedido.mismo_origen")) if sucursal_destino && sucursal_origen_id == sucursal_destino_id
   end
 
   def con_lineas
-    errors.add(:lineas, "el pedido necesita al menos un renglón") if lineas.empty?
+    errors.add(:lineas, I18n.t("errores.pedido.sin_renglones")) if lineas.empty?
   end
 end

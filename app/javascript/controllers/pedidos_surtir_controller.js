@@ -24,7 +24,7 @@ export default class extends Controller {
       body: cuerpo ? JSON.stringify(cuerpo) : undefined
     })
     const datos = await r.json().catch(() => ({}))
-    if (!r.ok) { alert(datos.error || "No se pudo"); return null }
+    if (!r.ok) { alert(datos.error || T.no_se_pudo); return null }
     return datos
   }
 
@@ -41,12 +41,12 @@ export default class extends Controller {
 
   async lista() {
     this.pedido = null
-    this.tituloTarget.textContent = "Pedidos por surtir"
+    this.tituloTarget.textContent = T.pedidos_por_surtir
     this.pieTarget.classList.add("hidden")
-    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">Cargando…</p>`
+    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">${T.cargando}</p>`
     const d = await this.pedir(`${this.pedidosUrlValue}.json`)
     if (!d) return
-    if (!d.pedidos.length) { this.cuerpoTarget.innerHTML = `<p class="py-6 text-center text-stone-500">No hay pedidos por surtir</p>`; return }
+    if (!d.pedidos.length) { this.cuerpoTarget.innerHTML = `<p class="py-6 text-center text-stone-500">${T.sin_pedidos}</p>`; return }
     this.cuerpoTarget.innerHTML = d.pedidos.map(p => `
       <div class="flex cursor-pointer items-center gap-3 border-b border-dashed border-stone-200 py-2 pl-3 hover:bg-stone-50" style="border-left:6px solid ${this.color(p.destino)}" data-action="click->pedidos-surtir#abrir" data-pedidos-surtir-id-param="${p.id}">
         <span class="text-lg" style="color:${this.color(p.destino)}"><i class="bi bi-basket"></i></span>
@@ -55,7 +55,7 @@ export default class extends Controller {
             <span class="text-xs text-stone-500">${this.esc(p.usuario)} · ${this.esc(p.creado)}</span></div>
           ${p.notas ? `<div class="mt-1 text-xs text-stone-500">${this.esc(p.notas)}</div>` : ""}
         </div>
-        <span class="rounded px-2 py-0.5 text-xs ${p.estado === "surtiendo" ? "bg-amber-100 text-amber-800" : "bg-sky-100 text-sky-800"}">${p.estado} · ${p.resueltos}/${p.renglones}</span>
+        <span class="rounded px-2 py-0.5 text-xs ${p.estado === "surtiendo" ? "bg-amber-100 text-amber-800" : "bg-sky-100 text-sky-800"}">${T.estados[p.estado] || p.estado} · ${p.resueltos}/${p.renglones}</span>
         <span class="text-stone-400">›</span>
       </div>`).join("")
   }
@@ -63,7 +63,7 @@ export default class extends Controller {
   // ---------------------------------------------------------------- detalle
 
   async detalle(id) {
-    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">Cargando…</p>`
+    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">${T.cargando}</p>`
     const d = await this.pedir(`${this.pedidosUrlValue}/${id}.json`)
     if (!d) return
     this.pedido = d
@@ -78,27 +78,27 @@ export default class extends Controller {
     this.tituloTarget.innerHTML = `${this.esc(p.folio)} &nbsp;${this.chip(p.destino, true)}`
     const bulto = (r, b) => {
       const enviada = b.salida && b.salida.estado !== "preparando"
-      const badge = !b.salida ? `<span class="text-xs text-amber-700">sin salida</span>`
-        : enviada ? `<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-800"><i class="bi bi-truck"></i> ${this.esc(b.salida.folio)} ${b.salida.estado}</span>`
-        : `<span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800"><i class="bi bi-box-seam"></i> ${this.esc(b.salida.folio)} por enviar</span>`
-      const verif = b.verificada ? `<span class="text-xs text-emerald-700">✓ verificada</span>` : (b.salida && !enviada ? `<span class="text-xs text-amber-700">sin verificar</span>` : "")
-      const baja = abierto && !enviada ? `<button type="button" class="btn btn-ghost-danger btn-xs ml-auto" title="Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida" data-id="${b.id}" data-que="${b.tipo === "caja" ? "la caja completa" : "el paquete"}" data-action="pedidos-surtir#darDeBaja"><i class="bi bi-trash"></i> Dar de baja</button>` : ""
+      const badge = !b.salida ? `<span class="text-xs text-amber-700">${T.sin_salida}</span>`
+        : enviada ? `<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-800"><i class="bi bi-truck"></i> ${this.esc(b.salida.folio)} ${T.estados[b.salida.estado] || b.salida.estado}</span>`
+        : `<span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800"><i class="bi bi-box-seam"></i> ${this.esc(b.salida.folio)} ${T.por_enviar}</span>`
+      const verif = b.verificada ? `<span class="text-xs text-emerald-700">✓ ${T.verificada}</span>` : (b.salida && !enviada ? `<span class="text-xs text-amber-700">${T.sin_verificar}</span>` : "")
+      const baja = abierto && !enviada ? `<button type="button" class="btn btn-ghost-danger btn-xs ml-auto" title="${T.baja_ayuda}" data-id="${b.id}" data-que="${b.tipo === "caja" ? T.la_caja_completa : T.el_paquete}" data-action="pedidos-surtir#darDeBaja"><i class="bi bi-trash"></i> ${T.dar_de_baja}</button>` : ""
       return `<div class="flex flex-wrap items-center gap-2 py-0.5 pl-6 text-xs">
         <code>${this.esc(b.codigo)}</code>
-        <span class="text-stone-500">${b.tipo}${b.paquetes ? ` · ${b.paquetes} paq` : ""} · ${this.esc(b.cantidad)} ${r.unidad}</span>
-        ${b.sustituto ? `<span class="rounded bg-violet-600 px-1.5 py-0.5 text-white">SUSTITUTO: ${this.esc(b.sustituto)}</span>` : ""}
+        <span class="text-stone-500">${b.tipo}${b.paquetes ? ` · ${b.paquetes} ${T.paq}` : ""} · ${this.esc(b.cantidad)} ${r.unidad}</span>
+        ${b.sustituto ? `<span class="rounded bg-violet-600 px-1.5 py-0.5 text-white">${T.sustituto}: ${this.esc(b.sustituto)}</span>` : ""}
         ${badge} ${verif} ${baja}</div>`
     }
     const html = renglones.map(r => {
       const ico = r.estado === "surtido" ? `<i class="bi bi-check-circle-fill text-emerald-600"></i>` : r.estado === "no_surtir" ? `<i class="bi bi-slash-circle text-stone-400"></i>` : `<i class="bi bi-circle text-amber-500"></i>`
       const acciones = !abierto ? "" : `<div class="mt-1 flex flex-wrap gap-2">
-        ${r.estado !== "no_surtir" ? `<a class="btn btn-primary btn-xs" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}"><i class="bi bi-tag"></i> Surtir</a>
-          <button type="button" class="btn btn-warning btn-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto"><i class="bi bi-arrow-left-right"></i> Enviar sustituto</button>
-          ${r.estado === "pendiente" ? `<button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#surtido" title="Darlo por surtido aunque falte">Dar por surtido</button>` : ""}` : ""}
-        <button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#${r.estado === "no_surtir" ? "reabrir" : "noSurtir"}">${r.estado === "no_surtir" ? "Reactivar" : "No se va a surtir"}</button>
+        ${r.estado !== "no_surtir" ? `<a class="btn btn-primary btn-xs" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}"><i class="bi bi-tag"></i> ${T.surtir}</a>
+          <button type="button" class="btn btn-warning btn-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto"><i class="bi bi-arrow-left-right"></i> ${T.enviar_sustituto}</button>
+          ${r.estado === "pendiente" ? `<button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#surtido" title="${T.dar_por_surtido_ayuda}">${T.dar_por_surtido}</button>` : ""}` : ""}
+        <button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#${r.estado === "no_surtir" ? "reabrir" : "noSurtir"}">${r.estado === "no_surtir" ? T.reactivar : T.no_se_va_a_surtir}</button>
         </div>
         <div class="mt-1 hidden max-w-md" id="sus-${r.id}">
-          <input type="text" class="w-full rounded border border-stone-300 px-2 py-1 text-sm" placeholder="Buscar el producto SUSTITUTO (ej. pollo entero)…" data-id="${r.id}" data-action="input->pedidos-surtir#buscarSustituto">
+          <input type="text" class="w-full rounded border border-stone-300 px-2 py-1 text-sm" placeholder="${T.buscar_sustituto}" data-id="${r.id}" data-action="input->pedidos-surtir#buscarSustituto">
           <div class="max-h-40 overflow-auto text-sm" id="sus-res-${r.id}"></div>
         </div>`
       return `<div class="border-b border-dashed border-stone-200 py-2">
@@ -109,16 +109,16 @@ export default class extends Controller {
         ${r.bultos.map(b => bulto(r, b)).join("")}
         ${acciones}</div>`
     }).join("")
-    this.cuerpoTarget.innerHTML = html || `<p class="py-4 text-stone-500">Pedido sin renglones</p>`
+    this.cuerpoTarget.innerHTML = html || `<p class="py-4 text-stone-500">${T.sin_renglones}</p>`
     this.pieTarget.classList.toggle("hidden", !abierto)
     if (!abierto) return
-    const faltan = renglones.filter(r => r.estado === "pendiente").map(r => `${r.producto}: sin surtir`)
-    renglones.forEach(r => { const n = r.bultos.filter(b => b.salida?.estado === "preparando" && !b.verificada).length; if (n) faltan.push(`${r.producto}: ${n} bulto${n === 1 ? "" : "s"} sin verificar`) })
-    this.faltanTarget.textContent = faltan.length ? `⚠ ${faltan.join(" · ")}` : (salida ? "Todo surtido y verificado: ya se puede sellar y enviar." : "")
+    const faltan = renglones.filter(r => r.estado === "pendiente").map(r => `${r.producto}: ${T.sin_surtir}`)
+    renglones.forEach(r => { const n = r.bultos.filter(b => b.salida?.estado === "preparando" && !b.verificada).length; if (n) faltan.push(`${r.producto}: ${n} ${n === 1 ? T.bulto : T.bultos} ${T.sin_verificar}`) })
+    this.faltanTarget.textContent = faltan.length ? `⚠ ${faltan.join(" · ")}` : (salida ? T.todo_listo : "")
     this.salidaLinkTarget.classList.toggle("hidden", !salida)
     if (salida) {
       this.salidaLinkTarget.href = salida.url
-      this.salidaLinkTarget.textContent = `<i class="bi bi-truck"></i> ${salida.folio}: ${salida.sin_verificar ? `verificar (${salida.sin_verificar}) y enviar` : "sellar y enviar"}`
+      this.salidaLinkTarget.innerHTML = `<i class="bi bi-truck"></i> ${this.esc(salida.folio)}: ${salida.sin_verificar ? `${T.verificar} (${salida.sin_verificar}) ${T.y_enviar}` : T.sellar_y_enviar}`
     }
   }
 
@@ -127,7 +127,7 @@ export default class extends Controller {
   linea(e) { return `${this.pedidosUrlValue}/${this.pedido.pedido.id}/lineas/${e.currentTarget.dataset.id}` }
 
   async noSurtir(e) {
-    const motivo = prompt("¿Por qué no se va a surtir este renglón?")
+    const motivo = prompt(T.por_que_no_surtir)
     if (motivo === null) return
     if (await this.pedir(`${this.linea(e)}/no_surtir`, "POST", { motivo })) this.refrescar()
   }
@@ -135,15 +135,15 @@ export default class extends Controller {
   async reabrir(e) { if (await this.pedir(`${this.linea(e)}/reabrir`, "POST", {})) this.refrescar() }
 
   async surtido(e) {
-    if (!confirm("¿Dar el renglón por surtido aunque falte?")) return
+    if (!confirm(T.confirmar_surtido)) return
     if (await this.pedir(`${this.linea(e)}/surtido`, "POST", {})) this.refrescar()
   }
 
   async darDeBaja(e) {
     const { id, que } = e.currentTarget.dataset
-    const motivo = prompt(`Dar de baja ${que} y sacarlo del pedido y de la salida. ¿Motivo?`)
+    const motivo = prompt(`${T.dar_de_baja} ${que}. ${T.motivo_pregunta}`)
     if (motivo === null) return
-    if (motivo.trim().length < 3) { alert("Escribe el motivo"); return }
+    if (motivo.trim().length < 3) { alert(T.escribe_motivo); return }
     if (await this.pedir(`${this.etiquetasUrlValue}/${id}/baja`, "POST", { motivo: motivo.trim() })) this.refrescar()
   }
 
@@ -161,7 +161,7 @@ export default class extends Controller {
     this.timerSustituto = setTimeout(async () => {
       const r = await fetch(`${this.productosUrlValue}?q=${encodeURIComponent(q)}`, { headers: { Accept: "application/json" } })
       const items = r.ok ? await r.json() : []
-      res.innerHTML = items.slice(0, 8).map(p => `<a class="block cursor-pointer border-b border-dashed border-stone-200 px-2 py-1 hover:bg-stone-100" href="${this.etiquetarUrlValue}?pedido_linea_id=${id}&producto_id=${p.id}&sustituto=1"><strong>${this.esc(p.nombre)}</strong> <span class="text-xs text-stone-500">${this.esc(p.clave)} · ${p.unidad}</span></a>`).join("") || `<p class="p-2 text-stone-500">Sin resultados</p>`
+      res.innerHTML = items.slice(0, 8).map(p => `<a class="block cursor-pointer border-b border-dashed border-stone-200 px-2 py-1 hover:bg-stone-100" href="${this.etiquetarUrlValue}?pedido_linea_id=${id}&producto_id=${p.id}&sustituto=1"><strong>${this.esc(p.nombre)}</strong> <span class="text-xs text-stone-500">${this.esc(p.clave)} · ${p.unidad}</span></a>`).join("") || `<p class="p-2 text-stone-500">${T.sin_resultados}</p>`
     }, 250)
   }
 }

@@ -6,19 +6,19 @@ class PedidoLineasController < ApplicationController
 
   def surtido
     @linea.marcar_surtido!
-    volver("Renglón marcado como surtido")
+    volver(t("pedidos.renglon_surtido"))
   end
 
   def no_surtir
     @linea.no_surtir!(params[:motivo].to_s.strip)
-    volver("Renglón apartado: no se va a surtir")
+    volver(t("pedidos.renglon_apartado"))
   rescue ArgumentError => e
     volver(nil, e.message)
   end
 
   def reabrir
     @linea.reabrir!
-    volver("Renglón reabierto")
+    volver(t("pedidos.renglon_reabierto"))
   end
 
   private

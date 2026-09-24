@@ -1,9 +1,9 @@
 <div class="ticket">
-  <div class="centro"><strong>PENDIENTES POR SURTIR</strong></div>
+  <div class="centro"><strong><%= t("pedidos.pendientes_por_surtir").upcase %></strong></div>
   <div class="centro"><%= sucursal_actual %> · <%= l Time.current, format: :short %></div>
   <div class="linea"></div>
   <% if @pendientes.empty? %>
-    <div class="centro">Nada pendiente.</div>
+    <div class="centro"><%= t("pedidos.nada_pendiente") %></div>
   <% else %>
     <table>
       <% @pendientes.each do |producto, falta, pedidos| %>
@@ -12,6 +12,6 @@
       <% end %>
     </table>
     <div class="linea"></div>
-    <div><%= @pendientes.size %> productos · <%= @pendientes.flat_map { |_, _, ps| ps }.uniq.size %> pedidos</div>
+    <div><%= @pendientes.size %> <%= t("pedidos.productos") %> · <%= @pendientes.flat_map { |_, _, ps| ps }.uniq.size %> <%= t("pedidos.pedidos").downcase %></div>
   <% end %>
 </div>

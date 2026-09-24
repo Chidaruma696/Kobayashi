@@ -34,6 +34,11 @@ module Permiso
 
   MODULOS = CLAVES.keys.map { |c| c.split(".").first }.uniq.freeze
 
+  # Nombre para mostrar, en el idioma del usuario (permisos.* en config/locales).
+  def self.nombre(clave)
+    I18n.t("permisos.#{clave}", default: CLAVES[clave])
+  end
+
   def self.valida?(clave)
     clave == "*" || CLAVES.key?(clave) || (clave.end_with?(".*") && MODULOS.include?(clave.delete_suffix(".*")))
   end
