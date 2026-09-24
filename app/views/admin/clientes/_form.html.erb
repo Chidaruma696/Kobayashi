@@ -1,23 +1,23 @@
-<%= form_with model: [ :admin, @cliente ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: t("comun.nombre"), tipo: :text_field %>
-  <div class="grid grid-cols-2 gap-4">
+<%= form_with model: [ :admin, @cliente ], class: "formulario" do |f| %>
+  <div class="campos">
+    <%= render "admin/campo", f: f, campo: :nombre, etiqueta: t("comun.nombre"), tipo: :text_field %>
     <%= render "admin/campo", f: f, campo: :telefono, etiqueta: t("admin.telefono"), tipo: :text_field %>
-    <div><%= f.label :ruta_id, t("salidas.ruta"), class: "block text-sm font-medium" %><%= f.collection_select :ruta_id, Ruta.activas.order(:nombre), :id, :nombre, { include_blank: t("admin.sin_ruta") }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
-  </div>
-  <%= render "admin/campo", f: f, campo: :direccion, etiqueta: t("admin.direccion"), tipo: :text_field %>
-  <div class="grid grid-cols-2 gap-4">
+    <div><%= f.label :ruta_id, t("salidas.ruta"), class: "block text-sm font-medium" %><%= f.collection_select :ruta_id, Ruta.activas.order(:nombre), :id, :nombre, { include_blank: t("admin.sin_ruta") }, class: "entrada" %></div>
+    <div class="md:col-span-2"><%= render "admin/campo", f: f, campo: :direccion, etiqueta: t("admin.direccion"), tipo: :text_field %></div>
     <%= render "admin/campo", f: f, campo: :orden, etiqueta: t("admin.orden_en_ruta"), tipo: :number_field, opciones: { min: 0 } %>
-    <label class="flex items-center gap-2 self-end text-sm"><%= f.check_box :activo %> <%= t("comun.activo") %></label>
   </div>
-  <fieldset class="rounded border border-stone-300 p-3">
-    <legend class="px-1 text-sm font-medium"><%= t("admin.credito_de_ruta") %></legend>
-    <div class="grid gap-4 sm:grid-cols-3">
-      <div><%= f.label :credito, t("salidas.tipo"), class: "block text-sm font-medium" %><%= f.select :credito, Credito::TIPOS.keys.map { |k| [ Credito.nombre(k), k ] }, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
-      <div><%= f.label :limite_credito, t("admin.limite_credito"), class: "block text-sm font-medium" %><%= f.number_field :limite_credito, step: "0.01", min: 0, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %></div>
-      <div><%= f.label :dia_corte, t("admin.dia_corte"), class: "block text-sm font-medium" %><%= f.select :dia_corte, Credito::DIAS.each_index.map { |i| [ Credito.dia(i), i ] }, { include_blank: t("admin.sin_dia") }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
+  <fieldset class="rounded-lg border border-stone-200 p-4">
+    <legend class="px-1 text-sm font-semibold"><%= t("admin.credito_de_ruta") %></legend>
+    <div class="campos">
+      <div><%= f.label :credito, t("salidas.tipo"), class: "block text-sm font-medium" %><%= f.select :credito, Credito::TIPOS.keys.map { |k| [ Credito.nombre(k), k ] }, {}, class: "entrada" %></div>
+      <div><%= f.label :limite_credito, t("admin.limite_credito"), class: "block text-sm font-medium" %><%= f.number_field :limite_credito, step: "0.01", min: 0, class: "entrada font-mono" %></div>
+      <div><%= f.label :dia_corte, t("admin.dia_corte"), class: "block text-sm font-medium" %><%= f.select :dia_corte, Credito::DIAS.each_index.map { |i| [ Credito.dia(i), i ] }, { include_blank: t("admin.sin_dia") }, class: "entrada" %></div>
     </div>
-    <p class="mt-2 text-xs text-stone-500"><%= t("admin.credito_ayuda") %></p>
+    <p class="mt-3 text-xs text-stone-500"><%= t("admin.credito_ayuda") %></p>
   </fieldset>
   <%= render "admin/campo", f: f, campo: :notas, etiqueta: t("comun.notas"), tipo: :text_area, opciones: { rows: 2 } %>
-  <%= f.submit @cliente.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary" %>
+  <div class="flex flex-wrap items-center gap-4">
+    <%= f.submit @cliente.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary btn-lg" %>
+    <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> <%= t("comun.activo") %></label>
+  </div>
 <% end %>

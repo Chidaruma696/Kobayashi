@@ -1,22 +1,24 @@
 <h1 class="mb-4 text-2xl font-bold"><%= t("viajes.nuevo") %></h1>
-<%= form_with url: viajes_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <div>
-    <%= f.label :ruta_id, t("salidas.ruta"), class: "block text-sm font-medium" %>
-    <%= f.select :ruta_id, @rutas.map { |r| [ "#{r.nombre}#{" · #{t("salidas.chofer").downcase} #{r.chofer}" if r.chofer}", r.id ] }, { selected: params[:ruta_id] }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-  </div>
-  <div>
-    <%= f.label :chofer_id, t("salidas.chofer"), class: "block text-sm font-medium" %>
-    <%= f.select :chofer_id, @choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: t("viajes.el_de_la_ruta") }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-    <p class="mt-1 text-xs text-stone-500"><%= t("viajes.solo_con_permiso") %></p>
-  </div>
-  <div>
-    <%= f.label :fecha, t("comun.fecha"), class: "block text-sm font-medium" %>
-    <%= f.date_field :fecha, value: Date.current, class: "mt-1 rounded border border-stone-300 px-3 py-2" %>
-  </div>
-  <div>
-    <%= f.label :notas, t("comun.notas"), class: "block text-sm font-medium" %>
-    <%= f.text_field :notas, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+<%= form_with url: viajes_path, class: "formulario" do |f| %>
+  <div class="campos-4">
+    <div>
+      <%= f.label :ruta_id, t("salidas.ruta"), class: "block text-sm font-medium" %>
+      <%= f.select :ruta_id, @rutas.map { |r| [ "#{r.nombre}#{" · #{t("salidas.chofer").downcase} #{r.chofer}" if r.chofer}", r.id ] }, { selected: params[:ruta_id] }, class: "entrada" %>
+    </div>
+    <div>
+      <%= f.label :chofer_id, t("salidas.chofer"), class: "block text-sm font-medium" %>
+      <%= f.select :chofer_id, @choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: t("viajes.el_de_la_ruta") }, class: "entrada" %>
+      <p class="mt-1 text-xs text-stone-500"><%= t("viajes.solo_con_permiso") %></p>
+    </div>
+    <div>
+      <%= f.label :fecha, t("comun.fecha"), class: "block text-sm font-medium" %>
+      <%= f.date_field :fecha, value: Date.current, class: "entrada" %>
+    </div>
+    <div>
+      <%= f.label :notas, t("comun.notas"), class: "block text-sm font-medium" %>
+      <%= f.text_field :notas, class: "entrada" %>
+    </div>
   </div>
   <p class="text-sm text-stone-600"><%= t("viajes.nuevo_ayuda") %></p>
-  <%= f.submit t("viajes.armar_viaje"), class: "btn btn-primary" %>
+  <%= f.submit t("viajes.armar_viaje"), class: "btn btn-primary btn-lg" %>
 <% end %>

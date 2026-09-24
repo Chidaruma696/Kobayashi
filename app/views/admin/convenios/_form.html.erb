@@ -1,15 +1,17 @@
-<%= form_with model: [ :admin, @convenio ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <div><%= f.label :cliente_id, t("caja.cliente"), class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
-  <div class="grid gap-4 sm:grid-cols-2">
+<%= form_with model: [ :admin, @convenio ], class: "formulario" do |f| %>
+  <div class="campos">
+    <div><%= f.label :cliente_id, t("caja.cliente"), class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "entrada" %></div>
     <%= render "admin/campo", f: f, campo: :lineas, etiqueta: t("admin.lineas_producto"), tipo: :text_field, opciones: { list: "lineas_producto" } %>
     <%= render "admin/campo", f: f, campo: :excluir, etiqueta: t("admin.excluir_productos"), tipo: :text_field, opciones: {} %>
   </div>
   <datalist id="lineas_producto"><% Producto.activos.distinct.pluck(:linea).compact.each do |l| %><option value="<%= l %>"><% end %></datalist>
-  <div class="grid gap-4 sm:grid-cols-2">
+  <div class="campos">
     <%= render "admin/campo", f: f, campo: :precio, etiqueta: t("admin.precio_convenio"), tipo: :number_field, opciones: { step: "0.01", min: "0.01" } %>
     <%= render "admin/campo", f: f, campo: :tope_cajas, etiqueta: t("admin.tope_semanal_cajas"), tipo: :number_field, opciones: { step: "0.5", min: 0 } %>
+    <%= render "admin/campo", f: f, campo: :notas, etiqueta: t("comun.notas"), tipo: :text_field %>
   </div>
-  <%= render "admin/campo", f: f, campo: :notas, etiqueta: t("comun.notas"), tipo: :text_field %>
-  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> <%= t("comun.activo") %></label>
-  <%= f.submit @convenio.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary" %>
+  <div class="flex flex-wrap items-center gap-4">
+    <%= f.submit @convenio.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary btn-lg" %>
+    <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> <%= t("comun.activo") %></label>
+  </div>
 <% end %>

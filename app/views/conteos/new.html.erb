@@ -2,12 +2,14 @@
 <% if @abierto %>
   <p class="rounded bg-amber-50 p-3 text-sm"><%= t("conteos.ya_hay_abierto") %> <%= link_to @abierto.folio, conteo_path(@abierto), class: "chip-folio" %>. <%= t("conteos.cierralo_antes") %></p>
 <% else %>
-  <%= form_with url: conteos_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-    <div>
-      <%= f.label :responsable_id, t("conteos.responsable_ayuda"), class: "block text-sm font-medium" %>
-      <%= f.collection_select :responsable_id, @responsables, :id, :nombre, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+  <%= form_with url: conteos_path, class: "formulario" do |f| %>
+    <div class="campos">
+      <div class="md:col-span-2">
+        <%= f.label :responsable_id, t("conteos.responsable_ayuda"), class: "block text-sm font-medium" %>
+        <%= f.collection_select :responsable_id, @responsables, :id, :nombre, {}, class: "entrada" %>
+      </div>
     </div>
     <p class="text-sm text-stone-600"><%= t("conteos.nuevo_ayuda") %></p>
-    <%= f.submit t("conteos.abrir"), class: "btn btn-primary" %>
+    <%= f.submit t("conteos.abrir"), class: "btn btn-primary btn-lg" %>
   <% end %>
 <% end %>

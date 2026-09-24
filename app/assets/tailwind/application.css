@@ -57,6 +57,13 @@
   .card { @apply rounded-lg bg-white p-4 shadow-sm ring-1 ring-stone-200; }
   .badge { @apply inline-block rounded-md bg-stone-200 px-2 py-0.5 text-xs font-semibold text-stone-700; }
 
+  /* Formularios: a todo lo ancho, campos en rejilla (1 col en móvil, 2 en tableta, 3 en escritorio). */
+  .formulario { @apply w-full space-y-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-stone-200 xl:p-8; }
+  .campos { @apply grid gap-4 md:grid-cols-2 xl:grid-cols-3; }
+  .campos-2 { @apply grid gap-4 md:grid-cols-2; }
+  .campos-4 { @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4; }
+  .entrada { @apply mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base; }
+
   /* Opción grande y amigable (radio escondido dentro): arranque y ajustes. */
   .opcion { @apply flex cursor-pointer items-center gap-3 rounded-lg border-2 border-stone-300 bg-white px-4 py-4 text-lg font-semibold transition-colors hover:border-marca-400; }
   .opcion:has(:checked) { @apply border-marca-600 bg-marca-50 text-marca-900; }

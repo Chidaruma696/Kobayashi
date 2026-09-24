@@ -1,21 +1,23 @@
 <h1 class="mb-4 text-2xl font-bold"><%= t("salidas.nueva_desde", sucursal: sucursal_actual) %></h1>
-<%= form_with url: salidas_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <% if @pedido %>
-    <%= f.hidden_field :pedido_id, value: @pedido.id %>
-    <p class="text-sm"><%= t("pedidos.para") %> <strong><%= @pedido.destino %></strong> · <%= t("salidas.surte_el_pedido") %> <%= link_to @pedido.folio, pedido_path(@pedido), class: "chip-folio" %></p>
-  <% else %>
-    <div>
-      <%= f.label :destino, t("pedidos.para"), class: "block text-sm font-medium" %>
-      <% grupos = { t("salidas.tiendas") => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] } } %>
-      <% grupos[t("salidas.clientes_de_ruta")] = @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } if @clientes.any? %>
-      <%= f.select :destino, grouped_options_for_select(grupos), {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-    </div>
-  <% end %>
-  <% unless sucursal_actual.matriz? %>
-    <div>
-      <%= f.label :motivo, t("salidas.motivo_devolucion"), class: "block text-sm font-medium" %>
-      <%= f.text_field :motivo, required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-    </div>
-  <% end %>
-  <%= f.submit t("salidas.abrir_salida"), class: "btn btn-primary" %>
+<%= form_with url: salidas_path, class: "formulario" do |f| %>
+  <div class="campos">
+    <% if @pedido %>
+      <%= f.hidden_field :pedido_id, value: @pedido.id %>
+      <p class="text-base md:col-span-2"><%= t("pedidos.para") %> <strong><%= @pedido.destino %></strong> · <%= t("salidas.surte_el_pedido") %> <%= link_to @pedido.folio, pedido_path(@pedido), class: "chip-folio" %></p>
+    <% else %>
+      <div>
+        <%= f.label :destino, t("pedidos.para"), class: "block text-sm font-medium" %>
+        <% grupos = { t("salidas.tiendas") => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] } } %>
+        <% grupos[t("salidas.clientes_de_ruta")] = @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } if @clientes.any? %>
+        <%= f.select :destino, grouped_options_for_select(grupos), {}, class: "entrada" %>
+      </div>
+    <% end %>
+    <% unless sucursal_actual.matriz? %>
+      <div class="md:col-span-2">
+        <%= f.label :motivo, t("salidas.motivo_devolucion"), class: "block text-sm font-medium" %>
+        <%= f.text_field :motivo, required: true, class: "entrada" %>
+      </div>
+    <% end %>
+  </div>
+  <%= f.submit t("salidas.abrir_salida"), class: "btn btn-primary btn-lg" %>
 <% end %>
