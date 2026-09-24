@@ -33,8 +33,8 @@
         <p class="text-stone-600"><%= t("instalacion.idioma_ayuda") %></p>
         <div class="grid gap-3 sm:grid-cols-3">
           <% { "es" => "Español", "en" => "English", "de" => "Deutsch" }.each do |i, nombre| %>
-            <%= link_to instalar_path(idioma: i), class: "flex items-center justify-between rounded-lg border-2 px-4 py-4 text-lg font-semibold #{I18n.locale.to_s == i ? 'border-marca-600 bg-marca-50 text-marca-900' : 'border-stone-300 bg-white hover:border-marca-400'}" do %>
-              <%= nombre %> <% if I18n.locale.to_s == i %><i class="bi bi-check-circle-fill text-marca-600"></i><% end %>
+            <%= link_to instalar_path(idioma: i), class: "opcion #{'border-marca-600 bg-marca-50 text-marca-900' if I18n.locale.to_s == i}" do %>
+              <%= nombre %> <% if I18n.locale.to_s == i %><i class="bi bi-check-circle-fill ml-auto text-marca-600"></i><% end %>
             <% end %>
           <% end %>
         </div>
@@ -45,14 +45,17 @@
       <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
         <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.apariencia") %></h1>
         <p class="text-stone-600"><%= t("instalacion.apariencia_ayuda") %></p>
+        <% iconos = { "sistema" => "circle-half", "claro" => "sun", "oscuro" => "moon-stars", "normal" => "fonts", "grande" => "zoom-in", "compacta" => "arrows-collapse" } %>
         <% { tema: Usuario::TEMAS, letra: Usuario::LETRAS, densidad: Usuario::DENSIDADES }.each do |campo, valores| %>
           <fieldset>
             <legend class="mb-2 text-sm font-medium"><%= t("ajustes.#{campo}") %></legend>
-            <div class="flex flex-wrap gap-2">
+            <div class="grid gap-3 sm:grid-cols-3">
               <% valores.each do |v| %>
-                <label class="btn btn-secondary cursor-pointer has-checked:bg-marca-600 has-checked:text-white has-checked:border-marca-700">
+                <label class="opcion">
                   <%= f.radio_button campo, v, checked: @datos[campo].to_s == v, class: "sr-only", data: { atributo: (campo == :tema ? "theme" : campo), action: "change->pasos#aplicar" } %>
+                  <i class="bi bi-<%= campo == :densidad && v == "normal" ? "arrows-expand" : iconos[v] %> text-2xl text-stone-500"></i>
                   <%= t("ajustes.#{campo}_opciones.#{v}") %>
+                  <i class="bi bi-check-circle-fill opcion-check"></i>
                 </label>
               <% end %>
             </div>
@@ -72,7 +75,7 @@
           <legend class="mb-2 text-sm font-medium"><%= t("instalacion.giro") %></legend>
           <div class="grid gap-2 sm:grid-cols-2">
             <% Modulo::GIROS.each_key do |g| %>
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border-2 border-stone-300 bg-white px-4 py-3 has-checked:border-marca-600 has-checked:bg-marca-50">
+              <label class="opcion items-start text-base">
                 <%= f.radio_button :giro, g, checked: @datos[:giro].to_s == g, class: "mt-1" %>
                 <span class="flex-1">
                   <strong><%= t("giros.#{g}.nombre") %></strong>

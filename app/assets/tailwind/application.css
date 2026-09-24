@@ -57,6 +57,12 @@
   .card { @apply rounded-lg bg-white p-4 shadow-sm ring-1 ring-stone-200; }
   .badge { @apply inline-block rounded-md bg-stone-200 px-2 py-0.5 text-xs font-semibold text-stone-700; }
 
+  /* Opción grande y amigable (radio escondido dentro): arranque y ajustes. */
+  .opcion { @apply flex cursor-pointer items-center gap-3 rounded-lg border-2 border-stone-300 bg-white px-4 py-4 text-lg font-semibold transition-colors hover:border-marca-400; }
+  .opcion:has(:checked) { @apply border-marca-600 bg-marca-50 text-marca-900; }
+  .opcion-check { @apply ml-auto text-marca-600 invisible; }
+  .opcion:has(:checked) .opcion-check { @apply visible; }
+
   .tabla { @apply w-full border-collapse overflow-hidden rounded-lg bg-white text-sm shadow-sm ring-1 ring-stone-200; }
   .tabla thead th { @apply bg-stone-100 px-3 py-2 text-left text-xs font-semibold tracking-wide text-stone-600 uppercase; }
   .tabla tbody tr { @apply border-t border-stone-100; }

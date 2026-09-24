@@ -46,8 +46,31 @@ es:
       caja:
         piso_precio: Piso de precio (% del catálogo)
         limite_gaveta: Tope de gaveta para sucursales nuevas ($)
+      ticket:
+        lema: Lema o renglón bajo el nombre
+        rfc: Identificación fiscal (RFC, NIT…)
+        leyenda_devoluciones: Leyenda de devoluciones
+        mostrar_cajero: Mostrar quién atendió
+        mostrar_codigo: Imprimir el código de barras del ticket
+        ancho: Ancho del papel
     modulos: Módulos
     modulos_ayuda: Lo apagado desaparece de la cinta, de los roles y de sus pantallas; los datos se quedan. No se apaga un módulo con trabajo abierto.
+    ticket:
+      titulo: Diseño del ticket
+      intro: Lo que llenes a la izquierda se ve al momento en el ticket de la derecha, tal cual va a salir de la impresora. Vale para todas las sucursales.
+      ir: Diseñar el ticket
+      ir_ayuda: 'Logo, nombre, dirección, teléfonos, identificación fiscal y pie: se editan con vista previa.'
+      encabezado: Encabezado
+      cuerpo: Cuerpo
+      pie: Pie
+      vista_previa: Así se ve
+      sin_logo: Sin logo
+      subir_logo: Subir logo
+      quitar_logo: Quitar
+      logo_ayuda: PNG o JPG en negro sobre blanco, menos de 300 KB; sale a 30 mm de ancho. Los grises se ven sucios en térmica.
+      muestra:
+        producto_kg: Producto por kilo
+        producto_pieza: Producto por pieza
   comun:
     cerrar: Cerrar
     guardar: Guardar
@@ -169,6 +192,7 @@ es:
       usuarios: Usuarios
       roles: Roles
       sucursales: Sucursales
+      ticket: Ticket
   acerca:
     titulo: Acerca de Kobayashi
     lema: Punto de venta y trastienda para la matriz y sus tiendas
@@ -336,6 +360,7 @@ es:
       desconocidos: 'desconocidos: %{claves}'
     ajuste:
       entero: '%{clave}: debe ser un número entero'
+      logo: el logo debe ser una imagen PNG, JPG o WebP de menos de 300 KB
     movimiento:
       tipo_desconocido: 'tipo de movimiento desconocido: %{tipo}'
     canastillas:
@@ -664,6 +689,8 @@ es:
       pieza: pz
       litro: l
       metro: m
+    ticket:
+      logo_grande: El logo pesa más de 300 KB; usa una imagen más chica.
   etiquetas:
     etiqueta: Etiqueta
     etiquetar: Etiquetar

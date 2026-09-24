@@ -11,7 +11,7 @@ module RibbonHelper
         Boton.new(:ventas_por_producto, :ventas_por_producto_path, "reportes.ver", "graph-up")
       ] },
       { id: :revisar, botones: [ Boton.new(:por_revisar, :revisiones_path, "revisiones.resolver", "clipboard-check") ] },
-      { id: :ajustes, botones: [ Boton.new(:ajustes, :ajustes_path, nil, "gear") ] }
+      { id: :ajustes, botones: [ Boton.new(:ajustes, :ajustes_path, nil, "gear"), Boton.new(:ticket, :ajustes_ticket_path, "admin.usuarios", "receipt") ] }
     ] },
     { id: :caja, grupos: [
       { id: :vender, botones: [

@@ -35,14 +35,10 @@
           <% end %>
         </div>
       </div>
-      <div class="space-y-3">
+      <div class="space-y-2">
         <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.negocio") %></h3>
-        <p class="text-xs text-stone-500"><%= t("ajustes.negocio_ayuda") %></p>
-        <% %w[negocio.nombre negocio.direccion negocio.telefono negocio.pie_ticket].each do |clave| %>
-          <label class="block text-sm"><%= t("ajustes.claves.#{clave}") %>
-            <%= f.text_field "ajuste[#{clave}]", value: @ajustes[clave], placeholder: (clave == "negocio.nombre" ? sucursal_actual.nombre : nil), class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-          </label>
-        <% end %>
+        <p class="text-xs text-stone-500"><%= t("ajustes.ticket.ir_ayuda") %></p>
+        <%= link_to icono("receipt", t("ajustes.ticket.ir")), ajustes_ticket_path, class: "btn btn-secondary" %>
       </div>
       <% if Modulo.activo?("etiquetas") %>
       <div class="space-y-3">

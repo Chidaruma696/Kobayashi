@@ -46,8 +46,31 @@ de:
       caja:
         piso_precio: Preisuntergrenze (% des Listenpreises)
         limite_gaveta: Ladenlimit für neue Filialen ($)
+      ticket:
+        lema: Slogan oder Zeile unter dem Namen
+        rfc: Steuernummer (RFC, USt-IdNr. …)
+        leyenda_devoluciones: Hinweis zu Rückgaben
+        mostrar_cajero: Bedienung anzeigen
+        mostrar_codigo: Barcode des Tickets drucken
+        ancho: Papierbreite
     modulos: Module
     modulos_ayuda: Was aus ist, verschwindet aus dem Menüband, den Rollen und seinen Seiten; die Daten bleiben. Ein Modul mit offener Arbeit lässt sich nicht ausschalten.
+    ticket:
+      titulo: Ticket-Design
+      intro: Was du links ausfüllst, erscheint sofort im Ticket rechts, genau so, wie es aus dem Drucker kommt. Gilt für alle Filialen.
+      ir: Ticket gestalten
+      ir_ayuda: 'Logo, Name, Adresse, Telefon, Steuernummer und Fußzeile: mit Live-Vorschau bearbeiten.'
+      encabezado: Kopf
+      cuerpo: Inhalt
+      pie: Fuß
+      vista_previa: So sieht es aus
+      sin_logo: Kein Logo
+      subir_logo: Logo hochladen
+      quitar_logo: Entfernen
+      logo_ayuda: PNG oder JPG, schwarz auf weiß, unter 300 KB; wird 30 mm breit gedruckt. Grautöne wirken auf Thermopapier schmutzig.
+      muestra:
+        producto_kg: Produkt nach Kilo
+        producto_pieza: Produkt nach Stück
   comun:
     cerrar: Schließen
     guardar: Speichern
@@ -169,6 +192,7 @@ de:
       usuarios: Benutzer
       roles: Rollen
       sucursales: Filialen
+      ticket: Ticket
   acerca:
     titulo: Über Kobayashi
     lema: Kasse und Backoffice für die Zentrale und ihre Läden
@@ -336,6 +360,7 @@ de:
       desconocidos: 'unbekannt: %{claves}'
     ajuste:
       entero: '%{clave}: muss eine ganze Zahl sein'
+      logo: das Logo muss ein PNG-, JPG- oder WebP-Bild unter 300 KB sein
     movimiento:
       tipo_desconocido: 'unbekannte Bewegungsart: %{tipo}'
     canastillas:
@@ -664,6 +689,8 @@ de:
       pieza: St.
       litro: l
       metro: m
+    ticket:
+      logo_grande: Das Logo ist größer als 300 KB; nimm ein kleineres Bild.
   etiquetas:
     etiqueta: Etikett
     etiquetar: Etikettieren

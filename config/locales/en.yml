@@ -46,8 +46,31 @@ en:
       caja:
         piso_precio: Price floor (% of list price)
         limite_gaveta: Drawer limit for new branches ($)
+      ticket:
+        lema: Tagline or line under the name
+        rfc: Tax ID (RFC, VAT…)
+        leyenda_devoluciones: Returns notice
+        mostrar_cajero: Show who served
+        mostrar_codigo: Print the ticket barcode
+        ancho: Paper width
     modulos: Modules
     modulos_ayuda: What is off disappears from the ribbon, the roles and its screens; the data stays. A module with open work cannot be turned off.
+    ticket:
+      titulo: Ticket design
+      intro: What you fill in on the left shows right away on the ticket on the right, exactly as it will come out of the printer. Applies to every branch.
+      ir: Design the ticket
+      ir_ayuda: 'Logo, name, address, phones, tax ID and footer: edited with a live preview.'
+      encabezado: Header
+      cuerpo: Body
+      pie: Footer
+      vista_previa: How it looks
+      sin_logo: No logo
+      subir_logo: Upload logo
+      quitar_logo: Remove
+      logo_ayuda: PNG or JPG, black on white, under 300 KB; printed 30 mm wide. Greys look dirty on thermal paper.
+      muestra:
+        producto_kg: Product by kilo
+        producto_pieza: Product by piece
   comun:
     cerrar: Close
     guardar: Save
@@ -169,6 +192,7 @@ en:
       usuarios: Users
       roles: Roles
       sucursales: Branches
+      ticket: Ticket
   acerca:
     titulo: About Kobayashi
     lema: Point of sale and back office for the headquarters and its shops
@@ -336,6 +360,7 @@ en:
       desconocidos: 'unknown: %{claves}'
     ajuste:
       entero: '%{clave}: must be a whole number'
+      logo: the logo must be a PNG, JPG or WebP image under 300 KB
     movimiento:
       tipo_desconocido: 'unknown movement type: %{tipo}'
     canastillas:
@@ -664,6 +689,8 @@ en:
       pieza: pc
       litro: l
       metro: m
+    ticket:
+      logo_grande: The logo is over 300 KB; use a smaller image.
   etiquetas:
     etiqueta: Label
     etiquetar: Label

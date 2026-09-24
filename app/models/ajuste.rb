@@ -6,6 +6,13 @@ class Ajuste < ApplicationRecord
     "negocio.direccion" => "",
     "negocio.telefono" => "",
     "negocio.pie_ticket" => "¡Gracias por su compra!",
+    "ticket.logo" => "",                 # imagen en data URL (PNG/JPG chico), arriba del ticket
+    "ticket.lema" => "",                 # renglón bajo el nombre
+    "ticket.rfc" => "",                  # identificación fiscal
+    "ticket.leyenda_devoluciones" => "", # vacío = el texto del sistema
+    "ticket.mostrar_cajero" => "1",
+    "ticket.mostrar_codigo" => "1",      # el código de barras del ticket
+    "ticket.ancho" => "80",              # mm de papel: 80 o 58
     "etiqueta.ancho" => "55",            # mm
     "etiqueta.alto" => "45",
     "etiqueta.leyenda" => "",
@@ -19,9 +26,13 @@ class Ajuste < ApplicationRecord
     "modulos.rutas" => "1",
     "modulos.conteos" => "1"
   }.freeze
-  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta].freeze
+  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta ticket.ancho].freeze
+  LOGO_MAX = 400_000 # caracteres del data URL (~300 KB de imagen)
 
   validates :clave, presence: true, uniqueness: true, inclusion: { in: DEFAULTS.keys }
+
+  # Ancho imprimible del ticket en mm según el papel (80 → 72, 58 → 48).
+  def self.ancho_ticket_mm = entero("ticket.ancho") == 58 ? 48 : 72
 
   def self.[](clave)
     valor = find_by(clave: clave)&.valor
@@ -39,6 +50,7 @@ class Ajuste < ApplicationRecord
         next unless DEFAULTS.key?(clave)
         valor = valor.to_s.strip
         raise ArgumentError, I18n.t("errores.ajuste.entero", clave: clave) if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
+        raise ArgumentError, I18n.t("errores.ajuste.logo") if clave == "ticket.logo" && valor.present? && (valor.length > LOGO_MAX || valor !~ %r{\Adata:image/(png|jpeg|gif|webp);base64,})
         registro = find_or_initialize_by(clave: clave)
         valor.blank? ? registro.destroy : registro.update!(valor: valor)
       end

@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     get "/", action: :index
     patch "preferencias", action: :preferencias, as: :preferencias
     patch "sistema", action: :sistema, as: :sistema
+    get "ticket", action: :ticket, as: :ticket
+    patch "ticket", action: :guardar_ticket
   end
   resources :revisiones, only: %i[index] do
     member { post :resolver }
