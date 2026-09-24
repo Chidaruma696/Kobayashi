@@ -1,0 +1,28 @@
+<%# Acerca de: versión, de qué commit salió, quién está dentro, créditos y a dónde reportar. %>
+<dialog class="m-auto w-full max-w-md rounded-xl p-0 shadow-2xl" data-dialogo-target="dialogo" data-action="click->dialogo#cerrarFuera">
+  <div class="flex items-center gap-4 border-b border-stone-200 px-6 py-5">
+    <%= render "layouts/logo", tamano: 56 %>
+    <div class="min-w-0 flex-1">
+      <div class="text-xl font-bold tracking-tight">Kobayashi</div>
+      <div class="text-sm text-stone-600">Punto de venta y trastienda para la matriz y sus tiendas</div>
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm" data-action="dialogo#cerrar" title="Cerrar">✕</button>
+  </div>
+  <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 px-6 py-4 text-sm">
+    <dt class="text-stone-500">Versión</dt><dd class="font-mono"><%= Kobayashi::VERSION %> <span class="text-stone-500">· build <%= Kobayashi::COMMIT %><%= " del #{l Date.parse(Kobayashi::COMMIT_FECHA), format: :long}" if Kobayashi::COMMIT_FECHA %></span></dd>
+    <dt class="text-stone-500">Motor</dt><dd class="font-mono">Rails <%= Rails.version %> · Ruby <%= RUBY_VERSION %> · <%= ActiveRecord::Base.connection.adapter_name %></dd>
+    <% if usuario_actual %>
+      <dt class="text-stone-500">Sesión</dt><dd><%= usuario_actual %> · <%= usuario_actual.rol %> · <%= sucursal_actual %><%= " (matriz)" if sucursal_actual&.matriz? %></dd>
+      <dt class="text-stone-500">Servidor</dt><dd class="font-mono"><%= request.host_with_port %> · <%= Rails.env %></dd>
+    <% end %>
+  </dl>
+  <div class="border-t border-stone-200 bg-stone-50 px-6 py-4 text-xs leading-relaxed text-stone-600">
+    <p>Kobayashi, Kana y Tohru toman su nombre de <em>Kobayashi-san Chi no Maid Dragon</em>, de Coolkyousinnjya; la paleta sale de ella. Nada de esto tiene relación con la autora ni con las editoriales.</p>
+    <p class="mt-1">Báscula por Web Serial vía Kana. Hecho con Rails, Hotwire y Tailwind. Código abierto bajo licencia MIT.</p>
+  </div>
+  <div class="flex flex-wrap items-center justify-end gap-2 border-t border-stone-200 px-6 py-3">
+    <%= link_to "Código en GitHub", "https://github.com/Chidaruma696/Kobayashi", target: "_blank", rel: "noopener", class: "btn btn-secondary btn-sm" %>
+    <%= link_to "Reportar un problema", "https://github.com/Chidaruma696/Kobayashi/issues/new", target: "_blank", rel: "noopener", class: "btn btn-secondary btn-sm" %>
+    <button type="button" class="btn btn-primary btn-sm" data-action="dialogo#cerrar">Cerrar</button>
+  </div>
+</dialog>

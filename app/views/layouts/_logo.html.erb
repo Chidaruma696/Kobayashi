@@ -1,4 +1,6 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+<%# El logo: los lentes redondos de Kobayashi sobre el salmón de su pelo. `tamano` en px. %>
+<% tamano = local_assigns.fetch(:tamano, 28) %>
+<svg width="<%= tamano %>" height="<%= tamano %>" viewBox="0 0 64 64" role="img" aria-label="Kobayashi" class="<%= local_assigns[:clase] %>">
   <circle cx="32" cy="32" r="32" fill="#dd8082"/>
   <path d="M10 22 Q20 8 32 12 Q44 8 54 22 Q50 16 40 17 Q34 18 32 21 Q30 18 24 17 Q14 16 10 22Z" fill="#ac635a"/>
   <g fill="none" stroke="#3a1718" stroke-width="3.5" stroke-linecap="round">
