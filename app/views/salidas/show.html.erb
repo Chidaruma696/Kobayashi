@@ -98,6 +98,14 @@
     <div class="rounded bg-white p-4 shadow-sm">
       <h2 class="mb-2 font-semibold">Recibir: paquete por paquete, o la tarima entera</h2>
       <%= render "escaneo", url: recibir_etiqueta_salida_path(s), placeholder: "Código del paquete o de la tarima", boton: "Recibir" %>
+      <% sin_precio = s.contenido.keys.select { |p| p.precio_centavos_en(sucursal_actual).zero? } %>
+      <% if sin_precio.any? %>
+        <p class="mt-2 rounded bg-amber-50 px-3 py-2 text-sm text-amber-800">Llegan <strong>sin precio</strong> en esta tienda: <%= sin_precio.map(&:nombre).join(", ") %>. Se reciben igual, pero la caja no los vende hasta que la matriz les ponga precio.</p>
+      <% end %>
+      <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Llegó un paquete que no viene en la salida (sobrante)</summary>
+        <p class="mt-1 text-xs text-slate-500">Se etiquetó por fuera y nunca entró a la salida. Entra a la tienda con motivo y queda por revisar.</p>
+        <%= render "escaneo", url: sobrante_salida_path(s), placeholder: "Código del paquete", boton: "Recibir sobrante", motivo: true %>
+      </details>
       <p class="mt-2 text-sm text-slate-600">Recibidos <%= @filas.count { |f| f.estado == "recibida" } %> · faltantes <%= @filas.count { |f| f.estado == "faltante" } %> · pendientes <%= @filas.count { |f| f.estado == "pendiente" } %></p>
     </div>
     <div class="rounded bg-white p-4 shadow-sm">
@@ -127,7 +135,7 @@
   <tbody>
     <% @grupos.each do |grupo, filas| %>
       <% filas.each_with_index do |f, i| %>
-        <tr class="border-t border-slate-100 <%= { 'recibida' => 'bg-green-50', 'faltante' => 'bg-red-50' }[f.estado] %>">
+        <tr class="border-t border-slate-100 <%= { 'recibida' => 'bg-green-50', 'faltante' => 'bg-red-50', 'sobrante' => 'bg-amber-50' }[f.estado] %>">
           <td class="px-3 py-1 font-mono text-xs"><%= i.zero? ? (grupo ? "#{grupo.tipo} #{grupo.codigo}" : "suelto") : "" %></td>
           <td class="px-3 py-1 font-mono text-xs"><%= f.etiqueta.codigo %></td>
           <td class="px-3 py-1"><%= f.etiqueta.producto.nombre %></td>

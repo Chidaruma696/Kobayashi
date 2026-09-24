@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       post :sellar
       post :enviar
       post :recibir_etiqueta
+      post :sobrante
       post :reportar
       post :cerrar_recepcion
       post :cobrar_entrega

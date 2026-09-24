@@ -251,6 +251,33 @@ class Salida < ApplicationRecord
     filas.size
   end
 
+  # Llegó un paquete que no venía en la salida (se etiquetó por fuera y nunca entró a ella). No se
+  # pierde ni se queda en el limbo: sale del origen, entra a la tienda como sobrante con motivo, y
+  # queda por revisar (la revisión la abre el controlador).
+  def recibir_sobrante!(etiqueta, motivo:, usuario:)
+    raise ArgumentError, "un reparto se cobra, no se recibe" if reparto?
+    raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
+    raise ArgumentError, "hace falta el motivo" if motivo.blank?
+    raise ArgumentError, "#{etiqueta.codigo} está #{etiqueta.estado}" unless etiqueta.viva?
+    raise ArgumentError, "#{etiqueta.codigo} es una #{etiqueta.tipo}: escanea los paquetes" unless etiqueta.paquete? || (etiqueta.caja? && etiqueta.hijas.none?)
+    raise ArgumentError, "#{etiqueta.codigo} sí viene en esta salida: recíbela normal" if salida_etiquetas.exists?(etiqueta: etiqueta)
+    raise ArgumentError, "#{etiqueta.codigo} es de #{etiqueta.sucursal.nombre}, no de #{sucursal_origen.nombre}" unless etiqueta.sucursal_id == sucursal_origen_id
+    if (otra = SalidaEtiqueta.joins(:salida).where(etiqueta: etiqueta, salidas: { estado: %w[preparando sellada enviada] }).includes(:salida).first)
+      raise ArgumentError, "#{etiqueta.codigo} va en la salida #{otra.salida.folio}: recíbela allá"
+    end
+    transaction do
+      # El origen no lo descontó al enviar esta salida: se descuenta ahora, con el mismo rastro.
+      Inventario.mover!(sucursal: sucursal_origen, producto: etiqueta.producto, tipo: "salida", cantidad: etiqueta.cantidad,
+                        usuario: usuario, etiqueta: etiqueta, referencia: self, motivo: "#{folio} sobrante: #{motivo}")
+      Inventario.mover!(sucursal: sucursal_destino, producto: etiqueta.producto, tipo: "recepcion", cantidad: etiqueta.cantidad,
+                        usuario: usuario, etiqueta: etiqueta, referencia: self, motivo: "#{folio} sobrante: #{motivo}")
+      padre = etiqueta.padre
+      etiqueta.update!(sucursal_id: sucursal_destino_id, padre_id: nil)
+      padre&.recalcular_contenido!
+      salida_etiquetas.create!(etiqueta: etiqueta, estado: "sobrante", motivo: motivo, recibido_en: Time.current)
+    end
+  end
+
   def recibir_lineas!(usuario:)
     raise ArgumentError, "la salida no está en tránsito (#{estado})" unless enviada?
     transaction do

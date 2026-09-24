@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_100001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -521,7 +521,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
     t.index ["salida_id", "estado"], name: "index_salida_etiquetas_on_salida_id_and_estado"
     t.index ["salida_id"], name: "index_salida_etiquetas_on_salida_id"
     t.index ["verificado_por_id"], name: "index_salida_etiquetas_on_verificado_por_id"
-    t.check_constraint "estado IN ('pendiente', 'recibida', 'faltante')", name: "salida_etiquetas_estado"
+    t.check_constraint "estado IN ('pendiente', 'recibida', 'faltante', 'sobrante')", name: "salida_etiquetas_estado"
   end
 
   create_table "salida_lineas", force: :cascade do |t|
@@ -758,7 +758,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
   add_foreign_key "movimientos", "usuarios"
   add_foreign_key "movimientos_canastillas", "clientes"
   add_foreign_key "movimientos_canastillas", "sucursales"
-  add_foreign_key "movimientos_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
+  add_foreign_key "movimientos_canastillas", "tipos_canastilla"
   add_foreign_key "movimientos_canastillas", "usuarios"
   add_foreign_key "movimientos_canastillas", "usuarios", column: "chofer_id"
   add_foreign_key "movimientos_canastillas", "viajes"
@@ -788,7 +788,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_090001) do
   add_foreign_key "revisiones", "usuarios", column: "revisado_por_id"
   add_foreign_key "rutas", "usuarios", column: "chofer_id"
   add_foreign_key "salida_canastillas", "salidas"
-  add_foreign_key "salida_canastillas", "tipos_canastilla", column: "tipo_canastilla_id"
+  add_foreign_key "salida_canastillas", "tipos_canastilla"
   add_foreign_key "salida_etiquetas", "etiquetas"
   add_foreign_key "salida_etiquetas", "etiquetas", column: "grupo_id"
   add_foreign_key "salida_etiquetas", "salidas"

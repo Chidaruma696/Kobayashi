@@ -78,6 +78,32 @@ class SalidaTest < ActiveSupport::TestCase
     assert_equal BigDecimal("10"), Existencia.de(@tienda, productos(:catsup))
   end
 
+  test "un paquete que llega sin venir en la salida entra como sobrante con motivo" do
+    matriz, tienda, admin = sucursales(:matriz), sucursales(:tienda), usuarios(:admin)
+    pechuga = productos(:pechuga)
+    Inventario.mover!(sucursal: matriz, producto: pechuga, tipo: "entrada", cantidad: 10, usuario: admin)
+    en_salida = Etiqueta.create!(tipo: "paquete", producto: pechuga, cantidad: 1, sucursal: matriz, usuario: admin, pedido_linea: pedido_lineas(:pechuga_5))
+    por_fuera = Etiqueta.create!(tipo: "paquete", producto: pechuga, cantidad: 2, sucursal: matriz, usuario: admin, autorizado_por: admin, justificacion: "por fuera")
+    s = Salida.nueva!(origen: matriz, destino: tienda, usuario: admin)
+    s.agregar!(en_salida)
+    s.sellar!(usuario: usuarios(:supervisora), sin_verificar_motivo: "prueba")
+    s.enviar!(usuario: admin)
+    antes = Existencia.de(matriz, pechuga)
+    en_tienda = Existencia.de(tienda, pechuga)
+
+    assert_raises(ArgumentError) { s.recibir!(por_fuera, usuario: usuarios(:cajera)) }
+    assert_match "motivo", assert_raises(ArgumentError) { s.recibir_sobrante!(por_fuera, motivo: "", usuario: usuarios(:cajera)) }.message
+    assert_match "recíbela normal", assert_raises(ArgumentError) { s.recibir_sobrante!(en_salida, motivo: "x", usuario: usuarios(:cajera)) }.message
+    s.recibir_sobrante!(por_fuera, motivo: "venía en la caja sin estar en la salida", usuario: usuarios(:cajera))
+    assert_equal tienda, por_fuera.reload.sucursal
+    assert_equal antes - 2, Existencia.de(matriz, pechuga), "el origen lo descuenta ahora"
+    assert_equal en_tienda + 2, Existencia.de(tienda, pechuga)
+    assert_equal "sobrante", s.salida_etiquetas.find_by(etiqueta: por_fuera).estado
+    s.recibir!(en_salida, usuario: usuarios(:cajera))
+    s.cerrar_recepcion!(usuario: usuarios(:cajera))
+    assert_equal "recibida", s.reload.estado
+  end
+
   test "una tarima se recibe entera" do
     tarima = Etiqueta.armar_tarima!([ @caja, @catsup ], usuario: @admin)
     assert_equal 3, @salida.agregar!(tarima)
