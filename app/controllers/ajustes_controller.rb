@@ -19,6 +19,7 @@ class AjustesController < ApplicationController
     autorizar!("admin.usuarios")
     @ajustes = Ajuste.todos
     @venta = venta_de_muestra
+    @previa = true
   end
 
   def guardar_ticket

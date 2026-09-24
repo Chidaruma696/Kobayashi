@@ -50,6 +50,6 @@
   <div class="lg:sticky lg:top-4 lg:self-start">
     <div class="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.ticket.vista_previa") %></div>
     <%# La vista previa es el ticket de verdad, con su misma hoja de estilos, dentro de un iframe %>
-    <iframe title="<%= t("ajustes.ticket.vista_previa") %>" class="h-[720px] w-[360px] rounded border border-stone-300 bg-stone-200" srcdoc="<%= render(template: "ajustes/ticket_previa", layout: "layouts/ticket", formats: [ :html ]).gsub('"', '&quot;') %>" data-ticket-diseno-target="marco"></iframe>
+    <iframe title="<%= t("ajustes.ticket.vista_previa") %>" class="h-[720px] w-[360px] rounded border border-stone-300 bg-stone-200" srcdoc="<%= ERB::Util.html_escape(render(template: "ajustes/ticket_previa", layout: "layouts/ticket", formats: [ :html ]).to_str) %>" data-ticket-diseno-target="marco"></iframe>
   </div>
 </div>

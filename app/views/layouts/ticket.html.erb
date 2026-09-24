@@ -36,7 +36,7 @@
   </head>
   <body>
     <%= yield %>
-    <div class="acciones">
+    <div class="acciones" <%= "hidden" if @previa %>>
       <button onclick="window.print()"><%= t("comun.imprimir") %></button>
       <% if @venta %><a href="<%= caja_path %>"><%= t("caja.nueva_venta") %></a><% end %>
     </div>

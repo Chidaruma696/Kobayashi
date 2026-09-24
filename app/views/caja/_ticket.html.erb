@@ -5,7 +5,7 @@
   <div class="logo <%= 'oculto' if a["ticket.logo"].blank? %>" data-ticket="logo"><img src="<%= a["ticket.logo"].presence || "data:," %>" alt=""></div>
   <div class="centro neg" style="font-size: 10pt;" data-ticket="negocio.nombre" data-vacio="<%= venta.sucursal&.nombre %>"><%= a["negocio.nombre"].presence || venta.sucursal&.nombre %></div>
   <div class="centro <%= 'oculto' if a["ticket.lema"].blank? %>" data-ticket="ticket.lema"><%= a["ticket.lema"] %></div>
-  <% if a["negocio.nombre"].present? && venta.sucursal %><div class="centro" data-ticket="sucursal"><%= venta.sucursal.nombre %></div><% end %>
+  <% if a["negocio.nombre"].present? && venta.sucursal && venta.sucursal.nombre != a["negocio.nombre"] %><div class="centro" data-ticket="sucursal"><%= venta.sucursal.nombre %></div><% end %>
   <div class="centro <%= 'oculto' if a["negocio.direccion"].blank? %>" data-ticket="negocio.direccion"><%= a["negocio.direccion"] %></div>
   <div class="centro neg <%= 'oculto' if a["negocio.telefono"].blank? %>" data-ticket="negocio.telefono"><%= a["negocio.telefono"] %></div>
   <div class="centro <%= 'oculto' if a["ticket.rfc"].blank? %>" data-ticket="ticket.rfc"><%= a["ticket.rfc"] %></div>
