@@ -36,7 +36,8 @@ module Permiso
 
   # Nombre para mostrar, en el idioma del usuario (permisos.* en config/locales).
   def self.nombre(clave)
-    I18n.t("permisos.#{clave}", default: CLAVES[clave])
+    # La clave lleva punto, así que no se puede pedir "permisos.caja.vender" (I18n lo anidaría).
+    I18n.t("permisos", default: {})[clave.to_sym] || CLAVES[clave]
   end
 
   def self.valida?(clave)

@@ -53,6 +53,6 @@ class Convenio < ApplicationRecord
   end
 
   def to_s
-    "#{Dinero.pesos(precio_centavos)}/kg en #{lineas} hasta #{tope_cajas.to_s('F')} cajas por semana"
+    I18n.t("admin.convenio_resumen", precio: Dinero.pesos(precio_centavos), lineas: lineas, cajas: tope_cajas.to_s("F"))
   end
 end

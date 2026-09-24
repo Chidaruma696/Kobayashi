@@ -185,6 +185,7 @@ de:
     hola: Hallo, %{nombre}
     incorrectos: Benutzer oder Passwort falsch
     cerrada: Abgemeldet
+    inicia_para_continuar: Zum Fortfahren anmelden
   errores:
     sin_permiso:
       titulo: Keine Berechtigung
@@ -341,6 +342,8 @@ de:
     credito:
       cargo_suma: eine Belastung addiert
       abono_resta: eine Zahlung oder Erstattung subtrahiert
+    usuario:
+      formato: nur Kleinbuchstaben, Ziffern, Punkt und Bindestrich
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -522,7 +525,7 @@ de:
     clientes_de_ruta: Tourkunden
     enviar_pedido: Bestellung senden
     surte: liefert
-    pendientes_por_surtir: Offen zu kommissionieren
+    pendientes_por_surtir: Offen zum Kommissionieren
     nada_pendiente: Nichts offen.
     productos: Produkte
     enviado: Bestellung %{folio} an %{a} gesendet
@@ -1332,3 +1335,4 @@ de:
     usuario: Benutzername
     usuario_minusculas: Benutzername (Kleinbuchstaben)
     nueva_contrasena: Neues Passwort (leer = unverändert)
+    convenio_resumen: '%{precio}/kg bei %{lineas} bis zu %{cajas} Kisten pro Woche'

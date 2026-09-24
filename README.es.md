@@ -92,6 +92,7 @@ La matriz produce carne, **etiqueta cada paquete en la báscula**, vende en su p
 - **Kilos a tres decimales, dinero en centavos enteros**, un solo reloj (Ciudad de México), fecha de negocio distinta de la hora de captura.
 - **Báscula en el navegador** por Web Serial con [Kana](https://github.com/Chidaruma696/Kana) (solo Chrome o Edge).
 - **Cinta tipo Office**: pestañas por módulo, botones grandes por acción, filtrados por permiso.
+- **Tres idiomas**: inglés por defecto, español y alemán; cada usuario elige el suyo en Ajustes, junto con tema, densidad y tamaño de letra.
 
 <br/>
 

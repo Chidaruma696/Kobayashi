@@ -15,7 +15,7 @@ class Usuario < ApplicationRecord
   validates :densidad, inclusion: { in: DENSIDADES }
   validates :letra, inclusion: { in: LETRAS }
   validates :usuario, presence: true, uniqueness: true,
-                      format: { with: /\A[a-z0-9._-]+\z/, message: "solo minúsculas, números, punto y guion" }
+                      format: { with: /\A[a-z0-9._-]+\z/, message: ->(*) { I18n.t("errores.usuario.formato") } }
 
   has_many :cargos, dependent: :restrict_with_error
 

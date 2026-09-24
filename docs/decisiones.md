@@ -52,3 +52,6 @@ El sistema se llama como ella, así que los colores salen de ella: el rosa salm�
 
 ## Apache 2.0 en vez de MIT (24 sept 2026)
 Quiero que se use, se cambie y hasta se venda; lo único que pido es el crédito. MIT solo obliga a conservar el aviso en el código; Apache 2.0 obliga además a conservar el NOTICE y a marcar lo que se cambie, y es estándar. En el NOTICE va la forma del crédito.
+
+## Tres idiomas, inglés por defecto (24 sept 2026)
+El sistema nació en español porque el negocio habla español, y así se quedan los modelos, las tablas y las claves. Pero la interfaz ahora va en inglés, español y alemán: cada usuario elige el suyo en Ajustes y, si no ha elegido, manda el idioma del navegador y luego el inglés. Todo lo que ve una persona pasa por `t()`: vistas, avisos de los controladores, los `raise` de los modelos (con `I18n.t`) y los textos del JS (`window.T` en el layout). Los nombres de datos (permisos, tipos de crédito, tipos de movimiento) tienen su español en el código como último recurso. Los tests siguen en español (`I18n.default_locale = :es` en test_helper), porque aseguran el texto que se escribió, no la traducción.

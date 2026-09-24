@@ -34,7 +34,7 @@ class PedidosController < ApplicationController
                         .includes(:producto, pedido: %i[sucursal_destino cliente]).order("pedidos.created_at")
     @pendientes = lineas.group_by(&:producto).map { |producto, ls| [ producto, ls.sum(&:faltante), ls.map(&:pedido).uniq ] }
                         .select { |_, falta, _| falta.positive? }.sort_by { |p, _, _| p.nombre }
-    @titulo = "Pendientes por surtir"
+    @titulo = t("pedidos.pendientes_por_surtir")
     render layout: "ticket"
   end
 

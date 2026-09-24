@@ -185,6 +185,7 @@ es:
     hola: Hola, %{nombre}
     incorrectos: Usuario o contraseña incorrectos
     cerrada: Sesión cerrada
+    inicia_para_continuar: Inicia sesión para continuar
   errores:
     sin_permiso:
       titulo: Sin permiso
@@ -341,6 +342,8 @@ es:
     credito:
       cargo_suma: un cargo suma
       abono_resta: un abono o devolución resta
+    usuario:
+      formato: solo minúsculas, números, punto y guion
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -1332,3 +1335,4 @@ es:
     usuario: Usuario
     usuario_minusculas: Usuario (minúsculas)
     nueva_contrasena: Nueva contraseña (vacío = igual)
+    convenio_resumen: '%{precio}/kg en %{lineas} hasta %{cajas} cajas por semana'

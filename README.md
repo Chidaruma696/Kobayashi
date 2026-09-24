@@ -92,6 +92,7 @@ The headquarters produces meat, **labels every package on a scale**, sells at it
 - **Kilos to three decimals, money in integer cents**, one clock (Mexico City), business date separate from capture time.
 - **Scale in the browser** through Web Serial with [Kana](https://github.com/Chidaruma696/Kana) (Chrome or Edge only).
 - **Office-style ribbon**: tabs per module, big buttons per action, filtered by permission.
+- **Three languages**: English by default, Spanish and German; each user picks theirs in Settings, along with theme, density and font size.
 
 <br/>
 

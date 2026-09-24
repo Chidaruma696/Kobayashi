@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   end
 
   def exigir_sesion
-    redirect_to entrar_path, alert: "Inicia sesión para continuar" unless usuario_actual
+    redirect_to entrar_path, alert: t("sesion.inicia_para_continuar") unless usuario_actual
   end
 
   def puede?(clave)

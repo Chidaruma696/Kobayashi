@@ -185,6 +185,7 @@ en:
     hola: Hi, %{nombre}
     incorrectos: Wrong user or password
     cerrada: Signed out
+    inicia_para_continuar: Sign in to continue
   errores:
     sin_permiso:
       titulo: No permission
@@ -341,6 +342,8 @@ en:
     credito:
       cargo_suma: a charge adds
       abono_resta: a payment or refund subtracts
+    usuario:
+      formato: only lowercase letters, digits, dot and dash
   inicio:
     titulo: Home
     ventas: Sales
@@ -522,7 +525,7 @@ en:
     clientes_de_ruta: Route customers
     enviar_pedido: Send order
     surte: fulfilled by
-    pendientes_por_surtir: Pending to fulfil
+    pendientes_por_surtir: Pending to fill
     nada_pendiente: Nothing pending.
     productos: products
     enviado: Order %{folio} sent to %{a}
@@ -1332,3 +1335,4 @@ en:
     usuario: Username
     usuario_minusculas: Username (lowercase)
     nueva_contrasena: New password (empty = unchanged)
+    convenio_resumen: '%{precio}/kg on %{lineas} up to %{cajas} boxes per week'
