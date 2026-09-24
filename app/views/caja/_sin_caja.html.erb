@@ -4,9 +4,9 @@
     <%= form_with url: caja_abrir_path, class: "mt-2 flex items-end gap-3" do |f| %>
       <div>
         <%= f.label :fondo, "Fondo inicial", class: "block text-sm" %>
-        <%= f.number_field :fondo, step: "0.01", min: 0, value: "0.00", required: true, class: "rounded border border-slate-300 px-3 py-2 font-mono" %>
+        <%= f.number_field :fondo, step: "0.01", min: 0, value: "0.00", required: true, class: "rounded border border-stone-300 px-3 py-2 font-mono" %>
       </div>
-      <%= f.submit "Abrir caja", class: "rounded bg-slate-900 px-4 py-2 text-white" %>
+      <%= f.submit "Abrir caja", class: "btn btn-primary" %>
     <% end %>
   <% else %>
     <p class="text-sm">Pide a alguien con permiso que la abra.</p>

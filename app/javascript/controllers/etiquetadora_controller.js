@@ -71,22 +71,22 @@ export default class extends Controller {
     if (!r.ok || this.buscadorTarget.value.trim() !== q) return
     this.candidatos = await r.json()
     this.resultadosTarget.innerHTML = this.candidatos.length
-      ? this.candidatos.map((p, i) => `<div class="cursor-pointer border-b border-slate-100 px-3 py-2 text-sm hover:bg-slate-100 ${i === 0 ? "bg-slate-100" : ""}" data-idx="${i}" data-action="mousedown->etiquetadora#elegirResultado"><span class="font-semibold">${this.esc(p.nombre)}</span> <span class="text-slate-500">${this.esc(p.clave)} · PLU ${p.plu} · ${p.unidad}</span></div>`).join("")
-      : `<div class="px-3 py-2 text-sm text-slate-500">Sin resultados</div>`
+      ? this.candidatos.map((p, i) => `<div class="cursor-pointer border-b border-stone-100 px-3 py-2 text-sm hover:bg-stone-100 ${i === 0 ? "bg-stone-100" : ""}" data-idx="${i}" data-action="mousedown->etiquetadora#elegirResultado"><span class="font-semibold">${this.esc(p.nombre)}</span> <span class="text-stone-500">${this.esc(p.clave)} · PLU ${p.plu} · ${p.unidad}</span></div>`).join("")
+      : `<div class="px-3 py-2 text-sm text-stone-500">Sin resultados</div>`
     this.resultadosTarget.classList.remove("hidden")
     if (this.candidatos.length === 1 && /^\d{8,}$/.test(q)) this.elegir(this.candidatos[0])
   }
 
   teclaBuscador(e) {
     const items = [ ...this.resultadosTarget.querySelectorAll("[data-idx]") ]
-    let i = items.findIndex(el => el.classList.contains("bg-slate-100"))
+    let i = items.findIndex(el => el.classList.contains("bg-stone-100"))
     if (e.key === "Escape") { this.resultadosTarget.classList.add("hidden"); return }
     if (e.key === "Enter") { e.preventDefault(); if (i >= 0) this.elegir(this.candidatos[i]); return }
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
     e.preventDefault()
     if (!items.length) return
     i = e.key === "ArrowDown" ? Math.min(i + 1, items.length - 1) : Math.max(i - 1, 0)
-    items.forEach(el => el.classList.remove("bg-slate-100")); items[i].classList.add("bg-slate-100"); items[i].scrollIntoView({ block: "nearest" })
+    items.forEach(el => el.classList.remove("bg-stone-100")); items[i].classList.add("bg-stone-100"); items[i].scrollIntoView({ block: "nearest" })
   }
 
   elegirResultado(e) { this.elegir(this.candidatos[Number(e.currentTarget.dataset.idx)]) }
@@ -104,7 +104,7 @@ export default class extends Controller {
   // Ficha con chips (clave, PLU, unidad, peso fijo, código de proveedor) y el plegable de fábrica.
   pintarFicha() {
     const p = this.producto
-    const chip = (texto, color = "bg-red-50 text-red-700") => `<span class="rounded px-2 py-0.5 text-xs font-semibold ${color}">${texto}</span>`
+    const chip = (texto, color = "bg-marca-50 text-marca-800") => `<span class="rounded px-2 py-0.5 text-xs font-semibold ${color}">${texto}</span>`
     const chips = [ `<span class="text-base font-bold">${this.esc(p.nombre)}</span>`, chip(`ID ${this.esc(p.clave)}`), chip(`PLU ${p.plu}`), chip(`Unidad ${p.unidad}`) ]
     if (this.pesoFijo > 0) chips.push(chip(`Peso fijo ${this.pesoFijo.toFixed(3)} kg`, "bg-blue-50 text-blue-700"))
     if (p.codigos.length) chips.push(chip(`Código proveedor <code>${this.esc(p.codigos.join(", "))}</code>`, "bg-amber-50 text-amber-700"))
@@ -116,8 +116,8 @@ export default class extends Controller {
     this.pesoFijoInputTarget.value = this.pesoFijo > 0 ? this.pesoFijo.toFixed(3) : ""
     const detalle = p.codigos_detalle || p.codigos.map(c => ({ id: null, codigo: c }))
     this.codigosListaTarget.innerHTML = detalle.length
-      ? detalle.map(c => `<li class="flex items-center gap-2"><code class="rounded bg-slate-100 px-2 py-0.5">${this.esc(c.codigo)}</code>${c.id ? `<button type="button" class="text-xs text-red-700 hover:underline" data-id="${c.id}" data-action="etiquetadora#quitarCodigo">quitar</button>` : ""}</li>`).join("")
-      : `<li class="text-xs text-slate-500">Sin código fijo asignado.</li>`
+      ? detalle.map(c => `<li class="flex items-center gap-2"><code class="rounded bg-stone-100 px-2 py-0.5">${this.esc(c.codigo)}</code>${c.id ? `<button type="button" class="btn btn-ghost-danger btn-xs" data-id="${c.id}" data-action="etiquetadora#quitarCodigo">quitar</button>` : ""}</li>`).join("")
+      : `<li class="text-xs text-stone-500">Sin código fijo asignado.</li>`
   }
 
   // Vincula el código de fábrica y/o el peso por pieza (va a Admin → Productos por JSON).
@@ -253,28 +253,28 @@ export default class extends Controller {
     }
     const cajaBaja = !!this.caja?.baja
     const accion = f => {
-      if (f.baja || (f.id && cajaBaja)) return `<span class="rounded bg-slate-200 px-2 py-0.5 text-xs" title="${this.esc(f.baja || this.caja?.baja)}">baja</span>`
-      if (f.id) return `<button type="button" class="text-slate-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja">🗑</button>`
-      return this.porPieza ? "" : `<button type="button" class="text-slate-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar">✕</button>`
+      if (f.baja || (f.id && cajaBaja)) return `<span class="badge" title="${this.esc(f.baja || this.caja?.baja)}">baja</span>`
+      if (f.id) return `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja esta etiqueta (etiqueté mal)" data-id="${f.id}" data-tipo="paquete" data-action="etiquetadora#darDeBaja">🗑</button>`
+      return this.porPieza ? "" : `<button type="button" class="text-stone-400 hover:text-red-700" title="Quitar" data-idx="${f.i}" data-action="etiquetadora#quitar">✕</button>`
     }
-    const tachada = f => (f.baja || (f.id && cajaBaja)) ? "line-through text-slate-400" : ""
-    this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-slate-100 ${tachada(f)}">
-        <td class="px-4 py-1 text-slate-400">${f.i + 1}</td>
-        <td class="px-2 py-1 text-slate-500">${f.origen}</td>
+    const tachada = f => (f.baja || (f.id && cajaBaja)) ? "line-through text-stone-400" : ""
+    this.listaTarget.innerHTML = filas.map(f => `<tr class="border-t border-stone-100 ${tachada(f)}">
+        <td class="px-4 py-1 text-stone-400">${f.i + 1}</td>
+        <td class="px-2 py-1 text-stone-500">${f.origen}</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(f.cantidad)} ${this.unidad}</td>
-        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "italic text-slate-400"}">${f.codigo || "al registrar"}</td>
+        <td class="px-2 py-1 font-mono text-xs ${f.codigo ? "text-emerald-700" : "italic text-stone-400"}">${f.codigo || "al registrar"}</td>
         <td class="px-2 py-1 text-right">${accion(f)}</td>
       </tr>`).join("")
     if (this.caja) {
       const c = this.caja
-      this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold ${cajaBaja ? "line-through text-slate-400" : ""}">
+      this.listaTarget.insertAdjacentHTML("afterbegin", `<tr class="border-t border-amber-200 bg-amber-50 font-semibold ${cajaBaja ? "line-through text-stone-400" : ""}">
         <td class="px-4 py-1">📦</td><td class="px-2 py-1">caja</td>
         <td class="px-2 py-1 text-right font-mono">${this.fmt(c.cantidad)} ${this.unidad}</td>
         <td class="px-2 py-1 font-mono text-xs text-amber-700">${c.codigo}</td>
-        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="rounded bg-slate-200 px-2 py-0.5 text-xs">baja</span>` : `<button type="button" class="text-slate-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja">🗑</button>`}</td>
+        <td class="px-2 py-1 text-right">${cajaBaja ? `<span class="badge">baja</span>` : `<button type="button" class="text-stone-400 hover:text-red-700" title="Dar de baja la caja completa (etiqueté mal)" data-id="${c.id}" data-tipo="caja" data-action="etiquetadora#darDeBaja">🗑</button>`}</td>
       </tr>`)
     }
-    if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-slate-500">${this.porPieza && enCaja ? `La caja se registra con ${n} piezas, sin etiquetas individuales` : "Sin pesadas aún"}</td></tr>`
+    if (!filas.length && !this.caja) this.listaTarget.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-xs text-stone-500">${this.porPieza && enCaja ? `La caja se registra con ${n} piezas, sin etiquetas individuales` : "Sin pesadas aún"}</td></tr>`
     this.btnRegistrarTarget.classList.toggle("hidden", this.registrado)
     this.btnReimprimirTarget.classList.toggle("hidden", !this.registrado || cajaBaja)
     this.pintarSalida()
@@ -283,7 +283,7 @@ export default class extends Controller {
   pintarSalida() {
     if (!this.hasSalidaTarget) return
     const s = this.salida
-    this.salidaTarget.innerHTML = s ? `→ va en la salida <a href="${s.url}" class="font-mono text-blue-700 underline" target="_blank">${this.esc(s.folio)}</a> a ${this.esc(s.destino || "")} · ${s.paquetes} paquete${s.paquetes === 1 ? "" : "s"}` : ""
+    this.salidaTarget.innerHTML = s ? `→ va en la salida <a href="${s.url}" class="chip-folio" target="_blank">${this.esc(s.folio)}</a> a ${this.esc(s.destino || "")} · ${s.paquetes} paquete${s.paquetes === 1 ? "" : "s"}` : ""
   }
 
   // Etiqueté mal: baja con motivo de una pesada o de la caja completa. El servidor la saca del
@@ -394,12 +394,12 @@ export default class extends Controller {
   iniciarBascula() {
     this.bascula = this.simuladaValue ? basculaSimulada() : new Bascula({ clave: "kobayashi:bascula" })
     const peso = (kg, color) => { this.pesoTarget.textContent = kg.toFixed(3); this.pesoTarget.className = `text-4xl font-extrabold leading-none ${color}` }
-    this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-slate-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `Pesando… ${p.kg.toFixed(3)} kg` })
+    this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-stone-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `Pesando… ${p.kg.toFixed(3)} kg` })
     this.bascula.on("estable", p => {
       if (this.producto && !this.porPieza) { this.agregar(p.kg, "báscula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `Agregado: ${p.kg.toFixed(3)} kg ✓` }
       else this.estadoTarget.textContent = `Estable ${p.kg.toFixed(3)} kg (elige un producto por kilo)`
     })
-    this.bascula.on("retirado", () => { peso(0, "text-slate-500"); this.estadoTarget.textContent = "Coloca paquete" })
+    this.bascula.on("retirado", () => { peso(0, "text-stone-500"); this.estadoTarget.textContent = "Coloca paquete" })
     this.bascula.on("estado", e => {
       const on = e.estado === "conectada"
       this.estadoTarget.textContent = e.mensaje || e.estado

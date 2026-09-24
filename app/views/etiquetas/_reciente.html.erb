@@ -1,6 +1,6 @@
-<li id="<%= dom_id(etiqueta) %>" class="flex items-center justify-between gap-2 border-t border-slate-100 py-2 text-sm">
+<li id="<%= dom_id(etiqueta) %>" class="flex items-center justify-between gap-2 border-t border-stone-100 py-2 text-sm">
   <span class="font-mono text-xs"><%= etiqueta.codigo %></span>
   <span class="flex-1 truncate"><%= etiqueta.producto&.nombre %></span>
   <span class="font-mono"><%= number_with_precision(etiqueta.cantidad, precision: etiqueta.producto&.decimales || 3) %> <%= etiqueta.producto&.unidad %></span>
-  <%= link_to "imprimir", etiqueta_path(etiqueta, imprimir: 1), target: "_blank", class: "text-blue-700 hover:underline" %>
+  <%= link_to "Imprimir", etiqueta_path(etiqueta, imprimir: 1), target: "_blank", class: "btn btn-secondary btn-xs" %>
 </li>

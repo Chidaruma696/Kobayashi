@@ -10,13 +10,13 @@
     <div>
       <%= f.label :usuario, "Usuario", class: "block text-sm font-medium" %>
       <%= f.text_field :usuario, autofocus: true, autocomplete: "username", autocapitalize: "none",
-                       class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+                       class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
     <div>
       <%= f.label :password, "Contraseña", class: "block text-sm font-medium" %>
       <%= f.password_field :password, autocomplete: "current-password",
-                           class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+                           class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
-    <%= f.submit "Entrar", class: "w-full rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+    <%= f.submit "Entrar", class: "btn btn-primary w-full" %>
   <% end %>
 </div>

@@ -1,12 +1,12 @@
-<div class="mb-4 flex items-center justify-between">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Kardex · <%= @sucursal %><%= " · #{@producto.nombre}" if @producto %></h1>
   <%= render "selector_sucursal" %>
 </div>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2">Etiqueta</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2">Motivo</th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Fecha</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2">Tipo</th><th class="px-3 py-2 text-right">Cantidad</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2">Etiqueta</th><th class="px-3 py-2">Quién</th><th class="px-3 py-2">Motivo</th></tr></thead>
   <tbody>
     <% @movimientos.each do |m| %>
-      <tr class="border-t border-slate-100">
+      <tr class="border-t border-stone-100">
         <td class="px-3 py-2 whitespace-nowrap"><%= l m.created_at, format: :short %></td>
         <td class="px-3 py-2"><%= m.producto.nombre %></td>
         <td class="px-3 py-2"><%= m.nombre_tipo %></td>
@@ -14,9 +14,9 @@
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(m.saldo, precision: m.producto.decimales) %></td>
         <td class="px-3 py-2 font-mono text-xs"><%= m.etiqueta&.codigo %></td>
         <td class="px-3 py-2"><%= m.usuario.nombre %></td>
-        <td class="px-3 py-2 text-slate-600"><%= m.motivo %></td>
+        <td class="px-3 py-2 text-stone-600"><%= m.motivo %></td>
       </tr>
     <% end %>
-    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-slate-500">Sin movimientos.</td></tr><% end %>
+    <% if @movimientos.empty? %><tr><td colspan="8" class="px-3 py-6 text-center text-stone-500">Sin movimientos.</td></tr><% end %>
   </tbody>
 </table>

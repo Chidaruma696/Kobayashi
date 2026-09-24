@@ -1,31 +1,36 @@
 <% activa = pestana_activa %>
-<div class="bg-slate-900 text-white">
-  <nav class="flex w-full flex-wrap items-end gap-1 px-4 pt-2 text-sm">
-    <%= link_to "Kobayashi", root_path, class: "mr-4 pb-2 text-lg font-bold" %>
-    <% pestanas_visibles.each do |p| %>
-      <%= link_to p[:nombre], ruta_de_pestana(p),
-            class: "rounded-t px-4 py-2 #{p[:id] == activa[:id] ? 'bg-slate-100 text-slate-900 font-semibold' : 'text-slate-300 hover:bg-slate-800'}" %>
+<div class="bg-marca-900 text-white">
+  <nav class="flex w-full items-center gap-3 px-4 pt-2 text-sm">
+    <%= link_to root_path, class: "flex shrink-0 items-center gap-2 pb-2 text-lg font-bold tracking-tight text-white hover:text-marca-100" do %>
+      <span class="inline-block h-6 w-6 rounded-md bg-marca-500 text-center text-sm leading-6 text-white shadow-inner">K</span><span class="hidden sm:inline">Kobayashi</span>
     <% end %>
-    <span class="ml-auto pb-2 text-slate-300"><%= sucursal_actual %> · <%= usuario_actual %></span>
-    <%= button_to "Salir", salir_path, method: :delete, class: "mb-1 ml-3 rounded bg-slate-700 px-3 py-1 hover:bg-slate-600" %>
+    <%# En pantalla chica las pestañas se deslizan de lado en vez de apilarse %>
+    <div class="flex min-w-0 flex-1 items-end gap-1 overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
+      <% pestanas_visibles.each do |p| %>
+        <%= link_to p[:nombre], ruta_de_pestana(p),
+              class: "shrink-0 rounded-t-md px-4 py-2 transition-colors #{p[:id] == activa[:id] ? 'bg-stone-100 font-semibold text-marca-900' : 'text-marca-100 hover:bg-marca-800 hover:text-white'}" %>
+      <% end %>
+    </div>
+    <span class="hidden shrink-0 pb-2 text-marca-100 lg:inline" title="<%= sucursal_actual %> · <%= usuario_actual %>"><%= sucursal_actual %> · <%= usuario_actual %></span>
+    <%= button_to "Salir", salir_path, method: :delete, class: "btn btn-sm mb-1 shrink-0 border-marca-700 bg-marca-800 text-marca-50 shadow-none hover:bg-marca-700", title: "#{sucursal_actual} · #{usuario_actual}" %>
   </nav>
 </div>
-<div class="border-b border-slate-300 bg-slate-100">
+<div class="border-b border-stone-300 bg-stone-100">
   <div class="flex w-full flex-wrap gap-x-6 gap-y-2 px-4 py-2">
     <% activa[:grupos].each do |g| %>
       <% botones = g[:botones].select { |b| boton_visible?(b) } %>
       <% next if botones.empty? %>
-      <div class="flex flex-col items-center border-r border-slate-300 pr-6 last:border-0">
+      <div class="flex flex-col items-center border-r border-stone-300 pr-6 last:border-0">
         <div class="flex gap-1">
           <% botones.each do |b| %>
             <% ruta = send(b.ruta) %>
-            <%= link_to ruta, class: "flex w-20 flex-col items-center rounded px-1 py-1 text-center text-xs hover:bg-slate-200 #{'bg-white shadow-sm' if current_page?(ruta)}" do %>
+            <%= link_to ruta, class: "flex w-20 flex-col items-center rounded-md px-1 py-1 text-center text-xs text-stone-700 transition-colors hover:bg-white hover:text-marca-900 #{'bg-white text-marca-900 shadow-sm ring-1 ring-marca-200' if current_page?(ruta)}" do %>
               <span class="text-2xl leading-8"><%= b.icono %></span>
               <span class="leading-tight"><%= b.nombre %></span>
             <% end %>
           <% end %>
         </div>
-        <span class="mt-1 text-[10px] uppercase tracking-wide text-slate-500"><%= g[:nombre] %></span>
+        <span class="mt-1 text-[10px] uppercase tracking-wide text-stone-500"><%= g[:nombre] %></span>
       </div>
     <% end %>
   </div>

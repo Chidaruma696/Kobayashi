@@ -15,14 +15,14 @@
         <%= linea.producto.kg? ? "· genera la caja como siempre: se liga sola al pedido y entra a la salida" : "· caja fija: cuenta las piezas y registra" %>
       </div>
     </div>
-    <button type="button" class="rounded bg-white/90 px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-white" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>">☰ Checklist</button>
-    <%= link_to "✕", new_etiqueta_path, class: "rounded border border-white/60 px-3 py-1 text-sm hover:bg-white/20", title: "Salir del pedido" %>
+    <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>">☰ Checklist</button>
+    <%= link_to "✕", new_etiqueta_path, class: "btn btn-light btn-sm", title: "Salir del pedido" %>
   </div>
 <% elsif produccion %>
   <div class="mb-4 rounded border-l-4 border-emerald-600 bg-emerald-50 p-3 text-sm">
     Producción <strong><%= produccion.folio %></strong> · entró <span class="font-mono"><%= number_with_precision(produccion.cantidad, precision: 3) %></span> de <%= produccion.producto.nombre %>,
     queda <span class="font-mono" id="lleva"><%= number_with_precision(produccion.disponible, precision: 3) %></span>
-    · <%= link_to "ver producción", produccion_path(produccion), class: "text-emerald-800 underline" %>
+    · <%= link_to "Ver producción", produccion_path(produccion), class: "btn btn-secondary btn-xs" %>
   </div>
 <% else %>
   <div class="mb-4 rounded border-l-4 border-amber-500 bg-amber-50 p-3 text-sm">

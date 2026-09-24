@@ -1,29 +1,29 @@
 <% s = @salida %>
 <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
   <h1 class="text-2xl font-bold"><%= s.cliente %></h1>
-  <%= link_to "← Mi ruta", reparto_path, class: "text-sm text-blue-700 underline" %>
+  <%= link_to "← Mi ruta", reparto_path, class: "btn btn-ghost btn-sm" %>
 </div>
-<p class="mb-4 text-sm text-slate-600"><%= s.cliente.direccion %><%= " · #{s.cliente.telefono}" if s.cliente.telefono.present? %> · salida <span class="font-mono"><%= s.folio %></span> · nota <span class="font-mono"><%= @venta.folio %></span> · <%= pesos(@venta.saldo_centavos) %></p>
+<p class="mb-4 text-sm text-stone-600"><%= s.cliente.direccion %><%= " · #{s.cliente.telefono}" if s.cliente.telefono.present? %> · salida <span class="font-mono"><%= s.folio %></span> · nota <span class="font-mono"><%= @venta.folio %></span> · <%= pesos(@venta.saldo_centavos) %></p>
 
-<div class="mb-4 rounded border-l-4 <%= @credito.bloqueado ? 'border-red-600 bg-red-50' : (@credito.tipo == 'contado' ? 'border-slate-400 bg-slate-100' : 'border-emerald-600 bg-emerald-50') %> p-3 text-sm">
+<div class="mb-4 rounded border-l-4 <%= @credito.bloqueado ? 'border-red-600 bg-red-50' : (@credito.tipo == 'contado' ? 'border-stone-400 bg-stone-100' : 'border-emerald-600 bg-emerald-50') %> p-3 text-sm">
   <strong><%= Credito::TIPOS[@credito.tipo] %></strong> · debe <span class="font-mono"><%= pesos(@credito.saldo_centavos) %></span> ·
   <%= @credito.bloqueado ? "CRÉDITO BLOQUEADO: cobra todo de contado" : (@credito.tipo == "contado" ? "solo de contado" : "puede llevarse la nota a crédito") %>
   <% if @credito.motivo.present? %><div class="text-xs"><%= @credito.motivo %></div><% end %>
 </div>
 <% if (conv = s.cliente.convenio) %>
-  <p class="mb-4 rounded bg-slate-100 p-3 text-sm">Convenio: <%= conv %>. Usadas esta semana: <%= conv.cajas_usadas(Date.current).to_s("F") %>.</p>
+  <p class="mb-4 rounded bg-stone-100 p-3 text-sm">Convenio: <%= conv %>. Usadas esta semana: <%= conv.cajas_usadas(Date.current).to_s("F") %>.</p>
 <% end %>
 <% pendientes = @filas.count { |f| f.estado == "pendiente" } %>
-<div class="mb-4 rounded bg-white p-4 shadow-sm">
+<div class="card mb-4">
   <h2 class="mb-2 font-semibold">Entregar: escanea cada caja, tarima o paquete que bajas</h2>
   <%= form_with url: reparto_entregar_path(s), class: "flex gap-2" do |f| %>
-    <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: "Código del bulto", class: "flex-1 rounded border border-slate-300 px-3 py-3 font-mono text-lg" %>
-    <%= f.submit "Entregar", class: "rounded bg-slate-900 px-4 py-3 text-white" %>
+    <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: "Código del bulto", class: "flex-1 rounded border border-stone-300 px-3 py-3 font-mono text-lg" %>
+    <%= f.submit "Entregar", class: "btn btn-primary btn-lg" %>
   <% end %>
   <p class="mt-2 text-sm">Entregados <strong><%= @filas.size - pendientes %></strong> de <%= @filas.size %> · pendientes <strong><%= pendientes %></strong></p>
   <ul class="mt-2 text-sm">
     <% @bultos.each do |bulto, hojas| %>
-      <li class="flex justify-between border-t border-slate-100 py-1 <%= hojas.all? { |h| h.estado == 'recibida' } ? 'text-green-700' : (hojas.all? { |h| h.estado == 'faltante' } ? 'text-red-700' : '') %>">
+      <li class="flex justify-between border-t border-stone-100 py-1 <%= hojas.all? { |h| h.estado == 'recibida' } ? 'text-green-700' : (hojas.all? { |h| h.estado == 'faltante' } ? 'text-red-700' : '') %>">
         <span><span class="font-mono"><%= bulto.codigo %></span> <%= bulto.tipo %> · <%= bulto.producto.nombre %><%= " (#{hojas.size} paquetes)" if hojas.size > 1 %></span>
         <span><%= hojas.count { |h| h.estado == "recibida" } %>/<%= hojas.size %></span>
       </li>
@@ -33,70 +33,70 @@
     <p class="mt-3 text-sm font-semibold">Sin etiqueta (no se escanea):</p>
     <ul class="text-sm">
       <% @manuales.each do |l| %>
-        <li class="flex justify-between border-t border-slate-100 py-1"><span><%= l.producto.nombre %> · <%= number_with_precision(l.cantidad, precision: l.producto.decimales) %> <%= l.producto.unidad %> <span class="text-xs text-slate-500">(<%= l.motivo %>)</span></span>
+        <li class="flex justify-between border-t border-stone-100 py-1"><span><%= l.producto.nombre %> · <%= number_with_precision(l.cantidad, precision: l.producto.decimales) %> <%= l.producto.unidad %> <span class="text-xs text-stone-500">(<%= l.motivo %>)</span></span>
           <label class="text-xs"><input type="checkbox" name="rechazar_lineas[]" value="<%= l.id %>" form="form_cerrar"> rechazar</label></li>
       <% end %>
     </ul>
   <% end %>
   <% if pendientes.positive? %>
-    <details class="mt-2 text-sm"><summary class="cursor-pointer text-slate-500">Entregar todo sin escanear (queda por revisar)</summary>
+    <details class="mt-2 text-sm"><summary class="cursor-pointer text-stone-500">Entregar todo sin escanear (queda por revisar)</summary>
       <%= form_with url: reparto_entregar_todo_path(s), class: "mt-2 flex gap-2" do |f| %>
-        <%= f.text_field :motivo, placeholder: "por qué no se escaneó", required: true, class: "flex-1 rounded border border-slate-300 px-3 py-2" %>
-        <%= f.submit "Dar por entregado", class: "rounded border border-amber-400 px-3 py-2" %>
+        <%= f.text_field :motivo, placeholder: "por qué no se escaneó", required: true, class: "flex-1 rounded border border-stone-300 px-3 py-2" %>
+        <%= f.submit "Dar por entregado", class: "btn btn-warning" %>
       <% end %></details>
   <% end %>
 </div>
 
 <div class="mb-4 grid gap-4 md:grid-cols-2">
-  <div class="rounded bg-white p-4 shadow-sm">
+  <div class="card">
     <h2 class="mb-1 font-semibold">Cerrar parada y cobrar</h2>
-    <p class="mb-3 text-sm text-slate-600">Lo que no escaneaste se rechaza y vuelve al camión. Cobra el resto de contado.</p>
+    <p class="mb-3 text-sm text-stone-600">Lo que no escaneaste se rechaza y vuelve al camión. Cobra el resto de contado.</p>
     <%= form_with url: reparto_cerrar_path(s), id: "form_cerrar", class: "space-y-2 text-sm" do |f| %>
-      <%= f.text_field :motivo_rechazo, placeholder: pendientes.positive? ? "motivo del rechazo de los #{pendientes} pendientes" : "motivo si rechazas algo", required: pendientes.positive?, class: "w-full rounded border border-slate-300 px-3 py-2" %>
+      <%= f.text_field :motivo_rechazo, placeholder: pendientes.positive? ? "motivo del rechazo de los #{pendientes} pendientes" : "motivo si rechazas algo", required: pendientes.positive?, class: "w-full rounded border border-stone-300 px-3 py-2" %>
       <div class="grid grid-cols-3 gap-2">
-        <div><%= f.label :efectivo, "Efectivo", class: "block" %><%= f.number_field :efectivo, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-slate-300 px-2 py-2 text-right font-mono text-lg" %></div>
-        <div><%= f.label :transferencia, "Transferencia", class: "block" %><%= f.number_field :transferencia, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-slate-300 px-2 py-2 text-right font-mono" %></div>
-        <div><%= f.label :deposito, "Depósito", class: "block" %><%= f.number_field :deposito, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-slate-300 px-2 py-2 text-right font-mono" %></div>
+        <div><%= f.label :efectivo, "Efectivo", class: "block" %><%= f.number_field :efectivo, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-stone-300 px-2 py-2 text-right font-mono text-lg" %></div>
+        <div><%= f.label :transferencia, "Transferencia", class: "block" %><%= f.number_field :transferencia, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-stone-300 px-2 py-2 text-right font-mono" %></div>
+        <div><%= f.label :deposito, "Depósito", class: "block" %><%= f.number_field :deposito, step: "0.01", min: 0, inputmode: "decimal", class: "w-full rounded border border-stone-300 px-2 py-2 text-right font-mono" %></div>
       </div>
       <% if @credito.permite_credito? %>
         <label class="flex items-center gap-2 rounded bg-emerald-50 px-3 py-2"><%= f.check_box :a_credito %> Lo que no pague va a su cuenta (crédito)</label>
       <% end %>
-      <p class="text-xs text-slate-500">La nota vale <%= pesos(@venta.saldo_centavos) %> si se entrega todo; el sistema descuenta lo rechazado.</p>
+      <p class="text-xs text-stone-500">La nota vale <%= pesos(@venta.saldo_centavos) %> si se entrega todo; el sistema descuenta lo rechazado.</p>
       <%= f.submit "Cerrar parada y cobrar", class: "w-full rounded bg-emerald-700 px-4 py-3 text-lg font-semibold text-white" %>
     <% end %>
   </div>
   <div class="space-y-4">
-    <div class="rounded bg-white p-4 shadow-sm">
+    <div class="card">
       <h2 class="mb-1 font-semibold">No se entregó</h2>
       <%= form_with url: reparto_no_entregado_path(s), class: "flex gap-2 text-sm", data: { turbo_confirm: "Todo vuelve al camión y la nota queda en cero. ¿Seguro?" } do |f| %>
-        <%= f.text_field :motivo, placeholder: "cerrado, no quiso, no estaba…", required: true, class: "flex-1 rounded border border-slate-300 px-3 py-2" %>
+        <%= f.text_field :motivo, placeholder: "cerrado, no quiso, no estaba…", required: true, class: "flex-1 rounded border border-stone-300 px-3 py-2" %>
         <%= f.submit "No entregado", class: "rounded border border-red-400 px-3 py-2 text-red-700" %>
       <% end %>
     </div>
     <% if @tipos.any? %>
-      <div class="rounded bg-white p-4 shadow-sm">
+      <div class="card">
         <h2 class="mb-1 font-semibold">Canastillas</h2>
-        <p class="mb-2 text-xs text-slate-600">Van: <%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ").presence || "ninguna" %>. Debe: <%= @canastillas_cliente.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(", ").presence || "nada" %>.</p>
+        <p class="mb-2 text-xs text-stone-600">Van: <%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ").presence || "ninguna" %>. Debe: <%= @canastillas_cliente.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(", ").presence || "nada" %>.</p>
         <%= form_with url: reparto_canastillas_path(s), class: "flex flex-wrap gap-2 text-sm" do |f| %>
-          <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "rounded border border-slate-300 px-2 py-2" %>
-          <%= f.number_field :cantidad, min: 1, inputmode: "numeric", placeholder: "devuelve", required: true, class: "w-24 rounded border border-slate-300 px-2 py-2 font-mono" %>
-          <%= f.submit "Devolvió", class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+          <%= f.select :tipo_canastilla_id, @tipos.map { |t| [ t.to_s, t.id ] }, {}, class: "rounded border border-stone-300 px-2 py-2" %>
+          <%= f.number_field :cantidad, min: 1, inputmode: "numeric", placeholder: "devuelve", required: true, class: "w-24 rounded border border-stone-300 px-2 py-2 font-mono" %>
+          <%= f.submit "Devolvió", class: "btn btn-primary" %>
         <% end %>
       </div>
     <% end %>
     <% if @credito.saldo_centavos.positive? %>
-      <div class="rounded bg-white p-4 shadow-sm">
+      <div class="card">
         <h2 class="mb-1 font-semibold">Abono a cuenta</h2>
-        <p class="mb-2 text-xs text-slate-500">Paga algo de lo que debía. Lo traes tú hasta liquidar.</p>
+        <p class="mb-2 text-xs text-stone-500">Paga algo de lo que debía. Lo traes tú hasta liquidar.</p>
         <%= form_with url: reparto_abonar_path(s), class: "flex flex-wrap gap-2 text-sm" do |f| %>
-          <%= f.number_field :monto, step: "0.01", min: "0.01", inputmode: "decimal", placeholder: "monto", required: true, class: "w-28 rounded border border-slate-300 px-2 py-2 font-mono" %>
-          <%= f.select :forma, Pago::FORMAS.map { |x| [ x.humanize, x ] }, {}, class: "rounded border border-slate-300 px-2 py-2" %>
-          <%= f.submit "Abonar", class: "rounded bg-slate-900 px-3 py-2 text-white" %>
+          <%= f.number_field :monto, step: "0.01", min: "0.01", inputmode: "decimal", placeholder: "monto", required: true, class: "w-28 rounded border border-stone-300 px-2 py-2 font-mono" %>
+          <%= f.select :forma, Pago::FORMAS.map { |x| [ x.humanize, x ] }, {}, class: "rounded border border-stone-300 px-2 py-2" %>
+          <%= f.submit "Abonar", class: "btn btn-primary" %>
         <% end %>
       </div>
     <% end %>
     <% if puede?("pedidos.solicitar") %>
-      <div class="rounded bg-white p-4 shadow-sm">
+      <div class="card">
         <h2 class="mb-1 font-semibold">Pedido para la próxima visita</h2>
         <%= form_with url: pedidos_path, data: { controller: "lineas" }, class: "text-sm" do |f| %>
           <%= hidden_field_tag "pedido[destino]", "cliente:#{s.cliente_id}" %>
@@ -105,17 +105,17 @@
             <tbody data-lineas-target="cuerpo">
               <% 2.times do |i| %>
                 <tr data-lineas-target="fila">
-                  <td class="py-1 pr-2"><%= select_tag "pedido[lineas_attributes][#{i}][producto_id]", options_from_collection_for_select(@productos, :id, ->(p) { "#{p.nombre} (#{p.unidad})" }), include_blank: "—", class: "w-full rounded border border-slate-300 px-2 py-1" %></td>
-                  <td class="py-1 pr-2"><%= number_field_tag "pedido[lineas_attributes][#{i}][cantidad]", nil, step: "0.001", min: "0.001", inputmode: "decimal", class: "w-24 rounded border border-slate-300 px-2 py-1 font-mono" %></td>
+                  <td class="py-1 pr-2"><%= select_tag "pedido[lineas_attributes][#{i}][producto_id]", options_from_collection_for_select(@productos, :id, ->(p) { "#{p.nombre} (#{p.unidad})" }), include_blank: "—", class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
+                  <td class="py-1 pr-2"><%= number_field_tag "pedido[lineas_attributes][#{i}][cantidad]", nil, step: "0.001", min: "0.001", inputmode: "decimal", class: "w-24 rounded border border-stone-300 px-2 py-1 font-mono" %></td>
                   <td class="py-1"><button type="button" data-action="lineas#quitar" class="text-red-700">✕</button></td>
                 </tr>
               <% end %>
             </tbody>
           </table>
           <div class="mt-2 flex items-center gap-2">
-            <button type="button" data-action="lineas#agregar" class="rounded border border-slate-300 px-3 py-1">+ renglón</button>
-            <%= text_field_tag "pedido[notas]", nil, placeholder: "notas", class: "flex-1 rounded border border-slate-300 px-2 py-1" %>
-            <%= submit_tag "Pedir", class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+            <button type="button" data-action="lineas#agregar" class="btn btn-secondary btn-sm">+ renglón</button>
+            <%= text_field_tag "pedido[notas]", nil, placeholder: "notas", class: "flex-1 rounded border border-stone-300 px-2 py-1" %>
+            <%= submit_tag "Pedir", class: "btn btn-primary btn-sm" %>
           </div>
         <% end %>
       </div>

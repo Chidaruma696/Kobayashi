@@ -2,21 +2,21 @@
 <%= form_with url: viajes_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div>
     <%= f.label :ruta_id, "Ruta", class: "block text-sm font-medium" %>
-    <%= f.select :ruta_id, @rutas.map { |r| [ "#{r.nombre}#{" · chofer #{r.chofer}" if r.chofer}", r.id ] }, { selected: params[:ruta_id] }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    <%= f.select :ruta_id, @rutas.map { |r| [ "#{r.nombre}#{" · chofer #{r.chofer}" if r.chofer}", r.id ] }, { selected: params[:ruta_id] }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
   <div>
     <%= f.label :chofer_id, "Chofer", class: "block text-sm font-medium" %>
-    <%= f.select :chofer_id, @choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: "— el de la ruta —" }, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
-    <p class="mt-1 text-xs text-slate-500">Solo aparecen usuarios con permiso de repartir.</p>
+    <%= f.select :chofer_id, @choferes.map { |u| [ u.nombre, u.id ] }, { include_blank: "— el de la ruta —" }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+    <p class="mt-1 text-xs text-stone-500">Solo aparecen usuarios con permiso de repartir.</p>
   </div>
   <div>
     <%= f.label :fecha, "Fecha", class: "block text-sm font-medium" %>
-    <%= f.date_field :fecha, value: Date.current, class: "mt-1 rounded border border-slate-300 px-3 py-2" %>
+    <%= f.date_field :fecha, value: Date.current, class: "mt-1 rounded border border-stone-300 px-3 py-2" %>
   </div>
   <div>
     <%= f.label :notas, "Notas", class: "block text-sm font-medium" %>
-    <%= f.text_field :notas, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+    <%= f.text_field :notas, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
-  <p class="text-sm text-slate-600">Los repartos de la ruta que ya estén sellados suben solos al viaje; los demás se agregan desde la ficha del viaje o de la salida.</p>
-  <%= f.submit "Armar viaje", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+  <p class="text-sm text-stone-600">Los repartos de la ruta que ya estén sellados suben solos al viaje; los demás se agregan desde la ficha del viaje o de la salida.</p>
+  <%= f.submit "Armar viaje", class: "btn btn-primary" %>
 <% end %>

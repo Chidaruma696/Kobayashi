@@ -46,3 +46,6 @@ Producción es solo esto: entra una mercancía en una cantidad y salen las etiqu
 
 ## Folios por sucursal, únicos por sucursal (24 sept 2026)
 Cada tienda numera lo suyo (su B-00001, su C-00001), como el sistema anterior, pero el índice los exigía únicos en todo el sistema: la segunda tienda no podía ni abrir caja. Salió al cargar datos de prueba con tres sucursales; nunca se había probado con más de una. Ahora la unicidad es por sucursal. Las listas y búsquedas ya están acotadas a la sucursal del usuario, así que el folio corto sigue sirviendo.
+
+## La paleta es Kobayashi (24 sept 2026)
+El sistema se llama como ella, así que los colores salen de ella: el cobrizo del pelo es la marca (cinta, botones principales), el granate de la corbata es el acento de peligro y los grises son cálidos como su oficina. Y una regla de interfaz: nada de enlaces pelones; lo que hace algo es un botón, y lo que apunta a otro documento (un folio, un cliente) es un chip con fondo. Los estilos viven en `app/assets/tailwind/application.css` como clases (`btn`, `enlace`, `chip-folio`, `card`, `tabla`, `badge`) para no repetir utilidades en cada vista.

@@ -1,37 +1,37 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Pedido <%= @pedido.folio %> · para <span class="rounded px-2 py-0.5 text-lg text-white" style="background: <%= color_destino(@pedido.destino) %>"><%= @pedido.destino %></span></h1>
   <div class="flex items-center gap-2">
-    <%= link_to "🖨 Hoja", hoja_pedido_path(@pedido), target: "_blank", class: "rounded border border-slate-300 px-3 py-1 text-sm" %>
-    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to "🏷 Surtir en la etiquetadora", new_etiqueta_path(pedido: @pedido.id), class: "rounded bg-slate-900 px-3 py-1 text-sm text-white" %><% end %>
-    <span class="rounded bg-slate-200 px-3 py-1 text-sm"><%= @pedido.estado %></span>
+    <%= link_to "🖨 Hoja", hoja_pedido_path(@pedido), target: "_blank", class: "btn btn-secondary btn-sm" %>
+    <% if @surtidor && @pedido.abierto? && puede?("etiquetas.crear") %><%= link_to "🏷 Surtir en la etiquetadora", new_etiqueta_path(pedido: @pedido.id), class: "btn btn-primary btn-sm" %><% end %>
+    <span class="badge"><%= @pedido.estado %></span>
   </div>
 </div>
-<p class="mb-4 text-sm text-slate-600">Pidió <%= @pedido.usuario %> el <%= l @pedido.created_at, format: :short %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
+<p class="mb-4 text-sm text-stone-600">Pidió <%= @pedido.usuario %> el <%= l @pedido.created_at, format: :short %><%= " · #{@pedido.notas}" if @pedido.notas.present? %></p>
 <% salidas_por_linea = SalidaEtiqueta.joins(:etiqueta, :salida).where(etiquetas: { pedido_linea_id: @pedido.lineas.map(&:id) }).includes(:salida).group_by { |f| f.etiqueta.pedido_linea_id }.transform_values { |fs| fs.map(&:salida).uniq } %>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Pide</th><th class="px-3 py-2 text-right">Lleva</th><th class="px-3 py-2 text-right">Falta</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Salida</th><% if @surtidor && @pedido.abierto? %><th class="px-3 py-2">Acciones</th><% end %></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Producto</th><th class="px-3 py-2 text-right">Pide</th><th class="px-3 py-2 text-right">Lleva</th><th class="px-3 py-2 text-right">Falta</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Salida</th><% if @surtidor && @pedido.abierto? %><th class="px-3 py-2">Acciones</th><% end %></tr></thead>
   <tbody>
     <% @pedido.lineas.each do |l| %>
       <% d = l.producto.decimales %>
-      <tr class="border-t border-slate-100 <%= 'bg-green-50' if l.estado == 'surtido' %> <%= 'bg-amber-50' if l.estado == 'no_surtir' %>">
+      <tr class="border-t border-stone-100 <%= 'bg-green-50' if l.estado == 'surtido' %> <%= 'bg-amber-50' if l.estado == 'no_surtir' %>">
         <td class="px-3 py-2"><%= l.producto.nombre %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad, precision: d) %> <%= l.producto.unidad %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad_surtida, precision: d) %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.faltante, precision: d) %></td>
         <td class="px-3 py-2"><%= l.estado.humanize %><%= " · #{l.motivo}" if l.motivo.present? %></td>
-        <td class="px-3 py-2 text-xs"><%= (salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{s.estado})", salida_path(s), class: "font-mono text-blue-700") }.join(", ").html_safe %></td>
+        <td class="px-3 py-2 text-xs"><%= (salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{s.estado})", salida_path(s), class: "chip-folio") }.join(", ").html_safe %></td>
         <% if @surtidor && @pedido.abierto? %>
           <td class="px-3 py-2">
             <div class="flex flex-wrap items-center gap-2">
               <% if l.pendiente? %>
-                <%= link_to "Etiquetar", new_etiqueta_path(pedido_linea_id: l.id), class: "rounded bg-slate-900 px-2 py-1 text-white" %>
-                <%= button_to "Dar por surtido", surtido_pedido_linea_path(@pedido, l), class: "rounded border border-slate-300 px-2 py-1" %>
+                <%= link_to "Etiquetar", new_etiqueta_path(pedido_linea_id: l.id), class: "btn btn-primary btn-xs" %>
+                <%= button_to "Dar por surtido", surtido_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
                 <%= form_with url: no_surtir_pedido_linea_path(@pedido, l), class: "flex gap-1" do |f| %>
-                  <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "w-28 rounded border border-slate-300 px-2 py-1" %>
+                  <%= f.text_field :motivo, placeholder: "motivo", required: true, class: "w-28 rounded border border-stone-300 px-2 py-1" %>
                   <%= f.submit "No surtir", class: "rounded border border-amber-400 px-2 py-1" %>
                 <% end %>
               <% else %>
-                <%= button_to "Reabrir", reabrir_pedido_linea_path(@pedido, l), class: "rounded border border-slate-300 px-2 py-1" %>
+                <%= button_to "Reabrir", reabrir_pedido_linea_path(@pedido, l), class: "btn btn-secondary btn-xs" %>
               <% end %>
             </div>
           </td>
@@ -42,9 +42,9 @@
 </table>
 <% if @surtidor && @pedido.abierto? %>
   <div class="mt-4 flex gap-3 text-sm">
-    <%= link_to "Nueva salida a #{@pedido.destino}", new_salida_path(pedido_id: @pedido.id), class: "rounded border border-slate-300 px-3 py-2" if puede?("salidas.surtir") %>
+    <%= link_to "Nueva salida a #{@pedido.destino}", new_salida_path(pedido_id: @pedido.id), class: "btn btn-secondary" if puede?("salidas.surtir") %>
   </div>
 <% end %>
 <% if @pedido.abierto? && puede?("pedidos.solicitar") %>
-  <%= button_to "Cancelar pedido", cancelar_pedido_path(@pedido), class: "mt-6 text-sm text-red-700 hover:underline", form: { data: { turbo_confirm: "¿Cancelar el pedido #{@pedido.folio}?" } } %>
+  <%= button_to "Cancelar pedido", cancelar_pedido_path(@pedido), class: "btn btn-ghost-danger btn-sm mt-6", form: { data: { turbo_confirm: "¿Cancelar el pedido #{@pedido.folio}?" } } %>
 <% end %>

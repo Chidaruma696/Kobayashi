@@ -3,6 +3,6 @@
     <%= f.hidden_field :producto_id, value: params[:producto_id] if params[:producto_id].present? %>
     <%= f.label :sucursal_id, "Sucursal" %>
     <%= f.select :sucursal_id, Sucursal.activas.order(:nombre).pluck(:nombre, :id), { selected: @sucursal.id },
-                 onchange: "this.form.requestSubmit()", class: "rounded border border-slate-300 px-2 py-1" %>
+                 onchange: "this.form.requestSubmit()", class: "btn btn-secondary btn-xs" %>
   <% end %>
 <% end %>

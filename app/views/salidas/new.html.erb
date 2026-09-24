@@ -2,18 +2,18 @@
 <%= form_with url: salidas_path, class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <% if @pedido %>
     <%= f.hidden_field :pedido_id, value: @pedido.id %>
-    <p class="text-sm">Para <strong><%= @pedido.destino %></strong> · surte el pedido <%= link_to @pedido.folio, pedido_path(@pedido), class: "font-mono text-blue-700" %></p>
+    <p class="text-sm">Para <strong><%= @pedido.destino %></strong> · surte el pedido <%= link_to @pedido.folio, pedido_path(@pedido), class: "chip-folio" %></p>
   <% else %>
     <div>
       <%= f.label :destino, "Para", class: "block text-sm font-medium" %>
-      <%= f.select :destino, grouped_options_for_select({ "Tiendas" => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, "Clientes de ruta" => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }), {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+      <%= f.select :destino, grouped_options_for_select({ "Tiendas" => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, "Clientes de ruta" => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }), {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
   <% end %>
   <% unless sucursal_actual.matriz? %>
     <div>
       <%= f.label :motivo, "Motivo de la devolución", class: "block text-sm font-medium" %>
-      <%= f.text_field :motivo, required: true, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+      <%= f.text_field :motivo, required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
   <% end %>
-  <%= f.submit "Abrir salida", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700" %>
+  <%= f.submit "Abrir salida", class: "btn btn-primary" %>
 <% end %>

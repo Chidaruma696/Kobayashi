@@ -1,19 +1,19 @@
-<div class="mb-4 flex items-center justify-between">
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold">Promociones</h1>
-  <%= link_to "Nueva promoción", new_admin_promocion_path, class: "rounded bg-slate-900 px-3 py-1 text-white" %>
+  <%= link_to "Nueva promoción", new_admin_promocion_path, class: "btn btn-primary btn-sm" %>
 </div>
-<table class="w-full border-collapse bg-white text-sm shadow-sm">
-  <thead class="bg-slate-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2">Sucursal</th><th class="px-3 py-2">Regla</th><th class="px-3 py-2">Vigencia</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
+<table class="tabla">
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Producto</th><th class="px-3 py-2">Sucursal</th><th class="px-3 py-2">Regla</th><th class="px-3 py-2">Vigencia</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
   <tbody>
     <% @promociones.each do |p| %>
-      <tr class="border-t border-slate-100 <%= 'text-slate-400' unless p.vigente? %>">
+      <tr class="border-t border-stone-100 <%= 'text-stone-400' unless p.vigente? %>">
         <td class="px-3 py-2"><%= p.nombre %></td><td class="px-3 py-2"><%= p.producto.nombre %></td><td class="px-3 py-2"><%= p.sucursal || "todas" %></td>
         <td class="px-3 py-2"><%= p.descripcion %></td>
         <td class="px-3 py-2"><%= [ p.desde && l(p.desde, format: :short), p.hasta && l(p.hasta, format: :short) ].compact.join(" → ").presence || "siempre" %></td>
         <td class="px-3 py-2"><%= p.activa ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "editar", edit_admin_promocion_path(p), class: "text-blue-700" %> · <%= button_to "borrar", admin_promocion_path(p), method: :delete, class: "inline text-red-700", form: { class: "inline", data: { turbo_confirm: "¿Borrar #{p.nombre}?" } } %></td>
+        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "editar", edit_admin_promocion_path(p), class: "enlace" %> · <%= button_to "borrar", admin_promocion_path(p), method: :delete, class: "inline text-red-700", form: { class: "inline", data: { turbo_confirm: "¿Borrar #{p.nombre}?" } } %></td>
       </tr>
     <% end %>
-    <% if @promociones.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-slate-500">Sin promociones.</td></tr><% end %>
+    <% if @promociones.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-stone-500">Sin promociones.</td></tr><% end %>
   </tbody>
 </table>

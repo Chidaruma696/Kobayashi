@@ -8,11 +8,11 @@
   <div class="grid grid-cols-3 gap-4">
     <div>
       <%= f.label :unidad, "Unidad", class: "block text-sm font-medium" %>
-      <%= f.select :unidad, [ [ "kilo", "kg" ], [ "pieza", "pieza" ] ], {}, class: "mt-1 w-full rounded border border-slate-300 px-3 py-2" %>
+      <%= f.select :unidad, [ [ "kilo", "kg" ], [ "pieza", "pieza" ] ], {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
     <%= render "admin/campo", f: f, campo: :precio, etiqueta: "Precio", tipo: :number_field, opciones: { step: "0.01", min: 0 } %>
     <%= render "admin/campo", f: f, campo: :peso_fijo, etiqueta: "Peso por pieza (kg, opcional)", tipo: :number_field, opciones: { step: "0.001", min: 0 } %>
   </div>
   <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
-  <%= f.submit @producto.new_record? ? "Crear" : "Guardar", class: "rounded bg-slate-900 px-4 py-2 font-semibold text-white" %>
+  <%= f.submit @producto.new_record? ? "Crear" : "Guardar", class: "btn btn-primary" %>
 <% end %>

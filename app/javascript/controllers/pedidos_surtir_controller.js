@@ -43,27 +43,27 @@ export default class extends Controller {
     this.pedido = null
     this.tituloTarget.textContent = "Pedidos por surtir"
     this.pieTarget.classList.add("hidden")
-    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-slate-500">Cargando…</p>`
+    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">Cargando…</p>`
     const d = await this.pedir(`${this.pedidosUrlValue}.json`)
     if (!d) return
-    if (!d.pedidos.length) { this.cuerpoTarget.innerHTML = `<p class="py-6 text-center text-slate-500">No hay pedidos por surtir</p>`; return }
+    if (!d.pedidos.length) { this.cuerpoTarget.innerHTML = `<p class="py-6 text-center text-stone-500">No hay pedidos por surtir</p>`; return }
     this.cuerpoTarget.innerHTML = d.pedidos.map(p => `
-      <div class="flex cursor-pointer items-center gap-3 border-b border-dashed border-slate-200 py-2 pl-3 hover:bg-slate-50" style="border-left:6px solid ${this.color(p.destino)}" data-action="click->pedidos-surtir#abrir" data-pedidos-surtir-id-param="${p.id}">
+      <div class="flex cursor-pointer items-center gap-3 border-b border-dashed border-stone-200 py-2 pl-3 hover:bg-stone-50" style="border-left:6px solid ${this.color(p.destino)}" data-action="click->pedidos-surtir#abrir" data-pedidos-surtir-id-param="${p.id}">
         <span class="text-lg" style="color:${this.color(p.destino)}">🧺</span>
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-2"><strong class="text-base">${this.esc(p.folio)}</strong> ${this.chip(p.destino, true)}
-            <span class="text-xs text-slate-500">${this.esc(p.usuario)} · ${this.esc(p.creado)}</span></div>
-          ${p.notas ? `<div class="mt-1 text-xs text-slate-500">${this.esc(p.notas)}</div>` : ""}
+            <span class="text-xs text-stone-500">${this.esc(p.usuario)} · ${this.esc(p.creado)}</span></div>
+          ${p.notas ? `<div class="mt-1 text-xs text-stone-500">${this.esc(p.notas)}</div>` : ""}
         </div>
         <span class="rounded px-2 py-0.5 text-xs ${p.estado === "surtiendo" ? "bg-amber-100 text-amber-800" : "bg-sky-100 text-sky-800"}">${p.estado} · ${p.resueltos}/${p.renglones}</span>
-        <span class="text-slate-400">›</span>
+        <span class="text-stone-400">›</span>
       </div>`).join("")
   }
 
   // ---------------------------------------------------------------- detalle
 
   async detalle(id) {
-    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-slate-500">Cargando…</p>`
+    this.cuerpoTarget.innerHTML = `<p class="py-4 text-center text-sm text-stone-500">Cargando…</p>`
     const d = await this.pedir(`${this.pedidosUrlValue}/${id}.json`)
     if (!d) return
     this.pedido = d
@@ -82,34 +82,34 @@ export default class extends Controller {
         : enviada ? `<span class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-800">🚚 ${this.esc(b.salida.folio)} ${b.salida.estado}</span>`
         : `<span class="rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">📦 ${this.esc(b.salida.folio)} por enviar</span>`
       const verif = b.verificada ? `<span class="text-xs text-emerald-700">✓ verificada</span>` : (b.salida && !enviada ? `<span class="text-xs text-amber-700">sin verificar</span>` : "")
-      const baja = abierto && !enviada ? `<button type="button" class="ml-auto text-xs text-red-700 hover:underline" title="Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida" data-id="${b.id}" data-que="${b.tipo === "caja" ? "la caja completa" : "el paquete"}" data-action="pedidos-surtir#darDeBaja">🗑 Dar de baja</button>` : ""
+      const baja = abierto && !enviada ? `<button type="button" class="btn btn-ghost-danger btn-xs ml-auto" title="Etiqueté mal: da de baja el bulto, lo saca del pedido y de la salida" data-id="${b.id}" data-que="${b.tipo === "caja" ? "la caja completa" : "el paquete"}" data-action="pedidos-surtir#darDeBaja">🗑 Dar de baja</button>` : ""
       return `<div class="flex flex-wrap items-center gap-2 py-0.5 pl-6 text-xs">
         <code>${this.esc(b.codigo)}</code>
-        <span class="text-slate-500">${b.tipo}${b.paquetes ? ` · ${b.paquetes} paq` : ""} · ${this.esc(b.cantidad)} ${r.unidad}</span>
+        <span class="text-stone-500">${b.tipo}${b.paquetes ? ` · ${b.paquetes} paq` : ""} · ${this.esc(b.cantidad)} ${r.unidad}</span>
         ${b.sustituto ? `<span class="rounded bg-violet-600 px-1.5 py-0.5 text-white">SUSTITUTO: ${this.esc(b.sustituto)}</span>` : ""}
         ${badge} ${verif} ${baja}</div>`
     }
     const html = renglones.map(r => {
-      const ico = r.estado === "surtido" ? `<span class="text-emerald-600">✔</span>` : r.estado === "no_surtir" ? `<span class="text-slate-400">⊘</span>` : `<span class="text-amber-500">○</span>`
+      const ico = r.estado === "surtido" ? `<span class="text-emerald-600">✔</span>` : r.estado === "no_surtir" ? `<span class="text-stone-400">⊘</span>` : `<span class="text-amber-500">○</span>`
       const acciones = !abierto ? "" : `<div class="mt-1 flex flex-wrap gap-2">
-        ${r.estado !== "no_surtir" ? `<a class="rounded bg-slate-900 px-2 py-1 text-xs text-white hover:bg-slate-700" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}">🏷 Surtir</a>
-          <button type="button" class="rounded border border-amber-400 px-2 py-1 text-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto">⇄ Enviar sustituto</button>
-          ${r.estado === "pendiente" ? `<button type="button" class="rounded border border-slate-300 px-2 py-1 text-xs" data-id="${r.id}" data-action="pedidos-surtir#surtido" title="Darlo por surtido aunque falte">Dar por surtido</button>` : ""}` : ""}
-        <button type="button" class="rounded border px-2 py-1 text-xs ${r.estado === "no_surtir" ? "border-sky-400" : "border-slate-300"}" data-id="${r.id}" data-action="pedidos-surtir#${r.estado === "no_surtir" ? "reabrir" : "noSurtir"}">${r.estado === "no_surtir" ? "Reactivar" : "No se va a surtir"}</button>
+        ${r.estado !== "no_surtir" ? `<a class="btn btn-primary btn-xs" href="${this.etiquetarUrlValue}?pedido_linea_id=${r.id}">🏷 Surtir</a>
+          <button type="button" class="btn btn-warning btn-xs" data-id="${r.id}" data-action="pedidos-surtir#sustituto">⇄ Enviar sustituto</button>
+          ${r.estado === "pendiente" ? `<button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#surtido" title="Darlo por surtido aunque falte">Dar por surtido</button>` : ""}` : ""}
+        <button type="button" class="btn btn-secondary btn-xs" data-id="${r.id}" data-action="pedidos-surtir#${r.estado === "no_surtir" ? "reabrir" : "noSurtir"}">${r.estado === "no_surtir" ? "Reactivar" : "No se va a surtir"}</button>
         </div>
         <div class="mt-1 hidden max-w-md" id="sus-${r.id}">
-          <input type="text" class="w-full rounded border border-slate-300 px-2 py-1 text-sm" placeholder="Buscar el producto SUSTITUTO (ej. pollo entero)…" data-id="${r.id}" data-action="input->pedidos-surtir#buscarSustituto">
+          <input type="text" class="w-full rounded border border-stone-300 px-2 py-1 text-sm" placeholder="Buscar el producto SUSTITUTO (ej. pollo entero)…" data-id="${r.id}" data-action="input->pedidos-surtir#buscarSustituto">
           <div class="max-h-40 overflow-auto text-sm" id="sus-res-${r.id}"></div>
         </div>`
-      return `<div class="border-b border-dashed border-slate-200 py-2">
+      return `<div class="border-b border-dashed border-stone-200 py-2">
         <div class="flex flex-wrap items-center gap-2">${ico} <strong>${this.esc(r.producto)}</strong>
           <span class="ml-auto text-sm font-mono">${this.esc(r.surtida)} / ${this.esc(r.cantidad)} ${r.unidad}</span></div>
-        <div class="my-1 h-1.5 overflow-hidden rounded bg-slate-200"><span class="block h-full bg-emerald-600" style="width:${r.pct}%"></span></div>
-        ${r.motivo ? `<div class="pl-6 text-xs text-slate-500">${this.esc(r.motivo)}</div>` : ""}
+        <div class="my-1 h-1.5 overflow-hidden rounded bg-stone-200"><span class="block h-full bg-emerald-600" style="width:${r.pct}%"></span></div>
+        ${r.motivo ? `<div class="pl-6 text-xs text-stone-500">${this.esc(r.motivo)}</div>` : ""}
         ${r.bultos.map(b => bulto(r, b)).join("")}
         ${acciones}</div>`
     }).join("")
-    this.cuerpoTarget.innerHTML = html || `<p class="py-4 text-slate-500">Pedido sin renglones</p>`
+    this.cuerpoTarget.innerHTML = html || `<p class="py-4 text-stone-500">Pedido sin renglones</p>`
     this.pieTarget.classList.toggle("hidden", !abierto)
     if (!abierto) return
     const faltan = renglones.filter(r => r.estado === "pendiente").map(r => `${r.producto}: sin surtir`)
@@ -161,7 +161,7 @@ export default class extends Controller {
     this.timerSustituto = setTimeout(async () => {
       const r = await fetch(`${this.productosUrlValue}?q=${encodeURIComponent(q)}`, { headers: { Accept: "application/json" } })
       const items = r.ok ? await r.json() : []
-      res.innerHTML = items.slice(0, 8).map(p => `<a class="block cursor-pointer border-b border-dashed border-slate-200 px-2 py-1 hover:bg-slate-100" href="${this.etiquetarUrlValue}?pedido_linea_id=${id}&producto_id=${p.id}&sustituto=1"><strong>${this.esc(p.nombre)}</strong> <span class="text-xs text-slate-500">${this.esc(p.clave)} · ${p.unidad}</span></a>`).join("") || `<p class="p-2 text-slate-500">Sin resultados</p>`
+      res.innerHTML = items.slice(0, 8).map(p => `<a class="block cursor-pointer border-b border-dashed border-stone-200 px-2 py-1 hover:bg-stone-100" href="${this.etiquetarUrlValue}?pedido_linea_id=${id}&producto_id=${p.id}&sustituto=1"><strong>${this.esc(p.nombre)}</strong> <span class="text-xs text-stone-500">${this.esc(p.clave)} · ${p.unidad}</span></a>`).join("") || `<p class="p-2 text-stone-500">Sin resultados</p>`
     }, 250)
   }
 }
