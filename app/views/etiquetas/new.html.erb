@@ -2,6 +2,8 @@
      data-etiquetadora-lote-url-value="<%= lote_etiquetas_path %>"
      data-etiquetadora-productos-url-value="<%= productos_etiquetas_path %>"
      data-etiquetadora-imprimir-url-value="<%= imprimir_etiquetas_path %>"
+     data-etiquetadora-etiquetas-url-value="<%= etiquetas_path %>"
+     data-etiquetadora-admin-productos-url-value="<%= admin_productos_path %>"
      data-etiquetadora-pedido-linea-id-value="<%= @linea&.id %>"
      data-etiquetadora-produccion-id-value="<%= @produccion&.id %>"
      data-etiquetadora-producto-value="<%= @producto_json.to_json if @producto_json %>"
@@ -9,13 +11,12 @@
 
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
     <h1 class="text-2xl font-bold">Etiquetar · <%= sucursal_actual %></h1>
-    <div class="flex items-center gap-2 rounded bg-white px-3 py-1 shadow-sm">
-      <span class="text-xs text-slate-500" data-etiquetadora-target="estado">báscula desconectada</span>
-      <span class="font-mono text-2xl" data-etiquetadora-target="peso">0.000</span>
-      <button type="button" data-action="etiquetadora#alternarBascula" class="rounded bg-slate-200 px-2 py-1 text-xs hover:bg-slate-300"><span data-etiquetadora-target="btnBascula">conectar</span></button>
+    <div class="flex items-center gap-2">
       <% if params[:simulada].present? %>
-        <button type="button" data-action="etiquetadora#simular" class="rounded bg-amber-500 px-2 py-1 text-xs text-white">simular</button>
+        <button type="button" data-action="etiquetadora#simular" class="rounded bg-amber-500 px-3 py-1 text-sm text-white">simular pesada</button>
       <% end %>
+      <button type="button" data-action="etiquetadora#alternarBascula" data-etiquetadora-target="btnBascula"
+              class="rounded border border-red-700 px-3 py-1 text-sm text-red-700 hover:bg-red-50">Conectar báscula</button>
     </div>
   </div>
 
@@ -25,32 +26,53 @@
     <div class="space-y-4 lg:col-span-2">
       <div id="aviso" data-etiquetadora-target="aviso" class="empty:hidden rounded bg-red-50 px-3 py-2 text-sm text-red-800"></div>
 
-      <%# Producto %>
+      <%# Producto: buscador, ficha con chips y, plegado, el código de fábrica %>
       <div class="rounded bg-white p-4 shadow-sm">
+        <div class="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Producto</div>
         <div class="relative">
-          <input type="text" autocomplete="off" placeholder="Producto: nombre, clave, PLU o escanea su código"
+          <input type="text" autocomplete="off" placeholder="Nombre, clave, PLU o escanea su código"
                  class="w-full rounded border border-slate-300 px-3 py-3 text-lg"
                  data-etiquetadora-target="buscador"
                  data-action="input->etiquetadora#buscar focus->etiquetadora#buscar blur->etiquetadora#ocultarResultados keydown->etiquetadora#teclaBuscador">
           <div class="absolute left-0 right-0 top-full z-30 mt-1 hidden max-h-80 overflow-y-auto rounded border border-slate-300 bg-white shadow-lg" data-etiquetadora-target="resultados"></div>
         </div>
-        <p class="mt-2 hidden text-sm text-slate-600" data-etiquetadora-target="ficha"></p>
+        <div class="mt-3 hidden flex-wrap items-center gap-2 text-sm" data-etiquetadora-target="ficha"></div>
+        <% if puede?("admin.catalogo") %>
+          <details class="mt-3 hidden text-sm" data-etiquetadora-target="fabrica">
+            <summary class="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-500">Código de fábrica y peso fijo</summary>
+            <div class="mt-2 flex flex-wrap items-end gap-2">
+              <label class="flex-1 text-xs text-slate-600">Código de fábrica
+                <input type="text" autocomplete="off" placeholder="Escanear o teclear…" class="mt-1 w-full rounded border border-slate-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="codigoNuevo" data-action="keydown.enter->etiquetadora#vincular">
+              </label>
+              <label class="w-36 text-xs text-slate-600">Peso por pieza (kg)
+                <input type="number" step="0.001" min="0" placeholder="ej. 0.200" class="mt-1 w-full rounded border border-slate-300 px-2 py-1 font-mono text-sm" data-etiquetadora-target="pesoFijoInput" data-action="keydown.enter->etiquetadora#vincular">
+              </label>
+              <button type="button" data-action="etiquetadora#vincular" class="rounded bg-amber-500 px-3 py-1 text-sm font-semibold text-white hover:bg-amber-400">Vincular</button>
+            </div>
+            <ul class="mt-2 space-y-1" data-etiquetadora-target="codigosLista"></ul>
+            <p class="mt-1 text-xs text-slate-500">Vincula el código que trae de fábrica para que la caja lo reconozca al escanear. Si el fabricante lo cambia, agrega el nuevo: todos escanean este producto.</p>
+          </details>
+        <% end %>
       </div>
 
       <%# Pesadas (kg) %>
       <div class="hidden rounded bg-white p-4 shadow-sm" data-etiquetadora-target="panelKg">
-        <div class="grid gap-3 md:grid-cols-2">
+        <div class="grid gap-4 md:grid-cols-2">
           <div>
-            <div class="text-xs uppercase text-slate-500">Una pesada</div>
-            <div class="mt-1 flex gap-2">
+            <div class="text-xs font-bold uppercase tracking-wide text-slate-500">Una pesada</div>
+            <div class="mt-1 flex flex-wrap gap-2">
               <input type="number" step="0.001" min="0.001" placeholder="kg" class="w-32 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="manual" data-action="keydown.enter->etiquetadora#agregarManual">
               <button type="button" data-action="etiquetadora#agregarManual" class="rounded bg-slate-900 px-3 py-2 text-white hover:bg-slate-700">Agregar</button>
-              <button type="button" data-action="etiquetadora#capturar" disabled class="rounded border border-slate-300 px-3 py-2 disabled:opacity-40" data-etiquetadora-target="btnCapturar" title="Toma el peso que marca la báscula ahora">De la báscula</button>
+              <button type="button" data-action="etiquetadora#capturar" disabled class="rounded border border-emerald-700 px-3 py-2 text-emerald-800 disabled:opacity-40" data-etiquetadora-target="btnCapturar" title="Toma el peso que marca la báscula ahora">De la báscula</button>
             </div>
             <p class="mt-1 text-xs text-slate-500">Con la báscula conectada cada peso estable entra solo.</p>
+            <div class="mt-2 rounded-lg border-2 border-slate-300 bg-slate-900 px-4 py-3 text-center font-mono">
+              <div class="text-4xl font-extrabold leading-none text-slate-500" data-etiquetadora-target="peso">0.000</div>
+              <div class="mt-1 text-xs text-slate-400" data-etiquetadora-target="estado">Desconectada</div>
+            </div>
           </div>
           <div>
-            <div class="text-xs uppercase text-slate-500">Varias iguales</div>
+            <div class="text-xs font-bold uppercase tracking-wide text-slate-500">Varias iguales</div>
             <div class="mt-1 flex items-center gap-2">
               <input type="number" step="1" min="1" value="10" class="w-16 rounded border border-slate-300 px-2 py-2 font-mono" data-etiquetadora-target="qn" data-action="input->etiquetadora#recalcularQuick keydown.enter->etiquetadora#agregarVarias">
               <span>×</span>
@@ -85,10 +107,12 @@
             <label class="flex items-center gap-1" data-etiquetadora-target="alVueloLabel"><input type="checkbox" data-etiquetadora-target="alVuelo" data-action="etiquetadora#guardarPrefs"> Imprimir al vuelo</label>
           </div>
         </div>
-        <table class="w-full text-sm">
-          <thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-4 py-1">#</th><th class="px-2 py-1">Origen</th><th class="px-2 py-1 text-right">Cantidad</th><th class="px-2 py-1">Código</th><th></th></tr></thead>
-          <tbody data-etiquetadora-target="lista"></tbody>
-        </table>
+        <div class="max-h-96 overflow-y-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-4 py-1">#</th><th class="px-2 py-1">Origen</th><th class="px-2 py-1 text-right">Cantidad</th><th class="px-2 py-1">Código</th><th></th></tr></thead>
+            <tbody data-etiquetadora-target="lista"></tbody>
+          </table>
+        </div>
         <% if @linea.nil? && @produccion.nil? %>
           <div class="flex flex-wrap gap-3 border-t border-slate-200 px-4 py-3 text-sm">
             <input type="text" placeholder="Motivo (obligatorio: no hay pedido ni producción)" class="flex-1 rounded border border-slate-300 px-2 py-1" data-etiquetadora-target="justificacion">
@@ -101,6 +125,7 @@
           <button type="button" data-action="etiquetadora#reimprimir" data-etiquetadora-target="btnReimprimir" class="hidden rounded border border-slate-300 px-4 py-3">Reimprimir</button>
           <button type="button" data-action="etiquetadora#limpiar" class="px-3 py-2 text-sm text-slate-500 hover:underline">Limpiar</button>
           <span class="text-sm text-emerald-800" data-etiquetadora-target="resultado"></span>
+          <span class="w-full text-sm text-slate-600 empty:hidden" data-etiquetadora-target="salida"></span>
         </div>
       </div>
     </div>

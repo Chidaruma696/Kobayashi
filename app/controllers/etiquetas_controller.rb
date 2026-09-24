@@ -214,7 +214,8 @@ class EtiquetasController < ApplicationController
 
   def producto_json(p)
     { id: p.id, nombre: p.nombre, clave: p.clave, plu: p.plu, unidad: p.unidad, decimales: p.decimales,
-      peso_fijo: p.peso_fijo&.to_s("F"), codigos: p.codigos_barras.map(&:codigo) }
+      peso_fijo: p.peso_fijo&.to_s("F"), codigos: p.codigos_barras.map(&:codigo),
+      codigos_detalle: p.codigos_barras.map { |c| { id: c.id, codigo: c.codigo } } }
   end
 
   # Tamaño y textos de la etiqueta impresa; vienen del navegador (ajustes guardados) o valen los de fábrica.

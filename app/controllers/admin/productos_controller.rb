@@ -22,6 +22,10 @@ module Admin
 
     def update
       @producto.assign_attributes(permitidos)
+      # La etiquetadora solo toca el peso fijo, por JSON.
+      if request.format.json?
+        return @producto.save ? render(json: { id: @producto.id, peso_fijo: @producto.peso_fijo&.to_s("F") }) : render(json: { error: @producto.errors.full_messages.join(", ") }, status: :unprocessable_entity)
+      end
       Producto.transaction do
         params.fetch(:precios, {}).each { |sucursal_id, pesos| @producto.fijar_precio!(Sucursal.find(sucursal_id), pesos) } if @producto.valid?
         guardar(@producto, admin_productos_path, "Producto guardado")
@@ -36,7 +40,7 @@ module Admin
 
     def permitidos
       p = params.require(:producto).permit(:clave, :nombre, :linea, :unidad, :precio, :peso_fijo, :plu, :activo)
-      p[:clave] = p[:clave].to_s.strip.upcase
+      p[:clave] = p[:clave].to_s.strip.upcase if p.key?(:clave)
       p[:peso_fijo] = nil if p.key?(:peso_fijo) && p[:peso_fijo].blank?
       p[:plu] = nil if p.key?(:plu) && p[:plu].blank?
       p
