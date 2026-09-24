@@ -13,7 +13,7 @@ module Admin
 
     def create
       @promocion = Promocion.new(permitidos)
-      guardar(@promocion, admin_promociones_path, "Promoción creada")
+      guardar(@promocion, admin_promociones_path, t("admin.avisos.creado", que: t("admin.modelos.promocion")))
     end
 
     def edit
@@ -21,14 +21,14 @@ module Admin
 
     def update
       @promocion.assign_attributes(permitidos)
-      guardar(@promocion, admin_promociones_path, "Promoción guardada")
+      guardar(@promocion, admin_promociones_path, t("admin.avisos.guardado", que: t("admin.modelos.promocion")))
     end
 
     def destroy
       @promocion.destroy!
-      redirect_to admin_promociones_path, notice: "Promoción borrada"
+      redirect_to admin_promociones_path, notice: t("admin.avisos.borrado", que: t("admin.modelos.promocion"))
     rescue ActiveRecord::RecordNotDestroyed
-      redirect_to admin_promociones_path, alert: "Ya se usó en ventas: desactívala en vez de borrarla"
+      redirect_to admin_promociones_path, alert: t("admin.avisos.ya_usado", que: t("admin.modelos.promocion"))
     end
 
     private

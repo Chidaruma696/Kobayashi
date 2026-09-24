@@ -13,7 +13,7 @@ module Admin
 
     def create
       @rol = Rol.new(permitidos)
-      guardar(@rol, admin_roles_path, "Rol creado")
+      guardar(@rol, admin_roles_path, t("admin.avisos.creado", que: t("admin.modelos.rol")))
     end
 
     def edit
@@ -21,7 +21,7 @@ module Admin
 
     def update
       @rol.assign_attributes(permitidos)
-      guardar(@rol, admin_roles_path, "Rol guardado")
+      guardar(@rol, admin_roles_path, t("admin.avisos.guardado", que: t("admin.modelos.rol")))
     end
 
     private

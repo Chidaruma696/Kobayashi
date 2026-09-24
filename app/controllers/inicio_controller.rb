@@ -31,7 +31,7 @@ class InicioController < ApplicationController
       format.html
       format.csv do
         csv = CSV.generate(col_sep: ";") do |c|
-          c << [ "clave", "producto", "unidad", "cantidad", "importe", "lineas" ]
+          c << %w[clave producto unidad cantidad importe lineas].map { |k| t("inicio.csv.#{k}") }
           @filas.each { |f| c << [ f[0], f[1], f[2], BigDecimal(f[3].to_s).round(3).to_s("F"), (f[4].to_i / 100.0).round(2), f[5] ] }
         end
         send_data csv, filename: "ventas-#{@desde}-#{@hasta}.csv", type: "text/csv"

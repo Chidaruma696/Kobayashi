@@ -5,6 +5,9 @@ class Promocion < ApplicationRecord
   TIPOS = { "precio" => "Precio especial", "porcentaje" => "Descuento %", "por_cantidad" => "Precio a partir de una cantidad" }.freeze
 
   belongs_to :producto
+
+  def self.nombre_tipo(tipo) = I18n.t("promociones.tipos.#{tipo}", default: TIPOS[tipo])
+
   belongs_to :sucursal, optional: true
   has_many :venta_lineas, dependent: :restrict_with_error
 
@@ -41,9 +44,9 @@ class Promocion < ApplicationRecord
 
   def descripcion
     case tipo
-    when "precio" then "#{Dinero.pesos(precio_centavos)} fijo"
-    when "porcentaje" then "#{porcentaje.to_s('F').sub(/\.0+\z/, '')} % de descuento"
-    else "#{Dinero.pesos(precio_centavos)} desde #{cantidad_minima.to_s('F')} #{producto.unidad}"
+    when "precio" then I18n.t("promociones.desc.precio", precio: Dinero.pesos(precio_centavos))
+    when "porcentaje" then I18n.t("promociones.desc.porcentaje", pct: porcentaje.to_s("F").sub(/\.0+\z/, ""))
+    else I18n.t("promociones.desc.por_cantidad", precio: Dinero.pesos(precio_centavos), desde: cantidad_minima.to_s("F"), unidad: producto.unidad)
     end
   end
 
@@ -54,6 +57,6 @@ class Promocion < ApplicationRecord
   private
 
   def vigencia_coherente
-    errors.add(:hasta, "no puede ser antes de desde") if desde && hasta && hasta < desde
+    errors.add(:hasta, I18n.t("errores.promocion.hasta_antes")) if desde && hasta && hasta < desde
   end
 end

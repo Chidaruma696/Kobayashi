@@ -33,7 +33,7 @@ class Ajuste < ApplicationRecord
       valores.each do |clave, valor|
         next unless DEFAULTS.key?(clave)
         valor = valor.to_s.strip
-        raise ArgumentError, "#{clave}: debe ser un número entero" if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
+        raise ArgumentError, I18n.t("errores.ajuste.entero", clave: clave) if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
         registro = find_or_initialize_by(clave: clave)
         valor.blank? ? registro.destroy : registro.update!(valor: valor)
       end

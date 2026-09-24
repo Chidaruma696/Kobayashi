@@ -89,6 +89,7 @@ es:
     cuando: Cuándo
     codigo: Código
     kg_cada_una: kg c/u
+    crear: Crear
   cinta:
     menu: Menú
     salir: Salir
@@ -323,6 +324,23 @@ es:
       sin_caja: no hay caja abierta en %{sucursal} para recibir el abono
     revision:
       ya_esta: la revisión ya está %{estado}
+    promocion:
+      hasta_antes: no puede ser antes de desde
+    convenio:
+      ya_activo: ya tiene un convenio activo
+    rol:
+      lista: debe ser una lista
+      desconocidos: 'desconocidos: %{claves}'
+    ajuste:
+      entero: '%{clave}: debe ser un número entero'
+    movimiento:
+      tipo_desconocido: 'tipo de movimiento desconocido: %{tipo}'
+    canastillas:
+      cliente_o_chofer: un ajuste es sobre un cliente o sobre un chofer
+      mueve_algo: un movimiento mueve algo
+    credito:
+      cargo_suma: un cargo suma
+      abono_resta: un abono o devolución resta
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -348,6 +366,13 @@ es:
     por_revisar_html:
       one: '%{n} operación hecha sin autorización espera revisión.'
       other: '%{n} operaciones hechas sin autorización esperan revisión.'
+    csv:
+      clave: clave
+      producto: producto
+      unidad: unidad
+      cantidad: cantidad
+      importe: importe
+      lineas: lineas
   revisiones:
     titulo: Por revisar
     solo_esta: Solo %{sucursal}
@@ -1177,3 +1202,133 @@ es:
     entrada_o_ajuste: Entrada o ajuste
     queda_por_revisar: Se registra igual y queda por revisar al final del día.
     registrar: Registrar
+  promociones:
+    tipos:
+      precio: Precio especial
+      porcentaje: Descuento %
+      por_cantidad: Precio a partir de una cantidad
+    desc:
+      precio: '%{precio} fijo'
+      porcentaje: '%{pct} % de descuento'
+      por_cantidad: '%{precio} desde %{desde} %{unidad}'
+  admin:
+    modelos:
+      cliente: Cliente
+      convenio: Convenio
+      producto: Producto
+      promocion: Promoción
+      rol: Rol
+      ruta: Ruta
+      sucursal: Sucursal
+      tipo_canastilla: Tipo de canastilla
+      usuario: Usuario
+    modulos:
+      admin: administración
+      caja: caja
+      canastillas: canastillas
+      cobranza: cobranza
+      conteos: conteos
+      etiquetas: etiquetas
+      inventario: inventario
+      pedidos: pedidos
+      produccion: producción
+      reportes: reportes
+      revisiones: revisiones
+      rutas: rutas
+      salidas: salidas
+    avisos:
+      creado: '%{que} creado'
+      guardado: '%{que} guardado'
+      borrado: '%{que} borrado'
+      ya_usado: '%{que} ya se usó: desactívalo en vez de borrarlo'
+      codigo_agregado: Código %{codigo} agregado
+      codigo_quitado: Código quitado
+      orden_guardado: Orden de reparto guardado
+    telefono: Teléfono
+    sin_ruta: sin ruta
+    direccion: Dirección
+    orden_en_ruta: Orden en la ruta
+    orden: Orden
+    credito_de_ruta: Crédito de ruta
+    limite_credito: Límite (pesos, solo tipo límite)
+    dia_corte: Día de corte (semanal / especial)
+    sin_dia: — sin día (lunes a sábado) —
+    credito_ayuda: 'Nota por nota: paga la anterior para sacar la nueva. Límite: bloquea al llegar al tope. Semanal: bloquea si debe algo de antes del corte. Contado abonando: crédito mientras abone cada 7 días. Especial: como semanal con su día propio; sin día, solo bloqueo manual.'
+    clientes_de_ruta: Clientes de ruta
+    nuevo_cliente: Nuevo cliente
+    sin_clientes: Sin clientes.
+    clientes: Clientes
+    convenio: Convenio
+    nuevo_convenio: Nuevo convenio
+    convenios_de_precio: Convenios de precio
+    convenios_ayuda: Precio fijo por kilo en ciertas líneas, hasta un tope semanal de cajas que se acumula entre todas las notas de la semana del cliente. Lo que se pasa del tope va a precio de lista.
+    lineas_producto: Líneas de producto (separadas por coma)
+    excluir_productos: Excluir productos cuyo nombre contenga
+    precio_convenio: Precio convenio por kg (pesos)
+    tope_semanal_cajas: Tope semanal (cajas)
+    lineas: Líneas
+    excluye: Excluye
+    precio_kg: Precio/kg
+    tope_semanal: Tope semanal
+    borrar: borrar
+    confirmar_borrar_convenio: ¿Borrar el convenio?
+    sin_convenios: Sin convenios.
+    precio_por_sucursal: Precio por sucursal
+    precio_por_sucursal_ayuda: Vacío = hereda el precio general (%{precio}). Se guarda con el botón %{boton} del producto.
+    general: general
+    codigos_proveedor: Códigos del proveedor
+    escanea_o_teclea_codigo: escanea o teclea el código
+    plu_automatico: PLU (vacío = automático)
+    linea: Línea
+    kilo: kilo
+    peso_por_pieza_opcional: Peso por pieza (kg, opcional)
+    productos: Productos
+    nuevo_producto: Nuevo producto
+    codigos: Códigos
+    nombre_en_ticket: Nombre (sale en el ticket)
+    regla: Regla
+    descuento_pct: Descuento %
+    cantidad_minima: Cantidad mínima
+    desde_opcional: Desde (opcional)
+    hasta_opcional: Hasta (opcional)
+    activa: Activa
+    promocion_ayuda: Precio especial y precio a partir de una cantidad usan el campo Precio; el descuento usa el porcentaje sobre el precio de la sucursal. Si hay varias vigentes, la caja aplica la más barata.
+    promociones: Promociones
+    nueva_promocion: Nueva promoción
+    vigencia: Vigencia
+    siempre: siempre
+    confirmar_borrar: ¿Borrar %{nombre}?
+    sin_promociones: Sin promociones.
+    rol: Rol
+    nuevo_rol: Nuevo rol
+    roles: Roles
+    permisos: Permisos
+    usuarios: Usuarios
+    todo_administrador: Todo (administrador)
+    todo_el_modulo: todo el módulo
+    nueva_ruta: Nueva ruta
+    rutas: Rutas
+    sin_asignar: sin asignar
+    zonas_de_la_ruta: Zonas de la ruta (el reparto va zona por zona, en este orden)
+    nueva_zona: nueva zona
+    sin_rutas: Sin rutas.
+    editar_ruta_y_zonas: Editar ruta y zonas
+    orden_ayuda: 'Cada cliente en su zona y con su número. Cuando se arma un viaje, las paradas se generan con este orden: primero por zona, luego por número.'
+    sin_zona: — sin zona —
+    ruta_sin_clientes: La ruta no tiene clientes.
+    guardar_orden: Guardar orden
+    nueva_sucursal: Nueva sucursal
+    sucursales: Sucursales
+    tienda: tienda
+    limite_efectivo: Efectivo máximo en gaveta antes de obligar retiro
+    limite_en_gaveta: Límite en gaveta
+    nuevo_tipo_canastilla: Nuevo tipo de canastilla
+    tipos_de_canastilla: Tipos de canastilla
+    nuevo_tipo: Nuevo tipo
+    nombre_marca: Nombre (marca)
+    color: Color
+    sin_tipos_canastilla: Sin tipos. Crea al menos uno (por ejemplo "Rejilla" negra).
+    nuevo_usuario: Nuevo usuario
+    usuario: Usuario
+    usuario_minusculas: Usuario (minúsculas)
+    nueva_contrasena: Nueva contraseña (vacío = igual)

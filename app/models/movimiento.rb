@@ -25,7 +25,7 @@ class Movimiento < ApplicationRecord
   def self.signo(tipo)
     return 1 if ENTRADAS.include?(tipo)
     return -1 if SALIDAS.include?(tipo)
-    raise ArgumentError, "tipo de movimiento desconocido: #{tipo}"
+    raise ArgumentError, I18n.t("errores.movimiento.tipo_desconocido", tipo: tipo)
   end
 
   def entrada?

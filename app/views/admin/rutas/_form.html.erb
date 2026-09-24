@@ -1,16 +1,16 @@
 <%= form_with model: [ :admin, @ruta ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
-  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: "Nombre", tipo: :text_field %>
-  <div><%= f.label :chofer_id, "Chofer", class: "block text-sm font-medium" %><%= f.collection_select :chofer_id, Usuario.activos.order(:nombre), :id, :nombre, { include_blank: "sin asignar" }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
-  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activa %> Activa</label>
+  <%= render "admin/campo", f: f, campo: :nombre, etiqueta: t("comun.nombre"), tipo: :text_field %>
+  <div><%= f.label :chofer_id, t("salidas.chofer"), class: "block text-sm font-medium" %><%= f.collection_select :chofer_id, Usuario.activos.order(:nombre), :id, :nombre, { include_blank: t("admin.sin_asignar") }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box :activa %> <%= t("admin.activa") %></label>
   <fieldset class="rounded border border-stone-300 p-3">
-    <legend class="px-1 text-sm font-medium">Zonas de la ruta (el reparto va zona por zona, en este orden)</legend>
+    <legend class="px-1 text-sm font-medium"><%= t("admin.zonas_de_la_ruta") %></legend>
     <table class="w-full text-sm">
-      <thead><tr class="text-left text-stone-500"><th class="py-1">Zona</th><th class="w-24 py-1">Orden</th><th class="w-20 py-1">Quitar</th></tr></thead>
+      <thead><tr class="text-left text-stone-500"><th class="py-1"><%= t("viajes.zona") %></th><th class="w-24 py-1"><%= t("admin.orden") %></th><th class="w-20 py-1"><%= t("salidas.quitar") %></th></tr></thead>
       <tbody>
         <% zonas = @ruta.zonas.to_a.sort_by { |z| [ z.orden, z.nombre.to_s ] } + Array.new(2) { @ruta.zonas.build(orden: (@ruta.zonas.map(&:orden).max || 0) + 1) } %>
         <%= f.fields_for :zonas, zonas do |z| %>
           <tr>
-            <td class="py-1 pr-2"><%= z.text_field :nombre, placeholder: "nueva zona", class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
+            <td class="py-1 pr-2"><%= z.text_field :nombre, placeholder: t("admin.nueva_zona"), class: "w-full rounded border border-stone-300 px-2 py-1" %></td>
             <td class="py-1 pr-2"><%= z.number_field :orden, class: "w-full rounded border border-stone-300 px-2 py-1 font-mono" %></td>
             <td class="py-1"><% unless z.object.new_record? %><%= z.check_box :_destroy %><% end %></td>
           </tr>
@@ -18,6 +18,6 @@
       </tbody>
     </table>
   </fieldset>
-  <%= f.submit @ruta.new_record? ? "Crear" : "Guardar", class: "btn btn-primary" %>
-  <% unless @ruta.new_record? %><%= link_to "Orden de reparto", orden_admin_ruta_path(@ruta), class: "btn btn-secondary btn-sm ml-3" %><% end %>
+  <%= f.submit @ruta.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary" %>
+  <% unless @ruta.new_record? %><%= link_to t("viajes.orden_de_reparto"), orden_admin_ruta_path(@ruta), class: "btn btn-secondary btn-sm ml-3" %><% end %>
 <% end %>

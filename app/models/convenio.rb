@@ -9,7 +9,7 @@ class Convenio < ApplicationRecord
   validates :lineas, presence: true
   validates :tope_cajas, numericality: { greater_than_or_equal_to: 0 }
   validates :precio_centavos, numericality: { only_integer: true, greater_than: 0 }
-  validates :cliente_id, uniqueness: { conditions: -> { where(activo: true) }, message: "ya tiene un convenio activo" }, if: :activo
+  validates :cliente_id, uniqueness: { conditions: -> { where(activo: true) }, message: ->(*) { I18n.t("errores.convenio.ya_activo") } }, if: :activo
 
   scope :activos, -> { where(activo: true) }
 

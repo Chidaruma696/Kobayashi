@@ -13,7 +13,7 @@ module Admin
 
     def create
       @sucursal = Sucursal.new(permitidos)
-      guardar(@sucursal, admin_sucursales_path, "Sucursal creada")
+      guardar(@sucursal, admin_sucursales_path, t("admin.avisos.creado", que: t("admin.modelos.sucursal")))
     end
 
     def edit
@@ -21,7 +21,7 @@ module Admin
 
     def update
       @sucursal.assign_attributes(permitidos)
-      guardar(@sucursal, admin_sucursales_path, "Sucursal guardada")
+      guardar(@sucursal, admin_sucursales_path, t("admin.avisos.guardado", que: t("admin.modelos.sucursal")))
     end
 
     private

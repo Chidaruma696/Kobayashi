@@ -21,13 +21,13 @@ module Canastillas
 
   def self.mover!(tipo:, tipo_canastilla:, cantidad:, sucursal:, usuario:, cliente: nil, chofer: nil, viaje: nil, concepto: nil, fecha: Date.current)
     n = cantidad.to_i
-    raise ArgumentError, "la cantidad debe ser mayor que cero" unless n.positive?
+    raise ArgumentError, I18n.t("errores.inventario.cantidad_cero") unless n.positive?
     cli, cho = case tipo
     when "carga" then [ 0, n ]
     when "entrega" then [ n, -n ]
     when "devolucion" then [ -n, chofer ? n : 0 ]
     when "descarga" then [ 0, -n ]
-    else raise ArgumentError, "tipo de movimiento desconocido: #{tipo}"
+    else raise ArgumentError, I18n.t("errores.movimiento.tipo_desconocido", tipo: tipo)
     end
     MovimientoCanastilla.create!(tipo: tipo, tipo_canastilla: tipo_canastilla, cliente: cliente, chofer: chofer, viaje: viaje, sucursal: sucursal,
                                  cantidad_cliente: cliente ? cli : 0, cantidad_chofer: chofer ? cho : 0, fecha: fecha, concepto: concepto, usuario: usuario)
@@ -35,8 +35,8 @@ module Canastillas
 
   # Ajuste a mano, con motivo: cantidad con signo sobre el cliente o sobre el chofer.
   def self.ajustar!(tipo_canastilla:, cantidad:, motivo:, sucursal:, usuario:, cliente: nil, chofer: nil)
-    raise ArgumentError, "escribe el motivo del ajuste" if motivo.blank?
-    raise ArgumentError, "un ajuste es sobre un cliente o sobre un chofer" if cliente.nil? == chofer.nil?
+    raise ArgumentError, I18n.t("errores.escribe_motivo") if motivo.blank?
+    raise ArgumentError, I18n.t("errores.canastillas.cliente_o_chofer") if cliente.nil? == chofer.nil?
     MovimientoCanastilla.create!(tipo: "ajuste", tipo_canastilla: tipo_canastilla, cliente: cliente, chofer: chofer, sucursal: sucursal,
                                  cantidad_cliente: cliente ? cantidad.to_i : 0, cantidad_chofer: chofer ? cantidad.to_i : 0,
                                  fecha: Date.current, concepto: motivo, usuario: usuario)

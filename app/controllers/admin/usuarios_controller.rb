@@ -13,7 +13,7 @@ module Admin
 
     def create
       @usuario = Usuario.new(permitidos)
-      guardar(@usuario, admin_usuarios_path, "Usuario creado")
+      guardar(@usuario, admin_usuarios_path, t("admin.avisos.creado", que: t("admin.modelos.usuario")))
     end
 
     def edit
@@ -21,7 +21,7 @@ module Admin
 
     def update
       @usuario.assign_attributes(permitidos)
-      guardar(@usuario, admin_usuarios_path, "Usuario guardado")
+      guardar(@usuario, admin_usuarios_path, t("admin.avisos.guardado", que: t("admin.modelos.usuario")))
     end
 
     private

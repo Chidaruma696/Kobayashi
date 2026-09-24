@@ -1,14 +1,14 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Tipos de canastilla</h1>
-  <%= link_to "Nuevo tipo", new_admin_tipo_canastilla_path, class: "btn btn-primary btn-sm" %>
+  <h1 class="text-2xl font-bold"><%= t("admin.tipos_de_canastilla") %></h1>
+  <%= link_to t("admin.nuevo_tipo"), new_admin_tipo_canastilla_path, class: "btn btn-primary btn-sm" %>
 </div>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Color</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.nombre") %></th><th class="px-3 py-2"><%= t("admin.color") %></th><th class="px-3 py-2"><%= t("comun.activo") %></th><th></th></tr></thead>
   <tbody>
     <% @tipos.each do |t| %>
-      <tr class="border-t border-stone-100 <%= 'text-stone-400' unless t.activo %>"><td class="px-3 py-2"><%= t.nombre %></td><td class="px-3 py-2"><%= t.color %></td><td class="px-3 py-2"><%= t.activo ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_tipo_canastilla_path(t), class: "btn btn-secondary btn-xs" %></td></tr>
+      <tr class="border-t border-stone-100 <%= 'text-stone-400' unless t.activo %>"><td class="px-3 py-2"><%= t.nombre %></td><td class="px-3 py-2"><%= t.color %></td><td class="px-3 py-2"><%= t.activo ? t("comun.si") : t("comun.no") %></td>
+        <td class="px-3 py-2 text-right"><%= link_to t("comun.editar"), edit_admin_tipo_canastilla_path(t), class: "btn btn-secondary btn-xs" %></td></tr>
     <% end %>
-    <% if @tipos.empty? %><tr><td colspan="4" class="px-3 py-6 text-center text-stone-500">Sin tipos. Crea al menos uno (por ejemplo "Rejilla" negra).</td></tr><% end %>
+    <% if @tipos.empty? %><tr><td colspan="4" class="px-3 py-6 text-center text-stone-500"><%= t("admin.sin_tipos_canastilla") %></td></tr><% end %>
   </tbody>
 </table>

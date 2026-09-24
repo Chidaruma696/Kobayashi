@@ -14,7 +14,7 @@ module Admin
 
     def create
       @cliente = Cliente.new(permitidos)
-      guardar(@cliente, admin_clientes_path, "Cliente creado")
+      guardar(@cliente, admin_clientes_path, t("admin.avisos.creado", que: t("admin.modelos.cliente")))
     end
 
     def edit
@@ -22,7 +22,7 @@ module Admin
 
     def update
       @cliente.assign_attributes(permitidos)
-      guardar(@cliente, admin_clientes_path, "Cliente guardado")
+      guardar(@cliente, admin_clientes_path, t("admin.avisos.guardado", que: t("admin.modelos.cliente")))
     end
 
     private

@@ -13,7 +13,7 @@ module Admin
 
     def create
       @tipo = TipoCanastilla.new(permitidos)
-      guardar(@tipo, admin_tipos_canastilla_path, "Tipo de canastilla creado")
+      guardar(@tipo, admin_tipos_canastilla_path, t("admin.avisos.creado", que: t("admin.modelos.tipo_canastilla")))
     end
 
     def edit
@@ -21,7 +21,7 @@ module Admin
 
     def update
       @tipo.assign_attributes(permitidos)
-      guardar(@tipo, admin_tipos_canastilla_path, "Tipo de canastilla guardado")
+      guardar(@tipo, admin_tipos_canastilla_path, t("admin.avisos.guardado", que: t("admin.modelos.tipo_canastilla")))
     end
 
     private

@@ -19,7 +19,7 @@ class MovimientoCanastilla < ApplicationRecord
 
   validates :tipo, inclusion: { in: TIPOS }
   validates :fecha, presence: true
-  validate { errors.add(:base, "un movimiento mueve algo") if cantidad_cliente.zero? && cantidad_chofer.zero? }
+  validate { errors.add(:base, I18n.t("errores.canastillas.mueve_algo")) if cantidad_cliente.zero? && cantidad_chofer.zero? }
 
   before_update { raise ActiveRecord::ReadOnlyRecord, "las canastillas no se editan, se ajustan" }
   before_destroy { raise ActiveRecord::ReadOnlyRecord, "las canastillas no se borran, se ajustan" }

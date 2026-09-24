@@ -13,7 +13,7 @@ module Admin
 
     def create
       @ruta = Ruta.new(permitidos)
-      guardar(@ruta, admin_rutas_path, "Ruta creada")
+      guardar(@ruta, admin_rutas_path, t("admin.avisos.creado", que: t("admin.modelos.ruta")))
     end
 
     def edit
@@ -21,7 +21,7 @@ module Admin
 
     def update
       @ruta.assign_attributes(permitidos)
-      guardar(@ruta, admin_rutas_path, "Ruta guardada")
+      guardar(@ruta, admin_rutas_path, t("admin.avisos.guardado", que: t("admin.modelos.ruta")))
     end
 
     # Orden de reparto de la ruta: cada cliente en su zona y con su número.
@@ -37,7 +37,7 @@ module Admin
           c.update!(zona_id: campos[:zona_id].presence, orden: campos[:orden].to_i)
         end
       end
-      redirect_to orden_admin_ruta_path(@ruta), notice: "Orden de reparto guardado"
+      redirect_to orden_admin_ruta_path(@ruta), notice: t("admin.avisos.orden_guardado")
     rescue ActiveRecord::RecordInvalid => e
       redirect_to orden_admin_ruta_path(@ruta), alert: e.record.errors.full_messages.join(", ")
     end

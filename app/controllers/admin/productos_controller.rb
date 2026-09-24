@@ -14,7 +14,7 @@ module Admin
 
     def create
       @producto = Producto.new(permitidos)
-      guardar(@producto, -> { edit_admin_producto_path(@producto) }, "Producto creado")
+      guardar(@producto, -> { edit_admin_producto_path(@producto) }, t("admin.avisos.creado", que: t("admin.modelos.producto")))
     end
 
     def edit
@@ -28,7 +28,7 @@ module Admin
       end
       Producto.transaction do
         params.fetch(:precios, {}).each { |sucursal_id, pesos| @producto.fijar_precio!(Sucursal.find(sucursal_id), pesos) } if @producto.valid?
-        guardar(@producto, admin_productos_path, "Producto guardado")
+        guardar(@producto, admin_productos_path, t("admin.avisos.guardado", que: t("admin.modelos.producto")))
       end
     end
 

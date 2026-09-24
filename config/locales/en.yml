@@ -89,6 +89,7 @@ en:
     cuando: When
     codigo: Code
     kg_cada_una: kg each
+    crear: Create
   cinta:
     menu: Menu
     salir: Sign out
@@ -323,6 +324,23 @@ en:
       sin_caja: no register open at %{sucursal} to take the payment
     revision:
       ya_esta: the review is already %{estado}
+    promocion:
+      hasta_antes: cannot be before from
+    convenio:
+      ya_activo: already has an active agreement
+    rol:
+      lista: must be a list
+      desconocidos: 'unknown: %{claves}'
+    ajuste:
+      entero: '%{clave}: must be a whole number'
+    movimiento:
+      tipo_desconocido: 'unknown movement type: %{tipo}'
+    canastillas:
+      cliente_o_chofer: an adjustment is on a customer or on a driver
+      mueve_algo: a movement moves something
+    credito:
+      cargo_suma: a charge adds
+      abono_resta: a payment or refund subtracts
   inicio:
     titulo: Home
     ventas: Sales
@@ -348,6 +366,13 @@ en:
     por_revisar_html:
       one: '%{n} operation done without authorisation awaits review.'
       other: '%{n} operations done without authorisation await review.'
+    csv:
+      clave: key
+      producto: product
+      unidad: unit
+      cantidad: quantity
+      importe: amount
+      lineas: lines
   revisiones:
     titulo: To review
     solo_esta: Only %{sucursal}
@@ -1177,3 +1202,133 @@ en:
     entrada_o_ajuste: Receipt or adjustment
     queda_por_revisar: It is recorded anyway and goes to end-of-day review.
     registrar: Record
+  promociones:
+    tipos:
+      precio: Special price
+      porcentaje: Discount %
+      por_cantidad: Price from a quantity
+    desc:
+      precio: '%{precio} fixed'
+      porcentaje: '%{pct} % off'
+      por_cantidad: '%{precio} from %{desde} %{unidad}'
+  admin:
+    modelos:
+      cliente: Customer
+      convenio: Agreement
+      producto: Product
+      promocion: Promotion
+      rol: Role
+      ruta: Route
+      sucursal: Branch
+      tipo_canastilla: Crate type
+      usuario: User
+    modulos:
+      admin: administration
+      caja: register
+      canastillas: crates
+      cobranza: collections
+      conteos: counts
+      etiquetas: labels
+      inventario: inventory
+      pedidos: orders
+      produccion: production
+      reportes: reports
+      revisiones: reviews
+      rutas: routes
+      salidas: transfers
+    avisos:
+      creado: '%{que} created'
+      guardado: '%{que} saved'
+      borrado: '%{que} deleted'
+      ya_usado: '%{que} is already in use: deactivate it instead of deleting it'
+      codigo_agregado: Code %{codigo} added
+      codigo_quitado: Code removed
+      orden_guardado: Delivery order saved
+    telefono: Phone
+    sin_ruta: no route
+    direccion: Address
+    orden_en_ruta: Order on the route
+    orden: Order
+    credito_de_ruta: Route credit
+    limite_credito: Limit (pesos, limit type only)
+    dia_corte: Cutoff day (weekly / special)
+    sin_dia: — no day (Monday to Saturday) —
+    credito_ayuda: 'Note by note: pays the previous one to get a new one. Limit: blocks on reaching the cap. Weekly: blocks if anything from before the cutoff is owed. Cash with payments: credit as long as they pay every 7 days. Special: like weekly with its own day; without a day, manual block only.'
+    clientes_de_ruta: Route customers
+    nuevo_cliente: New customer
+    sin_clientes: No customers.
+    clientes: Customers
+    convenio: Agreement
+    nuevo_convenio: New agreement
+    convenios_de_precio: Price agreements
+    convenios_ayuda: Fixed price per kilo on certain lines, up to a weekly cap of boxes that accumulates across all the customer's notes of the week. Anything over the cap goes at list price.
+    lineas_producto: Product lines (comma-separated)
+    excluir_productos: Exclude products whose name contains
+    precio_convenio: Agreement price per kg (pesos)
+    tope_semanal_cajas: Weekly cap (boxes)
+    lineas: Lines
+    excluye: Excludes
+    precio_kg: Price/kg
+    tope_semanal: Weekly cap
+    borrar: delete
+    confirmar_borrar_convenio: Delete the agreement?
+    sin_convenios: No agreements.
+    precio_por_sucursal: Price per branch
+    precio_por_sucursal_ayuda: Empty = inherits the general price (%{precio}). Saved with the product's %{boton} button.
+    general: general
+    codigos_proveedor: Supplier codes
+    escanea_o_teclea_codigo: scan or type the code
+    plu_automatico: PLU (empty = automatic)
+    linea: Line
+    kilo: kilo
+    peso_por_pieza_opcional: Weight per piece (kg, optional)
+    productos: Products
+    nuevo_producto: New product
+    codigos: Codes
+    nombre_en_ticket: Name (shown on the ticket)
+    regla: Rule
+    descuento_pct: Discount %
+    cantidad_minima: Minimum quantity
+    desde_opcional: From (optional)
+    hasta_opcional: To (optional)
+    activa: Active
+    promocion_ayuda: Special price and price from a quantity use the Price field; the discount uses the percentage over the branch price. If several are in force, the register applies the cheapest.
+    promociones: Promotions
+    nueva_promocion: New promotion
+    vigencia: Validity
+    siempre: always
+    confirmar_borrar: Delete %{nombre}?
+    sin_promociones: No promotions.
+    rol: Role
+    nuevo_rol: New role
+    roles: Roles
+    permisos: Permissions
+    usuarios: Users
+    todo_administrador: Everything (administrator)
+    todo_el_modulo: whole module
+    nueva_ruta: New route
+    rutas: Routes
+    sin_asignar: unassigned
+    zonas_de_la_ruta: Route zones (delivery goes zone by zone, in this order)
+    nueva_zona: new zone
+    sin_rutas: No routes.
+    editar_ruta_y_zonas: Edit route and zones
+    orden_ayuda: 'Each customer in their zone and with their number. When a trip is assembled, the stops are generated in this order: first by zone, then by number.'
+    sin_zona: — no zone —
+    ruta_sin_clientes: The route has no customers.
+    guardar_orden: Save order
+    nueva_sucursal: New branch
+    sucursales: Branches
+    tienda: store
+    limite_efectivo: Maximum cash in the drawer before a drop is required
+    limite_en_gaveta: Drawer limit
+    nuevo_tipo_canastilla: New crate type
+    tipos_de_canastilla: Crate types
+    nuevo_tipo: New type
+    nombre_marca: Name (brand)
+    color: Color
+    sin_tipos_canastilla: No types. Create at least one (for example a black "Grid").
+    nuevo_usuario: New user
+    usuario: Username
+    usuario_minusculas: Username (lowercase)
+    nueva_contrasena: New password (empty = unchanged)

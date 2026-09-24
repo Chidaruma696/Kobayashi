@@ -89,6 +89,7 @@ de:
     cuando: Wann
     codigo: Code
     kg_cada_una: kg je Stück
+    crear: Anlegen
   cinta:
     menu: Menü
     salir: Abmelden
@@ -323,6 +324,23 @@ de:
       sin_caja: keine Kasse offen in %{sucursal}, um die Zahlung anzunehmen
     revision:
       ya_esta: die Prüfung ist bereits %{estado}
+    promocion:
+      hasta_antes: darf nicht vor „von“ liegen
+    convenio:
+      ya_activo: hat bereits eine aktive Vereinbarung
+    rol:
+      lista: muss eine Liste sein
+      desconocidos: 'unbekannt: %{claves}'
+    ajuste:
+      entero: '%{clave}: muss eine ganze Zahl sein'
+    movimiento:
+      tipo_desconocido: 'unbekannte Bewegungsart: %{tipo}'
+    canastillas:
+      cliente_o_chofer: eine Korrektur betrifft einen Kunden oder einen Fahrer
+      mueve_algo: eine Bewegung bewegt etwas
+    credito:
+      cargo_suma: eine Belastung addiert
+      abono_resta: eine Zahlung oder Erstattung subtrahiert
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -348,6 +366,13 @@ de:
     por_revisar_html:
       one: '%{n} Vorgang ohne Freigabe wartet auf Prüfung.'
       other: '%{n} Vorgänge ohne Freigabe warten auf Prüfung.'
+    csv:
+      clave: schluessel
+      producto: produkt
+      unidad: einheit
+      cantidad: menge
+      importe: betrag
+      lineas: zeilen
   revisiones:
     titulo: Zu prüfen
     solo_esta: Nur %{sucursal}
@@ -1177,3 +1202,133 @@ de:
     entrada_o_ajuste: Eingang oder Korrektur
     queda_por_revisar: Wird trotzdem erfasst und geht zur Tagesprüfung.
     registrar: Erfassen
+  promociones:
+    tipos:
+      precio: Sonderpreis
+      porcentaje: Rabatt %
+      por_cantidad: Preis ab einer Menge
+    desc:
+      precio: '%{precio} fest'
+      porcentaje: '%{pct} % Rabatt'
+      por_cantidad: '%{precio} ab %{desde} %{unidad}'
+  admin:
+    modelos:
+      cliente: Kunde
+      convenio: Vereinbarung
+      producto: Produkt
+      promocion: Aktion
+      rol: Rolle
+      ruta: Tour
+      sucursal: Filiale
+      tipo_canastilla: Korbtyp
+      usuario: Benutzer
+    modulos:
+      admin: Verwaltung
+      caja: Kasse
+      canastillas: Körbe
+      cobranza: Inkasso
+      conteos: Zählungen
+      etiquetas: Etiketten
+      inventario: Bestand
+      pedidos: Bestellungen
+      produccion: Produktion
+      reportes: Berichte
+      revisiones: Prüfungen
+      rutas: Touren
+      salidas: Transfers
+    avisos:
+      creado: '%{que} angelegt'
+      guardado: '%{que} gespeichert'
+      borrado: '%{que} gelöscht'
+      ya_usado: '%{que} wird bereits verwendet: deaktivieren statt löschen'
+      codigo_agregado: Code %{codigo} hinzugefügt
+      codigo_quitado: Code entfernt
+      orden_guardado: Lieferreihenfolge gespeichert
+    telefono: Telefon
+    sin_ruta: keine Tour
+    direccion: Adresse
+    orden_en_ruta: Reihenfolge auf der Tour
+    orden: Reihenfolge
+    credito_de_ruta: Tourkredit
+    limite_credito: Limit (Pesos, nur Typ Limit)
+    dia_corte: Stichtag (wöchentlich / speziell)
+    sin_dia: — kein Tag (Montag bis Samstag) —
+    credito_ayuda: 'Schein für Schein: zahlt den vorigen, um einen neuen zu bekommen. Limit: sperrt beim Erreichen der Grenze. Wöchentlich: sperrt, wenn etwas von vor dem Stichtag offen ist. Bar mit Teilzahlungen: Kredit, solange alle 7 Tage gezahlt wird. Speziell: wie wöchentlich mit eigenem Tag; ohne Tag nur manuelle Sperre.'
+    clientes_de_ruta: Tourkunden
+    nuevo_cliente: Neuer Kunde
+    sin_clientes: Keine Kunden.
+    clientes: Kunden
+    convenio: Vereinbarung
+    nuevo_convenio: Neue Vereinbarung
+    convenios_de_precio: Preisvereinbarungen
+    convenios_ayuda: Fester Kilopreis für bestimmte Linien bis zu einer wöchentlichen Kistengrenze, die sich über alle Lieferscheine des Kunden in der Woche summiert. Was darüber liegt, geht zum Listenpreis.
+    lineas_producto: Produktlinien (durch Komma getrennt)
+    excluir_productos: Produkte ausschließen, deren Name enthält
+    precio_convenio: Vereinbarter Preis je kg (Pesos)
+    tope_semanal_cajas: Wochengrenze (Kisten)
+    lineas: Linien
+    excluye: Ausgeschlossen
+    precio_kg: Preis/kg
+    tope_semanal: Wochengrenze
+    borrar: löschen
+    confirmar_borrar_convenio: Vereinbarung löschen?
+    sin_convenios: Keine Vereinbarungen.
+    precio_por_sucursal: Preis je Filiale
+    precio_por_sucursal_ayuda: Leer = erbt den allgemeinen Preis (%{precio}). Wird mit der Schaltfläche %{boton} des Produkts gespeichert.
+    general: allgemein
+    codigos_proveedor: Lieferantencodes
+    escanea_o_teclea_codigo: Code scannen oder eintippen
+    plu_automatico: PLU (leer = automatisch)
+    linea: Linie
+    kilo: Kilo
+    peso_por_pieza_opcional: Gewicht je Stück (kg, optional)
+    productos: Produkte
+    nuevo_producto: Neues Produkt
+    codigos: Codes
+    nombre_en_ticket: Name (erscheint auf dem Ticket)
+    regla: Regel
+    descuento_pct: Rabatt %
+    cantidad_minima: Mindestmenge
+    desde_opcional: Von (optional)
+    hasta_opcional: Bis (optional)
+    activa: Aktiv
+    promocion_ayuda: Sonderpreis und Preis ab einer Menge nutzen das Feld Preis; der Rabatt nutzt den Prozentsatz auf den Filialpreis. Gelten mehrere, wendet die Kasse die günstigste an.
+    promociones: Aktionen
+    nueva_promocion: Neue Aktion
+    vigencia: Gültigkeit
+    siempre: immer
+    confirmar_borrar: '%{nombre} löschen?'
+    sin_promociones: Keine Aktionen.
+    rol: Rolle
+    nuevo_rol: Neue Rolle
+    roles: Rollen
+    permisos: Berechtigungen
+    usuarios: Benutzer
+    todo_administrador: Alles (Administrator)
+    todo_el_modulo: ganzes Modul
+    nueva_ruta: Neue Tour
+    rutas: Touren
+    sin_asignar: nicht zugewiesen
+    zonas_de_la_ruta: Zonen der Tour (die Lieferung geht Zone für Zone, in dieser Reihenfolge)
+    nueva_zona: neue Zone
+    sin_rutas: Keine Touren.
+    editar_ruta_y_zonas: Tour und Zonen bearbeiten
+    orden_ayuda: 'Jeder Kunde in seiner Zone mit seiner Nummer. Beim Zusammenstellen einer Fahrt entstehen die Halte in dieser Reihenfolge: erst nach Zone, dann nach Nummer.'
+    sin_zona: — keine Zone —
+    ruta_sin_clientes: Die Tour hat keine Kunden.
+    guardar_orden: Reihenfolge speichern
+    nueva_sucursal: Neue Filiale
+    sucursales: Filialen
+    tienda: Laden
+    limite_efectivo: Maximales Bargeld in der Lade, bevor eine Abschöpfung nötig ist
+    limite_en_gaveta: Ladenlimit
+    nuevo_tipo_canastilla: Neuer Korbtyp
+    tipos_de_canastilla: Korbtypen
+    nuevo_tipo: Neuer Typ
+    nombre_marca: Name (Marke)
+    color: Farbe
+    sin_tipos_canastilla: Keine Typen. Lege mindestens einen an (z. B. „Gitter“ schwarz).
+    nuevo_usuario: Neuer Benutzer
+    usuario: Benutzername
+    usuario_minusculas: Benutzername (Kleinbuchstaben)
+    nueva_contrasena: Neues Passwort (leer = unverändert)

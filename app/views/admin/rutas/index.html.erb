@@ -1,18 +1,18 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Rutas</h1>
-  <%= link_to "Nueva ruta", new_admin_ruta_path, class: "btn btn-primary btn-sm" %>
+  <h1 class="text-2xl font-bold"><%= t("admin.rutas") %></h1>
+  <%= link_to t("admin.nueva_ruta"), new_admin_ruta_path, class: "btn btn-primary btn-sm" %>
 </div>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Chofer</th><th class="px-3 py-2">Clientes</th><th class="px-3 py-2">Activa</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("salidas.ruta") %></th><th class="px-3 py-2"><%= t("salidas.chofer") %></th><th class="px-3 py-2"><%= t("admin.clientes") %></th><th class="px-3 py-2"><%= t("admin.activa") %></th><th></th></tr></thead>
   <tbody>
     <% @rutas.each do |r| %>
       <tr class="border-t border-stone-100 align-top">
         <td class="px-3 py-2 font-semibold"><%= r.nombre %></td><td class="px-3 py-2"><%= r.chofer || "—" %></td>
         <td class="px-3 py-2 text-stone-600"><%= r.clientes_en_orden.map(&:nombre).join(" → ") %></td>
-        <td class="px-3 py-2"><%= r.activa ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to "Editar", edit_admin_ruta_path(r), class: "btn btn-secondary btn-xs" %> · <%= link_to "Orden de reparto", orden_admin_ruta_path(r), class: "enlace" %></td>
+        <td class="px-3 py-2"><%= r.activa ? t("comun.si") : t("comun.no") %></td>
+        <td class="px-3 py-2 text-right whitespace-nowrap"><%= link_to t("comun.editar"), edit_admin_ruta_path(r), class: "btn btn-secondary btn-xs" %> · <%= link_to t("viajes.orden_de_reparto"), orden_admin_ruta_path(r), class: "enlace" %></td>
       </tr>
     <% end %>
-    <% if @rutas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-stone-500">Sin rutas.</td></tr><% end %>
+    <% if @rutas.empty? %><tr><td colspan="5" class="px-3 py-6 text-center text-stone-500"><%= t("admin.sin_rutas") %></td></tr><% end %>
   </tbody>
 </table>

@@ -1,23 +1,23 @@
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-  <h1 class="text-2xl font-bold">Clientes de ruta</h1>
+  <h1 class="text-2xl font-bold"><%= t("admin.clientes_de_ruta") %></h1>
   <div class="flex gap-3">
     <%= form_with url: admin_clientes_path, method: :get, class: "flex gap-2" do |f| %>
-      <%= f.text_field :q, value: params[:q], placeholder: "buscar", class: "btn btn-secondary btn-sm" %>
-      <%= f.submit "Buscar", class: "btn btn-secondary btn-sm" %>
+      <%= f.text_field :q, value: params[:q], placeholder: t("comun.buscar").downcase, class: "btn btn-secondary btn-sm" %>
+      <%= f.submit t("comun.buscar"), class: "btn btn-secondary btn-sm" %>
     <% end %>
-    <%= link_to "Nuevo cliente", new_admin_cliente_path, class: "btn btn-primary btn-sm" %>
+    <%= link_to t("admin.nuevo_cliente"), new_admin_cliente_path, class: "btn btn-primary btn-sm" %>
   </div>
 </div>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Teléfono</th><th class="px-3 py-2">Dirección</th><th class="px-3 py-2">Ruta</th><th class="px-3 py-2">Orden</th><th class="px-3 py-2">Crédito</th><th class="px-3 py-2 text-right">Saldo</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.nombre") %></th><th class="px-3 py-2"><%= t("admin.telefono") %></th><th class="px-3 py-2"><%= t("admin.direccion") %></th><th class="px-3 py-2"><%= t("salidas.ruta") %></th><th class="px-3 py-2"><%= t("admin.orden") %></th><th class="px-3 py-2"><%= t("cobranza.credito") %></th><th class="px-3 py-2 text-right"><%= t("cobranza.saldo") %></th><th class="px-3 py-2"><%= t("comun.activo") %></th><th></th></tr></thead>
   <tbody>
     <% @clientes.each do |c| %>
       <tr class="border-t border-stone-100 <%= 'text-stone-400' unless c.activo %>">
         <td class="px-3 py-2"><%= c.nombre %></td><td class="px-3 py-2"><%= c.telefono %></td><td class="px-3 py-2"><%= c.direccion %></td>
-        <td class="px-3 py-2"><%= c.ruta %></td><td class="px-3 py-2"><%= c.orden %></td><td class="px-3 py-2"><%= Credito::TIPOS[c.credito] %></td><td class="px-3 py-2 text-right font-mono"><%= pesos(c.saldo_centavos) %></td><td class="px-3 py-2"><%= c.activo ? "sí" : "no" %></td>
-        <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_cliente_path(c), class: "btn btn-secondary btn-xs" %></td>
+        <td class="px-3 py-2"><%= c.ruta %></td><td class="px-3 py-2"><%= c.orden %></td><td class="px-3 py-2"><%= Credito.nombre(c.credito) %></td><td class="px-3 py-2 text-right font-mono"><%= pesos(c.saldo_centavos) %></td><td class="px-3 py-2"><%= c.activo ? t("comun.si") : t("comun.no") %></td>
+        <td class="px-3 py-2 text-right"><%= link_to t("comun.editar"), edit_admin_cliente_path(c), class: "btn btn-secondary btn-xs" %></td>
       </tr>
     <% end %>
-    <% if @clientes.empty? %><tr><td colspan="9" class="px-3 py-6 text-center text-stone-500">Sin clientes.</td></tr><% end %>
+    <% if @clientes.empty? %><tr><td colspan="9" class="px-3 py-6 text-center text-stone-500"><%= t("admin.sin_clientes") %></td></tr><% end %>
   </tbody>
 </table>

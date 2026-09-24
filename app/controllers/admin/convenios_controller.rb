@@ -13,7 +13,7 @@ module Admin
 
     def create
       @convenio = Convenio.new(permitidos)
-      guardar(@convenio, admin_convenios_path, "Convenio creado")
+      guardar(@convenio, admin_convenios_path, t("admin.avisos.creado", que: t("admin.modelos.convenio")))
     end
 
     def edit
@@ -21,14 +21,14 @@ module Admin
 
     def update
       @convenio.assign_attributes(permitidos)
-      guardar(@convenio, admin_convenios_path, "Convenio guardado")
+      guardar(@convenio, admin_convenios_path, t("admin.avisos.guardado", que: t("admin.modelos.convenio")))
     end
 
     def destroy
       @convenio.destroy!
-      redirect_to admin_convenios_path, notice: "Convenio borrado"
+      redirect_to admin_convenios_path, notice: t("admin.avisos.borrado", que: t("admin.modelos.convenio"))
     rescue ActiveRecord::RecordNotDestroyed
-      redirect_to admin_convenios_path, alert: "Ya se usó en notas: desactívalo en vez de borrarlo"
+      redirect_to admin_convenios_path, alert: t("admin.avisos.ya_usado", que: t("admin.modelos.convenio"))
     end
 
     private

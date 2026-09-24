@@ -8,7 +8,7 @@ module Admin
       codigo = producto.codigos_barras.build(codigo: params[:codigo])
       if codigo.save
         respond_to do |format|
-          format.html { redirect_to edit_admin_producto_path(producto), notice: "Código #{codigo.codigo} agregado" }
+          format.html { redirect_to edit_admin_producto_path(producto), notice: t("admin.avisos.codigo_agregado", codigo: codigo.codigo) }
           format.json { render json: { id: codigo.id, codigo: codigo.codigo } }
         end
       else
@@ -23,7 +23,7 @@ module Admin
       producto = Producto.find(params[:producto_id])
       producto.codigos_barras.find(params[:id]).destroy!
       respond_to do |format|
-        format.html { redirect_to edit_admin_producto_path(producto), notice: "Código quitado" }
+        format.html { redirect_to edit_admin_producto_path(producto), notice: t("admin.avisos.codigo_quitado") }
         format.json { head :no_content }
       end
     end

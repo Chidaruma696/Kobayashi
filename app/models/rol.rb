@@ -15,8 +15,8 @@ class Rol < ApplicationRecord
   private
 
   def permisos_conocidos
-    return errors.add(:permisos, "debe ser una lista") unless permisos.is_a?(Array)
+    return errors.add(:permisos, I18n.t("errores.rol.lista")) unless permisos.is_a?(Array)
     desconocidos = permisos.reject { |c| Permiso.valida?(c) }
-    errors.add(:permisos, "desconocidos: #{desconocidos.join(', ')}") if desconocidos.any?
+    errors.add(:permisos, I18n.t("errores.rol.desconocidos", claves: desconocidos.join(", "))) if desconocidos.any?
   end
 end
