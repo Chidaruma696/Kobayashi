@@ -1,9 +1,9 @@
 <% content_for :body_class, "items-stretch" %>
 <%# Primer arranque a pantalla completa y por pasos: apariencia, negocio, sucursal, administrador, resumen. %>
-<div class="grid min-h-screen w-full lg:grid-cols-[320px_1fr]" data-controller="pasos" data-pasos-inicial-value="<%= @paso || 1 %>">
+<div class="grid min-h-screen w-full grid-rows-[auto_1fr] lg:grid-cols-[340px_1fr] lg:grid-rows-1" data-controller="pasos" data-pasos-inicial-value="<%= @paso || 1 %>">
   <aside class="flex flex-col gap-5 bg-marca-400 px-6 py-6 text-marca-950 lg:px-8 lg:py-8">
     <div class="flex items-center gap-4 lg:flex-col lg:items-start">
-      <%= image_tag "logo-b.png", alt: "Kobayashi", class: "h-20 w-20 shrink-0 lg:h-36 lg:w-36" %>
+      <%= image_tag "logo-b.png", alt: "Kobayashi", class: "h-24 w-24 shrink-0 lg:h-56 lg:w-56" %>
       <div>
         <div class="text-3xl font-bold leading-tight">Kobayashi</div>
         <div class="text-xs opacity-80">v<%= Kobayashi::VERSION %> · <%= t("instalacion.titulo") %></div>
@@ -20,11 +20,11 @@
     </ol>
   </aside>
 
-  <main class="flex flex-col px-6 py-10 sm:px-12 lg:px-20">
+  <main class="flex flex-col justify-center px-6 py-8 sm:px-12 lg:px-20">
     <% if flash[:alert] %>
       <p class="mb-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700"><%= flash[:alert] %></p>
     <% end %>
-    <%= form_with url: instalar_path, scope: :instalacion, class: "flex flex-1 flex-col", data: { turbo: false } do |f| %>
+    <%= form_with url: instalar_path, scope: :instalacion, class: "flex flex-col", data: { turbo: false } do |f| %>
       <%= f.hidden_field :idioma, value: I18n.locale %>
 
       <%# 1. Idioma (cambiarlo recarga la página: por eso va primero, antes de teclear nada) %>
