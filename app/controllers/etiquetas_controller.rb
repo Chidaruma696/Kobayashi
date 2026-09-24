@@ -1,5 +1,6 @@
 class EtiquetasController < ApplicationController
   pestana :etiquetas
+  modulo :etiquetas
 
   before_action { autorizar!("etiquetas.crear") }
 

@@ -1,5 +1,6 @@
 class CargosController < ApplicationController
   pestana :conteos
+  modulo :conteos
 
   before_action { autorizar!("conteos.cargos") }
 

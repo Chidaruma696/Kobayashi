@@ -23,6 +23,19 @@
     <%= form_with url: ajustes_sistema_path, method: :patch, class: "card space-y-5" do |f| %>
       <h2 class="font-semibold"><%= t("ajustes.sistema") %></h2>
       <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.modulos") %></h3>
+        <p class="text-xs text-stone-500"><%= t("ajustes.modulos_ayuda") %></p>
+        <%= hidden_field_tag "modulos[]", "" %>
+        <div class="grid gap-2 sm:grid-cols-2">
+          <% Modulo::OPCIONALES.each do |m| %>
+            <label class="flex items-start gap-2 rounded border border-stone-200 px-3 py-2 text-sm has-checked:border-marca-400 has-checked:bg-marca-50">
+              <%= check_box_tag "modulos[]", m, Modulo.activo?(m), id: "modulo_#{m}", class: "mt-1" %>
+              <span><strong><%= t("modulos.#{m}.nombre") %></strong><br><span class="text-xs text-stone-500"><%= t("modulos.#{m}.que") %></span></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+      <div class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.negocio") %></h3>
         <p class="text-xs text-stone-500"><%= t("ajustes.negocio_ayuda") %></p>
         <% %w[negocio.nombre negocio.direccion negocio.telefono negocio.pie_ticket].each do |clave| %>
@@ -31,6 +44,7 @@
           </label>
         <% end %>
       </div>
+      <% if Modulo.activo?("etiquetas") %>
       <div class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.etiqueta") %></h3>
         <p class="text-xs text-stone-500"><%= t("ajustes.etiqueta_ayuda") %></p>
@@ -45,6 +59,7 @@
           <%= f.text_field "ajuste[etiqueta.leyenda]", value: @ajustes["etiqueta.leyenda"], class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
         </label>
       </div>
+      <% end %>
       <div class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.caja") %></h3>
         <div class="grid grid-cols-2 gap-3">

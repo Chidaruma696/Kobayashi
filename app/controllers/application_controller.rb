@@ -8,7 +8,11 @@ class ApplicationController < ActionController::Base
   class_attribute :pestana_ribbon, default: :inicio
   def self.pestana(id) = self.pestana_ribbon = id
 
-  before_action :exigir_instalacion, :exigir_sesion
+  # Módulo opcional del que depende este controlador (ver Modulo); nil = siempre disponible.
+  class_attribute :modulo_requerido, default: nil
+  def self.modulo(clave) = self.modulo_requerido = clave.to_s
+
+  before_action :exigir_instalacion, :exigir_sesion, :exigir_modulo
   around_action :con_idioma
   helper_method :usuario_actual, :sucursal_actual, :puede?
 
@@ -40,6 +44,12 @@ class ApplicationController < ActionController::Base
   # primero se crea el administrador.
   def exigir_instalacion
     redirect_to instalar_path if Usuario.activos.none?
+  end
+
+  # Un módulo apagado no existe: sus pantallas lo dicen en vez de dar un 404 pelón.
+  def exigir_modulo
+    return if modulo_requerido.nil? || Modulo.activo?(modulo_requerido)
+    render "errores/modulo_apagado", status: :not_found, locals: { modulo: modulo_requerido }
   end
 
   def exigir_sesion

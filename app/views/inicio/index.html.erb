@@ -26,6 +26,7 @@
       <% if @cortes.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("inicio.sin_cortes") %></td></tr><% end %>
     </table>
   </div>
+  <% if Modulo.activo?("etiquetas") %>
   <div class="card">
     <h2 class="mb-2 font-semibold"><%= t("inicio.mermas") %></h2>
     <table class="w-full text-sm">
@@ -35,6 +36,8 @@
       <% if @mermas.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("inicio.sin_producciones") %></td></tr><% end %>
     </table>
   </div>
+  <% end %>
+  <% if Modulo.activo?("conteos") %>
   <div class="card">
     <h2 class="mb-2 font-semibold"><%= t("inicio.conteos") %></h2>
     <table class="w-full text-sm">
@@ -44,4 +47,5 @@
       <% if @conteos.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("inicio.sin_conteos") %></td></tr><% end %>
     </table>
   </div>
+  <% end %>
 </div>

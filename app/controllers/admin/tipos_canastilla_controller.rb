@@ -1,5 +1,6 @@
 module Admin
   class TiposCanastillaController < BaseController
+    modulo :rutas
     before_action { autorizar!("admin.catalogo") }
     before_action :cargar, only: %i[edit update]
 

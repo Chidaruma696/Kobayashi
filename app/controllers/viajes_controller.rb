@@ -1,6 +1,7 @@
 # Viajes de reparto: la oficina arma la ruta del día, la despacha y la liquida cuando el chofer vuelve.
 class ViajesController < ApplicationController
   pestana :rutas
+  modulo :rutas
 
   before_action :cargar_viaje, except: %i[index new create subir]
 

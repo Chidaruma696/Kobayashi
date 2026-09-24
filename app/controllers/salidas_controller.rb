@@ -1,5 +1,6 @@
 class SalidasController < ApplicationController
   pestana :salidas
+  modulo :salidas
 
   before_action :cargar_salida, except: %i[index new create por_recibir]
 
@@ -22,7 +23,7 @@ class SalidasController < ApplicationController
     return if @pedido
 
     @destinos = Sucursal.activas.where.not(id: sucursal_actual.id).order(:nombre)
-    @clientes = sucursal_actual.matriz? ? Cliente.activos.includes(:ruta).order(:nombre) : []
+    @clientes = sucursal_actual.matriz? && Modulo.activo?("rutas") ? Cliente.activos.includes(:ruta).order(:nombre) : []
   end
 
   def create

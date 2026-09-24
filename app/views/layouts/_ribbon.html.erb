@@ -27,7 +27,7 @@
 <%# La cinta de botones de la pestaña activa (solo en pantalla ancha) %>
 <div class="hidden border-b border-stone-300 bg-fondo md:block">
   <div class="flex w-full flex-wrap gap-x-6 gap-y-2 px-4 py-2">
-    <% activa[:grupos].each do |g| %>
+    <% activa[:grupos].select { |g| grupo_visible?(g) }.each do |g| %>
       <% botones = g[:botones].select { |b| boton_visible?(b) } %>
       <% next if botones.empty? %>
       <div class="flex flex-col items-center border-r border-stone-300 pr-6 last:border-0">
@@ -60,7 +60,7 @@
   <nav class="flex-1 overflow-y-auto px-2 py-2 text-sm">
     <% pestanas_visibles.each do |p| %>
       <div class="mt-3 px-2 text-[11px] font-bold uppercase tracking-wide <%= p[:id] == activa[:id] ? 'text-marca-800' : 'text-stone-500' %>"><%= t("cinta.pestanas.#{p[:id]}") %></div>
-      <% p[:grupos].each do |g| %>
+      <% p[:grupos].select { |g| grupo_visible?(g) }.each do |g| %>
         <% g[:botones].select { |b| boton_visible?(b) }.each do |b| %>
           <% ruta = send(b.ruta) %>
           <%= link_to ruta, class: "flex items-center gap-3 rounded-md px-2 py-2 text-stone-800 hover:bg-white #{'bg-white font-semibold text-marca-900 shadow-sm ring-1 ring-marca-200' if current_page?(ruta)}" do %>

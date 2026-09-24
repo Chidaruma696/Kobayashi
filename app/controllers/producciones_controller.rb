@@ -1,5 +1,6 @@
 class ProduccionesController < ApplicationController
   pestana :etiquetas
+  modulo :etiquetas
 
   before_action { autorizar!("produccion.abrir") }
 

@@ -46,6 +46,8 @@ es:
       caja:
         piso_precio: Piso de precio (% del catálogo)
         limite_gaveta: Tope de gaveta para sucursales nuevas ($)
+    modulos: Módulos
+    modulos_ayuda: Lo apagado desaparece de la cinta, de los roles y de sus pantallas; los datos se quedan. No se apaga un módulo con trabajo abierto.
   comun:
     cerrar: Cerrar
     guardar: Guardar
@@ -344,6 +346,11 @@ es:
       abono_resta: un abono o devolución resta
     usuario:
       formato: solo minúsculas, números, punto y guion
+    modulo_apagado:
+      titulo: El módulo %{modulo} está apagado
+      texto: Este negocio no lo usa. Quien administra usuarios puede encenderlo en Ajustes › Sistema.
+    modulo:
+      con_trabajo_abierto: 'no se puede apagar %{modulo}: hay trabajo abierto; ciérralo primero'
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -1347,3 +1354,35 @@ es:
     administrador: Administrador
     crear: Crear y entrar
     lista: 'Listo. Kobayashi es tuyo: empieza por Administración para dar de alta productos, sucursales y usuarios.'
+    giro: Giro del negocio
+    giro_ayuda: Solo decide qué módulos arrancan encendidos; se cambian cuando quieras en Ajustes.
+    sucursal_detalle: Nombre y código de la sucursal principal (si no, se usa el nombre del negocio y MTZ)
+  modulos:
+    etiquetas:
+      nombre: Etiquetas y producción
+      que: Pesar y etiquetar paquetes, cajas y tarimas con código de identidad; producción con merma.
+    pedidos:
+      nombre: Pedidos
+      que: Las tiendas y los clientes piden; la matriz surte renglón por renglón.
+    salidas:
+      nombre: Salidas y recepción
+      que: Traspasos entre sucursales escaneando, con verificación y recepción paquete por paquete.
+    rutas:
+      nombre: Rutas
+      que: Reparto a clientes con chofer, cobranza, crédito, canastillas y convenios. Necesita pedidos y salidas.
+    conteos:
+      nombre: Conteos
+      que: Conteos físicos escaneando; el faltante se carga al responsable.
+  giros:
+    abarrotes:
+      nombre: Abarrotes / tienda
+      que: solo caja, inventario y administración; productos por pieza con el código del proveedor.
+    recauderia:
+      nombre: Recaudería / frutería
+      que: lo anterior más etiquetas y producción, para pesar y etiquetar.
+    distribuidora:
+      nombre: Distribuidora
+      que: pedidos, salidas, rutas de reparto y conteos, sin etiquetadora.
+    todo:
+      nombre: Planta con tiendas y reparto (todo)
+      que: 'todos los módulos: etiquetas, pedidos, salidas, rutas y conteos.'

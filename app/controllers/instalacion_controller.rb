@@ -3,11 +3,11 @@ class InstalacionController < ApplicationController
   skip_before_action :exigir_instalacion, :exigir_sesion
   layout "sesion"
 
-  CAMPOS = %i[negocio sucursal codigo nombre usuario password idioma].freeze
+  CAMPOS = %i[negocio giro sucursal codigo nombre usuario password idioma].freeze
 
   def new
     return redirect_to root_path if Usuario.activos.exists?
-    @datos = { sucursal: "Matriz", codigo: "MTZ", usuario: "admin", idioma: I18n.locale.to_s }
+    @datos = { giro: "todo", codigo: "MTZ", usuario: "admin", idioma: I18n.locale.to_s }
   end
 
   def create

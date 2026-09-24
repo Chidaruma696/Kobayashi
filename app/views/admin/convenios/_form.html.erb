@@ -1,8 +1,8 @@
 <%= form_with model: [ :admin, @convenio ], class: "max-w-3xl space-y-4 rounded bg-white p-6 shadow-sm" do |f| %>
   <div><%= f.label :cliente_id, t("caja.cliente"), class: "block text-sm font-medium" %><%= f.collection_select :cliente_id, Cliente.activos.order(:nombre), :id, :nombre, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %></div>
   <div class="grid gap-4 sm:grid-cols-2">
-    <%= render "admin/campo", f: f, campo: :lineas, etiqueta: t("admin.lineas_producto"), tipo: :text_field, opciones: { placeholder: "Pollo, Rosticero", list: "lineas_producto" } %>
-    <%= render "admin/campo", f: f, campo: :excluir, etiqueta: t("admin.excluir_productos"), tipo: :text_field, opciones: { placeholder: "Avimarca" } %>
+    <%= render "admin/campo", f: f, campo: :lineas, etiqueta: t("admin.lineas_producto"), tipo: :text_field, opciones: { list: "lineas_producto" } %>
+    <%= render "admin/campo", f: f, campo: :excluir, etiqueta: t("admin.excluir_productos"), tipo: :text_field, opciones: {} %>
   </div>
   <datalist id="lineas_producto"><% Producto.activos.distinct.pluck(:linea).compact.each do |l| %><option value="<%= l %>"><% end %></datalist>
   <div class="grid gap-4 sm:grid-cols-2">

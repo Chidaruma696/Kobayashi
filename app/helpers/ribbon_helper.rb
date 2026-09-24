@@ -81,7 +81,7 @@ module RibbonHelper
         Boton.new(:productos, :admin_productos_path, "admin.catalogo", "box-seam"),
         Boton.new(:promociones, :admin_promociones_path, "admin.catalogo", "percent")
       ] },
-      { id: :reparto, botones: [
+      { id: :reparto, modulo: "rutas", botones: [
         Boton.new(:clientes, :admin_clientes_path, "admin.catalogo", "people"),
         Boton.new(:rutas, :admin_rutas_path, "admin.catalogo", "signpost-split"),
         Boton.new(:convenios, :admin_convenios_path, "admin.catalogo", "file-earmark-text"),
@@ -99,8 +99,13 @@ module RibbonHelper
     boton.permiso.nil? || puede?(boton.permiso)
   end
 
+  def grupo_visible?(grupo)
+    (grupo[:modulo].nil? || Modulo.activo?(grupo[:modulo])) && grupo[:botones].any? { |b| boton_visible?(b) }
+  end
+
+  # Una pestaña se ve si su módulo está encendido y alguno de sus grupos se ve.
   def pestanas_visibles
-    PESTANAS.select { |p| p[:grupos].any? { |g| g[:botones].any? { |b| boton_visible?(b) } } }
+    PESTANAS.select { |p| Modulo.activo?(p[:id]) && p[:grupos].any? { |g| grupo_visible?(g) } }
   end
 
   # Ajustes cuelga de Inicio en la cinta, pero es su propia pestaña activa: cae en Inicio.
@@ -109,7 +114,7 @@ module RibbonHelper
   end
 
   def ruta_de_pestana(pestana)
-    boton = pestana[:grupos].flat_map { |g| g[:botones] }.find { |b| boton_visible?(b) }
+    boton = pestana[:grupos].select { |g| grupo_visible?(g) }.flat_map { |g| g[:botones] }.find { |b| boton_visible?(b) }
     boton ? send(boton.ruta) : root_path
   end
 end

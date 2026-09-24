@@ -46,6 +46,8 @@ en:
       caja:
         piso_precio: Price floor (% of list price)
         limite_gaveta: Drawer limit for new branches ($)
+    modulos: Modules
+    modulos_ayuda: What is off disappears from the ribbon, the roles and its screens; the data stays. A module with open work cannot be turned off.
   comun:
     cerrar: Close
     guardar: Save
@@ -344,6 +346,11 @@ en:
       abono_resta: a payment or refund subtracts
     usuario:
       formato: only lowercase letters, digits, dot and dash
+    modulo_apagado:
+      titulo: The %{modulo} module is off
+      texto: This business does not use it. Whoever manages users can turn it on in Settings › System.
+    modulo:
+      con_trabajo_abierto: 'cannot turn off %{modulo}: there is open work; close it first'
   inicio:
     titulo: Home
     ventas: Sales
@@ -1347,3 +1354,35 @@ en:
     administrador: Administrator
     crear: Create and sign in
     lista: 'Done. Kobayashi is yours: start in Administration to add products, branches and users.'
+    giro: Type of business
+    giro_ayuda: It only decides which modules start on; change them any time in Settings.
+    sucursal_detalle: Name and code of the main branch (otherwise the business name and MTZ)
+  modulos:
+    etiquetas:
+      nombre: Labels and production
+      que: Weigh and label packages, boxes and pallets with identity barcodes; production runs with shrinkage.
+    pedidos:
+      nombre: Orders
+      que: Stores and customers order; head office fills line by line.
+    salidas:
+      nombre: Transfers and receiving
+      que: Transfers between branches by scanning, with verification and package-by-package receiving.
+    rutas:
+      nombre: Routes
+      que: Deliveries to customers with a driver, collections, credit, crates and agreements. Needs orders and transfers.
+    conteos:
+      nombre: Counts
+      que: Physical counts by scanning; the shortage is charged to the responsible person.
+  giros:
+    abarrotes:
+      nombre: Grocery / retail store
+      que: register, inventory and administration only; products by piece with the supplier's code.
+    recauderia:
+      nombre: Greengrocer / produce
+      que: the above plus labels and production, to weigh and label.
+    distribuidora:
+      nombre: Distributor
+      que: orders, transfers, delivery routes and counts, without the labeler.
+    todo:
+      nombre: Plant with stores and delivery (everything)
+      que: 'every module: labels, orders, transfers, routes and counts.'

@@ -1,5 +1,6 @@
 class PedidoLineasController < ApplicationController
   pestana :pedidos
+  modulo :pedidos
 
   before_action { autorizar!("pedidos.surtir") }
   before_action :cargar_linea

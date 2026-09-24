@@ -12,7 +12,7 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "input[name='instalacion[usuario]'][value=admin]"
 
-    post instalar_path, params: { instalacion: { negocio: "Carnes Selectas", sucursal: "Planta", codigo: "pl1", nombre: "Doña Rosa", usuario: "Rosa", password: "secreto123", idioma: "es" } }
+    post instalar_path, params: { instalacion: { negocio: "Carnes Selectas", giro: "recauderia", sucursal: "Planta", codigo: "pl1", nombre: "Doña Rosa", usuario: "Rosa", password: "secreto123", idioma: "es" } }
     assert_redirected_to root_path
     rosa = Usuario.find_by!(usuario: "rosa")
     assert_equal "Doña Rosa", rosa.nombre
@@ -21,6 +21,7 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     assert rosa.sucursal.matriz?
     assert_equal "Carnes Selectas", Ajuste["negocio.nombre"]
     assert_equal "es", rosa.idioma
+    assert_equal %w[etiquetas], Modulo.activos, "el giro deja encendido solo lo suyo"
 
     follow_redirect!
     assert_response :success, "queda con la sesión iniciada"
@@ -37,7 +38,7 @@ class InstalacionTest < ActionDispatch::IntegrationTest
 
   test "con datos malos lo dice y no deja nada a medias" do
     Usuario.update_all(activo: false)
-    post instalar_path, params: { instalacion: { sucursal: "Planta", codigo: "PL1", nombre: "", usuario: "rosa", password: "secreto123" } }
+    post instalar_path, params: { instalacion: { negocio: "X", giro: "abarrotes", sucursal: "Planta", codigo: "PL1", nombre: "", usuario: "rosa", password: "secreto123" } }
     assert_response :unprocessable_entity
     assert_nil Usuario.find_by(usuario: "rosa")
     assert_nil Sucursal.find_by(codigo: "PL1"), "la transacción se deshace entera"

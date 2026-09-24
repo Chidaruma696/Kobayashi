@@ -15,20 +15,31 @@
       <legend class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("instalacion.negocio") %></legend>
       <div>
         <%= f.label :negocio, t("instalacion.nombre_negocio"), class: "block text-sm font-medium" %>
-        <%= f.text_field :negocio, value: @datos[:negocio], autofocus: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+        <%= f.text_field :negocio, value: @datos[:negocio], autofocus: true, required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
         <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.nombre_negocio_ayuda") %></p>
       </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div class="col-span-2">
-          <%= f.label :sucursal, t("instalacion.matriz"), class: "block text-sm font-medium" %>
-          <%= f.text_field :sucursal, value: @datos[:sucursal], required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-        </div>
-        <div>
-          <%= f.label :codigo, t("comun.codigo"), class: "block text-sm font-medium" %>
-          <%= f.text_field :codigo, value: @datos[:codigo], required: true, maxlength: 10, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono uppercase" %>
-        </div>
+      <div>
+        <%= f.label :giro, t("instalacion.giro"), class: "block text-sm font-medium" %>
+        <%= f.select :giro, Modulo::GIROS.keys.map { |g| [ t("giros.#{g}.nombre"), g ] }, { selected: @datos[:giro] }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+        <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.giro_ayuda") %></p>
+        <ul class="mt-2 space-y-1 text-xs text-stone-600">
+          <% Modulo::GIROS.each_key do |g| %><li><strong><%= t("giros.#{g}.nombre") %></strong>: <%= t("giros.#{g}.que") %></li><% end %>
+        </ul>
       </div>
-      <p class="text-xs text-stone-500"><%= t("instalacion.matriz_ayuda") %></p>
+      <details class="text-sm">
+        <summary class="cursor-pointer text-stone-600"><%= t("instalacion.sucursal_detalle") %></summary>
+        <div class="mt-2 grid grid-cols-3 gap-3">
+          <div class="col-span-2">
+            <%= f.label :sucursal, t("instalacion.matriz"), class: "block text-sm font-medium" %>
+            <%= f.text_field :sucursal, value: @datos[:sucursal], class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+          </div>
+          <div>
+            <%= f.label :codigo, t("comun.codigo"), class: "block text-sm font-medium" %>
+            <%= f.text_field :codigo, value: @datos[:codigo], maxlength: 10, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono uppercase" %>
+          </div>
+        </div>
+        <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.matriz_ayuda") %></p>
+      </details>
     </fieldset>
     <fieldset class="space-y-3">
       <legend class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("instalacion.administrador") %></legend>

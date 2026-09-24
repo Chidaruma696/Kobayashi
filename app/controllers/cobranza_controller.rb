@@ -2,6 +2,7 @@
 # y el bloqueo manual que manda sobre la regla.
 class CobranzaController < ApplicationController
   pestana :rutas
+  modulo :rutas
 
   before_action { autorizar!("cobranza.ver") }
   before_action :cargar_cliente, except: :index

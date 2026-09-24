@@ -1,5 +1,6 @@
 class PedidosController < ApplicationController
   pestana :pedidos
+  modulo :pedidos
 
   # Quien surte ve su cola y lo surtido hace poco; quien pide ve cómo van los suyos.
   def index

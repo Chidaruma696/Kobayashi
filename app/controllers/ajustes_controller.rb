@@ -17,6 +17,7 @@ class AjustesController < ApplicationController
   def sistema
     autorizar!("admin.usuarios")
     Ajuste.guardar!(params.fetch(:ajuste, {}).to_unsafe_h)
+    Modulo.guardar!(params[:modulos]) if params.key?(:modulos)
     redirect_to ajustes_path, notice: t("ajustes.guardado")
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to ajustes_path, alert: e.message

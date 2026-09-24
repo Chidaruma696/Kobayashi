@@ -10,7 +10,7 @@
 
 # Kobayashi
 
-**帳 · Point of sale and back office for a meat plant that labels by weight, supplies its own shops and delivers to route customers. Ruby on Rails.**
+**帳 · Point of sale, labeler and back office for small businesses, by modules: a grocery store, a greengrocer that weighs and labels, a distributor with delivery routes, or a plant that supplies its own shops. Ruby on Rails.**
 
 <br/>
 
@@ -28,22 +28,31 @@
 ---
 
 > [!NOTE]
-> Kobayashi is the successor of [ToyPOS](https://github.com/Chidaruma696/ToyPOS): same business, but built **register first** instead of domain first. It runs on one server for the headquarters and its shops. It is in active development and has not yet run a real day of sales.
+> Kobayashi is the successor of [ToyPOS](https://github.com/Chidaruma696/ToyPOS): born for a meat plant, built **register first** instead of domain first, and now generalised by modules. It runs on one server for the head office and its branches. It is in active development and has not yet run a real day of sales.
 
 <br/>
 
 ## 🏪 What it is
 
-The headquarters produces meat, **labels every package on a scale**, sells at its own counter, supplies its shops and delivers to route customers who pay on delivery. Every package, box and pallet carries an **EAN-13 identity barcode**: the code names the row in the database, the weight lives in the database, never inside the code.
+One system, one database, and **modules that turn on or off per business**. Register, inventory, settings and administration are always there; the rest depends on what the business does and can be changed any time in Settings. On the first run, with an empty database, it asks for the business name, its type and the first administrator, and that is it.
+
+| Type of business | Modules that start on |
+|---|---|
+| **Grocery / retail store** | register, inventory, administration. Products by piece with the supplier's barcode. |
+| **Greengrocer / produce** | the above plus **labels and production**: weigh on the scale, print identity labels, production runs with shrinkage. |
+| **Distributor** | orders, transfers between branches, **delivery routes** (driver, collections, credit, crates, agreements) and counts, without the labeler. |
+| **Plant with stores and delivery** | everything. |
+
+Where labels are on, every package, box and pallet carries an **EAN-13 identity barcode**: the code names the row in the database, the weight lives in the database, never inside the code. A module that is off disappears from the ribbon, from the roles and from its screens; its data stays, and it cannot be turned off while it has open work.
 
 | Module | What it does | Rule it enforces |
 |---|---|---|
 | **Orders** | A shop or a route customer asks for goods; the headquarters fulfils line by line. | Fulfilled quantity is always the sum of the labels linked to the line, never a stored counter. |
-| **Production** | Raw product goes in, labelled cuts come out, the difference is waste. | Nothing comes out that did not go in; no production without an order or an authorised PIN. |
+| **Production** | Raw product goes in, labelled cuts come out, the difference is waste. | Nothing comes out that did not go in. Production has nothing to do with orders: it is an input and its outputs. |
 | **Labels** | Package, box and pallet with identity barcodes, printed at 55×45 mm. | No free labelling: every label comes from an order line, a production run, or a recorded authorisation. |
 | **Dispatch** | Scan to pick, a second person scans to verify the load, seal, send. | The picker cannot verify their own load. A label can be in only one active dispatch. |
 | **Receiving** | The shop scans package by package (or a whole pallet); missing or broken packages are reported by barcode. | What is not scanned does not enter stock. Boxes are not accepted whole. |
-| **Register** | Scan or type, scale for loose kilos, mixed payments, 80 mm ticket with its own barcode, cash drawer with float, withdrawals and close. | No sale without stock, without an open drawer, or above the cash limit. Price cuts need a PIN and never go under half the list price. |
+| **Register** | Scan or type, scale for loose kilos, mixed payments, 80 mm ticket with its own barcode, cash drawer with float, withdrawals and close. | No sale without stock, without an open drawer, or above the cash limit. A product with no price at that branch cannot be sold. Price cuts go to the review tray and never go under the floor (50 % of list by default). |
 | **Routes** | A trip per route and day: sealed deliveries board in stop order, the truck leaves, and the driver works from the phone: scan what gets off, reject what the customer refused, collect cash, take the order for the next visit. Back at the office the trip is settled: cash collected minus expenses is what the driver hands in; any shortfall is charged to the driver. | Money collected on the road is not in the drawer until settlement. Rejected goods return to stock the moment they are refused. Delivering without scanning is allowed but goes to the review tray. |
 | **Zones and delivery order** | A route has zones in order; each customer sits in a zone with a number. When a trip is built the stop order is generated from that (zone, then number), the office can move stops by hand before leaving, and the printed delivery order goes with the driver. | The order lives on the trip, not in someone's head. |
 | **Crates** | Crates are a loaned asset, by type (brand/colour). They load at departure, get handed over at the stop, come back when the customer returns them (at the stop or at the warehouse) and unload at settlement. Balances per customer and per driver, with adjustments. | Every movement carries its reason and its user. |
@@ -53,7 +62,7 @@ The headquarters produces meat, **labels every package on a scale**, sells at it
 | **Route sales** | Dispatch to a customer closes a note payable on delivery; the driver comes back and the delivery is charged into the open drawer. | Rejected goods come back as a return against the ticket. Cash only. |
 | **Counts** | The supervisor scans everything; the count wins. | Stock is adjusted, unseen labels die, and the shortage is charged to the cashier. |
 | **Prices** | List price, per-shop overrides, promotions (special price, percentage, volume). | The register applies the cheapest valid rule by itself; a promotion never raises a price. |
-| **Deferred authorization** | Anything that would need a supervisor (free labelling, production without an order, a line without a label, a stock adjustment, a cash withdrawal) goes through with a reason when nobody is around, and lands in a review tray. | The flow never stops; the supervisor approves or flags each one at the end of the day, and a flagged one can be charged to whoever did it. A PIN from someone with permission skips the tray. Selling below list price still needs the PIN. |
+| **Deferred authorization** | Anything that would need a supervisor (free labelling, a line without a label, a stock adjustment, a cash withdrawal, a price cut) goes through with a reason when nobody is around, and lands in a review tray. | The flow never stops; the supervisor approves or flags each one at the end of the day, and a flagged one can be charged to whoever did it. Whoever has the permission does it in their own name and skips the tray. There are no PINs. |
 | **Dashboard & admin** | Sales, tickets, payment mix, closes, waste, counts, valued stock, CSV by product; products, users, roles, shops, customers, routes. | Permissions by key, ribbon tabs appear only for what the user may do. |
 
 <br/>

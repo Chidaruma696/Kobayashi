@@ -1,5 +1,6 @@
 class ConteosController < ApplicationController
   pestana :conteos
+  modulo :conteos
 
   before_action { autorizar!("conteos.hacer") }
   before_action :cargar_conteo, only: %i[show escanear manual cerrar]

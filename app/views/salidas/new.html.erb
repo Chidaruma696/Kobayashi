@@ -6,7 +6,9 @@
   <% else %>
     <div>
       <%= f.label :destino, t("pedidos.para"), class: "block text-sm font-medium" %>
-      <%= f.select :destino, grouped_options_for_select({ t("salidas.tiendas") => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] }, t("salidas.clientes_de_ruta") => @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } }), {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+      <% grupos = { t("salidas.tiendas") => @destinos.map { |s| [ s.nombre, "sucursal:#{s.id}" ] } } %>
+      <% grupos[t("salidas.clientes_de_ruta")] = @clientes.map { |c| [ "#{c.nombre}#{" · #{c.ruta}" if c.ruta}", "cliente:#{c.id}" ] } if @clientes.any? %>
+      <%= f.select :destino, grouped_options_for_select(grupos), {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
   <% end %>
   <% unless sucursal_actual.matriz? %>

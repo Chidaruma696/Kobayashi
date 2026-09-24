@@ -3,7 +3,7 @@
 <%= render "por_revisar" %>
 <ul class="mt-6 grid gap-3 sm:grid-cols-2">
   <% Permiso::CLAVES.each_key do |clave| %>
-    <% next unless puede?(clave) %>
+    <% next unless puede?(clave) && Modulo.permiso_activo?(clave) %>
     <li class="rounded border border-stone-200 bg-white px-4 py-3 text-sm"><%= Permiso.nombre(clave) %> <span class="text-stone-400">(<%= clave %>)</span></li>
   <% end %>
 </ul>

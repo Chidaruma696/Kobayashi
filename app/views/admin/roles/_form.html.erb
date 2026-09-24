@@ -2,7 +2,7 @@
   <%= render "admin/campo", f: f, campo: :nombre, etiqueta: t("comun.nombre"), tipo: :text_field %>
   <%= hidden_field_tag "rol[permisos][]", "" %>
   <label class="flex items-center gap-2 text-sm font-semibold"><%= check_box_tag "rol[permisos][]", "*", @rol.permisos.include?("*"), id: "permiso_todo" %> <%= t("admin.todo_administrador") %></label>
-  <% Permiso::CLAVES.keys.group_by { |clave| clave.split(".").first }.each do |modulo, claves| %>
+  <% Permiso::CLAVES.keys.select { |c| Modulo.permiso_activo?(c) }.group_by { |clave| clave.split(".").first }.each do |modulo, claves| %>
     <fieldset class="rounded border border-stone-200 p-3">
       <legend class="px-1 text-sm font-semibold"><%= t("admin.modulos.#{modulo}", default: modulo) %> <label class="ml-2 font-normal text-stone-500"><%= check_box_tag "rol[permisos][]", "#{modulo}.*", @rol.permisos.include?("#{modulo}.*"), id: "permiso_#{modulo}_todo" %> <%= t("admin.todo_el_modulo") %></label></legend>
       <div class="grid gap-1 sm:grid-cols-2">

@@ -1,11 +1,12 @@
 # Primer arranque: con la base vacía se crean los roles base, la matriz, el nombre del negocio y
 # el administrador, todo en una transacción. Devuelve el administrador ya creado.
 module Instalacion
-  def self.instalar!(negocio:, sucursal:, codigo:, nombre:, usuario:, password:, idioma:)
+  def self.instalar!(negocio:, giro:, sucursal:, codigo:, nombre:, usuario:, password:, idioma:)
     ActiveRecord::Base.transaction do
       Rol.base!
+      Modulo.aplicar_giro!(giro)
       matriz = Sucursal.find_or_create_by!(codigo: codigo.to_s.strip.upcase.presence || "MTZ") do |s|
-        s.nombre = sucursal.to_s.strip.presence || "Matriz"
+        s.nombre = sucursal.to_s.strip.presence || negocio.to_s.strip.presence || "Matriz"
         s.tipo = "matriz"
       end
       Ajuste.guardar!("negocio.nombre" => negocio) if negocio.present?

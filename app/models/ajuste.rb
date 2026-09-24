@@ -12,7 +12,12 @@ class Ajuste < ApplicationRecord
     "etiqueta.barras" => "36",           # alto del código de barras, px
     "etiqueta.letra" => "14",
     "caja.piso_precio" => "50",          # % del catálogo por debajo del cual no se vende ni con permiso
-    "caja.limite_gaveta" => "3000"       # pesos, para sucursales nuevas
+    "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
+    "modulos.etiquetas" => "1",          # módulos opcionales: "1" encendido, "0" apagado (ver Modulo)
+    "modulos.pedidos" => "1",
+    "modulos.salidas" => "1",
+    "modulos.rutas" => "1",
+    "modulos.conteos" => "1"
   }.freeze
   ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta].freeze
 

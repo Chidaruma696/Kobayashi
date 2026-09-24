@@ -2,6 +2,7 @@
 # entregar escaneando, rechazar lo que no bajó, cobrar de contado y tomar el pedido de la próxima.
 class RepartoController < ApplicationController
   pestana :rutas
+  modulo :rutas
 
   before_action { autorizar!("rutas.repartir") }
   before_action :cargar_parada, except: :index

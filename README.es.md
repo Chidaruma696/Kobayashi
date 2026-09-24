@@ -10,7 +10,7 @@
 
 # Kobayashi
 
-**帳 · Punto de venta y administración para una planta de carne que etiqueta por peso, surte a sus propias tiendas y reparte a clientes de ruta. Ruby on Rails.**
+**帳 · Punto de venta, etiquetador y administración para negocios pequeños, por módulos: un abarrote, una recaudería que pesa y etiqueta, una distribuidora con rutas de reparto o una planta que surte a sus tiendas. Ruby on Rails.**
 
 <br/>
 
@@ -28,22 +28,31 @@
 ---
 
 > [!NOTE]
-> Kobayashi es el sucesor de [ToyPOS](https://github.com/Chidaruma696/ToyPOS): el mismo negocio, pero construido **primero la caja** y no primero el dominio. Corre en un solo servidor para la matriz y sus tiendas. Está en desarrollo y todavía no ha cobrado un día real.
+> Kobayashi es el sucesor de [ToyPOS](https://github.com/Chidaruma696/ToyPOS): nació para una planta de carne, se construyó **caja primero** en vez de dominio primero, y ahora va por módulos. Corre en un servidor para la matriz y sus sucursales. Está en desarrollo y todavía no ha corrido un día real de ventas.
 
 <br/>
 
 ## 🏪 Qué es
 
-La matriz produce carne, **etiqueta cada paquete en la báscula**, vende en su propio mostrador, surte a sus tiendas y reparte a clientes de ruta que pagan contra entrega. Cada paquete, caja y tarima lleva un **EAN-13 de identidad**: el código nombra la fila en la base; el peso vive en la base, nunca dentro del código.
+Un solo sistema, una sola base, y **módulos que se encienden o apagan por negocio**. Caja, inventario, ajustes y administración van siempre; el resto depende de a qué se dedica el negocio y se cambia cuando quieras en Ajustes. La primera vez, con la base vacía, pide el nombre del negocio, su giro y el primer administrador, y ya.
+
+| Giro | Módulos que arrancan encendidos |
+|---|---|
+| **Abarrotes / tienda** | caja, inventario, administración. Productos por pieza con el código del proveedor. |
+| **Recaudería / frutería** | lo anterior más **etiquetas y producción**: pesar en la báscula, imprimir etiquetas de identidad, producción con merma. |
+| **Distribuidora** | pedidos, salidas entre sucursales, **rutas de reparto** (chofer, cobranza, crédito, canastillas, convenios) y conteos, sin etiquetadora. |
+| **Planta con tiendas y reparto** | todo. |
+
+Donde hay etiquetas, cada paquete, caja y tarima lleva un **EAN-13 de identidad**: el código nombra la fila en la base; el peso vive en la base, nunca dentro del código. Un módulo apagado desaparece de la cinta, de los roles y de sus pantallas; sus datos se quedan, y no se apaga mientras tenga trabajo abierto.
 
 | Módulo | Qué hace | Regla que impone |
 |---|---|---|
 | **Pedidos** | Una tienda o un cliente de ruta pide; la matriz surte renglón por renglón. | Lo surtido es siempre la suma de las etiquetas ligadas al renglón, nunca un contador guardado. |
-| **Producción** | Entra producto en bruto, salen cortes etiquetados, la diferencia es merma. | No sale más de lo que entró; sin pedido o PIN autorizado no hay producción. |
+| **Producción** | Entra producto en bruto, salen cortes etiquetados, la diferencia es merma. | No sale más de lo que entró. La producción no tiene nada que ver con los pedidos: es una entrada y sus salidas. |
 | **Etiquetas** | Paquete, caja y tarima con barcode de identidad, impresas a 55×45 mm. | Nada de etiquetar suelto: toda etiqueta nace de un renglón, una producción o una autorización registrada. |
 | **Salidas** | Escanear para surtir, otra persona escanea para verificar la carga, sellar, enviar. | Quien surte no verifica su carga. Una etiqueta solo va en una salida activa. |
 | **Recepción** | La tienda escanea paquete por paquete (o la tarima entera); lo roto o perdido se reporta por barcode. | Lo que no se escanea no entra al stock. Las cajas no se aceptan enteras. |
-| **Caja** | Escanear o teclear, báscula para kilos sueltos, pagos mixtos, ticket de 80 mm con su propio barcode, corte con fondo, retiros y cierre. | No se vende sin stock, sin caja abierta ni con la gaveta pasada del límite. Bajar precio pide PIN y nunca baja de la mitad del catálogo. |
+| **Caja** | Escanear o teclear, báscula para kilos sueltos, pagos mixtos, ticket de 80 mm con su propio barcode, corte con fondo, retiros y cierre. | No se vende sin stock, sin caja abierta ni con la gaveta pasada del límite. Un producto sin precio en esa sucursal no se vende. Bajar precio cae en la bandeja de revisión y nunca baja del piso (50 % del catálogo por defecto). |
 | **Rutas** | Un viaje por ruta y día: los repartos sellados suben en orden de parada, sale el camión y el chofer trabaja desde el celular: escanea lo que baja, rechaza lo que el cliente no quiso, cobra de contado y toma el pedido de la próxima visita. Al volver, la oficina liquida: lo cobrado menos gastos es lo que el chofer entrega; lo que falte se le carga. | El dinero cobrado en ruta no está en la gaveta hasta liquidar. Lo rechazado vuelve al inventario en el momento. Entregar sin escanear se puede, pero cae en la bandeja de revisión. |
 | **Zonas y orden de reparto** | Una ruta tiene zonas en orden; cada cliente está en una zona con su número. Al armar un viaje se genera el orden de reparto con eso (zona y luego número), la oficina puede mover paradas a mano antes de salir, y el orden impreso se va con el chofer. | El orden vive en el viaje, no en la cabeza de nadie. |
 | **Canastillas** | Activo prestado, por tipo (marca/color). Se cargan al salir, se entregan en la parada, vuelven cuando el cliente las devuelve (en la parada o en bodega) y se descargan al liquidar. Saldo por cliente y por chofer, con ajustes. | Cada movimiento lleva su motivo y su usuario. |
@@ -53,7 +62,7 @@ La matriz produce carne, **etiqueta cada paquete en la báscula**, vende en su p
 | **Reparto** | La salida a un cliente cierra una nota por cobrar; el chofer vuelve y la entrega se cobra en la caja abierta. | Lo rechazado vuelve como devolución con el ticket. Todo de contado. |
 | **Conteos** | El supervisor escanea todo; el conteo manda. | Se ajusta el stock, las etiquetas no vistas mueren y el faltante se carga al cajero. |
 | **Precios** | Precio de lista, precio por sucursal, promociones (especial, porcentaje, por cantidad). | La caja aplica sola la regla más barata vigente; una promoción nunca sube el precio. |
-| **Autorización diferida** | Lo que necesitaría a un supervisor (etiquetar sin pedido, producir sin pedido, un renglón sin etiqueta, un ajuste de inventario, un retiro de efectivo) se hace igual con su motivo cuando no hay nadie, y cae en una bandeja de revisión. | El flujo nunca se frena; el supervisor aprueba u observa cada una al final del día, y lo observado se le puede cargar a quien lo hizo. Con el PIN de alguien con permiso no pasa por la bandeja. Bajar precio en caja sigue exigiendo PIN. |
+| **Autorización diferida** | Lo que necesitaría a un supervisor (etiquetar sin pedido, un renglón sin etiqueta, un ajuste de inventario, un retiro de efectivo, bajar un precio) se hace igual con su motivo cuando no hay nadie, y cae en una bandeja de revisión. | El flujo nunca se frena; el supervisor aprueba u observa cada una al final del día, y lo observado se le puede cargar a quien lo hizo. Quien tiene el permiso lo hace a su nombre y no pasa por la bandeja. No hay PIN. |
 | **Inicio (tablero) y admin** | Ventas, tickets, formas de pago, cortes, mermas, conteos, inventario valorizado, CSV por producto; productos, usuarios, roles, sucursales, clientes, rutas. | Permisos por clave; las pestañas de la cinta aparecen solo para lo que el usuario puede hacer. |
 
 <br/>

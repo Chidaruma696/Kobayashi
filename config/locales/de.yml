@@ -46,6 +46,8 @@ de:
       caja:
         piso_precio: Preisuntergrenze (% des Listenpreises)
         limite_gaveta: Ladenlimit für neue Filialen ($)
+    modulos: Module
+    modulos_ayuda: Was aus ist, verschwindet aus dem Menüband, den Rollen und seinen Seiten; die Daten bleiben. Ein Modul mit offener Arbeit lässt sich nicht ausschalten.
   comun:
     cerrar: Schließen
     guardar: Speichern
@@ -344,6 +346,11 @@ de:
       abono_resta: eine Zahlung oder Erstattung subtrahiert
     usuario:
       formato: nur Kleinbuchstaben, Ziffern, Punkt und Bindestrich
+    modulo_apagado:
+      titulo: Das Modul %{modulo} ist aus
+      texto: Dieser Betrieb nutzt es nicht. Wer Benutzer verwaltet, kann es unter Einstellungen › System einschalten.
+    modulo:
+      con_trabajo_abierto: '%{modulo} lässt sich nicht ausschalten: es gibt offene Arbeit; erst abschließen'
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -1347,3 +1354,35 @@ de:
     administrador: Administrator
     crear: Anlegen und anmelden
     lista: 'Fertig. Kobayashi gehört dir: fang in der Verwaltung mit Produkten, Filialen und Benutzern an.'
+    giro: Art des Betriebs
+    giro_ayuda: Legt nur fest, welche Module eingeschaltet starten; jederzeit in den Einstellungen änderbar.
+    sucursal_detalle: Name und Code der Hauptfiliale (sonst der Betriebsname und MTZ)
+  modulos:
+    etiquetas:
+      nombre: Etiketten und Produktion
+      que: Pakete, Kisten und Paletten wiegen und mit Identitätscode etikettieren; Produktion mit Schwund.
+    pedidos:
+      nombre: Bestellungen
+      que: Läden und Kunden bestellen; die Zentrale kommissioniert Zeile für Zeile.
+    salidas:
+      nombre: Transfers und Wareneingang
+      que: Transfers zwischen Filialen per Scan, mit Prüfung und Empfang Paket für Paket.
+    rutas:
+      nombre: Touren
+      que: Lieferung an Kunden mit Fahrer, Inkasso, Kredit, Körbe und Vereinbarungen. Braucht Bestellungen und Transfers.
+    conteos:
+      nombre: Zählungen
+      que: Inventur per Scan; der Fehlbestand wird dem Verantwortlichen belastet.
+  giros:
+    abarrotes:
+      nombre: Lebensmittelladen / Einzelhandel
+      que: nur Kasse, Bestand und Verwaltung; Stückprodukte mit Lieferantencode.
+    recauderia:
+      nombre: Obst und Gemüse
+      que: dazu Etiketten und Produktion, zum Wiegen und Etikettieren.
+    distribuidora:
+      nombre: Großhändler
+      que: Bestellungen, Transfers, Liefertouren und Zählungen, ohne Etikettierer.
+    todo:
+      nombre: Betrieb mit Läden und Lieferung (alles)
+      que: 'alle Module: Etiketten, Bestellungen, Transfers, Touren und Zählungen.'

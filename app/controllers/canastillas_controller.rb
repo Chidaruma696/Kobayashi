@@ -1,6 +1,7 @@
 # Canastillas: qué debe cada cliente y qué trae cada chofer, por tipo; devoluciones en oficina y ajustes.
 class CanastillasController < ApplicationController
   pestana :rutas
+  modulo :rutas
 
   before_action { autorizar!("canastillas.ver") }
 
