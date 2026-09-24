@@ -13,7 +13,7 @@ export default class extends Controller {
     "buscador", "resultados", "ficha", "fabrica", "codigoNuevo", "pesoFijoInput", "codigosLista",
     "panelKg", "manual", "qn", "qpeso", "qtotal", "qhint",
     "panelPieza", "piezas", "piezaNota", "btnCopias",
-    "panelLista", "resumen", "enCaja", "alVuelo", "alVueloLabel", "lista", "pin", "justificacion",
+    "panelLista", "resumen", "enCaja", "alVuelo", "alVueloLabel", "lista", "justificacion",
     "btnRegistrar", "btnReimprimir", "resultado", "salida",
     "cfgAncho", "cfgAlto", "cfgLeyenda", "cfgBarras", "cfgLetra"
   ]
@@ -377,7 +377,7 @@ export default class extends Controller {
     const datos = await this.pedir(this.loteUrlValue, "POST", {
       producto_id: this.producto.id, pedido_linea_id: this.pedidoLineaIdValue, produccion_id: this.produccionIdValue,
       sustituto: this.sustitutoValue ? "1" : "",
-      pin: this.hasPinTarget ? this.pinTarget.value : "", justificacion: this.hasJustificacionTarget ? this.justificacionTarget.value : "",
+      justificacion: this.hasJustificacionTarget ? this.justificacionTarget.value : "",
       ...cuerpo
     })
     if (datos?.salida) this.salida = datos.salida

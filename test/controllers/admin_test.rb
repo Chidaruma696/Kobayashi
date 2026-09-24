@@ -48,15 +48,15 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_select "input[name='precios[#{sucursales(:tienda).id}]'][value='80.0']"
   end
 
-  test "usuarios y roles: crear con PIN, cambiar rol, permisos con comodín" do
+  test "usuarios y roles: crear, cambiar rol, permisos con comodín" do
     post admin_roles_path, params: { rol: { nombre: "bodega", permisos: [ "", "etiquetas.*", "salidas.surtir" ] } }
     rol = Rol.find_by!(nombre: "bodega")
     assert rol.permite?("etiquetas.libre")
     assert_not rol.permite?("caja.vender")
-    post admin_usuarios_path, params: { usuario: { nombre: "Beto", usuario: "Beto", rol_id: rol.id, sucursal_id: sucursales(:matriz).id, password: "clave1234", pin: "5555", activo: "1" } }
+    post admin_usuarios_path, params: { usuario: { nombre: "Beto", usuario: "Beto", rol_id: rol.id, sucursal_id: sucursales(:matriz).id, password: "clave1234", activo: "1" } }
     u = Usuario.find_by!(usuario: "beto")
-    assert u.authenticate_pin("5555")
-    patch admin_usuario_path(u), params: { usuario: { nombre: "Beto", usuario: "beto", rol_id: roles(:cajero).id, sucursal_id: sucursales(:tienda).id, password: "", pin: "", activo: "1" } }
+    assert u.authenticate("clave1234")
+    patch admin_usuario_path(u), params: { usuario: { nombre: "Beto", usuario: "beto", rol_id: roles(:cajero).id, sucursal_id: sucursales(:tienda).id, password: "", activo: "1" } }
     assert u.reload.authenticate("clave1234"), "la contraseña no cambia si se deja vacía"
     assert_equal roles(:cajero), u.rol
     patch admin_rol_path(rol), params: { rol: { nombre: "bodega", permisos: [ "*" ] } }

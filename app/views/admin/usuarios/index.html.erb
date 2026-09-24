@@ -3,12 +3,12 @@
   <%= link_to "Nuevo usuario", new_admin_usuario_path, class: "btn btn-primary btn-sm" %>
 </div>
 <table class="tabla">
-  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Usuario</th><th class="px-3 py-2">Rol</th><th class="px-3 py-2">Sucursal</th><th class="px-3 py-2">PIN</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
+  <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2">Nombre</th><th class="px-3 py-2">Usuario</th><th class="px-3 py-2">Rol</th><th class="px-3 py-2">Sucursal</th><th class="px-3 py-2">Activo</th><th></th></tr></thead>
   <tbody>
     <% @usuarios.each do |u| %>
       <tr class="border-t border-stone-100 <%= 'text-stone-400' unless u.activo %>">
         <td class="px-3 py-2"><%= u.nombre %></td><td class="px-3 py-2 font-mono"><%= u.usuario %></td><td class="px-3 py-2"><%= u.rol %></td><td class="px-3 py-2"><%= u.sucursal %></td>
-        <td class="px-3 py-2"><%= u.pin_digest.present? ? "sí" : "no" %></td><td class="px-3 py-2"><%= u.activo ? "sí" : "no" %></td>
+        <td class="px-3 py-2"><%= u.activo ? "sí" : "no" %></td>
         <td class="px-3 py-2 text-right"><%= link_to "Editar", edit_admin_usuario_path(u), class: "btn btn-secondary btn-xs" %></td>
       </tr>
     <% end %>

@@ -182,8 +182,8 @@ class EtiquetasController < ApplicationController
     linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id && params[:sustituto].blank?
     raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion
-    raise ArgumentError, "sin pedido ni producción escribe el motivo (con PIN de quien autoriza, o queda por revisar)" if params[:justificacion].blank?
-    [ nil, autorizador_o_revision("etiquetas.libre", params[:pin]) ]
+    raise ArgumentError, "sin pedido ni producción escribe el motivo (queda por revisar)" if params[:justificacion].blank?
+    [ nil, autorizador_o_revision("etiquetas.libre") ]
   end
 
   # Etiquetas sueltas sin nadie que las autorizara: a la bandeja de revisión, cada una con lo que vale.

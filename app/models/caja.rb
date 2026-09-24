@@ -182,11 +182,12 @@ module Caja
     promo_precio, promocion = Promocion.mejor(producto, sucursal, cantidad, catalogo)
     legitimo = promo_precio || catalogo
     precio = l[:precio_centavos].present? ? l[:precio_centavos].to_i : legitimo
+    # Bajar el precio: nunca por debajo del piso; a nombre de quien tiene el permiso, o sin nadie
+    # (y entonces el controlador lo deja por revisar).
     autoriza = nil
     if precio < legitimo
       raise Error, "#{producto.nombre}: el precio no puede bajar de la mitad del catálogo (#{Dinero.pesos((catalogo * PISO_PRECIO).ceil)})" if precio < catalogo * PISO_PRECIO
-      raise Error, "#{producto.nombre}: bajar el precio necesita el PIN de quien pueda autorizarlo" unless autorizador&.puede?("caja.bajar_precio")
-      autoriza = autorizador
+      autoriza = autorizador if autorizador&.puede?("caja.bajar_precio")
     end
     { producto: producto, etiqueta: etiqueta, cantidad: cantidad, precio_centavos: precio, catalogo_centavos: catalogo,
       importe_centavos: Dinero.importe(cantidad, precio), autorizado_por: autoriza, promocion: (precio == promo_precio ? promocion : nil) }

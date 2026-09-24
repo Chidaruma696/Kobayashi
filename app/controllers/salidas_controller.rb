@@ -56,7 +56,7 @@ class SalidasController < ApplicationController
 
   def manual
     autorizar!("salidas.surtir")
-    autoriza = autorizador_o_revision("etiquetas.libre", params[:pin])
+    autoriza = autorizador_o_revision("etiquetas.libre")
     linea = @salida.agregar_manual!(producto: Producto.activos.find(params[:producto_id]), cantidad: params[:cantidad],
                                     motivo: params[:motivo].to_s.strip, autorizado_por: autoriza, usuario: usuario_actual)
     revisar_si_hace_falta(linea, autoriza, motivo: linea.motivo, valor_centavos: Revision.valor(linea.cantidad, linea.producto, sucursal_actual))

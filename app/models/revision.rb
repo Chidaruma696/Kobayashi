@@ -55,6 +55,7 @@ class Revision < ApplicationRecord
     when SalidaLinea then "Renglón sin etiqueta en #{revisable.salida.folio}: #{cantidad_de(revisable)}"
     when Movimiento then "#{revisable.nombre_tipo} de #{cantidad_de(revisable)}"
     when Retiro then "Retiro de #{Dinero.pesos(revisable.monto_centavos)} del corte #{revisable.corte.folio}"
+    when VentaLinea then "Precio bajado en #{revisable.venta.folio}: #{revisable.producto.nombre} a #{Dinero.pesos(revisable.precio_centavos)} (catálogo #{Dinero.pesos(revisable.catalogo_centavos)})"
     else "#{revisable_type} #{revisable_id}"
     end
   end

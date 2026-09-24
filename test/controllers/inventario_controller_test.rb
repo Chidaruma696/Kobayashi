@@ -1,7 +1,7 @@
 require "test_helper"
 
 class InventarioControllerTest < ActionDispatch::IntegrationTest
-  test "una cajera ajusta sin PIN y queda por revisar; con PIN de un supervisor queda autorizado" do
+  test "una cajera ajusta y queda por revisar; un supervisor ajusta a su nombre" do
     post entrar_path, params: { usuario: "cajera", password: "secreto1" }
     get inventario_path
     assert_response :ok
@@ -13,7 +13,9 @@ class InventarioControllerTest < ActionDispatch::IntegrationTest
     assert_match "por revisar", Movimiento.last.motivo
     assert_equal Movimiento.last, Revision.last.revisable
     assert_equal 25_800, Revision.last.valor_centavos
-    post movimientos_inventario_path, params: { producto_id: productos(:pechuga).id, tipo: "entrada", cantidad: "1", motivo: "llegó", pin: "4321" }
+    delete salir_path
+    post entrar_path, params: { usuario: "supervisora", password: "secreto1" }
+    post movimientos_inventario_path, params: { producto_id: productos(:pechuga).id, tipo: "entrada", cantidad: "1", motivo: "llegó" }
     assert_redirected_to kardex_inventario_path(producto_id: productos(:pechuga).id, sucursal_id: sucursales(:tienda).id)
     assert_equal BigDecimal("3"), Existencia.de(sucursales(:tienda), productos(:pechuga))
     assert_equal 1, Revision.count

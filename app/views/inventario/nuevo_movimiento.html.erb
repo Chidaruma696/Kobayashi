@@ -17,11 +17,7 @@
     <%= f.text_field :motivo, value: @movimiento.motivo, required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
   </div>
   <% unless puede?("inventario.ajustar") %>
-    <div>
-      <%= f.label :pin, "PIN de quien autoriza (opcional)", class: "block text-sm font-medium" %>
-      <%= f.password_field :pin, inputmode: "numeric", autocomplete: "off", class: "mt-1 w-40 rounded border border-stone-300 px-3 py-2" %>
-      <p class="mt-1 text-xs text-stone-600">Sin PIN se registra igual y queda por revisar al final del día.</p>
-    </div>
+    <p class="text-xs text-stone-600">Se registra igual y queda por revisar al final del día.</p>
   <% end %>
   <%= f.submit "Registrar", class: "btn btn-primary" %>
 <% end %>

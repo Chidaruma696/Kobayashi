@@ -26,7 +26,6 @@
           <%= form_with url: manual_salida_path(s), class: "mt-2 grid grid-cols-2 gap-2" do |f| %>
             <%= f.select :producto_id, Producto.activos.order(:nombre).map { |p| [ "#{p.nombre} (#{p.unidad})", p.id ] }, {}, class: "col-span-2 rounded border border-stone-300 px-2 py-1" %>
             <%= f.number_field :cantidad, step: "0.001", min: "0.001", placeholder: "cantidad", required: true, class: "rounded border border-stone-300 px-2 py-1 font-mono" %>
-            <%= f.password_field :pin, placeholder: "PIN (opcional: sin PIN queda por revisar)", inputmode: "numeric", autocomplete: "off", class: "btn btn-secondary btn-xs" %>
             <%= f.text_field :motivo, placeholder: "motivo (se cayó la etiqueta…)", required: true, class: "col-span-2 rounded border border-stone-300 px-2 py-1" %>
             <%= f.submit "Agregar renglón", class: "btn btn-primary btn-sm col-span-2" %>
           <% end %></details>

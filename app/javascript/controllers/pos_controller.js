@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // El ticket en pantalla: escanea, arma líneas, calcula para mostrar y manda todo al servidor,
 // que es quien de verdad cobra y recalcula.
 export default class extends Controller {
-  static targets = ["codigo", "cuerpo", "total", "efectivo", "transferencia", "deposito", "cambio", "pin", "aviso",
+  static targets = ["codigo", "cuerpo", "total", "efectivo", "transferencia", "deposito", "cambio", "aviso",
                     "pendiente", "pendienteNombre", "pendienteCantidad", "peso", "botonCobrar"]
   static values = { escanearUrl: String, cobrarUrl: String, clave: String }
 
@@ -140,7 +140,6 @@ export default class extends Controller {
     cuerpo.append("lineas", JSON.stringify(this.lineas.map(l => ({ etiqueta_id: l.etiqueta_id, producto_id: l.producto_id, cantidad: l.cantidad, precio_centavos: l.manual ? l.precio : null }))))
     cuerpo.append("pagos", JSON.stringify(pagos))
     cuerpo.append("clave", this.claveValue)
-    cuerpo.append("pin", this.pinTarget.value)
     cuerpo.append("authenticity_token", document.querySelector("meta[name=csrf-token]").content)
     this.botonCobrarTarget.disabled = true
     try {

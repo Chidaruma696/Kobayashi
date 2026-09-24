@@ -7,7 +7,6 @@
   </div>
   <div class="grid grid-cols-2 gap-4">
     <%= render "admin/campo", f: f, campo: :password, etiqueta: @usuario.new_record? ? "Contraseña" : "Nueva contraseña (vacío = igual)", tipo: :password_field, opciones: { autocomplete: "new-password" } %>
-    <%= render "admin/campo", f: f, campo: :pin, etiqueta: @usuario.new_record? ? "PIN (4 a 8 dígitos)" : "Nuevo PIN (vacío = igual)", tipo: :password_field, opciones: { inputmode: "numeric", autocomplete: "off" } %>
   </div>
   <label class="flex items-center gap-2 text-sm"><%= f.check_box :activo %> Activo</label>
   <%= f.submit @usuario.new_record? ? "Crear" : "Guardar", class: "btn btn-primary" %>

@@ -9,6 +9,24 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     Inventario.mover!(sucursal: @tienda, producto: productos(:pechuga), tipo: "entrada", cantidad: 2, usuario: usuarios(:cajera))
   end
 
+  test "la cajera baja un precio sin permiso: se cobra igual y el renglón queda por revisar con lo que dejó de cobrar" do
+    post caja_cobrar_path, params: { clave: "rebaja", lineas: [ { producto_id: productos(:catsup).id, cantidad: 2, precio_centavos: 3_000 } ].to_json,
+                                     pagos: [ { forma: "efectivo", monto_centavos: 6_000 } ].to_json }, headers: { "Accept" => "application/json" }
+    assert_response :ok
+    venta = Venta.find_by!(clave: "rebaja")
+    assert_nil venta.lineas.first.autorizado_por
+    r = Revision.last
+    assert_equal venta.lineas.first, r.revisable
+    assert_equal 2_400, r.valor_centavos, "2 × (42.00 − 30.00)"
+    assert_match "Precio bajado", r.descripcion
+    get revisiones_path
+    assert_response :forbidden, "la cajera no revisa"
+    delete salir_path
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    get revisiones_path(sucursal_id: "todas")
+    assert_select "td", /Precio bajado en B-/
+  end
+
   test "vender: escanea, cobra por JSON, imprime ticket y aparece en ventas" do
     get caja_path
     assert_select "input[data-pos-target=codigo]"
@@ -32,7 +50,7 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", /#{venta.folio}/
   end
 
-  test "sin caja abierta no cobra y el corte se abre, se retira con PIN y se cierra" do
+  test "sin caja abierta no cobra y el corte se abre, se retira (por revisar) y se cierra" do
     cortes(:tienda_abierto).update!(estado: "cerrado")
     post caja_cobrar_path, params: { clave: "x", lineas: [ { producto_id: productos(:catsup).id, cantidad: 1 } ].to_json, pagos: [ { forma: "efectivo", monto_centavos: 5_000 } ].to_json }, headers: { "Accept" => "application/json" }
     assert_response :unprocessable_entity
@@ -42,12 +60,12 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     corte = Corte.abierto_en(@tienda)
     assert_equal 50_000, corte.fondo_centavos
     post caja_retirar_path, params: { monto: "100", motivo: "caja fuerte" }
-    assert_equal 1, corte.retiros.count, "la cajera no tiene caja.retirar ni dio PIN: se retira igual y queda por revisar"
+    assert_equal 1, corte.retiros.count, "la cajera no tiene caja.retirar: se retira igual y queda por revisar"
     assert_nil corte.retiros.last.autorizado_por
     assert_equal 10_000, Revision.last.valor_centavos
-    post caja_retirar_path, params: { monto: "100", motivo: "caja fuerte", pin: "4321" }
+    post caja_retirar_path, params: { monto: "100", motivo: "caja fuerte" }
     assert_equal 20_000, corte.retiros.sum(:monto_centavos)
-    assert_equal usuarios(:supervisora), corte.retiros.last.autorizado_por
+    assert_equal 2, Revision.count, "cada retiro sin permiso queda por revisar"
     post caja_cerrar_path, params: { contado: "300.00" }
     assert_redirected_to caja_corte_path
     assert_equal 0, corte.reload.diferencia_centavos

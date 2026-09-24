@@ -141,8 +141,7 @@
         <% if @linea.nil? && @produccion.nil? %>
           <div class="flex flex-wrap gap-3 border-t border-stone-200 px-4 py-3 text-sm">
             <input type="text" placeholder="Motivo (obligatorio: no hay pedido ni producción)" class="flex-1 rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="justificacion">
-            <input type="password" placeholder="PIN de quien autoriza (opcional)" inputmode="numeric" autocomplete="off" class="w-52 rounded border border-stone-300 px-2 py-1" data-etiquetadora-target="pin">
-            <span class="w-full text-xs text-stone-500">Sin PIN se etiqueta igual y queda por revisar al final del día.</span>
+            <span class="w-full text-xs text-stone-500">Se etiqueta igual y queda por revisar al final del día.</span>
           </div>
         <% end %>
         <div class="flex flex-wrap items-center gap-3 border-t border-stone-200 px-4 py-3">

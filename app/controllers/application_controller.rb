@@ -38,20 +38,10 @@ class ApplicationController < ActionController::Base
     raise SinPermiso, clave unless puede?(clave)
   end
 
-  # Autorización puntual con PIN de alguien que sí tenga el permiso (o del propio usuario si lo tiene).
-  # Devuelve el usuario que autoriza o nil.
-  def autorizador(clave, pin)
-    return usuario_actual if puede?(clave)
-    Usuario.autorizador(clave, pin)
-  end
-
-  # Autorización diferida: quien autoriza si tiene el permiso o dio su PIN; nil si nadie está,
-  # y entonces la operación sigue y queda por revisar (ver Revision). Un PIN tecleado que no es
-  # de nadie con permiso sí es error: se puso a propósito.
-  def autorizador_o_revision(clave, pin)
-    return usuario_actual if puede?(clave)
-    return nil if pin.blank?
-    Usuario.autorizador(clave, pin) or raise ArgumentError, "ese PIN no es de nadie que pueda #{Permiso::CLAVES[clave].downcase}"
+  # Autorización diferida (no hay PIN): si quien opera tiene el permiso, queda a su nombre; si no,
+  # la operación sigue igual y queda por revisar (ver Revision). Devuelve quien autoriza o nil.
+  def autorizador_o_revision(clave)
+    puede?(clave) ? usuario_actual : nil
   end
 
   # Deja la operación en la bandeja de revisión si nadie la autorizó.

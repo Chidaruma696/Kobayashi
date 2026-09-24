@@ -30,12 +30,11 @@ module Admin
       @usuario = Usuario.find(params[:id])
     end
 
-    # Contraseña y PIN solo cambian si se escriben.
+    # La contraseña solo cambia si se escribe.
     def permitidos
-      p = params.require(:usuario).permit(:nombre, :usuario, :rol_id, :sucursal_id, :activo, :password, :pin)
+      p = params.require(:usuario).permit(:nombre, :usuario, :rol_id, :sucursal_id, :activo, :password)
       p[:usuario] = p[:usuario].to_s.strip.downcase
       p.delete(:password) if p[:password].blank?
-      p.delete(:pin) if p[:pin].blank?
       p
     end
   end
