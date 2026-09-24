@@ -28,3 +28,15 @@ Web Serial con Kana (mi librería). Vendorizada dentro del repo para no depender
 
 ## Canastillas en un rechazo parcial (pendiente)
 Hoy, si el cliente rechaza parte de la mercancía, las canastillas anotadas se dan por entregadas igual, salvo que el chofer registre devolución. No me convence del todo; lo dejo así hasta ver qué pasa en una ruta real.
+
+## La caja entra sola a la salida (24 sept 2026)
+Etiquetar contra el pedido y luego volver a escanear cada caja para meterla a la salida era doble trabajo, y en el sistema anterior el armado incremental del traspaso era lo que hacía rápido el surtido. Así que la caja que nace de un renglón cae en la salida que se está armando para ese destino (o la abre). El escaneo de quien carga el camión se queda: ese es el control, no el del surtidor.
+
+## Etiqueté mal: baja con motivo, no borrar (24 sept 2026)
+El sistema anterior no dejaba tirar un error una vez ligado al traspaso. Aquí se da de baja con motivo desde la misma lista: sale del renglón y de la salida en preparación, y la caja se queda con lo que de verdad trae. Si la salida ya se selló o viajó, se resuelve en la recepción; nada se borra.
+
+## Lo que llega sin venir en la salida es sobrante, no un error (24 sept 2026)
+Pasaba que se hacían cajas por fuera del pedido y viajaban sin ir en el traspaso; en la tienda "no pasaban". Aquí eso ya casi no puede ocurrir (etiquetar sin pedido exige motivo y revisión), pero si un paquete llega sin venir en la salida, se recibe como sobrante con motivo: sale del origen, entra a la tienda y queda por revisar. Que la mercancía no se pierda y el hueco se vea.
+
+## El precio no frena el traspaso; frena la venta (24 sept 2026)
+En el sistema anterior no se podía enviar sin ponerle precio a todo, y un producto nuevo sin precio retenía el traspaso entero. Aquí la salida y la recepción pasan siempre; lo que no tiene precio en esa tienda no se vende hasta que lo tenga (antes se cobraba en $0, que era peor).
