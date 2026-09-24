@@ -53,7 +53,7 @@ class EtiquetasController < ApplicationController
     base = { producto: producto, sucursal: sucursal_actual, usuario: usuario_actual, pedido_linea: linea, produccion: @produccion,
              autorizado_por: autoriza, justificacion: params[:justificacion].presence }
     paquetes = []
-    caja = nil
+    caja = salida = nil
     Etiqueta.transaction do
       Array(params[:pesadas]).each do |p|
         p = p.respond_to?(:to_unsafe_h) ? p.to_unsafe_h : p.to_h
@@ -69,9 +69,14 @@ class EtiquetasController < ApplicationController
         caja = Etiqueta.cerrar_caja!(paquetes, usuario: usuario_actual)
       end
       dejar_por_revisar(paquetes.select(&:previously_new_record?) + [ caja ].compact.select(&:previously_new_record?).reject(&:agrupando), linea, autoriza)
+      # Contra un pedido, lo registrado entra solo a la salida que se arma para ese destino.
+      if (pedido = linea&.pedido || @produccion&.pedido)
+        salida = Salida.para_pedido!(pedido, usuario: usuario_actual)
+        (caja ? [ caja ] : paquetes.select { |p| p.padre_id.nil? }).each { |e| salida.acomodar!(e) }
+      end
     end
     render json: { etiquetas: paquetes.map { |e| etiqueta_json(e) }, caja: (etiqueta_json(caja) if caja),
-                   lleva: lleva_de(linea, @produccion, producto) }
+                   lleva: lleva_de(linea, @produccion, producto), salida: (salida_json(salida) if salida) }
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, ArgumentError => e
     mensaje = e.respond_to?(:record) ? e.record.errors.full_messages.join(", ") : e.message
     render json: { error: mensaje }, status: :unprocessable_entity
@@ -133,12 +138,28 @@ class EtiquetasController < ApplicationController
     agrupar { |hijas| Etiqueta.armar_tarima!(hijas, usuario: usuario_actual) }
   end
 
+  # Etiqueté mal: baja con motivo desde Vivas (HTML) o desde la etiquetadora (JSON, que devuelve
+  # cómo quedó la caja, el renglón y la salida de donde salió).
   def baja
     etiqueta = Etiqueta.where(sucursal: sucursal_actual).find(params[:id])
+    salida = SalidaEtiqueta.joins(:salida).where(etiqueta_id: [ etiqueta.id ] + etiqueta.hijas_ids_profundas, salidas: { estado: "preparando" }).first&.salida
+    linea = etiqueta.pedido_linea || etiqueta.hijas.first&.pedido_linea
     etiqueta.dar_de_baja!(motivo: params[:motivo].to_s.strip, usuario: usuario_actual)
-    redirect_to etiquetas_path, notice: "#{etiqueta} dada de baja"
+    respond_to do |format|
+      format.html { redirect_to etiquetas_path, notice: "#{etiqueta} dada de baja" }
+      format.json do
+        padre = etiqueta.padre&.reload
+        render json: { id: etiqueta.id, codigo: etiqueta.codigo, tipo: etiqueta.tipo, hijas: etiqueta.hijas.count,
+                       padre: (padre && { id: padre.id, codigo: padre.codigo, cantidad: padre.cantidad.to_s("F"), estado: padre.estado }),
+                       salida: (salida && { folio: salida.folio, paquetes: salida.salida_etiquetas.count }),
+                       lleva: lleva_de(linea, nil, linea&.producto) }
+      end
+    end
   rescue ArgumentError => e
-    redirect_to etiquetas_path, alert: e.message
+    respond_to do |format|
+      format.html { redirect_to etiquetas_path, alert: e.message }
+      format.json { render json: { error: e.message }, status: :unprocessable_entity }
+    end
   end
 
   private
@@ -185,6 +206,10 @@ class EtiquetasController < ApplicationController
   def etiqueta_json(e)
     { id: e.id, codigo: e.codigo, tipo: e.tipo, cantidad: e.cantidad.to_s("F"), nombre: e.producto&.nombre,
       unidad: e.producto&.unidad, svg: helpers.ean13_svg(e.codigo, alto: 36, modulo: 2) }
+  end
+
+  def salida_json(s)
+    { id: s.id, folio: s.folio, destino: s.destino.to_s, paquetes: s.salida_etiquetas.count, url: salida_path(s) }
   end
 
   def producto_json(p)

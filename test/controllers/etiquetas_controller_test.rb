@@ -123,6 +123,63 @@ class EtiquetadoraTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
+  test "lo que se registra contra un pedido entra solo a la salida de ese destino, sin volver a escanear" do
+    linea = pedido_lineas(:pechuga_5)
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: linea.id, pesadas: [ { cantidad: "1" }, { cantidad: "2" } ], caja: "1" }, as: :json
+    assert_response :ok
+    datos = response.parsed_body
+    salida = Salida.find(datos["salida"]["id"])
+    assert_equal "preparando", salida.estado
+    assert_equal sucursales(:tienda), salida.destino
+    assert_equal 2, datos["salida"]["paquetes"]
+    assert_equal datos["caja"]["id"], salida.salida_etiquetas.first.grupo_id
+
+    # Al vuelo: cada pesada entra suelta; al cerrar la caja se reagrupan bajo ella en la misma salida.
+    ids = 2.times.map do |i|
+      post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: linea.id, pesadas: [ { cantidad: "0.5" } ] }, as: :json
+      assert_equal salida.folio, response.parsed_body["salida"]["folio"]
+      response.parsed_body["etiquetas"].first["id"]
+    end
+    assert_equal [ nil ], salida.salida_etiquetas.where(etiqueta_id: ids).distinct.pluck(:grupo_id)
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: linea.id, pesadas: ids.map { |id| { id: id } }, caja: "1" }, as: :json
+    caja2 = response.parsed_body["caja"]["id"]
+    assert_equal [ caja2 ], salida.salida_etiquetas.where(etiqueta_id: ids).distinct.pluck(:grupo_id)
+    assert_equal 4, salida.salida_etiquetas.count
+    assert_equal 1, Salida.count, "una sola salida por destino mientras se arma"
+  end
+
+  test "dar de baja desde la etiquetadora: sale de la salida, la caja se queda con lo que trae y el renglón baja" do
+    linea = pedido_lineas(:pechuga_5)
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: linea.id, pesadas: [ { cantidad: "1" }, { cantidad: "2" } ], caja: "1" }, as: :json
+    datos = response.parsed_body
+    caja = Etiqueta.find(datos["caja"]["id"])
+    salida = Salida.find(datos["salida"]["id"])
+    hija = caja.hijas.order(:cantidad).first
+    post baja_etiqueta_path(hija), params: { motivo: "peso mal capturado" }, as: :json
+    assert_response :ok
+    assert_equal "baja", hija.reload.estado
+    assert_equal "2.0", response.parsed_body["padre"]["cantidad"]
+    assert_equal BigDecimal("2"), caja.reload.cantidad
+    assert_equal 1, salida.salida_etiquetas.count
+    assert_equal "2,000", response.parsed_body["lleva"]
+
+    post baja_etiqueta_path(caja), params: { motivo: "producto equivocado" }, as: :json
+    assert_response :ok
+    assert_equal "baja", caja.reload.estado
+    assert_equal 0, salida.salida_etiquetas.count
+    assert_equal 0, linea.reload.cantidad_surtida
+    assert_equal "pendiente", linea.estado
+
+    # Ya sellada no se toca desde aquí.
+    post lote_etiquetas_path, params: { producto_id: productos(:pechuga).id, pedido_linea_id: linea.id, pesadas: [ { cantidad: "1" } ], caja: "1" }, as: :json
+    caja3 = Etiqueta.find(response.parsed_body["caja"]["id"])
+    salida.reload.sellar!(usuario: usuarios(:supervisora), sin_verificar_motivo: "prueba")
+    post baja_etiqueta_path(caja3), params: { motivo: "me equivoqué" }, as: :json
+    assert_response :unprocessable_entity
+    assert_match "sellada", response.parsed_body["error"]
+    assert_equal "viva", caja3.reload.estado
+  end
+
   test "caja fija de proveedor de N piezas" do
     post lote_etiquetas_path, params: { producto_id: productos(:catsup).id, pedido_linea_id: pedido_lineas(:catsup_10).id, caja_fija: "12" }, as: :json
     assert_response :ok

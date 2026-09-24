@@ -52,6 +52,29 @@ class Salida < ApplicationRecord
     end
   end
 
+  # La salida que se está armando para el destino de un pedido; si no hay, la abre. Así la caja
+  # que nace de un renglón entra sola a la salida, sin volver a escanearla.
+  def self.para_pedido!(pedido, usuario:)
+    abierta = where(sucursal_origen: pedido.sucursal_origen, sucursal_destino_id: pedido.sucursal_destino_id, cliente_id: pedido.cliente_id, estado: "preparando").order(:created_at).first
+    abierta || nueva!(origen: pedido.sucursal_origen, destino: pedido.destino, usuario: usuario)
+  end
+
+  # Mete una etiqueta recién registrada sin escanearla. Tolera lo que ya estaba: las pesadas que
+  # entraron al vuelo como sueltas y ahora se cerraron en caja se reagrupan bajo la caja.
+  # Devuelve cuántas hojas entraron nuevas.
+  def acomodar!(etiqueta)
+    raise ArgumentError, "la salida está #{estado}" unless preparando?
+    hojas = Salida.hojas_de(etiqueta)
+    ajena = SalidaEtiqueta.joins(:salida).where(etiqueta: hojas, salidas: { estado: %w[preparando sellada enviada] }).where.not(salida_id: id).first
+    raise ArgumentError, "#{ajena.etiqueta.codigo} ya va en la salida #{ajena.salida.folio}" if ajena
+    transaction do
+      puestas = salida_etiquetas.where(etiqueta: hojas).to_a
+      puestas.each { |f| f.update!(grupo: (f.etiqueta_id == etiqueta.id ? nil : etiqueta)) }
+      (hojas - puestas.map(&:etiqueta)).each { |h| salida_etiquetas.create!(etiqueta: h, grupo: (h == etiqueta ? nil : etiqueta)) }
+      hojas.size - puestas.size
+    end
+  end
+
   # --- surtir: escanear una etiqueta viva y suelta del origen; se expande a sus hojas.
   def agregar!(etiqueta)
     raise ArgumentError, "la salida está #{estado}" unless preparando?
