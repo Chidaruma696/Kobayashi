@@ -55,8 +55,11 @@ class Salida < ApplicationRecord
   # La salida que se está armando para el destino de un pedido; si no hay, la abre. Así la caja
   # que nace de un renglón entra sola a la salida, sin volver a escanearla.
   def self.para_pedido!(pedido, usuario:)
-    abierta = where(sucursal_origen: pedido.sucursal_origen, sucursal_destino_id: pedido.sucursal_destino_id, cliente_id: pedido.cliente_id, estado: "preparando").order(:created_at).first
-    abierta || nueva!(origen: pedido.sucursal_origen, destino: pedido.destino, usuario: usuario)
+    armandose_para(pedido) || nueva!(origen: pedido.sucursal_origen, destino: pedido.destino, usuario: usuario)
+  end
+
+  def self.armandose_para(pedido)
+    where(sucursal_origen: pedido.sucursal_origen, sucursal_destino_id: pedido.sucursal_destino_id, cliente_id: pedido.cliente_id, estado: "preparando").order(:created_at).first
   end
 
   # Mete una etiqueta recién registrada sin escanearla. Tolera lo que ya estaba: las pesadas que

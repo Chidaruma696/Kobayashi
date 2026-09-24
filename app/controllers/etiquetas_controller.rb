@@ -13,10 +13,13 @@ class EtiquetasController < ApplicationController
   # La etiquetadora: producto, lista de pesadas (o piezas), báscula, y Registrar e imprimir.
   def new
     cargar_contexto
-    producto = @linea&.producto || Producto.activos.find_by(id: params[:producto_id])
+    elegido = Producto.activos.find_by(id: params[:producto_id])
+    # Sustituto: se surte el renglón con otro producto (no hay pechuga, va pollo entero), a propósito.
+    @sustituto = params[:sustituto].present? && @linea && elegido && elegido.id != @linea.producto_id ? elegido : nil
+    producto = @sustituto || @linea&.producto || elegido
     @producto_json = producto && producto_json(producto)
-    @pendientes = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] }, estado: "pendiente")
-                             .includes(:producto, pedido: %i[sucursal_destino cliente]).order("pedidos.created_at")
+    @pendientes = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id, estado: %w[solicitado surtiendo] }, estado: "pendiente").count
+    @salida = @linea && Salida.armandose_para(@linea.pedido)
   end
 
   # Alta de una etiqueta suelta desde un formulario normal (lo usa también la caja de la ficha).
@@ -175,7 +178,8 @@ class EtiquetasController < ApplicationController
   # etiquetar sin pedido ni producción. Cambiar de producto dentro de un pedido cae en su renglón.
   def resolver_contexto(producto)
     linea = @linea
-    linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id
+    # Otro producto dentro del pedido cae en su renglón; declarado como sustituto, se queda en este.
+    linea = @linea.pedido.linea_de(producto) if @linea && @linea.producto_id != producto.id && params[:sustituto].blank?
     linea ||= @produccion&.pedido&.linea_de(producto)
     raise ArgumentError, "#{producto.nombre} no está en el pedido #{@linea.pedido.folio}" if @linea && linea.nil?
     return [ linea, nil ] if linea || @produccion

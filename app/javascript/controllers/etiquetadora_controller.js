@@ -18,7 +18,7 @@ export default class extends Controller {
     "cfgAncho", "cfgAlto", "cfgLeyenda", "cfgBarras", "cfgLetra"
   ]
   static values = { loteUrl: String, productosUrl: String, imprimirUrl: String, etiquetasUrl: String, adminProductosUrl: String,
-                    pedidoLineaId: String, produccionId: String, producto: Object, simulada: Boolean }
+                    pedidoLineaId: String, produccionId: String, sustituto: Boolean, producto: Object, simulada: Boolean }
 
   CFG_CLAVE = "kobayashi:etiqueta_cfg"
   CFG_DEFAULT = { ancho: 55, alto: 45, leyenda: "", barras: 36, letra: 14 }
@@ -376,6 +376,7 @@ export default class extends Controller {
   async enviar(cuerpo) {
     const datos = await this.pedir(this.loteUrlValue, "POST", {
       producto_id: this.producto.id, pedido_linea_id: this.pedidoLineaIdValue, produccion_id: this.produccionIdValue,
+      sustituto: this.sustitutoValue ? "1" : "",
       pin: this.hasPinTarget ? this.pinTarget.value : "", justificacion: this.hasJustificacionTarget ? this.justificacionTarget.value : "",
       ...cuerpo
     })

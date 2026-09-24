@@ -27,7 +27,11 @@ class PedidoLineasController < ApplicationController
     @linea = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_origen_id: sucursal_actual.id }).find(params[:id])
   end
 
+  # Desde la ficha del pedido (HTML) o desde el checklist de la etiquetadora (JSON).
   def volver(aviso, error = nil)
-    redirect_to pedido_path(@linea.pedido), notice: aviso, alert: error
+    respond_to do |format|
+      format.html { redirect_to pedido_path(@linea.pedido), notice: aviso, alert: error }
+      format.json { error ? render(json: { error: error }, status: :unprocessable_entity) : render(json: { id: @linea.id, estado: @linea.estado, motivo: @linea.motivo }) }
+    end
   end
 end
