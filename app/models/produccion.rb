@@ -12,7 +12,7 @@ class Produccion < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :cantidad, numericality: { greater_than: 0 }
   validates :estado, inclusion: { in: %w[abierta cerrada] }
 

@@ -43,3 +43,6 @@ En el sistema anterior no se podía enviar sin ponerle precio a todo, y un produ
 
 ## La producción no tiene nada que ver con los pedidos (24 sept 2026)
 Producción es solo esto: entra una mercancía en una cantidad y salen las etiquetas de lo que se saca de ella; al cerrar, la diferencia es merma. Ni pedido, ni motivo, ni PIN, ni revisión. Lo que sale queda vivo en la matriz y se surte a los pedidos escaneándolo o etiquetando contra el renglón, como todo lo demás. (Lo tenía enredado con los pedidos y hasta con el PIN viejo; me lo dijeron tres veces.)
+
+## Folios por sucursal, únicos por sucursal (24 sept 2026)
+Cada tienda numera lo suyo (su B-00001, su C-00001), como el sistema anterior, pero el índice los exigía únicos en todo el sistema: la segunda tienda no podía ni abrir caja. Salió al cargar datos de prueba con tres sucursales; nunca se había probado con más de una. Ahora la unicidad es por sucursal. Las listas y búsquedas ya están acotadas a la sucursal del usuario, así que el folio corto sigue sirviendo.

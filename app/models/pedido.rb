@@ -10,7 +10,7 @@ class Pedido < ApplicationRecord
 
   before_validation :asignar_folio, on: :create
 
-  validates :folio, presence: true, uniqueness: true
+  validates :folio, presence: true, uniqueness: { scope: :sucursal_origen_id }
   validates :estado, inclusion: { in: ESTADOS }
   validate :un_solo_destino
   validate :con_lineas, on: :create
