@@ -1,67 +1,136 @@
-<div class="w-full max-w-lg rounded-2xl bg-white p-8 shadow">
-  <div class="mb-6 flex items-center gap-3">
-    <%= image_tag "logo-b.png", alt: "Kobayashi", class: "h-12 w-12" %>
-    <div>
-      <h1 class="text-2xl font-bold leading-tight"><%= t("instalacion.titulo") %></h1>
-      <div class="text-xs text-stone-500">Kobayashi v<%= Kobayashi::VERSION %></div>
+<% content_for :body_class, "items-stretch" %>
+<%# Primer arranque a pantalla completa y por pasos: apariencia, negocio, sucursal, administrador, resumen. %>
+<div class="grid min-h-screen w-full lg:grid-cols-[320px_1fr]" data-controller="pasos" data-pasos-inicial-value="<%= @paso || 1 %>">
+  <aside class="flex flex-col gap-6 bg-marca-400 px-8 py-10 text-marca-950">
+    <div class="flex items-center gap-3">
+      <%= image_tag "logo-b.png", alt: "Kobayashi", class: "h-14 w-14" %>
+      <div>
+        <div class="text-2xl font-bold leading-tight">Kobayashi</div>
+        <div class="text-xs opacity-80">v<%= Kobayashi::VERSION %> · <%= t("instalacion.titulo") %></div>
+      </div>
     </div>
-  </div>
-  <p class="mb-4 text-sm text-stone-600"><%= t("instalacion.intro") %></p>
-  <% if flash[:alert] %>
-    <p class="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700"><%= flash[:alert] %></p>
-  <% end %>
-  <%= form_with url: instalar_path, scope: :instalacion, class: "space-y-4" do |f| %>
-    <fieldset class="space-y-3">
-      <legend class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("instalacion.negocio") %></legend>
-      <div>
-        <%= f.label :negocio, t("instalacion.nombre_negocio"), class: "block text-sm font-medium" %>
-        <%= f.text_field :negocio, value: @datos[:negocio], autofocus: true, required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-        <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.nombre_negocio_ayuda") %></p>
-      </div>
-      <div>
-        <%= f.label :giro, t("instalacion.giro"), class: "block text-sm font-medium" %>
-        <%= f.select :giro, Modulo::GIROS.keys.map { |g| [ t("giros.#{g}.nombre"), g ] }, { selected: @datos[:giro] }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-        <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.giro_ayuda") %></p>
-        <ul class="mt-2 space-y-1 text-xs text-stone-600">
-          <% Modulo::GIROS.each_key do |g| %><li><strong><%= t("giros.#{g}.nombre") %></strong>: <%= t("giros.#{g}.que") %></li><% end %>
-        </ul>
-      </div>
-      <details class="text-sm">
-        <summary class="cursor-pointer text-stone-600"><%= t("instalacion.sucursal_detalle") %></summary>
-        <div class="mt-2 grid grid-cols-3 gap-3">
+    <p class="text-sm opacity-90"><%= t("instalacion.intro") %></p>
+    <ol class="space-y-2 text-sm">
+      <% %w[apariencia negocio sucursal administrador resumen].each_with_index do |paso, i| %>
+        <li class="flex items-center gap-3" data-pasos-target="indicador">
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/60 font-mono text-xs"><%= i + 1 %></span>
+          <span><%= t("instalacion.pasos.#{paso}") %></span>
+        </li>
+      <% end %>
+    </ol>
+    <div class="mt-auto flex flex-wrap gap-2 text-xs">
+      <% Usuario::IDIOMAS.each do |i| %>
+        <%= link_to t("ajustes.idiomas.#{i}"), instalar_path(idioma: i), class: "rounded-full px-3 py-1 #{I18n.locale.to_s == i ? 'bg-white font-semibold' : 'bg-white/40 hover:bg-white/60'}" %>
+      <% end %>
+    </div>
+  </aside>
+
+  <main class="flex flex-col px-6 py-10 sm:px-12 lg:px-20">
+    <% if flash[:alert] %>
+      <p class="mb-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700"><%= flash[:alert] %></p>
+    <% end %>
+    <%= form_with url: instalar_path, scope: :instalacion, class: "flex flex-1 flex-col", data: { turbo: false } do |f| %>
+      <%= f.hidden_field :idioma, value: I18n.locale %>
+
+      <%# 1. Apariencia %>
+      <section class="max-w-2xl space-y-6" data-pasos-target="paso">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.bienvenida") %></h1>
+        <p class="text-stone-600"><%= t("instalacion.apariencia_ayuda") %></p>
+        <% { tema: Usuario::TEMAS, letra: Usuario::LETRAS, densidad: Usuario::DENSIDADES }.each do |campo, valores| %>
+          <fieldset>
+            <legend class="mb-2 text-sm font-medium"><%= t("ajustes.#{campo}") %></legend>
+            <div class="flex flex-wrap gap-2">
+              <% valores.each do |v| %>
+                <label class="btn btn-secondary cursor-pointer has-checked:bg-marca-600 has-checked:text-white has-checked:border-marca-700">
+                  <%= f.radio_button campo, v, checked: @datos[campo].to_s == v, class: "sr-only", data: { atributo: (campo == :tema ? "theme" : campo), action: "change->pasos#aplicar" } %>
+                  <%= t("ajustes.#{campo}_opciones.#{v}") %>
+                </label>
+              <% end %>
+            </div>
+          </fieldset>
+        <% end %>
+      </section>
+
+      <%# 2. Negocio %>
+      <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.negocio") %></h1>
+        <div>
+          <%= f.label :negocio, t("instalacion.nombre_negocio"), class: "block text-sm font-medium" %>
+          <%= f.text_field :negocio, value: @datos[:negocio], required: true, class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 text-lg" %>
+          <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.nombre_negocio_ayuda") %></p>
+        </div>
+        <fieldset>
+          <legend class="mb-2 text-sm font-medium"><%= t("instalacion.giro") %></legend>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <% Modulo::GIROS.each_key do |g| %>
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 has-checked:border-marca-600 has-checked:bg-marca-50">
+                <%= f.radio_button :giro, g, checked: @datos[:giro].to_s == g, class: "mt-1" %>
+                <span><strong><%= t("giros.#{g}.nombre") %></strong><br><span class="text-xs text-stone-600"><%= t("giros.#{g}.que") %></span></span>
+              </label>
+            <% end %>
+          </div>
+          <p class="mt-2 text-xs text-stone-500"><%= t("instalacion.giro_ayuda") %></p>
+        </fieldset>
+      </section>
+
+      <%# 3. Sucursal principal %>
+      <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.sucursal") %></h1>
+        <p class="text-stone-600"><%= t("instalacion.matriz_ayuda") %></p>
+        <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
             <%= f.label :sucursal, t("instalacion.matriz"), class: "block text-sm font-medium" %>
-            <%= f.text_field :sucursal, value: @datos[:sucursal], class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+            <%= f.text_field :sucursal, value: @datos[:sucursal], placeholder: t("instalacion.matriz_placeholder"), class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 text-lg" %>
           </div>
           <div>
             <%= f.label :codigo, t("comun.codigo"), class: "block text-sm font-medium" %>
-            <%= f.text_field :codigo, value: @datos[:codigo], maxlength: 10, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono uppercase" %>
+            <%= f.text_field :codigo, value: @datos[:codigo], maxlength: 10, class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 font-mono text-lg uppercase" %>
           </div>
         </div>
-        <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.matriz_ayuda") %></p>
-      </details>
-    </fieldset>
-    <fieldset class="space-y-3">
-      <legend class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("instalacion.administrador") %></legend>
-      <div>
-        <%= f.label :nombre, t("comun.nombre"), class: "block text-sm font-medium" %>
-        <%= f.text_field :nombre, value: @datos[:nombre], required: true, autocomplete: "name", class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
+      </section>
+
+      <%# 4. Administrador %>
+      <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.administrador") %></h1>
+        <p class="text-stone-600"><%= t("instalacion.administrador_ayuda") %></p>
         <div>
-          <%= f.label :usuario, t("sesion.usuario"), class: "block text-sm font-medium" %>
-          <%= f.text_field :usuario, value: @datos[:usuario], required: true, autocomplete: "username", autocapitalize: "none", class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+          <%= f.label :nombre, t("comun.nombre"), class: "block text-sm font-medium" %>
+          <%= f.text_field :nombre, value: @datos[:nombre], required: true, autocomplete: "name", class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 text-lg" %>
         </div>
-        <div>
-          <%= f.label :password, t("sesion.contrasena"), class: "block text-sm font-medium" %>
-          <%= f.password_field :password, required: true, minlength: 8, autocomplete: "new-password", class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div>
+            <%= f.label :usuario, t("sesion.usuario"), class: "block text-sm font-medium" %>
+            <%= f.text_field :usuario, value: @datos[:usuario], required: true, autocomplete: "username", autocapitalize: "none", class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 text-lg" %>
+          </div>
+          <div>
+            <%= f.label :password, t("sesion.contrasena"), class: "block text-sm font-medium" %>
+            <%= f.password_field :password, required: true, minlength: 8, autocomplete: "new-password", class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 text-lg" %>
+            <p class="mt-1 text-xs text-stone-500"><%= t("instalacion.contrasena_ayuda") %></p>
+          </div>
         </div>
+      </section>
+
+      <%# 5. Resumen %>
+      <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.resumen") %></h1>
+        <p class="text-stone-600"><%= t("instalacion.resumen_ayuda") %></p>
+        <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 rounded-lg border border-stone-200 bg-white p-4 text-sm" data-pasos-target="resumen">
+          <dt class="text-stone-500"><%= t("instalacion.nombre_negocio") %></dt><dd data-campo="negocio"></dd>
+          <dt class="text-stone-500"><%= t("instalacion.giro") %></dt><dd data-campo="giro"></dd>
+          <dt class="text-stone-500"><%= t("instalacion.matriz") %></dt><dd data-campo="sucursal" data-vacio="<%= t("instalacion.matriz_placeholder") %>"></dd>
+          <dt class="text-stone-500"><%= t("comun.codigo") %></dt><dd class="font-mono" data-campo="codigo" data-vacio="MTZ"></dd>
+          <dt class="text-stone-500"><%= t("instalacion.pasos.administrador") %></dt><dd data-campo="nombre"></dd>
+          <dt class="text-stone-500"><%= t("sesion.usuario") %></dt><dd class="font-mono" data-campo="usuario"></dd>
+          <dt class="text-stone-500"><%= t("sesion.contrasena") %></dt><dd data-campo="password"></dd>
+          <dt class="text-stone-500"><%= t("ajustes.idioma") %></dt><dd><%= t("ajustes.idiomas.#{I18n.locale}") %></dd>
+        </dl>
+      </section>
+
+      <div class="mt-10 flex items-center gap-3">
+        <button type="button" class="btn btn-secondary" data-pasos-target="anterior" data-action="pasos#anterior"><i class="bi bi-arrow-left"></i> <%= t("instalacion.anterior") %></button>
+        <button type="button" class="btn btn-primary btn-lg ml-auto" data-pasos-target="siguiente" data-action="pasos#siguiente"><%= t("instalacion.siguiente") %> <i class="bi bi-arrow-right"></i></button>
+        <%= f.submit t("instalacion.crear"), class: "btn btn-success btn-lg ml-auto hidden", data: { pasos_target: "enviar" } %>
       </div>
-      <div>
-        <%= f.label :idioma, t("ajustes.idioma"), class: "block text-sm font-medium" %>
-        <%= f.select :idioma, Usuario::IDIOMAS.map { |i| [ t("ajustes.idiomas.#{i}"), i ] }, { selected: @datos[:idioma] }, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
-      </div>
-    </fieldset>
-    <%= f.submit t("instalacion.crear"), class: "btn btn-primary w-full" %>
-  <% end %>
+    <% end %>
+  </main>
 </div>

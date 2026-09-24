@@ -1362,6 +1362,20 @@ es:
     giro: Giro del negocio
     giro_ayuda: Solo decide qué módulos arrancan encendidos; se cambian cuando quieras en Ajustes.
     sucursal_detalle: Nombre y código de la sucursal principal (si no, se usa el nombre del negocio y MTZ)
+    bienvenida: Bienvenido a Kobayashi
+    apariencia_ayuda: 'Antes de nada, ponlo cómodo: tema, tamaño de letra y densidad. Se aplican al momento y se quedan en tu usuario.'
+    pasos:
+      apariencia: Apariencia
+      negocio: Negocio
+      sucursal: Sucursal principal
+      administrador: Administrador
+      resumen: Revisar y crear
+    matriz_placeholder: el nombre del negocio
+    administrador_ayuda: El primer usuario lo puede todo. Después das de alta a los demás con sus roles.
+    contrasena_ayuda: Mínimo 8 caracteres.
+    resumen_ayuda: Revisa; con Anterior puedes corregir. Al crear, entras directo.
+    anterior: Anterior
+    siguiente: Siguiente
   modulos:
     etiquetas:
       nombre: Etiquetas y producción

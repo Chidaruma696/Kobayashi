@@ -1362,6 +1362,20 @@ de:
     giro: Art des Betriebs
     giro_ayuda: Legt nur fest, welche Module eingeschaltet starten; jederzeit in den Einstellungen änderbar.
     sucursal_detalle: Name und Code der Hauptfiliale (sonst der Betriebsname und MTZ)
+    bienvenida: Willkommen bei Kobayashi
+    apariencia_ayuda: 'Zuerst bequem einrichten: Thema, Schriftgröße und Dichte. Gilt sofort und bleibt bei deinem Benutzer.'
+    pasos:
+      apariencia: Darstellung
+      negocio: Betrieb
+      sucursal: Hauptfiliale
+      administrador: Administrator
+      resumen: Prüfen und anlegen
+    matriz_placeholder: der Betriebsname
+    administrador_ayuda: Der erste Benutzer darf alles. Die übrigen legst du danach mit ihren Rollen an.
+    contrasena_ayuda: Mindestens 8 Zeichen.
+    resumen_ayuda: Prüfen; mit Zurück lässt sich alles korrigieren. Beim Anlegen bist du direkt angemeldet.
+    anterior: Zurück
+    siguiente: Weiter
   modulos:
     etiquetas:
       nombre: Etiketten und Produktion

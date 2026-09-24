@@ -1362,6 +1362,20 @@ en:
     giro: Type of business
     giro_ayuda: It only decides which modules start on; change them any time in Settings.
     sucursal_detalle: Name and code of the main branch (otherwise the business name and MTZ)
+    bienvenida: Welcome to Kobayashi
+    apariencia_ayuda: 'First, make it comfortable: theme, font size and density. They apply right away and stay on your user.'
+    pasos:
+      apariencia: Appearance
+      negocio: Business
+      sucursal: Main branch
+      administrador: Administrator
+      resumen: Review and create
+    matriz_placeholder: the business name
+    administrador_ayuda: The first user can do everything. You add the rest with their roles afterwards.
+    contrasena_ayuda: At least 8 characters.
+    resumen_ayuda: Check it; use Back to fix anything. On create, you are signed in.
+    anterior: Back
+    siguiente: Next
   modulos:
     etiquetas:
       nombre: Labels and production

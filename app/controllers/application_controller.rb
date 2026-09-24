@@ -22,9 +22,12 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # Cada quien ve el sistema en su idioma; sin sesión, en el del navegador si lo tenemos.
+  # Cada quien ve el sistema en su idioma; sin sesión, el que pida (?idioma=, se recuerda en una
+  # cookie) o el del navegador si lo tenemos.
   def con_idioma(&)
-    idioma = usuario_actual&.idioma || http_accept_language_preferido
+    idiomas = I18n.available_locales.map(&:to_s)
+    cookies[:idioma] = params[:idioma] if params[:idioma].presence_in(idiomas)
+    idioma = usuario_actual&.idioma || cookies[:idioma].presence_in(idiomas) || http_accept_language_preferido
     I18n.with_locale(idioma, &)
   end
 

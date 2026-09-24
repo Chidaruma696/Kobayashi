@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_140001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_150001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -615,7 +615,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_140001) do
     t.string "pin_digest"
     t.integer "rol_id", null: false
     t.integer "sucursal_id", null: false
-    t.string "tema", default: "sistema", null: false
+    t.string "tema", default: "claro", null: false
     t.datetime "updated_at", null: false
     t.string "usuario", null: false
     t.index ["rol_id"], name: "index_usuarios_on_rol_id"

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>" data-theme="<%= usuario_actual&.tema || "sistema" %>" data-densidad="<%= usuario_actual&.densidad || "normal" %>" data-letra="<%= usuario_actual&.letra || "normal" %>">
+<html lang="<%= I18n.locale %>" data-theme="<%= usuario_actual&.tema || "claro" %>" data-densidad="<%= usuario_actual&.densidad || "normal" %>" data-letra="<%= usuario_actual&.letra || "normal" %>">
   <head>
     <meta charset="utf-8">
     <title>Kobayashi</title>
@@ -8,7 +8,7 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="min-h-screen bg-fondo text-stone-900 flex items-center justify-center">
+  <body class="min-h-screen bg-fondo text-stone-900 flex items-center justify-center <%= content_for?(:body_class) ? yield(:body_class) : "" %>">
     <%= yield %>
   </body>
 </html>
