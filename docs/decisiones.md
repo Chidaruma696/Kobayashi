@@ -40,3 +40,6 @@ Pasaba que se hacían cajas por fuera del pedido y viajaban sin ir en el traspas
 
 ## El precio no frena el traspaso; frena la venta (24 sept 2026)
 En el sistema anterior no se podía enviar sin ponerle precio a todo, y un producto nuevo sin precio retenía el traspaso entero. Aquí la salida y la recepción pasan siempre; lo que no tiene precio en esa tienda no se vende hasta que lo tenga (antes se cobraba en $0, que era peor).
+
+## La producción siempre va contra un pedido (24 sept 2026)
+Se había dejado abrir producción "sin pedido" con PIN y motivo, y hasta seguía colgando del PIN que ya habíamos descartado. No: la producción se abre para un pedido de sucursal y lo que sale de ella se liga a sus renglones. Nada de producir por si acaso.

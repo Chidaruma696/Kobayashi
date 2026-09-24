@@ -46,10 +46,13 @@ class ProduccionTest < ActiveSupport::TestCase
     assert_not Etiqueta.new(tipo: "paquete", producto: @ala, cantidad: 1, sucursal: @matriz, usuario: @admin, produccion: p).valid?
   end
 
-  test "sin pedido hace falta autorización con motivo, y sin existencia no se abre" do
+  test "sin pedido no hay producción, ni contra uno cerrado, ni sin existencia" do
     assert_raises(ActiveRecord::RecordInvalid) { abrir(pedido: nil) }
-    p = abrir(pedido: nil, autorizado_por: @admin, justificacion: "stock de mostrador")
-    assert p.persisted?
-    assert_raises(Inventario::SinExistencia) { abrir(pedido: nil, autorizado_por: @admin, justificacion: "otra") }
+    pedidos(:abierto).update!(estado: "cerrado")
+    e = assert_raises(ActiveRecord::RecordInvalid) { abrir }
+    assert_match "abierto", e.message
+    pedidos(:abierto).update!(estado: "solicitado")
+    assert abrir.persisted?
+    assert_raises(Inventario::SinExistencia) { abrir }
   end
 end
