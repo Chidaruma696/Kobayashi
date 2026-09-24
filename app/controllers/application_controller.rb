@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   class_attribute :pestana_ribbon, default: :inicio
   def self.pestana(id) = self.pestana_ribbon = id
 
-  before_action :exigir_sesion
+  before_action :exigir_instalacion, :exigir_sesion
   around_action :con_idioma
   helper_method :usuario_actual, :sucursal_actual, :puede?
 
@@ -34,6 +34,12 @@ class ApplicationController < ActionController::Base
 
   def sucursal_actual
     Current.sucursal ||= usuario_actual&.sucursal
+  end
+
+  # Sin ningún usuario activo el sistema está recién instalado (o sin nadie que pueda entrar):
+  # primero se crea el administrador.
+  def exigir_instalacion
+    redirect_to instalar_path if Usuario.activos.none?
   end
 
   def exigir_sesion

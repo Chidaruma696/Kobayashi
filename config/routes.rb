@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     member { post :resolver }
   end
 
+  get "instalar", to: "instalacion#new", as: :instalar
+  post "instalar", to: "instalacion#create"
   get "entrar", to: "sesiones#new", as: :entrar
   post "entrar", to: "sesiones#create"
   delete "salir", to: "sesiones#destroy", as: :salir

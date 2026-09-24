@@ -1336,3 +1336,14 @@ de:
     usuario_minusculas: Benutzername (Kleinbuchstaben)
     nueva_contrasena: Neues Passwort (leer = unverändert)
     convenio_resumen: '%{precio}/kg bei %{lineas} bis zu %{cajas} Kisten pro Woche'
+  instalacion:
+    titulo: Erster Start
+    intro: Die Datenbank ist leer. Gib dem Betrieb einen Namen und lege den ersten Administrator an; damit meldest du dich an und richtest den Rest ein (Produkte, Filialen, Benutzer).
+    negocio: Betrieb
+    nombre_negocio: Name des Betriebs
+    nombre_negocio_ayuda: Steht auf den Tickets. Lässt sich später in den Einstellungen ändern.
+    matriz: Zentrale (die Filiale, die produziert und beliefert)
+    matriz_ayuda: Der Code steht auf Belegnummern und Etiketten. Läden werden später angelegt.
+    administrador: Administrator
+    crear: Anlegen und anmelden
+    lista: 'Fertig. Kobayashi gehört dir: fang in der Verwaltung mit Produkten, Filialen und Benutzern an.'

@@ -103,7 +103,7 @@ bin/setup        # bundle, base de datos, semillas
 bin/dev          # http://localhost:3000
 ```
 
-Las semillas de desarrollo crean `admin` / `admin1234` (PIN `1234`), una matriz, una tienda y unos productos. Tests: `bin/rails test`.
+La primera vez, con la base vacía, la aplicación pide el nombre del negocio, la matriz y el primer administrador (nombre, usuario, contraseña, idioma) y entra con él; desde ahí se dan de alta productos, sucursales y usuarios en Administración. Las semillas solo crean los roles base. Tests: `bin/rails test`.
 
 <br/>
 

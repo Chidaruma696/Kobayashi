@@ -1336,3 +1336,14 @@ en:
     usuario_minusculas: Username (lowercase)
     nueva_contrasena: New password (empty = unchanged)
     convenio_resumen: '%{precio}/kg on %{lineas} up to %{cajas} boxes per week'
+  instalacion:
+    titulo: First run
+    intro: The database is empty. Name the business and create the first administrator; sign in with it and set up the rest (products, branches, users).
+    negocio: Business
+    nombre_negocio: Business name
+    nombre_negocio_ayuda: Printed on tickets. Can be changed later in Settings.
+    matriz: Head office (the branch that produces and supplies)
+    matriz_ayuda: The code goes on folios and labels. Stores are added later.
+    administrador: Administrator
+    crear: Create and sign in
+    lista: 'Done. Kobayashi is yours: start in Administration to add products, branches and users.'

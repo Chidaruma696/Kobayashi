@@ -103,7 +103,7 @@ bin/setup        # bundle, database, seeds
 bin/dev          # http://localhost:3000
 ```
 
-Development seeds create `admin` / `admin1234` (PIN `1234`), a headquarters, a shop and a handful of products. Tests: `bin/rails test`.
+On the first visit, with an empty database, the app asks for the business name, the head office and the first administrator (name, user, password, language) and signs you in; from there you add products, branches and users in Administration. Seeds only create the base roles. Tests: `bin/rails test`.
 
 <br/>
 

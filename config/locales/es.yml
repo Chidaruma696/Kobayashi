@@ -1336,3 +1336,14 @@ es:
     usuario_minusculas: Usuario (minúsculas)
     nueva_contrasena: Nueva contraseña (vacío = igual)
     convenio_resumen: '%{precio}/kg en %{lineas} hasta %{cajas} cajas por semana'
+  instalacion:
+    titulo: Primer arranque
+    intro: La base está vacía. Di cómo se llama el negocio y crea al primer administrador; con él entras y das de alta lo demás (productos, sucursales, usuarios).
+    negocio: Negocio
+    nombre_negocio: Nombre del negocio
+    nombre_negocio_ayuda: Sale en los tickets. Se puede cambiar después en Ajustes.
+    matriz: Matriz (la sucursal que produce y surte)
+    matriz_ayuda: El código va en los folios y en las etiquetas. Las tiendas se dan de alta después.
+    administrador: Administrador
+    crear: Crear y entrar
+    lista: 'Listo. Kobayashi es tuyo: empieza por Administración para dar de alta productos, sucursales y usuarios.'
