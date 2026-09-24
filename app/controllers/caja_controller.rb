@@ -22,6 +22,7 @@ class CajaController < ApplicationController
     end
     p = r.producto
     catalogo = p.precio_centavos_en(sucursal_actual)
+    return render json: { error: "#{p.nombre}: sin precio en #{sucursal_actual.nombre}; pídelo a la matriz antes de venderlo" }, status: :unprocessable_entity unless catalogo.positive?
     promos = Promocion.para(p, sucursal_actual).select(&:vigente?).map do |pr|
       { tipo: pr.tipo, cantidad_minima: pr.cantidad_minima, precio_centavos: pr.precio_centavos, porcentaje: pr.porcentaje, nombre: pr.nombre }
     end

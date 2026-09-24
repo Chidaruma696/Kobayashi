@@ -35,6 +35,14 @@ class CajaTest < ActiveSupport::TestCase
     assert_equal venta, Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t1", lineas: [ { producto_id: @catsup.id, cantidad: 1 } ], pagos: [])
   end
 
+  test "un producto sin precio en la sucursal se recibe pero no se vende" do
+    @catsup.update!(precio_centavos: 0)
+    e = assert_raises(Caja::Error) { cobrar([ { producto_id: @catsup.id, cantidad: 1 } ]) }
+    assert_match "sin precio", e.message
+    @catsup.fijar_precio!(@tienda, "40")
+    assert_equal 4_000, cobrar([ { producto_id: @catsup.id, cantidad: 1 } ]).total_centavos
+  end
+
   test "pagos mixtos: lo que no es efectivo no puede pasarse del total y el cambio sale del efectivo" do
     venta = Caja.cobrar!(sucursal: @tienda, usuario: @cajera, clave: "t2", lineas: [ { producto_id: @catsup.id, cantidad: 3 } ],
                          pagos: [ { forma: "transferencia", monto_centavos: 10_000 }, { forma: "efectivo", monto_centavos: 5_000 } ])

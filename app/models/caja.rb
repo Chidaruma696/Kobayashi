@@ -177,6 +177,8 @@ module Caja
       raise Error, "#{producto.nombre} va por piezas enteras" if !producto.kg? && cantidad != cantidad.floor
     end
     catalogo = producto.precio_centavos_en(sucursal)
+    # Un producto nuevo llega a la tienda sin precio: se recibe, pero no se vende hasta que lo tenga.
+    raise Error, "#{producto.nombre}: sin precio en #{sucursal.nombre}; pídelo a la matriz antes de venderlo" unless catalogo.positive?
     promo_precio, promocion = Promocion.mejor(producto, sucursal, cantidad, catalogo)
     legitimo = promo_precio || catalogo
     precio = l[:precio_centavos].present? ? l[:precio_centavos].to_i : legitimo
