@@ -18,10 +18,10 @@ export default class extends Controller {
     "cfgAncho", "cfgAlto", "cfgLeyenda", "cfgBarras", "cfgLetra"
   ]
   static values = { loteUrl: String, productosUrl: String, imprimirUrl: String, etiquetasUrl: String, adminProductosUrl: String,
-                    pedidoLineaId: String, produccionId: String, sustituto: Boolean, producto: Object, simulada: Boolean }
+                    pedidoLineaId: String, produccionId: String, sustituto: Boolean, producto: Object, simulada: Boolean, cfgDefault: Object }
 
   CFG_CLAVE = "kobayashi:etiqueta_cfg"
-  CFG_DEFAULT = { ancho: 55, alto: 45, leyenda: "", barras: 36, letra: 14 }
+  get CFG_DEFAULT() { return { ancho: 55, alto: 45, leyenda: "", barras: 36, letra: 14, ...(this.cfgDefaultValue || {}) } }
   PREFS_CLAVE = "kobayashi:etiquetar_prefs"
 
   connect() {

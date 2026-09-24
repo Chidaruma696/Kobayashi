@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   def self.pestana(id) = self.pestana_ribbon = id
 
   before_action :exigir_sesion
+  around_action :con_idioma
   helper_method :usuario_actual, :sucursal_actual, :puede?
 
   rescue_from SinPermiso do |e|
@@ -16,6 +17,16 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  # Cada quien ve el sistema en su idioma; sin sesión, en el del navegador si lo tenemos.
+  def con_idioma(&)
+    idioma = usuario_actual&.idioma || http_accept_language_preferido
+    I18n.with_locale(idioma, &)
+  end
+
+  def http_accept_language_preferido
+    request.env["HTTP_ACCEPT_LANGUAGE"].to_s.scan(/[a-z]{2}/).find { |l| I18n.available_locales.map(&:to_s).include?(l) } || I18n.default_locale
+  end
 
   def usuario_actual
     Current.usuario ||= Usuario.activos.includes(:rol, :sucursal).find_by(id: cookies.signed[:usuario_id])

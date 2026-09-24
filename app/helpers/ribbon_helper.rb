@@ -10,7 +10,8 @@ module RibbonHelper
         Boton.new("Inicio", :root_path, nil, "house"),
         Boton.new("Ventas por producto", :ventas_por_producto_path, "reportes.ver", "graph-up")
       ] },
-      { nombre: "Revisar", botones: [ Boton.new("Por revisar", :revisiones_path, "revisiones.resolver", "clipboard-check") ] }
+      { nombre: "Revisar", botones: [ Boton.new("Por revisar", :revisiones_path, "revisiones.resolver", "clipboard-check") ] },
+      { nombre: "Ajustes", botones: [ Boton.new("Ajustes", :ajustes_path, nil, "gear") ] }
     ] },
     { id: :caja, nombre: "Caja", grupos: [
       { nombre: "Vender", botones: [
@@ -94,6 +95,7 @@ module RibbonHelper
     ] }
   ].freeze
 
+  # Ajustes cuelga de Inicio en la cinta, pero es su propia pestaña activa.
   def boton_visible?(boton)
     boton.permiso.nil? || puede?(boton.permiso)
   end

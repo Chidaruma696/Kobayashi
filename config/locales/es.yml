@@ -1,0 +1,48 @@
+es:
+  ajustes:
+    titulo: Ajustes
+    guardado: Ajustes guardados
+    guardar: Guardar
+    para_ti: Para ti
+    para_ti_ayuda: Se guardan en tu usuario y te siguen en cualquier equipo.
+    idioma: Idioma
+    tema: Tema
+    densidad: Densidad
+    letra: Tamaño de letra
+    idiomas:
+      es: Español
+      en: English
+      de: Deutsch
+    tema_opciones:
+      sistema: Como el sistema
+      claro: Claro
+      oscuro: Oscuro
+    densidad_opciones:
+      normal: Normal
+      compacta: Compacta
+    letra_opciones:
+      normal: Normal
+      grande: Grande
+    sistema: Sistema
+    negocio: Negocio
+    negocio_ayuda: Lo que se imprime en el encabezado y el pie del ticket. Si el nombre va vacío, se usa el de la sucursal.
+    etiqueta: Etiqueta
+    etiqueta_ayuda: Tamaño y textos por defecto de la etiqueta impresa; cada equipo puede afinarlos en la etiquetadora.
+    caja: Caja
+    caja_ayuda: El tope de efectivo en gaveta se fija por sucursal.
+    ir_sucursales: Ver sucursales
+    claves:
+      negocio:
+        nombre: Nombre del negocio
+        direccion: Dirección
+        telefono: Teléfono
+        pie_ticket: Pie del ticket
+      etiqueta:
+        ancho: Ancho (mm)
+        alto: Alto (mm)
+        barras: Alto del código (px)
+        letra: Letra del nombre (px)
+        leyenda: Leyenda de la etiqueta
+      caja:
+        piso_precio: Piso de precio (% del catálogo)
+        limite_gaveta: Tope de gaveta para sucursales nuevas ($)

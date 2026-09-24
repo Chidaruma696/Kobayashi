@@ -1,5 +1,5 @@
 <div class="ticket">
-  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %><% if @venta.cliente %><br>Cliente: <%= @venta.cliente.nombre %><% end %></div>
+  <div class="centro"><strong><%= Ajuste["negocio.nombre"].presence || @venta.sucursal.nombre %></strong><% if Ajuste["negocio.nombre"].present? %><br><%= @venta.sucursal.nombre %><% end %><% if Ajuste["negocio.direccion"].present? %><br><%= Ajuste["negocio.direccion"] %><% end %><% if Ajuste["negocio.telefono"].present? %><br><%= Ajuste["negocio.telefono"] %><% end %><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %><% if @venta.cliente %><br>Cliente: <%= @venta.cliente.nombre %><% end %></div>
   <div class="linea"></div>
   <table>
     <% @venta.lineas.each do |l| %>
@@ -18,5 +18,5 @@
   <div class="linea"></div>
   <div class="centro">Devoluciones solo con este ticket</div>
   <%= ean13_svg(@venta.codigo, alto: 34, modulo: 2) %>
-  <div class="centro">¡Gracias!</div>
+  <% if Ajuste["negocio.pie_ticket"].present? %><div class="centro"><%= Ajuste["negocio.pie_ticket"] %></div><% end %>
 </div>

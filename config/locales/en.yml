@@ -1,31 +1,48 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  ajustes:
+    titulo: Settings
+    guardado: Settings saved
+    guardar: Save
+    para_ti: For you
+    para_ti_ayuda: Saved on your user; they follow you to any computer.
+    idioma: Language
+    tema: Theme
+    densidad: Density
+    letra: Font size
+    idiomas:
+      es: Español
+      en: English
+      de: Deutsch
+    tema_opciones:
+      sistema: Follow the system
+      claro: Light
+      oscuro: Dark
+    densidad_opciones:
+      normal: Normal
+      compacta: Compact
+    letra_opciones:
+      normal: Normal
+      grande: Large
+    sistema: System
+    negocio: Business
+    negocio_ayuda: Printed on the receipt header and footer. Leave the name empty to use the branch name.
+    etiqueta: Label
+    etiqueta_ayuda: Default size and texts of the printed label; each computer can fine-tune them in the labeler.
+    caja: Register
+    caja_ayuda: The cash drawer limit is set per branch.
+    ir_sucursales: See branches
+    claves:
+      negocio:
+        nombre: Business name
+        direccion: Address
+        telefono: Phone
+        pie_ticket: Receipt footer
+      etiqueta:
+        ancho: Width (mm)
+        alto: Height (mm)
+        barras: Barcode height (px)
+        letra: Name font size (px)
+        leyenda: Label caption
+      caja:
+        piso_precio: Price floor (% of list price)
+        limite_gaveta: Drawer limit for new branches ($)

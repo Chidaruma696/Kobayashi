@@ -1,0 +1,48 @@
+de:
+  ajustes:
+    titulo: Einstellungen
+    guardado: Einstellungen gespeichert
+    guardar: Speichern
+    para_ti: Für dich
+    para_ti_ayuda: Werden in deinem Benutzer gespeichert und gelten an jedem Gerät.
+    idioma: Sprache
+    tema: Design
+    densidad: Dichte
+    letra: Schriftgröße
+    idiomas:
+      es: Español
+      en: English
+      de: Deutsch
+    tema_opciones:
+      sistema: Wie das System
+      claro: Hell
+      oscuro: Dunkel
+    densidad_opciones:
+      normal: Normal
+      compacta: Kompakt
+    letra_opciones:
+      normal: Normal
+      grande: Groß
+    sistema: System
+    negocio: Geschäft
+    negocio_ayuda: Steht im Kopf und Fuß des Kassenbons. Bleibt der Name leer, wird der Name der Filiale verwendet.
+    etiqueta: Etikett
+    etiqueta_ayuda: Standardgröße und -texte des gedruckten Etiketts; jeder Rechner kann sie im Etikettierer feinjustieren.
+    caja: Kasse
+    caja_ayuda: Das Bargeldlimit der Kassenlade wird pro Filiale festgelegt.
+    ir_sucursales: Filialen ansehen
+    claves:
+      negocio:
+        nombre: Name des Geschäfts
+        direccion: Adresse
+        telefono: Telefon
+        pie_ticket: Fußzeile des Kassenbons
+      etiqueta:
+        ancho: Breite (mm)
+        alto: Höhe (mm)
+        barras: Höhe des Strichcodes (px)
+        letra: Schriftgröße des Namens (px)
+        leyenda: Beschriftung des Etiketts
+      caja:
+        piso_precio: Preisuntergrenze (% des Listenpreises)
+        limite_gaveta: Ladenlimit für neue Filialen ($)

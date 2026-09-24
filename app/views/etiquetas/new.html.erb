@@ -12,6 +12,7 @@
      data-etiquetadora-pedido-linea-id-value="<%= @linea&.id %>"
      data-etiquetadora-produccion-id-value="<%= @produccion&.id %>"
      data-etiquetadora-producto-value="<%= @producto_json.to_json if @producto_json %>"
+     data-etiquetadora-cfg-default-value="<%= { ancho: Ajuste.entero("etiqueta.ancho"), alto: Ajuste.entero("etiqueta.alto"), leyenda: Ajuste["etiqueta.leyenda"].to_s, barras: Ajuste.entero("etiqueta.barras"), letra: Ajuste.entero("etiqueta.letra") }.to_json %>"
      data-etiquetadora-simulada-value="<%= params[:simulada].present? %>">
 
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">

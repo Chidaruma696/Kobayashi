@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   root "inicio#index"
   get "ventas-por-producto", to: "inicio#ventas", as: :ventas_por_producto
+  scope "ajustes", controller: "ajustes", as: "ajustes" do
+    get "/", action: :index
+    patch "preferencias", action: :preferencias, as: :preferencias
+    patch "sistema", action: :sistema, as: :sistema
+  end
   resources :revisiones, only: %i[index] do
     member { post :resolver }
   end

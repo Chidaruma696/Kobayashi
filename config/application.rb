@@ -11,11 +11,13 @@ module Kobayashi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
-    # Kobayashi es un negocio mexicano: una sola fuente de hora y textos en español.
+    # Kobayashi es un negocio mexicano: una sola fuente de hora. Textos en español por defecto;
+    # cada usuario puede verlo en inglés o alemán.
     config.time_zone = "America/Mexico_City"
     config.active_record.default_timezone = :utc
     config.i18n.default_locale = :es
-    config.i18n.available_locales = [ :es ]
+    config.i18n.available_locales = [ :es, :en, :de ]
+    config.i18n.fallbacks = [ :es ]
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

@@ -62,3 +62,61 @@
   .tabla tbody tr { @apply border-t border-stone-100; }
   .tabla tbody tr:hover { @apply bg-marca-50/40; }
 }
+
+/* Tema oscuro: los mismos tokens, volteados. Se elige por usuario (data-theme) o sigue al sistema. */
+:root[data-theme="oscuro"] { color-scheme: dark; }
+@media (prefers-color-scheme: dark) { :root[data-theme="sistema"] { color-scheme: dark; } }
+
+@layer theme {
+  :root[data-theme="oscuro"] {
+    --color-white: #1f1b1a;
+    --color-fondo: #151212;
+    --color-pared: #1c1a17;
+    --color-stone-50: #262120;
+    --color-stone-100: #2a2524;
+    --color-stone-200: #3a3331;
+    --color-stone-300: #4a413e;
+    --color-stone-400: #7d746f;
+    --color-stone-500: #a39a95;
+    --color-stone-600: #c4bbb5;
+    --color-stone-700: #d9d1cb;
+    --color-stone-800: #e8e2dd;
+    --color-stone-900: #f3efeb;
+    --color-marca-50: #3a2222;
+    --color-marca-100: #4a2a2b;
+    --color-marca-200: #6b3a3c;
+    --color-marca-800: #f0b3b4;
+    --color-marca-900: #f6cfd0;
+    --color-marca-950: #fbe4e4;
+    --color-green-50: #14261b; --color-green-100: #1b3524; --color-green-800: #a7e3b9;
+    --color-emerald-50: #10271d; --color-emerald-100: #143826; --color-emerald-800: #9de3bf;
+    --color-red-50: #2e1618; --color-red-100: #3f1d20; --color-red-800: #f0a8ac;
+    --color-amber-50: #2c2210; --color-amber-100: #3d2f12; --color-amber-800: #f3cf7a; --color-amber-900: #f7dc98;
+    --color-sky-50: #10222c; --color-sky-100: #143040; --color-sky-800: #9ed3f0;
+    --color-blue-50: #131f33; --color-blue-800: #a9c4f5;
+    --color-corbata-700: #f0a8ac;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  @layer theme {
+    :root[data-theme="sistema"] {
+      --color-white: #1f1b1a; --color-fondo: #151212; --color-pared: #1c1a17;
+      --color-stone-50: #262120; --color-stone-100: #2a2524; --color-stone-200: #3a3331; --color-stone-300: #4a413e;
+      --color-stone-400: #7d746f; --color-stone-500: #a39a95; --color-stone-600: #c4bbb5; --color-stone-700: #d9d1cb;
+      --color-stone-800: #e8e2dd; --color-stone-900: #f3efeb;
+      --color-marca-50: #3a2222; --color-marca-100: #4a2a2b; --color-marca-200: #6b3a3c;
+      --color-marca-800: #f0b3b4; --color-marca-900: #f6cfd0; --color-marca-950: #fbe4e4;
+      --color-green-50: #14261b; --color-green-100: #1b3524; --color-green-800: #a7e3b9;
+      --color-emerald-50: #10271d; --color-emerald-100: #143826; --color-emerald-800: #9de3bf;
+      --color-red-50: #2e1618; --color-red-100: #3f1d20; --color-red-800: #f0a8ac;
+      --color-amber-50: #2c2210; --color-amber-100: #3d2f12; --color-amber-800: #f3cf7a; --color-amber-900: #f7dc98;
+      --color-sky-50: #10222c; --color-sky-100: #143040; --color-sky-800: #9ed3f0;
+      --color-blue-50: #131f33; --color-blue-800: #a9c4f5;
+      --color-corbata-700: #f0a8ac;
+    }
+  }
+}
+
+/* Densidad y tamaño de letra, por usuario. Todo el espaciado de Tailwind sale de --spacing. */
+:root[data-densidad="compacta"] { --spacing: 0.2rem; }
+:root[data-letra="grande"] { font-size: 18px; }

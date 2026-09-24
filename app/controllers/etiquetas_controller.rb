@@ -223,11 +223,11 @@ class EtiquetasController < ApplicationController
 
   # Tamaño y textos de la etiqueta impresa; vienen del navegador (ajustes guardados) o valen los de fábrica.
   def configurar_impresion
-    @ancho = params[:ancho].present? ? params[:ancho].to_i.clamp(20, 200) : 55
-    @alto = params[:alto].present? ? params[:alto].to_i.clamp(15, 200) : 45
-    @leyenda = params[:leyenda].to_s
-    @alto_barras = params[:bc].present? ? params[:bc].to_i.clamp(20, 200) : 36
-    @letra_nombre = params[:fn].present? ? params[:fn].to_i.clamp(8, 36) : 14
+    @ancho = params[:ancho].present? ? params[:ancho].to_i.clamp(20, 200) : Ajuste.entero("etiqueta.ancho")
+    @alto = params[:alto].present? ? params[:alto].to_i.clamp(15, 200) : Ajuste.entero("etiqueta.alto")
+    @leyenda = params.key?(:leyenda) ? params[:leyenda].to_s : Ajuste["etiqueta.leyenda"].to_s
+    @alto_barras = params[:bc].present? ? params[:bc].to_i.clamp(20, 200) : Ajuste.entero("etiqueta.barras")
+    @letra_nombre = params[:fn].present? ? params[:fn].to_i.clamp(8, 36) : Ajuste.entero("etiqueta.letra")
   end
 
   def agrupar

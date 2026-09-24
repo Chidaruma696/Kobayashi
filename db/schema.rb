@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_110001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_120001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -31,6 +31,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_110001) do
     t.index ["usuario_id"], name: "index_abonos_on_usuario_id"
     t.index ["viaje_id"], name: "index_abonos_on_viaje_id"
     t.check_constraint "monto_centavos > 0", name: "abonos_monto"
+  end
+
+  create_table "ajustes", force: :cascade do |t|
+    t.string "clave", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "valor"
+    t.index ["clave"], name: "index_ajustes_on_clave", unique: true
   end
 
   create_table "cargos", force: :cascade do |t|
@@ -599,11 +607,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_110001) do
   create_table "usuarios", force: :cascade do |t|
     t.boolean "activo", default: true, null: false
     t.datetime "created_at", null: false
+    t.string "densidad", default: "normal", null: false
+    t.string "idioma", default: "es", null: false
+    t.string "letra", default: "normal", null: false
     t.string "nombre", null: false
     t.string "password_digest", null: false
     t.string "pin_digest"
     t.integer "rol_id", null: false
     t.integer "sucursal_id", null: false
+    t.string "tema", default: "sistema", null: false
     t.datetime "updated_at", null: false
     t.string "usuario", null: false
     t.index ["rol_id"], name: "index_usuarios_on_rol_id"

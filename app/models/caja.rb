@@ -3,7 +3,6 @@
 module Caja
   class Error < StandardError; end
 
-  PISO_PRECIO = 0.5 # nunca por debajo de la mitad del catálogo, ni con autorización
 
   # lineas: [{ etiqueta_id: | producto_id:, cantidad:, precio_centavos: }]
   # pagos:  [{ forma:, monto_centavos: }]
@@ -186,7 +185,8 @@ module Caja
     # (y entonces el controlador lo deja por revisar).
     autoriza = nil
     if precio < legitimo
-      raise Error, "#{producto.nombre}: el precio no puede bajar de la mitad del catálogo (#{Dinero.pesos((catalogo * PISO_PRECIO).ceil)})" if precio < catalogo * PISO_PRECIO
+      piso = Ajuste.entero("caja.piso_precio") / 100.0 # nunca por debajo del piso, ni con permiso
+      raise Error, "#{producto.nombre}: el precio no puede bajar del #{Ajuste.entero('caja.piso_precio')} % del catálogo (#{Dinero.pesos((catalogo * piso).ceil)})" if precio < catalogo * piso
       autoriza = autorizador if autorizador&.puede?("caja.bajar_precio")
     end
     { producto: producto, etiqueta: etiqueta, cantidad: cantidad, precio_centavos: precio, catalogo_centavos: catalogo,

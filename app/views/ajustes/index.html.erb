@@ -1,0 +1,64 @@
+<h1 class="mb-4 text-2xl font-bold"><%= t("ajustes.titulo") %></h1>
+<div class="grid gap-4 lg:grid-cols-2">
+  <%= form_with url: ajustes_preferencias_path, method: :patch, class: "card space-y-4" do |f| %>
+    <h2 class="font-semibold"><%= t("ajustes.para_ti") %></h2>
+    <p class="text-sm text-stone-600"><%= t("ajustes.para_ti_ayuda") %></p>
+    <% opciones = { idioma: Usuario::IDIOMAS, tema: Usuario::TEMAS, densidad: Usuario::DENSIDADES, letra: Usuario::LETRAS } %>
+    <% opciones.each do |campo, valores| %>
+      <fieldset>
+        <legend class="mb-1 text-sm font-medium"><%= t("ajustes.#{campo}") %></legend>
+        <div class="flex flex-wrap gap-2">
+          <% valores.each do |v| %>
+            <label class="btn btn-secondary btn-sm cursor-pointer has-checked:bg-marca-600 has-checked:text-white has-checked:border-marca-700">
+              <%= f.radio_button campo, v, checked: usuario_actual.public_send(campo) == v, class: "sr-only", name: "usuario[#{campo}]" %>
+              <%= campo == :idioma ? t("ajustes.idiomas.#{v}") : t("ajustes.#{campo}_opciones.#{v}") %>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+    <% end %>
+    <%= f.submit t("ajustes.guardar"), class: "btn btn-primary" %>
+  <% end %>
+
+  <% if puede?("admin.usuarios") %>
+    <%= form_with url: ajustes_sistema_path, method: :patch, class: "card space-y-5" do |f| %>
+      <h2 class="font-semibold"><%= t("ajustes.sistema") %></h2>
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.negocio") %></h3>
+        <p class="text-xs text-stone-500"><%= t("ajustes.negocio_ayuda") %></p>
+        <% %w[negocio.nombre negocio.direccion negocio.telefono negocio.pie_ticket].each do |clave| %>
+          <label class="block text-sm"><%= t("ajustes.claves.#{clave}") %>
+            <%= f.text_field "ajuste[#{clave}]", value: @ajustes[clave], placeholder: (clave == "negocio.nombre" ? sucursal_actual.nombre : nil), class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+          </label>
+        <% end %>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.etiqueta") %></h3>
+        <p class="text-xs text-stone-500"><%= t("ajustes.etiqueta_ayuda") %></p>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <% %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra].each do |clave| %>
+            <label class="block text-sm"><%= t("ajustes.claves.#{clave}") %>
+              <%= f.number_field "ajuste[#{clave}]", value: @ajustes[clave], min: 1, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
+            </label>
+          <% end %>
+        </div>
+        <label class="block text-sm"><%= t("ajustes.claves.etiqueta.leyenda") %>
+          <%= f.text_field "ajuste[etiqueta.leyenda]", value: @ajustes["etiqueta.leyenda"], class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+        </label>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.caja") %></h3>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block text-sm"><%= t("ajustes.claves.caja.piso_precio") %>
+            <%= f.number_field "ajuste[caja.piso_precio]", value: @ajustes["caja.piso_precio"], min: 0, max: 100, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
+          </label>
+          <label class="block text-sm"><%= t("ajustes.claves.caja.limite_gaveta") %>
+            <%= f.number_field "ajuste[caja.limite_gaveta]", value: @ajustes["caja.limite_gaveta"], min: 1, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
+          </label>
+        </div>
+        <p class="text-xs text-stone-500"><%= t("ajustes.caja_ayuda") %> <%= link_to t("ajustes.ir_sucursales"), admin_sucursales_path, class: "enlace" %></p>
+      </div>
+      <%= f.submit t("ajustes.guardar"), class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+</div>
