@@ -28,7 +28,7 @@
 ---
 
 > [!NOTE]
-> Kobayashi is the successor of [ToyPOS](https://github.com/Chidaruma696/ToyPOS): born for a meat plant, built **register first** instead of domain first, and now generalised by modules. It runs on one server for the head office and its branches. It is in active development and has not yet run a real day of sales.
+> Kobayashi was born for a meat plant, built **register first** instead of domain first, and is now generalised by modules. It runs on one server for the head office and its branches. It is in active development and has not yet run a real day of sales.
 
 <br/>
 
