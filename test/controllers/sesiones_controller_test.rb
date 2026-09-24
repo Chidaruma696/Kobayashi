@@ -5,6 +5,11 @@ class AcercaDeTest < ActionDispatch::IntegrationTest
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     get root_path
     assert_select "button[title='Acerca de Kobayashi'] img[alt=Kobayashi]"
+    # En pantalla angosta la cinta vive en una barra lateral con las mismas pestañas y botones
+    assert_select "aside[data-lateral-target=panel]" do
+      assert_select "a", /Etiquetar/
+      assert_select "a", /Cobranza/
+    end
     assert_select "dialog[data-dialogo-target=dialogo]" do
       assert_select "dd", /#{Regexp.escape(Kobayashi::VERSION)}/
       assert_select "dd", /Rails #{Regexp.escape(Rails.version)}/
