@@ -12,7 +12,7 @@
         <%= t("pedidos.pide").downcase %> <span class="font-mono"><%= number_with_precision(linea.cantidad, precision: linea.producto.decimales) %></span> <%= linea.producto.unidad %>
         · <%= t("etiquetas.llevas") %> <span class="font-mono" id="lleva"><%= number_with_precision(linea.cantidad_surtida, precision: linea.producto.decimales) %></span>
         <% if salida %> · <%= t("etiquetas.armandose") %> <%= link_to salida.folio, salida_path(salida), class: "font-mono underline", target: "_blank" %> (<%= t("etiquetas.n_paquetes", count: salida.salida_etiquetas.count) %>)<% end %>
-        · <%= linea.producto.kg? ? t("etiquetas.ayuda_kg") : t("etiquetas.ayuda_pieza") %>
+        · <%= linea.producto.fraccionable? ? t("etiquetas.ayuda_kg") : t("etiquetas.ayuda_pieza") %>
       </div>
     </div>
     <button type="button" class="btn btn-light btn-sm" data-action="pedidos-surtir#abrir" data-pedidos-surtir-id-param="<%= pedido.id %>"><i class="bi bi-list-ul"></i> <%= t("etiquetas.checklist") %></button>

@@ -25,9 +25,10 @@ export default class extends Controller {
     if (datos.etiqueta_id) {
       if (this.lineas.some(l => l.etiqueta_id === datos.etiqueta_id)) { this.avisar(`${T.pos.la_etiqueta} ${datos.codigo} ${T.pos.ya_en_ticket}`); return }
       this.agregar({ ...datos, cantidad: Number(datos.cantidad) })
-    } else if (datos.unidad === "kg") {
+    } else if (datos.unidad !== "pieza") {
+      // Kilo, litro o metro: se teclea la cantidad (la báscula solo sirve para kilos)
       this.pendienteProducto = datos
-      this.pendienteNombreTarget.textContent = `${datos.nombre} (kg)`
+      this.pendienteNombreTarget.textContent = `${datos.nombre} (${T.unidades[datos.unidad] || datos.unidad})`
       this.pendienteCantidadTarget.value = this.pesoTarget.value || ""
       this.pendienteTarget.classList.remove("hidden")
       this.pendienteCantidadTarget.focus()
@@ -106,7 +107,7 @@ export default class extends Controller {
           <td class="px-3 py-2">${l.nombre}${l.codigo ? ` <span class="font-mono text-xs text-stone-500">${l.codigo}</span>` : ""}${l.promo ? ` <span class="rounded bg-emerald-100 px-1 text-xs text-emerald-800">${l.promo}</span>` : ""}</td>
           <td class="px-3 py-2 text-right font-mono">${l.etiqueta_id
             ? `${l.cantidad.toFixed(l.decimales)} ${l.unidad}`
-            : `<input type="number" value="${l.cantidad}" step="${l.unidad === "kg" ? "0.001" : "1"}" min="0" data-action="change->pos#cambiarCantidad" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"> ${l.unidad}`}</td>
+            : `<input type="number" value="${l.cantidad}" step="${l.unidad === "pieza" ? "1" : "0.001"}" min="0" data-action="change->pos#cambiarCantidad" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"> ${l.unidad}`}</td>
           <td class="px-3 py-2 text-right font-mono"><input type="number" value="${(l.precio / 100).toFixed(2)}" step="0.01" min="0" data-action="change->pos#cambiarPrecio" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"></td>
           <td class="px-3 py-2 text-right font-mono" data-importe="${i}">${this.pesos(this.importe(l))}</td>
           <td class="px-1"><button type="button" data-action="pos#quitar" data-pos-indice-param="${i}" class="px-2 text-red-700"><i class="bi bi-x-lg"></i></button></td>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_130001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_140001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -428,7 +428,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_130001) do
     t.index ["plu"], name: "index_productos_on_plu", unique: true
     t.check_constraint "plu BETWEEN 1 AND 99999", name: "productos_plu_rango"
     t.check_constraint "precio_centavos >= 0", name: "productos_precio_no_negativo"
-    t.check_constraint "unidad IN ('kg', 'pieza')", name: "productos_unidad"
+    t.check_constraint "unidad IN ('kg', 'pieza', 'litro', 'metro')", name: "productos_unidad"
   end
 
   create_table "promociones", force: :cascade do |t|

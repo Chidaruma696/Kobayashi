@@ -47,7 +47,8 @@ export default class extends Controller {
   esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])) }
   fmt(n) { return Number(n).toFixed(this.porPieza ? 0 : 3) }
   get porPieza() { return this.producto?.unidad === "pieza" }
-  get unidad() { return this.porPieza ? T.etq.pz : "kg" }
+  get unidad() { const u = this.producto?.unidad || "kg"; return T.unidades[u] || u }
+  get porKilo() { return this.producto?.unidad === "kg" }
   get pesoFijo() { return Number(this.producto?.peso_fijo || 0) }
   get csrf() { return document.querySelector("meta[name=csrf-token]")?.content }
 
@@ -396,7 +397,7 @@ export default class extends Controller {
     const peso = (kg, color) => { this.pesoTarget.textContent = kg.toFixed(3); this.pesoTarget.className = `text-4xl font-extrabold leading-none ${color}` }
     this.bascula.on("peso", p => { peso(p.kg, p.kg > 0.02 ? "text-red-500" : "text-stone-500"); if (p.kg > 0.02) this.estadoTarget.textContent = `${T.etq.pesando} ${p.kg.toFixed(3)} kg` })
     this.bascula.on("estable", p => {
-      if (this.producto && !this.porPieza) { this.agregar(p.kg, "bascula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `${T.etq.agregado}: ${p.kg.toFixed(3)} kg ✓` }
+      if (this.producto && this.porKilo) { this.agregar(p.kg, "bascula"); peso(p.kg, "text-emerald-400"); this.estadoTarget.textContent = `${T.etq.agregado}: ${p.kg.toFixed(3)} kg ✓` }
       else this.estadoTarget.textContent = `${T.etq.estable} ${p.kg.toFixed(3)} kg (${T.etq.elige_producto_kilo})`
     })
     this.bascula.on("retirado", () => { peso(0, "text-stone-500"); this.estadoTarget.textContent = T.etq.coloca_paquete })

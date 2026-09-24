@@ -659,6 +659,11 @@ es:
     baja:
       faltan_codigo_y_motivo: Hacen falta el código y el motivo
       no_encontrada: No se encontró esa etiqueta
+    unidades:
+      kg: kg
+      pieza: pz
+      litro: l
+      metro: m
   etiquetas:
     etiqueta: Etiqueta
     etiquetar: Etiquetar
@@ -1386,3 +1391,8 @@ es:
     todo:
       nombre: Planta con tiendas y reparto (todo)
       que: 'todos los módulos: etiquetas, pedidos, salidas, rutas y conteos.'
+  unidades:
+    kg: Kilo
+    pieza: Pieza
+    litro: Litro
+    metro: Metro

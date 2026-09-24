@@ -659,6 +659,11 @@ en:
     baja:
       faltan_codigo_y_motivo: Code and reason are required
       no_encontrada: That label was not found
+    unidades:
+      kg: kg
+      pieza: pc
+      litro: l
+      metro: m
   etiquetas:
     etiqueta: Label
     etiquetar: Label
@@ -1386,3 +1391,8 @@ en:
     todo:
       nombre: Plant with stores and delivery (everything)
       que: 'every module: labels, orders, transfers, routes and counts.'
+  unidades:
+    kg: Kilo
+    pieza: Piece
+    litro: Litre
+    metro: Metre

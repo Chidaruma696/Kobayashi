@@ -1,5 +1,7 @@
 class Producto < ApplicationRecord
-  UNIDADES = %w[kg pieza].freeze
+  # Kilo, litro y metro se venden en fracciones (tres decimales); la pieza, entera. La báscula solo pesa kilos.
+  UNIDADES = %w[kg pieza litro metro].freeze
+  UNIDADES_CORTAS = { "kg" => "kg", "pieza" => "pz", "litro" => "l", "metro" => "m" }.freeze
   PLU_INICIAL = 90_000
 
   has_many :codigos_barras, class_name: "CodigoBarras", dependent: :destroy
@@ -24,6 +26,13 @@ class Producto < ApplicationRecord
     unidad == "kg"
   end
 
+  def fraccionable?
+    unidad != "pieza"
+  end
+
+  def self.nombre_unidad(unidad) = I18n.t("unidades.#{unidad}", default: unidad)
+  def unidad_corta = UNIDADES_CORTAS.fetch(unidad, unidad)
+
   def precio
     BigDecimal(precio_centavos) / 100
   end
@@ -46,9 +55,9 @@ class Producto < ApplicationRecord
     end
   end
 
-  # Decimales con los que se captura la cantidad: kilos a 3, piezas enteras.
+  # Decimales con los que se captura la cantidad: fracciones a 3, piezas enteras.
   def decimales
-    kg? ? 3 : 0
+    fraccionable? ? 3 : 0
   end
 
   def to_s

@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def cantidad(valor, producto)
-    "#{number_with_precision(valor, precision: producto.decimales)} #{producto.unidad}"
+    "#{number_with_precision(valor, precision: producto.decimales)} #{producto.unidad_corta}"
   end
 
   # Un icono de Bootstrap Icons, con texto opcional detrás: icono("printer", "Imprimir").

@@ -659,6 +659,11 @@ de:
     baja:
       faltan_codigo_y_motivo: Code und Grund fehlen
       no_encontrada: Dieses Etikett wurde nicht gefunden
+    unidades:
+      kg: kg
+      pieza: St.
+      litro: l
+      metro: m
   etiquetas:
     etiqueta: Etikett
     etiquetar: Etikettieren
@@ -1386,3 +1391,8 @@ de:
     todo:
       nombre: Betrieb mit Läden und Lieferung (alles)
       que: 'alle Module: Etiketten, Bestellungen, Transfers, Touren und Zählungen.'
+  unidades:
+    kg: Kilo
+    pieza: Stück
+    litro: Liter
+    metro: Meter

@@ -98,7 +98,7 @@ Donde hay etiquetas, cada paquete, caja y tarima lleva un **EAN-13 de identidad*
 - **El kardex es la verdad.** `Movimiento` solo se inserta; `Existencia` es una proyección que se actualiza en la misma transacción, con `CHECK (cantidad >= 0)` en la base.
 - **Modelos y tablas en español**, porque el negocio ya habla así: pesada, caja, traspaso, corte, folio.
 - **Una transacción por operación**, un solo camino por operación. Sin fallbacks.
-- **Kilos a tres decimales, dinero en centavos enteros**, un solo reloj (Ciudad de México), fecha de negocio distinta de la hora de captura.
+- **Kilos, litros y metros a tres decimales, piezas enteras, dinero en centavos enteros**, un solo reloj (Ciudad de México), fecha de negocio distinta de la hora de captura.
 - **Báscula en el navegador** por Web Serial con [Kana](https://github.com/Chidaruma696/Kana) (solo Chrome o Edge).
 - **Cinta tipo Office**: pestañas por módulo, botones grandes por acción, filtrados por permiso.
 - **Tres idiomas**: inglés por defecto, español y alemán; cada usuario elige el suyo en Ajustes, junto con tema, densidad y tamaño de letra.

@@ -98,7 +98,7 @@ Where labels are on, every package, box and pallet carries an **EAN-13 identity 
 - **The ledger is the truth.** `Movimiento` is insert-only; `Existencia` is a projection updated in the same transaction, with `CHECK (cantidad >= 0)` in the database.
 - **Spanish models and tables**, because the business already speaks that language: pesada, caja, traspaso, corte, folio.
 - **One transaction per operation**, one code path per operation. No fallbacks.
-- **Kilos to three decimals, money in integer cents**, one clock (Mexico City), business date separate from capture time.
+- **Kilos, litres and metres to three decimals, pieces whole, money in integer cents**, one clock (Mexico City), business date separate from capture time.
 - **Scale in the browser** through Web Serial with [Kana](https://github.com/Chidaruma696/Kana) (Chrome or Edge only).
 - **Office-style ribbon**: tabs per module, big buttons per action, filtered by permission.
 - **Three languages**: English by default, Spanish and German; each user picks theirs in Settings, along with theme, density and font size.

@@ -173,7 +173,7 @@ module Caja
       producto = Producto.activos.find(l[:producto_id])
       cantidad = BigDecimal(l[:cantidad].to_s).round(3)
       raise Error, I18n.t("errores.caja.cantidad_invalida", producto: producto.nombre) unless cantidad.positive?
-      raise Error, I18n.t("errores.caja.piezas_enteras", producto: producto.nombre) if !producto.kg? && cantidad != cantidad.floor
+      raise Error, I18n.t("errores.caja.piezas_enteras", producto: producto.nombre) if !producto.fraccionable? && cantidad != cantidad.floor
     end
     catalogo = producto.precio_centavos_en(sucursal)
     # Un producto nuevo llega a la tienda sin precio: se recibe, pero no se vende hasta que lo tenga.

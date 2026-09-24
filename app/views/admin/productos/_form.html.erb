@@ -8,7 +8,7 @@
   <div class="grid grid-cols-3 gap-4">
     <div>
       <%= f.label :unidad, t("comun.unidad"), class: "block text-sm font-medium" %>
-      <%= f.select :unidad, [ [ t("admin.kilo"), "kg" ], [ t("comun.pieza"), "pieza" ] ], {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
+      <%= f.select :unidad, Producto::UNIDADES.map { |u| [ Producto.nombre_unidad(u), u ] }, {}, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2" %>
     </div>
     <%= render "admin/campo", f: f, campo: :precio, etiqueta: t("comun.precio"), tipo: :number_field, opciones: { step: "0.01", min: 0 } %>
     <%= render "admin/campo", f: f, campo: :peso_fijo, etiqueta: t("admin.peso_por_pieza_opcional"), tipo: :number_field, opciones: { step: "0.001", min: 0 } %>

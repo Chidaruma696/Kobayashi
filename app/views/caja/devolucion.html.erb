@@ -17,7 +17,7 @@
             <td class="px-3 py-2 text-right font-mono"><%= cantidad(l.cantidad, l.producto) %></td>
             <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad_devuelta, precision: l.producto.decimales) %></td>
             <td class="px-3 py-2 text-right font-mono"><%= pesos(l.precio_centavos) %></td>
-            <td class="px-3 py-2"><% if l.cantidad_pendiente.positive? %><%= number_field_tag "lineas[#{l.id}]", nil, step: l.producto.kg? ? "0.001" : "1", min: 0, max: l.cantidad_pendiente, class: "w-28 rounded border border-stone-300 px-2 py-1 font-mono" %><% else %><span class="text-stone-400"><%= t("comun.nada").delete(".") %></span><% end %></td>
+            <td class="px-3 py-2"><% if l.cantidad_pendiente.positive? %><%= number_field_tag "lineas[#{l.id}]", nil, step: l.producto.fraccionable? ? "0.001" : "1", min: 0, max: l.cantidad_pendiente, class: "w-28 rounded border border-stone-300 px-2 py-1 font-mono" %><% else %><span class="text-stone-400"><%= t("comun.nada").delete(".") %></span><% end %></td>
           </tr>
         <% end %>
       </tbody>
