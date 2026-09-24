@@ -54,17 +54,19 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     assert_select "span", /cerrada/
   end
 
-  test "sin pedido la producción pide PIN y el no surtir exige motivo" do
+  test "sin pedido la producción lleva motivo y sin PIN; el no surtir exige motivo" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     pollo = Producto.create!(clave: "POLLO", nombre: "Pollo entero", unidad: "kg", precio: 60)
     Inventario.mover!(sucursal: sucursales(:matriz), producto: pollo, tipo: "entrada", cantidad: 5, usuario: usuarios(:admin))
+    get new_produccion_path
+    assert_select "input[name=pin]", 0, "el PIN se descartó: sin pedido va con motivo y a revisión"
     post producciones_path, params: { producto_id: pollo.id, cantidad: "5" }
     assert_redirected_to new_produccion_path
     assert_match "motivo", flash[:alert]
     assert_equal 0, Produccion.count
-    post producciones_path, params: { producto_id: pollo.id, cantidad: "5", pin: "9999", justificacion: "mostrador" }
+    post producciones_path, params: { producto_id: pollo.id, cantidad: "5", justificacion: "mostrador" }
     assert_equal usuarios(:admin), Produccion.last.autorizado_por
-    assert_equal 0, Revision.count, "el admin tiene el permiso: nada que revisar"
+    assert_equal 0, Revision.count, "el admin tiene el permiso: queda a su nombre, nada que revisar"
 
     linea = pedido_lineas(:catsup_10)
     post no_surtir_pedido_linea_path(linea.pedido, linea), params: { motivo: "" }

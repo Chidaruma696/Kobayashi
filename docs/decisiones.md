@@ -40,3 +40,6 @@ Pasaba que se hacían cajas por fuera del pedido y viajaban sin ir en el traspas
 
 ## El precio no frena el traspaso; frena la venta (24 sept 2026)
 En el sistema anterior no se podía enviar sin ponerle precio a todo, y un producto nuevo sin precio retenía el traspaso entero. Aquí la salida y la recepción pasan siempre; lo que no tiene precio en esa tienda no se vende hasta que lo tenga (antes se cobraba en $0, que era peor).
+
+## Producción sin pedido sí, PIN no (24 sept 2026)
+La producción no necesita pedido para operar: se abre contra uno si lo hay, y sin pedido con motivo y queda por revisar, como todo lo demás. Lo que seguía colgando era el PIN de la etapa anterior; fuera. (Primero entendí al revés y la dejé obligatoria contra pedido: revertido.)

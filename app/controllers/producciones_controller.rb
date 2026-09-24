@@ -17,7 +17,8 @@ class ProduccionesController < ApplicationController
   def create
     pedido = Pedido.abiertos.find_by(id: params[:pedido_id], sucursal_origen: sucursal_actual)
     return redirect_to new_produccion_path, alert: "Sin pedido escribe el motivo" if pedido.nil? && params[:justificacion].blank?
-    autoriza = pedido ? nil : autorizador_o_revision("etiquetas.libre", params[:pin])
+    # Sin pedido no hay PIN de por medio: si quien abre tiene el permiso queda a su nombre; si no, queda por revisar.
+    autoriza = pedido.nil? && puede?("etiquetas.libre") ? usuario_actual : nil
     producto = Producto.activos.find(params[:producto_id])
     produccion = Produccion.abrir!(sucursal: sucursal_actual, producto: producto,
                                    cantidad: params[:cantidad], usuario: usuario_actual, pedido: pedido,
