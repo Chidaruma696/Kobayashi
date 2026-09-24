@@ -10,14 +10,13 @@
         <div class="flex flex-wrap gap-2">
           <% valores.each do |v| %>
             <label class="btn btn-secondary btn-sm cursor-pointer has-checked:bg-marca-600 has-checked:text-white has-checked:border-marca-700">
-              <%= f.radio_button campo, v, checked: usuario_actual.public_send(campo) == v, class: "sr-only", name: "usuario[#{campo}]" %>
+              <%= f.radio_button campo, v, checked: usuario_actual.public_send(campo) == v, class: "sr-only", name: "usuario[#{campo}]", onchange: "this.form.requestSubmit()" %>
               <%= campo == :idioma ? t("ajustes.idiomas.#{v}") : t("ajustes.#{campo}_opciones.#{v}") %>
             </label>
           <% end %>
         </div>
       </fieldset>
     <% end %>
-    <%= f.submit t("ajustes.guardar"), class: "btn btn-primary" %>
   <% end %>
 
   <% if puede?("admin.usuarios") %>
