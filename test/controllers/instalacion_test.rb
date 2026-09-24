@@ -11,7 +11,8 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     get instalar_path
     assert_response :success
     assert_select "html[data-theme=claro]", true, "arranca en modo claro"
-    assert_select "section[data-pasos-target=paso]", 5, "va por pasos"
+    assert_select "section[data-pasos-target=paso]", 6, "va por pasos"
+    assert_select "section:first-of-type a[href=?]", instalar_path(idioma: "de"), true, "el idioma es el primer paso"
     assert_select "input[name='instalacion[usuario]'][value=admin]"
     get instalar_path(idioma: "de")
     assert_select "html[lang=de]", true, "el idioma se cambia desde la pantalla"

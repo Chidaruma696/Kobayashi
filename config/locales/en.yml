@@ -1360,22 +1360,26 @@ en:
     crear: Create and sign in
     lista: 'Done. Kobayashi is yours: start in Administration to add products, branches and users.'
     giro: Type of business
-    giro_ayuda: It only decides which modules start on; change them any time in Settings.
+    giro_ayuda: 'Pick the closest to your business. It only decides which modules start on: the crossed-out ones can be turned on later in Settings, and the on ones can be turned off.'
     sucursal_detalle: Name and code of the main branch (otherwise the business name and MTZ)
     bienvenida: Welcome to Kobayashi
-    apariencia_ayuda: 'First, make it comfortable: theme, font size and density. They apply right away and stay on your user.'
+    apariencia_ayuda: 'Now make it comfortable for you: light or dark theme, font size and density. They apply right away, stay on your user, and everyone picks their own in Settings.'
     pasos:
       apariencia: Appearance
       negocio: Business
       sucursal: Main branch
       administrador: Administrator
       resumen: Review and create
+      idioma: Language
     matriz_placeholder: the business name
     administrador_ayuda: The first user can do everything. You add the rest with their roles afterwards.
     contrasena_ayuda: At least 8 characters.
     resumen_ayuda: Check it; use Back to fix anything. On create, you are signed in.
     anterior: Back
     siguiente: Next
+    idioma_ayuda: Let's start with the language. You pick it now for this installation, but you can change it later in Settings, and every user you add picks their own.
+    idioma_nota: Picking one reloads the screen in that language; that is why it is the first step, before typing anything.
+    siempre_incluye: Register, inventory, settings and administration (always)
   modulos:
     etiquetas:
       nombre: Labels and production

@@ -1360,22 +1360,26 @@ es:
     crear: Crear y entrar
     lista: 'Listo. Kobayashi es tuyo: empieza por Administración para dar de alta productos, sucursales y usuarios.'
     giro: Giro del negocio
-    giro_ayuda: Solo decide qué módulos arrancan encendidos; se cambian cuando quieras en Ajustes.
+    giro_ayuda: 'Marca lo más parecido a tu negocio. Solo decide qué módulos arrancan encendidos: los tachados se pueden encender después en Ajustes, y los encendidos se pueden apagar.'
     sucursal_detalle: Nombre y código de la sucursal principal (si no, se usa el nombre del negocio y MTZ)
     bienvenida: Bienvenido a Kobayashi
-    apariencia_ayuda: 'Antes de nada, ponlo cómodo: tema, tamaño de letra y densidad. Se aplican al momento y se quedan en tu usuario.'
+    apariencia_ayuda: 'Ahora ponlo cómodo para ti: tema claro u oscuro, tamaño de letra y densidad. Se aplican al momento, se guardan en tu usuario y cada quien elige lo suyo en Ajustes.'
     pasos:
       apariencia: Apariencia
       negocio: Negocio
       sucursal: Sucursal principal
       administrador: Administrador
       resumen: Revisar y crear
+      idioma: Idioma
     matriz_placeholder: el nombre del negocio
     administrador_ayuda: El primer usuario lo puede todo. Después das de alta a los demás con sus roles.
     contrasena_ayuda: Mínimo 8 caracteres.
     resumen_ayuda: Revisa; con Anterior puedes corregir. Al crear, entras directo.
     anterior: Anterior
     siguiente: Siguiente
+    idioma_ayuda: Empecemos por el idioma. Lo eliges ahora para esta instalación, pero lo puedes cambiar después en Ajustes, y cada usuario que des de alta elige el suyo.
+    idioma_nota: Al elegir uno la pantalla se vuelve a cargar en ese idioma; por eso es el primer paso, antes de escribir nada.
+    siempre_incluye: Caja, inventario, ajustes y administración (siempre)
   modulos:
     etiquetas:
       nombre: Etiquetas y producción
