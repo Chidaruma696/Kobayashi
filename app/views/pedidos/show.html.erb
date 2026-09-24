@@ -19,7 +19,7 @@
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.cantidad_surtida, precision: d) %></td>
         <td class="px-3 py-2 text-right font-mono"><%= number_with_precision(l.faltante, precision: d) %></td>
         <td class="px-3 py-2"><%= l.estado.humanize %><%= " · #{l.motivo}" if l.motivo.present? %></td>
-        <td class="px-3 py-2 text-xs"><%= (salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{s.estado})", salida_path(s), class: "chip-folio") }.join(", ").html_safe %></td>
+        <td class="px-3 py-2 text-xs"><%= safe_join((salidas_por_linea[l.id] || []).map { |s| link_to("#{s.folio} (#{s.estado})", salida_path(s), class: "chip-folio") }, ", ") %></td>
         <% if @surtidor && @pedido.abierto? %>
           <td class="px-3 py-2">
             <div class="flex flex-wrap items-center gap-2">

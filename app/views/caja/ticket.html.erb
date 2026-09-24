@@ -1,5 +1,5 @@
 <div class="ticket">
-  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %><%= "<br>Cliente: #{@venta.cliente.nombre}".html_safe if @venta.cliente %></div>
+  <div class="centro"><strong><%= @venta.sucursal.nombre %></strong><br><%= @venta.folio %> · <%= l @venta.created_at, format: :short %><br>Le atendió <%= @venta.usuario.nombre %><% if @venta.cliente %><br>Cliente: <%= @venta.cliente.nombre %><% end %></div>
   <div class="linea"></div>
   <table>
     <% @venta.lineas.each do |l| %>

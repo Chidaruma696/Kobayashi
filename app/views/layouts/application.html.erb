@@ -8,7 +8,9 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
-    <link rel="icon" href="/icon.png" type="image/png">
+    <%# El dragón tal cual: negro con el navegador en claro, blanco en oscuro %>
+    <link rel="icon" href="/icon-b.png" type="image/png" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="/icon-w.png" type="image/png" media="(prefers-color-scheme: dark)">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
