@@ -2,6 +2,8 @@
 <%# La barra lleva el salmón del pelo de Kobayashi con letra oscura. En pantalla ancha, pestañas
     clásicas pegadas a la cinta (con las esquinas de arriba redondeadas); en pantalla angosta la
     cinta se esconde y las mismas pestañas y botones viven en una barra lateral. %>
+<%# Barra y cinta van fijas arriba, como en Office: el contenido se desplaza debajo %>
+<div class="sticky top-0 z-30 shadow-sm" id="cinta">
 <div class="bg-marca-400 text-marca-950">
   <nav class="flex w-full items-end gap-3 px-4 pt-1.5 text-sm">
     <%# El dragón: en pantalla ancha abre el "Acerca de"; en angosta abre la barra lateral %>
@@ -44,6 +46,7 @@
       </div>
     <% end %>
   </div>
+</div>
 </div>
 
 <%# Barra lateral (solo en pantalla angosta): todas las pestañas con sus botones, en vertical %>
