@@ -29,6 +29,30 @@ class ConteoTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { Conteo.abrir!(sucursal: @tienda, usuario: @super, responsable: @cajera) }
   end
 
+  test "un conteo parcial solo toca lo elegido y rechaza lo que está fuera; el cíclico avisa cuando toca" do
+    assert_raises(ArgumentError) { Conteo.abrir!(sucursal: @tienda, usuario: @super, responsable: @cajera, productos: []) }
+    c = Conteo.abrir!(sucursal: @tienda, usuario: @super, responsable: @cajera, productos: [ productos(:catsup) ])
+    assert c.parcial?
+    assert_equal [ productos(:catsup) ], c.lineas.map(&:producto)
+    assert_raises(ArgumentError) { c.escanear!(@a) }
+    assert_raises(ArgumentError) { c.contar_manual!(productos(:pechuga), 1) }
+    assert_empty c.conteo_etiquetas, "el escaneo rechazado no dejó nada a medias"
+    assert_empty c.etiquetas_no_vistas, "las etiquetas de pechuga no cuentan como no vistas"
+    c.contar_manual!(productos(:catsup), 7)
+    c.cerrar!(usuario: @super)
+    assert_equal BigDecimal("7"), Existencia.de(@tienda, productos(:catsup))
+    assert_equal BigDecimal("5"), Existencia.de(@tienda, productos(:pechuga)), "la pechuga no se tocó"
+    assert_equal "viva", @a.reload.estado
+    assert_equal 1, c.lineas.count
+
+    assert_not Conteo.vencido?(@tienda), "sin frecuencia no vence"
+    @tienda.update!(dias_conteo: 7)
+    assert_not Conteo.vencido?(@tienda), "acaba de cerrar uno"
+    c.update_columns(cerrado_en: 8.days.ago)
+    assert Conteo.vencido?(@tienda)
+    assert Conteo.vencido?(sucursales(:matriz).tap { |m| m.update!(dias_conteo: 1) }), "nunca ha contado"
+  end
+
   test "al cerrar manda el conteo: ajusta el inventario, mata las etiquetas no vistas y carga el faltante" do
     c = Conteo.abrir!(sucursal: @tienda, usuario: @super, responsable: @cajera)
     c.escanear!(@a)

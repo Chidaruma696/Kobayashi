@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_180001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_190001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -131,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_180001) do
   end
 
   create_table "conteos", force: :cascade do |t|
+    t.string "alcance", default: "total", null: false
     t.datetime "cerrado_en"
     t.datetime "created_at", null: false
     t.string "estado", default: "abierto", null: false
@@ -752,6 +753,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_180001) do
     t.boolean "activa", default: true, null: false
     t.string "codigo", null: false
     t.datetime "created_at", null: false
+    t.integer "dias_conteo"
     t.integer "limite_efectivo_centavos", default: 300000, null: false
     t.string "nombre", null: false
     t.string "tipo", default: "tienda", null: false

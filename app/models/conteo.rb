@@ -13,24 +13,45 @@ class Conteo < ApplicationRecord
 
   validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
   validates :estado, inclusion: { in: %w[abierto cerrado] }
+  validates :alcance, inclusion: { in: %w[total parcial] }
 
   scope :abiertos, -> { where(estado: "abierto") }
+  scope :cerrados, -> { where(estado: "cerrado") }
 
   def abierto? = estado == "abierto"
+  def parcial? = alcance == "parcial"
 
-  def self.abrir!(sucursal:, usuario:, responsable:)
+  # Total: todo lo que hay en la sucursal. Parcial: solo `productos` (una lista o toda una línea),
+  # con existencia o sin ella, para poder contar sobrantes; lo demás no se toca al cerrar.
+  def self.abrir!(sucursal:, usuario:, responsable:, productos: nil)
     raise ArgumentError, I18n.t("errores.conteo.ya_abierto", sucursal: sucursal.nombre) if abiertos.exists?(sucursal: sucursal)
+    raise ArgumentError, I18n.t("errores.conteo.parcial_vacio") if productos && productos.empty?
     transaction do
-      c = create!(sucursal: sucursal, usuario: usuario, responsable: responsable)
-      Existencia.where(sucursal: sucursal).where("cantidad > 0").includes(:producto).each do |e|
-        c.lineas.create!(producto: e.producto, sistema: e.cantidad)
+      c = create!(sucursal: sucursal, usuario: usuario, responsable: responsable, alcance: productos ? "parcial" : "total")
+      if productos
+        productos.each { |p| c.lineas.create!(producto: p, sistema: Existencia.de(sucursal, p)) }
+      else
+        Existencia.where(sucursal: sucursal).where("cantidad > 0").includes(:producto).each do |e|
+          c.lineas.create!(producto: e.producto, sistema: e.cantidad)
+        end
       end
       c
     end
   end
 
+  # ¿Toca contar? Cuando la sucursal cuenta cada N días y el último cerrado es más viejo (o no hay).
+  def self.vencido?(sucursal)
+    return false unless sucursal.dias_conteo
+    ultimo = cerrados.where(sucursal: sucursal).maximum(:cerrado_en)
+    ultimo.nil? || ultimo < sucursal.dias_conteo.days.ago
+  end
+
   def linea_de(producto)
-    lineas.find_or_create_by!(producto: producto) { |l| l.sistema = Existencia.de(sucursal, producto) }
+    if parcial?
+      lineas.find_by(producto: producto) or raise ArgumentError, I18n.t("errores.conteo.fuera_de_alcance", producto: producto.nombre)
+    else
+      lineas.find_or_create_by!(producto: producto) { |l| l.sistema = Existencia.de(sucursal, producto) }
+    end
   end
 
   # Escanear una etiqueta: se cuentan sus hojas vivas, cada una una sola vez.
@@ -41,6 +62,7 @@ class Conteo < ApplicationRecord
     raise ArgumentError, I18n.t("errores.conteo.en_transito", codigo: etiqueta.codigo) if etiqueta.en_transito?
     nuevas = 0
     transaction do
+      etiqueta.hojas_vivas.each { |h| linea_de(h.producto) } if parcial?
       etiqueta.hojas_vivas.each do |h|
         next if conteo_etiquetas.exists?(etiqueta: h)
         conteo_etiquetas.create!(etiqueta: h)
@@ -62,7 +84,8 @@ class Conteo < ApplicationRecord
 
   # Etiquetas vivas de la sucursal que nadie escaneó: son las que faltan, con su barcode exacto.
   def etiquetas_no_vistas
-    Etiqueta.vivas.hojas.where(sucursal: sucursal).where.not(id: conteo_etiquetas.select(:etiqueta_id)).includes(:producto)
+    vivas = Etiqueta.vivas.hojas.where(sucursal: sucursal).where.not(id: conteo_etiquetas.select(:etiqueta_id)).includes(:producto)
+    parcial? ? vivas.where(producto_id: lineas.select(:producto_id)) : vivas
   end
 
   def cerrar!(usuario:)

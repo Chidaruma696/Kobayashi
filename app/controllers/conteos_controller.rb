@@ -6,16 +6,23 @@ class ConteosController < ApplicationController
   before_action :cargar_conteo, only: %i[show escanear manual cerrar]
 
   def index
-    @conteos = Conteo.where(sucursal: sucursal_actual).includes(:usuario, :responsable).order(created_at: :desc).limit(30)
+    @conteos = Conteo.where(sucursal: sucursal_actual).includes(:usuario, :responsable, :lineas).order(created_at: :desc).limit(30)
+    @vencido = Conteo.vencido?(sucursal_actual)
   end
 
   def new
     @abierto = Conteo.abiertos.find_by(sucursal: sucursal_actual)
     @responsables = Usuario.activos.where(sucursal: sucursal_actual).order(:nombre)
+    @lineas = Producto.activos.where.not(linea: [ nil, "" ]).distinct.order(:linea).pluck(:linea)
+    @productos = Producto.activos.order(:nombre)
   end
 
+  # Todo, o solo una línea o unos productos (parcial): lo demás no se toca al cerrar.
   def create
-    conteo = Conteo.abrir!(sucursal: sucursal_actual, usuario: usuario_actual, responsable: Usuario.activos.find(params[:responsable_id]))
+    productos = if params[:alcance] == "parcial"
+      params[:linea].present? ? Producto.activos.where(linea: params[:linea]).order(:nombre).to_a : Producto.activos.where(id: params[:producto_ids]).order(:nombre).to_a
+    end
+    conteo = Conteo.abrir!(sucursal: sucursal_actual, usuario: usuario_actual, responsable: Usuario.activos.find(params[:responsable_id]), productos: productos)
     redirect_to conteo_path(conteo), notice: t("conteos.avisos.abierto", folio: conteo.folio)
   rescue ArgumentError => e
     redirect_to new_conteo_path, alert: e.message
@@ -24,7 +31,7 @@ class ConteosController < ApplicationController
   def show
     @lineas = @conteo.lineas.includes(:producto).joins(:producto).order("productos.nombre")
     @no_vistas = @conteo.etiquetas_no_vistas.limit(200) if @conteo.abierto?
-    @productos = Producto.activos.order(:nombre)
+    @productos = @conteo.parcial? ? @lineas.map(&:producto) : Producto.activos.order(:nombre)
   end
 
   def escanear

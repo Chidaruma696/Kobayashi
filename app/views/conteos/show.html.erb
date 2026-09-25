@@ -1,7 +1,7 @@
 <% c = @conteo %>
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold"><%= t("conteos.conteo") %> <%= c.folio %> · <%= c.sucursal %></h1>
-  <span class="badge"><%= t("estados.#{c.estado}") %></span>
+  <span class="badge"><%= t("estados.#{c.estado}") %><%= " · #{t("conteos.parcial_badge", count: @lineas.size)}" if c.parcial? %></span>
 </div>
 <p class="mb-4 text-sm text-stone-600"><%= t("conteos.supervisor") %> <%= c.usuario %> · <%= t("conteos.responsable").downcase %> <%= c.responsable %> · <%= l c.created_at, format: :short %><%= " · #{t("estados.cerrado")} #{l c.cerrado_en, format: :short}" if c.cerrado_en %></p>
 <% if c.abierto? %>

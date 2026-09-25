@@ -417,6 +417,8 @@ de:
       cerrado: die Zählung ist geschlossen
       en_transito: Etikett %{codigo} ist unterwegs
       ya_contada: '%{codigo} wurde schon gezählt'
+      fuera_de_alcance: '%{producto} gehört nicht zu dieser Teilzählung'
+      parcial_vacio: eine Linie oder mindestens ein Produkt wählen
       cantidad_invalida: ungültige Menge
       ya_cerrado: die Zählung ist bereits geschlossen
     cargo:
@@ -1370,6 +1372,15 @@ de:
     ya_hay_abierto: 'Es ist bereits eine Zählung offen:'
     cierralo_antes: Erst schließen, dann eine neue öffnen.
     responsable_ayuda: Verantwortlich für den Bestand (dem der Fehlbestand belastet wird)
+    alcance: Umfang
+    alcance_total: Der ganze Bestand
+    alcance_parcial: Nur eine Linie oder einige Produkte
+    o_estos_productos: Oder diese Produkte
+    parcial_ayuda: Eine Teilzählung berichtigt nur das Gewählte; der Rest bleibt unberührt. Bei gewählter Linie werden die Produkte ignoriert.
+    parcial_badge:
+      one: teilweise · 1 Produkt
+      other: 'teilweise · %{count} Produkte'
+    toca_contar: 'Zählung fällig: gezählt wird alle %{cada} Tage und die letzte abgeschlossene Zählung ist älter (oder es gibt keine).'
     nuevo_ayuda: 'Beim Öffnen wird der Systembestand übernommen. Alles scannen; was kein Etikett hat, wird eingetippt. Beim Schließen zählt die Zählung: der Bestand wird angepasst, nicht gesehene Etiketten werden abgeschrieben und der Fehlbestand dem Verantwortlichen belastet.'
     abrir: Zählung öffnen
     escanear: Scannen
@@ -1529,6 +1540,7 @@ de:
     sucursales: Filialen
     tienda: Laden
     limite_efectivo: Maximales Bargeld in der Lade, bevor eine Abschöpfung nötig ist
+    dias_conteo: Zählen alle (Tage; leer = keine Erinnerung)
     limite_en_gaveta: Ladenlimit
     nuevo_tipo_canastilla: Neuer Korbtyp
     tipos_de_canastilla: Korbtypen

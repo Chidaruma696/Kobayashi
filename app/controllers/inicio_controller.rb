@@ -21,6 +21,7 @@ class InicioController < ApplicationController
     @cortes = Corte.where(sucursal: sucursales, estado: "cerrado", cerrado_en: @desde.beginning_of_day..@hasta.end_of_day).includes(:sucursal, :usuario).order(cerrado_en: :desc)
     @mermas = Produccion.where(sucursal: sucursales, estado: "cerrada", updated_at: @desde.beginning_of_day..@hasta.end_of_day).includes(:producto)
     @conteos = Conteo.where(sucursal: sucursales, estado: "cerrado", cerrado_en: @desde.beginning_of_day..@hasta.end_of_day).includes(:sucursal, :responsable)
+    @toca_contar = sucursales.select { |s| Conteo.vencido?(s) }
     @valor_existencias = Existencia.where(sucursal: sucursales).joins(:producto).sum("existencias.cantidad * productos.precio_centavos").to_i
     @dias_caducidad = Ajuste.entero("etiqueta.aviso_caducidad")
     @caducan = Etiqueta.vivas.hojas.where(sucursal: sucursales).por_caducar(@dias_caducidad).joins(:producto)

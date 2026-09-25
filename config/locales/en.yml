@@ -417,6 +417,8 @@ en:
       cerrado: the count is closed
       en_transito: label %{codigo} is in transit
       ya_contada: '%{codigo} was already counted'
+      fuera_de_alcance: '%{producto} is not in this partial count'
+      parcial_vacio: choose a line or at least one product
       cantidad_invalida: invalid quantity
       ya_cerrado: the count is already closed
     cargo:
@@ -1370,6 +1372,15 @@ en:
     ya_hay_abierto: 'There is already an open count:'
     cierralo_antes: Close it before opening another.
     responsable_ayuda: Person responsible for the stock (the shortage is charged to them)
+    alcance: Scope
+    alcance_total: The whole inventory
+    alcance_parcial: Only one line or some products
+    o_estos_productos: Or these products
+    parcial_ayuda: A partial count only adjusts what was chosen; the rest is left alone. If you pick a line, the products are ignored.
+    parcial_badge:
+      one: partial · 1 product
+      other: 'partial · %{count} products'
+    toca_contar: 'Time to count: counts are every %{cada} days and the last closed count is older (or there is none).'
     nuevo_ayuda: 'Opening takes the system stock. Scan everything there is; whatever has no label is typed in. On closing, the count rules: inventory is adjusted, labels that did not show up are written off and the shortage is charged to the responsible person.'
     abrir: Open count
     escanear: Scan
@@ -1529,6 +1540,7 @@ en:
     sucursales: Branches
     tienda: store
     limite_efectivo: Maximum cash in the drawer before a drop is required
+    dias_conteo: Count every (days; empty = no reminder)
     limite_en_gaveta: Drawer limit
     nuevo_tipo_canastilla: New crate type
     tipos_de_canastilla: Crate types

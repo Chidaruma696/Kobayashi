@@ -417,6 +417,8 @@ es:
       cerrado: el conteo está cerrado
       en_transito: la etiqueta %{codigo} está en tránsito
       ya_contada: '%{codigo} ya estaba contada'
+      fuera_de_alcance: '%{producto} no está en este conteo parcial'
+      parcial_vacio: elige una línea o al menos un producto
       cantidad_invalida: cantidad inválida
       ya_cerrado: el conteo ya está cerrado
     cargo:
@@ -1370,6 +1372,15 @@ es:
     ya_hay_abierto: 'Ya hay un conteo abierto:'
     cierralo_antes: Ciérralo antes de abrir otro.
     responsable_ayuda: Responsable de la caja (a quien se carga el faltante)
+    alcance: Alcance
+    alcance_total: Todo el inventario
+    alcance_parcial: Solo una línea o unos productos
+    o_estos_productos: O estos productos
+    parcial_ayuda: En un conteo parcial solo se ajusta lo elegido; lo demás no se toca. Si eliges línea, se ignoran los productos.
+    parcial_badge:
+      one: parcial · 1 producto
+      other: 'parcial · %{count} productos'
+    toca_contar: 'Toca contar: se cuenta cada %{cada} días y el último conteo cerrado es más viejo (o no hay ninguno).'
     nuevo_ayuda: 'Al abrir se toma la existencia del sistema. Escanea todo lo que haya; lo que no lleve etiqueta se teclea. Al cerrar, el conteo manda: el inventario se ajusta, las etiquetas que no aparecieron se dan de baja y el faltante se carga al responsable.'
     abrir: Abrir conteo
     escanear: Escanear
@@ -1529,6 +1540,7 @@ es:
     sucursales: Sucursales
     tienda: tienda
     limite_efectivo: Efectivo máximo en gaveta antes de obligar retiro
+    dias_conteo: Contar cada (días; vacío = sin aviso)
     limite_en_gaveta: Límite en gaveta
     nuevo_tipo_canastilla: Nuevo tipo de canastilla
     tipos_de_canastilla: Tipos de canastilla

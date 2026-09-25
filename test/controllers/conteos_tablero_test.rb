@@ -27,6 +27,32 @@ class ConteosTableroTest < ActionDispatch::IntegrationTest
     assert_select "td", /#{conteo.folio}/
   end
 
+  test "conteo parcial por línea desde la pantalla, y el aviso de que toca contar" do
+    get new_conteo_path
+    assert_select "input[name=alcance][value=parcial]"
+    assert_select "select[name=linea] option", /Abarrotes/
+    post conteos_path, params: { responsable_id: usuarios(:cajera).id, alcance: "parcial", linea: "Abarrotes" }
+    conteo = Conteo.last
+    assert conteo.parcial?
+    assert_equal [ productos(:catsup) ], conteo.lineas.map(&:producto)
+    post escanear_conteo_path(conteo), params: { codigo: @p.codigo }
+    assert_match "no está en este conteo parcial", flash[:alert]
+    get conteo_path(conteo)
+    assert_select "span.badge", /parcial · 1 producto/
+    post cerrar_conteo_path(conteo)
+    assert_equal "cerrado", conteo.reload.estado
+    get conteos_path
+    assert_select "p", { count: 0, text: /Toca contar/ }
+    @tienda.update!(dias_conteo: 3)
+    conteo.update_columns(cerrado_en: 4.days.ago)
+    get conteos_path
+    assert_select "p", /Toca contar/
+    get root_path
+    assert_select "p", /Toca contar/
+    post conteos_path, params: { responsable_id: usuarios(:cajera).id, alcance: "parcial" }
+    assert_match "al menos un producto", flash[:alert]
+  end
+
   test "el inicio es el tablero y ventas por producto con CSV; sin permiso, bienvenida" do
     Caja.cobrar!(sucursal: @tienda, usuario: usuarios(:cajera), clave: "tb", lineas: [ { producto_id: productos(:catsup).id, cantidad: 2 } ], pagos: [ { forma: "efectivo", monto_centavos: 10_000 } ])
     get root_path

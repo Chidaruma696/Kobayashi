@@ -14,6 +14,8 @@ class Sucursal < ApplicationRecord
   has_many :salidas_recibidas, class_name: "Salida", foreign_key: :sucursal_destino_id, dependent: :restrict_with_error, inverse_of: :sucursal_destino
 
   validates :limite_efectivo_centavos, numericality: { only_integer: true, greater_than: 0 }
+  # Cada cuántos días toca un conteo; vacío = sin aviso.
+  validates :dias_conteo, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
   validates :codigo, presence: true, uniqueness: true, length: { maximum: 10 }
   validates :nombre, presence: true
