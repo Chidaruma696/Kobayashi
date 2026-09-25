@@ -305,7 +305,37 @@ class Salida < ApplicationRecord
     filas.size
   end
 
-  # Cierra la recepción: lo pendiente se reporta como faltante con el motivo dado.
+  # Qué dice cada caja (o tarima, o paquete suelto) contra lo que de verdad llegó: cantidad y
+  # paquetes esperados, recibidos, y los códigos de lo que falta. Sirve en vivo mientras se recibe
+  # y es lo que se canta al cerrar.
+  Canto = Struct.new(:grupo, :producto, :esperado, :recibido, :paquetes, :recibidos, :faltan, keyword_init: true) do
+    def diferencia = esperado - recibido
+    def completo? = faltan.empty?
+  end
+
+  def resumen_por_caja
+    salida_etiquetas.includes(etiqueta: :producto, grupo: :producto).group_by(&:grupo).map do |grupo, filas|
+      vivas = filas.reject { |f| f.estado == "sobrante" }
+      llegaron = vivas.select { |f| f.estado == "recibida" }
+      Canto.new(grupo: grupo, producto: (grupo&.producto || vivas.first&.etiqueta&.producto),
+                esperado: vivas.sum { |f| f.etiqueta.cantidad }, recibido: llegaron.sum { |f| f.etiqueta.cantidad },
+                paquetes: vivas.size, recibidos: llegaron.size, faltan: (vivas - llegaron).map { |f| f.etiqueta.codigo })
+    end
+  end
+
+  # El canto en texto, una línea por caja con diferencia, para la salida y para la bandeja de revisión.
+  def canto_de_recepcion
+    resumen_por_caja.reject(&:completo?).map do |c|
+      nombre = c.grupo ? "#{I18n.t("etiquetas.tipos.#{c.grupo.tipo}")} #{c.grupo.codigo}" : I18n.t("salidas.suelto")
+      dec = c.producto&.decimales || 3
+      cifra = ->(n) { ActiveSupport::NumberHelper.number_to_rounded(n, precision: dec) }
+      I18n.t("salidas.canto", caja: nombre, producto: c.producto&.nombre, esperado: cifra.(c.esperado), paquetes: c.paquetes,
+             recibido: cifra.(c.recibido), recibidos: c.recibidos, faltan: cifra.(c.diferencia), unidad: c.producto&.unidad_corta, codigos: c.faltan.join(", "))
+    end.join("\n")
+  end
+
+  # Cierra la recepción: lo pendiente se reporta como faltante con el motivo dado, se canta la
+  # diferencia por caja y, si faltó algo, queda por revisar con su valor a precio de la tienda.
   def cerrar_recepcion!(usuario:, motivo_pendientes: nil)
     raise ArgumentError, I18n.t("errores.salida.no_en_transito", estado: I18n.t("estados.#{estado}")) unless enviada?
     transaction do
@@ -315,7 +345,12 @@ class Salida < ApplicationRecord
         pendientes.each { |f| reportar!(f.etiqueta, motivo: motivo_pendientes, usuario: usuario) }
       end
       recibir_lineas!(usuario: usuario) if lineas.where(recibida: false).exists?
-      update!(estado: "recibida", recibido_en: Time.current)
+      canto = canto_de_recepcion
+      update!(estado: "recibida", recibido_en: Time.current, diferencias: canto.presence)
+      if canto.present?
+        valor = salida_etiquetas.where(estado: "faltante").includes(etiqueta: :producto).sum { |f| Revision.valor(f.etiqueta.cantidad, f.etiqueta.producto, sucursal_destino) }
+        Revision.abrir!(self, usuario: usuario, sucursal: sucursal_destino, motivo: I18n.t("salidas.avisos.faltantes_al_recibir", folio: folio, canto: canto), valor_centavos: valor)
+      end
     end
   end
 

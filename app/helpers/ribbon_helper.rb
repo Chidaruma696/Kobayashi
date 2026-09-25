@@ -65,6 +65,7 @@ module RibbonHelper
         Boton.new(:nuevo_conteo, :new_conteo_path, "conteos.hacer", "search"),
         Boton.new(:conteos, :conteos_path, "conteos.hacer", "list-ul")
       ] },
+      { id: :supervisar, botones: [ Boton.new(:supervision, :supervisiones_path, "conteos.hacer", "eye") ] },
       { id: :cargos, botones: [ Boton.new(:cargos, :cargos_path, "conteos.cargos", "cash-coin") ] }
     ] },
     { id: :inventario, grupos: [

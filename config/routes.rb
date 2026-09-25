@@ -113,6 +113,14 @@ Rails.application.routes.draw do
       post :cerrar
     end
   end
+  # Supervisión: revisar sin ajustar; una abierta por sucursal que se acumula días
+  resources :supervisiones, only: %i[index create show] do
+    member do
+      post :escanear
+      post :pesar
+      post :cerrar
+    end
+  end
   resources :cargos, only: %i[index] do
     member { post :resolver }
   end

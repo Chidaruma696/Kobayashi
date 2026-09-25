@@ -6,6 +6,7 @@ module RevisionesHelper
     when Etiqueta then etiqueta_path(r)
     when Produccion then produccion_path(r)
     when SalidaLinea then salida_path(r.salida)
+    when Salida then salida_path(r)
     when Movimiento then kardex_inventario_path(producto_id: r.producto_id, sucursal_id: r.sucursal_id)
     when Retiro then caja_corte_path
     when VentaLinea then caja_ticket_path(r.venta)

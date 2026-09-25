@@ -160,6 +160,7 @@ en:
       catalogo: Catalogue
       reparto: Delivery
       gente: People
+      supervisar: Supervise
     botones:
       inicio: Home
       ventas_por_producto: Sales by product
@@ -202,6 +203,7 @@ en:
       roles: Roles
       sucursales: Branches
       ticket: Ticket
+      supervision: Supervision
   acerca:
     titulo: About Kobayashi
     lema: Point of sale and back office for the headquarters and its shops
@@ -387,6 +389,9 @@ en:
       texto: This business does not use it. Whoever manages users can turn it on in Settings › System.
     modulo:
       con_trabajo_abierto: 'cannot turn off %{modulo}: there is open work; close it first'
+    supervision:
+      cerrada: the supervision is closed
+      ya_vista: '%{codigo} was already seen'
   inicio:
     titulo: Home
     ventas: Sales
@@ -444,6 +449,7 @@ en:
       movimiento: '%{tipo} of %{cantidad}'
       retiro: Cash drop of %{monto} from session %{folio}
       venta_linea: 'Price lowered on %{folio}: %{producto} to %{precio} (catalog %{catalogo})'
+      salida: Reception of %{folio} at %{destino} with shortages
   estados:
     pendiente: pending
     aprobada: approved
@@ -994,6 +1000,15 @@ en:
       sobrante: '%{codigo} received as surplus; goes to review'
       recibida: Transfer %{folio} received
       desarmada: '%{folio}: broken up on reception'
+      faltantes_al_recibir: |-
+        Shortages on receiving %{folio}:
+        %{canto}
+    canto: '%{caja} (%{producto}) says %{esperado} %{unidad} in %{paquetes} packages; %{recibido} arrived in %{recibidos}; %{faltan} %{unidad} missing: %{codigos}'
+    canto_titulo: What each box says against what arrived
+    dice: Says
+    llego: Arrived
+    codigos_faltan: Missing codes
+    diferencias_titulo: Differences on receiving
   credito:
     tipos:
       contado: Cash (no credit)
@@ -1580,3 +1595,35 @@ en:
       etiqueta: Label
       viaje: Trip
       conteo: Count
+  supervision:
+    titulo: Supervision
+    intro: 'To walk the store with the phone and check what is there: scan or enter weights, each weighing is matched to a live label and says whether it is there or not. It accumulates over days and never adjusts inventory; that is what the count is for.'
+    abrir: Start supervising
+    seguir: Continue
+    abierta_desde: Supervision %{folio} open since %{fecha}
+    vistas_n: '%{n} labels seen · %{sin_pareja} unmatched weighings'
+    cerradas: Closed
+    vistas: Seen
+    no_vistas: Not seen
+    sin_pareja: Unmatched
+    escanear: Scan
+    ver: Seen
+    pesar: Enter a weight
+    pesar_ayuda: 'Type what the scale shows (or what the label says): it looks for a live label sold by kilo with that exact weight that nobody has seen.'
+    cualquier_producto: any product
+    buscar_pareja: Is it there?
+    ultimas_vistas: Last seen
+    no_vistas_titulo: Live labels nobody has seen
+    todo_visto: Everything seen.
+    sin_pareja_titulo: Unmatched weighings
+    sin_pareja_ayuda: 'Weights that matched no live label: goods without a label, or a label already sold.'
+    cerrar: Close supervision
+    confirmar_cerrar: It closes without adjusting anything. The next one starts from zero. Close?
+    como:
+      escaneo: scan
+      pesada: weighing
+    avisos:
+      vistas: '%{n} labels seen'
+      esta: 'It is there: %{codigo} · %{producto}'
+      no_esta: 'Not there: no live label weighs %{cantidad}'
+      cerrada: Supervision %{folio} closed

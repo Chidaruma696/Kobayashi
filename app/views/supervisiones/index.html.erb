@@ -1,0 +1,25 @@
+<h1 class="mb-1 text-2xl font-bold"><%= t("supervision.titulo") %> · <%= sucursal_actual %></h1>
+<p class="mb-4 text-sm text-stone-600"><%= t("supervision.intro") %></p>
+<% if @abierta %>
+  <div class="card mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <div class="font-semibold"><%= t("supervision.abierta_desde", folio: @abierta.folio, fecha: l(@abierta.created_at, format: :short)) %></div>
+      <div class="text-sm text-stone-600"><%= t("supervision.vistas_n", n: @abierta.vistas.con_pareja.count, sin_pareja: @abierta.sin_pareja.count) %></div>
+    </div>
+    <%= link_to icono("eye", t("supervision.seguir")), supervision_path(@abierta), class: "btn btn-primary btn-lg" %>
+  </div>
+<% else %>
+  <%= button_to icono("eye", t("supervision.abrir")), supervisiones_path, class: "btn btn-primary btn-lg mb-6" %>
+<% end %>
+<% if @cerradas.any? %>
+  <h2 class="mb-2 font-semibold"><%= t("supervision.cerradas") %></h2>
+  <table class="tabla">
+    <thead><tr><th><%= t("comun.folio") %></th><th><%= t("comun.desde") %></th><th><%= t("comun.hasta") %></th><th><%= t("comun.quien") %></th><th class="text-right"><%= t("supervision.vistas") %></th><th class="text-right"><%= t("supervision.sin_pareja") %></th></tr></thead>
+    <tbody>
+      <% @cerradas.each do |s| %>
+        <tr class="border-t border-stone-100"><td class="px-3 py-2 font-mono"><%= s.folio %></td><td class="px-3 py-2"><%= l s.created_at, format: :short %></td><td class="px-3 py-2"><%= l s.cerrado_en, format: :short %></td><td class="px-3 py-2"><%= s.usuario %></td>
+          <td class="px-3 py-2 text-right font-mono"><%= s.vistas.con_pareja.count %></td><td class="px-3 py-2 text-right font-mono"><%= s.sin_pareja.count %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

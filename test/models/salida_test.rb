@@ -69,8 +69,18 @@ class SalidaTest < ActiveSupport::TestCase
     assert_nil @p1.reload.padre_id
     assert @caja.reload.viva?, "la caja sigue viva mientras le quede un paquete"
     assert_raises(ArgumentError) { @salida.cerrar_recepcion!(usuario: @super) }
+    canto = @salida.resumen_por_caja
+    caja = canto.find { |c| c.grupo == @caja }
+    assert_equal [ BigDecimal("5"), BigDecimal("2"), 2, 1, [ @p2.codigo ] ], [ caja.esperado, caja.recibido, caja.paquetes, caja.recibidos, caja.faltan ], "la caja dice 5 kg en 2 y llegaron 2 kg en 1"
+    assert canto.find { |c| c.grupo.nil? || c.grupo == @catsup }.completo?
     @salida.cerrar_recepcion!(usuario: @super, motivo_pendientes: "llegó sin etiqueta")
     assert_equal "recibida", @salida.estado
+    assert_match @p2.codigo, @salida.diferencias, "el canto queda en la salida con los códigos que faltaron"
+    assert_match(/3[.,]000/, @salida.diferencias)
+    revision = Revision.pendientes.find_by(revisable: @salida)
+    assert revision, "lo que faltó queda por revisar en la tienda"
+    assert_equal @tienda, revision.sucursal
+    assert_equal Revision.valor(3, productos(:pechuga), @tienda), revision.valor_centavos
     assert_equal "baja", @p2.reload.estado
     assert_equal "faltante", @salida.salida_etiquetas.find_by(etiqueta: @p2).estado
     assert_equal "baja", @caja.reload.estado

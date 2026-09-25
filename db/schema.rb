@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -548,6 +548,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_100001) do
   create_table "salidas", force: :cascade do |t|
     t.integer "cliente_id"
     t.datetime "created_at", null: false
+    t.text "diferencias"
     t.datetime "enviado_en"
     t.string "estado", default: "preparando", null: false
     t.string "folio", null: false
@@ -588,6 +589,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_100001) do
     t.datetime "updated_at", null: false
     t.index ["codigo"], name: "index_sucursales_on_codigo", unique: true
     t.check_constraint "tipo IN ('matriz', 'tienda')", name: "sucursales_tipo"
+  end
+
+  create_table "supervision_etiquetas", force: :cascade do |t|
+    t.decimal "cantidad", precision: 12, scale: 3
+    t.string "como", default: "escaneo", null: false
+    t.datetime "created_at", null: false
+    t.integer "etiqueta_id"
+    t.integer "supervision_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["etiqueta_id"], name: "index_supervision_etiquetas_on_etiqueta_id"
+    t.index ["supervision_id", "etiqueta_id"], name: "index_supervision_etiquetas_on_supervision_id_and_etiqueta_id", unique: true, where: "etiqueta_id IS NOT NULL"
+    t.index ["supervision_id"], name: "index_supervision_etiquetas_on_supervision_id"
+    t.index ["usuario_id"], name: "index_supervision_etiquetas_on_usuario_id"
+  end
+
+  create_table "supervisiones", force: :cascade do |t|
+    t.datetime "cerrado_en"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "abierta", null: false
+    t.string "folio", null: false
+    t.string "notas"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["sucursal_id", "folio"], name: "index_supervisiones_on_sucursal_id_and_folio", unique: true
+    t.index ["sucursal_id"], name: "index_supervisiones_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_supervisiones_on_usuario_id"
+    t.check_constraint "estado IN ('abierta', 'cerrada')", name: "supervisiones_estado"
   end
 
   create_table "tipos_canastilla", force: :cascade do |t|
@@ -809,6 +839,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_100001) do
   add_foreign_key "salidas", "usuarios", column: "verificado_por_id"
   add_foreign_key "salidas", "ventas"
   add_foreign_key "salidas", "viajes"
+  add_foreign_key "supervision_etiquetas", "etiquetas"
+  add_foreign_key "supervision_etiquetas", "supervisiones"
+  add_foreign_key "supervision_etiquetas", "usuarios"
+  add_foreign_key "supervisiones", "sucursales"
+  add_foreign_key "supervisiones", "usuarios"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
   add_foreign_key "venta_lineas", "convenios"

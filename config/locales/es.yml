@@ -160,6 +160,7 @@ es:
       catalogo: Catálogo
       reparto: Reparto
       gente: Gente
+      supervisar: Supervisar
     botones:
       inicio: Inicio
       ventas_por_producto: Ventas por producto
@@ -202,6 +203,7 @@ es:
       roles: Roles
       sucursales: Sucursales
       ticket: Ticket
+      supervision: Supervisión
   acerca:
     titulo: Acerca de Kobayashi
     lema: Punto de venta y trastienda para la matriz y sus tiendas
@@ -387,6 +389,9 @@ es:
       texto: Este negocio no lo usa. Quien administra usuarios puede encenderlo en Ajustes › Sistema.
     modulo:
       con_trabajo_abierto: 'no se puede apagar %{modulo}: hay trabajo abierto; ciérralo primero'
+    supervision:
+      cerrada: la supervisión está cerrada
+      ya_vista: '%{codigo} ya estaba vista'
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -444,6 +449,7 @@ es:
       movimiento: '%{tipo} de %{cantidad}'
       retiro: Retiro de %{monto} del corte %{folio}
       venta_linea: 'Precio bajado en %{folio}: %{producto} a %{precio} (catálogo %{catalogo})'
+      salida: Recepción de %{folio} en %{destino} con faltantes
   estados:
     pendiente: pendiente
     aprobada: aprobada
@@ -994,6 +1000,15 @@ es:
       sobrante: '%{codigo} recibida como sobrante; queda por revisar'
       recibida: Salida %{folio} recibida
       desarmada: '%{folio}: desarmada al recibir'
+      faltantes_al_recibir: |-
+        Faltantes al recibir %{folio}:
+        %{canto}
+    canto: '%{caja} (%{producto}) dice %{esperado} %{unidad} en %{paquetes} paquetes; llegaron %{recibido} en %{recibidos}; faltan %{faltan} %{unidad}: %{codigos}'
+    canto_titulo: Lo que dice cada caja contra lo que llegó
+    dice: Dice
+    llego: Llegó
+    codigos_faltan: Códigos que faltan
+    diferencias_titulo: Diferencias al recibir
   credito:
     tipos:
       contado: Contado (sin crédito)
@@ -1580,3 +1595,35 @@ es:
       etiqueta: Etiqueta
       viaje: Viaje
       conteo: Conteo
+  supervision:
+    titulo: Supervisión
+    intro: 'Para caminar la tienda con el teléfono y comprobar qué hay: escanea o captura pesos, cada pesada se empareja con una etiqueta viva y dice si está o no está. Se acumula días y nunca ajusta el inventario; para eso está el conteo.'
+    abrir: Empezar a supervisar
+    seguir: Seguir
+    abierta_desde: Supervisión %{folio} abierta desde el %{fecha}
+    vistas_n: '%{n} etiquetas vistas · %{sin_pareja} pesadas sin pareja'
+    cerradas: Cerradas
+    vistas: Vistas
+    no_vistas: Sin ver
+    sin_pareja: Sin pareja
+    escanear: Escanear
+    ver: Vista
+    pesar: Capturar un peso
+    pesar_ayuda: 'Teclea lo que marca la báscula (o lo que dice la etiqueta): se busca una etiqueta viva por kilo con ese peso exacto que nadie haya visto.'
+    cualquier_producto: cualquier producto
+    buscar_pareja: ¿Está?
+    ultimas_vistas: Últimas vistas
+    no_vistas_titulo: Etiquetas vivas que nadie ha visto
+    todo_visto: Todo visto.
+    sin_pareja_titulo: Pesadas sin pareja
+    sin_pareja_ayuda: 'Pesos que no cuadraron con ninguna etiqueta viva: mercancía sin etiqueta o etiqueta ya vendida.'
+    cerrar: Cerrar supervisión
+    confirmar_cerrar: Se cierra sin ajustar nada. La siguiente empieza de cero. ¿Cerrar?
+    como:
+      escaneo: escaneo
+      pesada: pesada
+    avisos:
+      vistas: '%{n} etiquetas vistas'
+      esta: 'Está: %{codigo} · %{producto}'
+      no_esta: 'No está: ninguna etiqueta viva pesa %{cantidad}'
+      cerrada: Supervisión %{folio} cerrada

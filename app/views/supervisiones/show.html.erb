@@ -1,0 +1,57 @@
+<% s = @supervision %>
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold"><%= t("supervision.titulo") %> <%= s.folio %> · <%= s.sucursal %></h1>
+  <span class="badge"><%= t("estados.#{s.estado}") %></span>
+</div>
+<div class="mb-4 grid gap-4 sm:grid-cols-3">
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("supervision.vistas") %></div><div class="font-mono text-2xl text-green-700"><%= s.vistas.con_pareja.count %> / <%= @total_vivas %></div></div>
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("supervision.no_vistas") %></div><div class="font-mono text-2xl"><%= @total_vivas - s.vistas.con_pareja.count %></div></div>
+  <div class="card"><div class="text-xs uppercase text-stone-500"><%= t("supervision.sin_pareja") %></div><div class="font-mono text-2xl text-corbata-700"><%= s.sin_pareja.count %></div></div>
+</div>
+<% if s.abierta? %>
+  <div class="mb-4 grid gap-4 md:grid-cols-2">
+    <div class="card">
+      <h2 class="mb-2 font-semibold"><%= t("supervision.escanear") %></h2>
+      <%= form_with url: escanear_supervision_path(s), class: "flex gap-2" do |f| %>
+        <%= f.text_field :codigo, autofocus: true, autocomplete: "off", placeholder: t("conteos.etiqueta_placeholder"), class: "entrada mt-0 flex-1 font-mono text-lg" %>
+        <%= f.submit t("supervision.ver"), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+    <div class="card">
+      <h2 class="mb-2 font-semibold"><%= t("supervision.pesar") %></h2>
+      <p class="mb-2 text-xs text-stone-500"><%= t("supervision.pesar_ayuda") %></p>
+      <%= form_with url: pesar_supervision_path(s), class: "flex flex-wrap gap-2" do |f| %>
+        <%= f.number_field :cantidad, step: "0.001", min: "0.001", inputmode: "decimal", placeholder: "kg", class: "entrada mt-0 w-32 font-mono text-lg" %>
+        <%= f.select :producto_id, @productos.map { |p| [ p.nombre, p.id ] }, { include_blank: t("supervision.cualquier_producto") }, class: "entrada mt-0 flex-1" %>
+        <%= f.submit t("supervision.buscar_pareja"), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<div class="grid gap-4 lg:grid-cols-3">
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("supervision.ultimas_vistas") %></h2>
+    <ul class="text-sm">
+      <% @vistas.each do |v| %><li class="flex justify-between border-t border-stone-100 py-1"><span><span class="font-mono text-xs"><%= v.etiqueta.codigo %></span> · <%= v.etiqueta.producto.nombre %> · <%= cantidad(v.etiqueta.cantidad, v.etiqueta.producto) %></span><span class="text-xs text-stone-500"><%= t("supervision.como.#{v.como}") %> · <%= l v.created_at, format: :short %></span></li><% end %>
+      <% if @vistas.empty? %><li class="py-3 text-center text-stone-500"><%= t("comun.nada") %></li><% end %>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("supervision.no_vistas_titulo") %></h2>
+    <ul class="max-h-96 overflow-y-auto text-sm">
+      <% @no_vistas.each do |e| %><li class="border-t border-stone-100 py-1"><span class="font-mono text-xs"><%= e.codigo %></span> · <%= e.producto.nombre %> · <%= cantidad(e.cantidad, e.producto) %></li><% end %>
+      <% if @no_vistas.empty? %><li class="py-3 text-center text-green-700"><%= t("supervision.todo_visto") %></li><% end %>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("supervision.sin_pareja_titulo") %></h2>
+    <p class="mb-2 text-xs text-stone-500"><%= t("supervision.sin_pareja_ayuda") %></p>
+    <ul class="text-sm">
+      <% @sin_pareja.each do |v| %><li class="flex justify-between border-t border-stone-100 py-1 text-corbata-700"><span class="font-mono"><%= v.cantidad.to_s("F") %> kg</span><span class="text-xs text-stone-500"><%= v.usuario %> · <%= l v.created_at, format: :short %></span></li><% end %>
+      <% if @sin_pareja.empty? %><li class="py-3 text-center text-stone-500"><%= t("comun.nada") %></li><% end %>
+    </ul>
+  </div>
+</div>
+<% if s.abierta? %>
+  <%= button_to t("supervision.cerrar"), cerrar_supervision_path(s), class: "btn btn-secondary mt-4", form: { data: { turbo_confirm: t("supervision.confirmar_cerrar") } } %>
+<% end %>

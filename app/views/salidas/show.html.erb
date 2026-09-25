@@ -107,6 +107,24 @@
       </details>
       <p class="mt-2 text-sm text-stone-600"><%= t("salidas.conteo_recepcion", recibidos: @filas.count { |f| f.estado == "recibida" }, faltantes: @filas.count { |f| f.estado == "faltante" }, pendientes: @filas.count { |f| f.estado == "pendiente" }) %></p>
     </div>
+    <div class="card md:col-span-2">
+      <h2 class="mb-2 font-semibold"><%= t("salidas.canto_titulo") %></h2>
+      <table class="w-full text-sm">
+        <thead class="text-left text-stone-500"><tr><th class="py-1"><%= t("salidas.grupo") %></th><th class="py-1"><%= t("comun.producto") %></th><th class="py-1 text-right"><%= t("salidas.dice") %></th><th class="py-1 text-right"><%= t("salidas.llego") %></th><th class="py-1 text-right"><%= t("salidas.falta") %></th><th class="py-1"><%= t("salidas.codigos_faltan") %></th></tr></thead>
+        <tbody>
+          <% s.resumen_por_caja.each do |c| %>
+            <tr class="border-t border-stone-100 <%= c.completo? ? 'text-green-800' : 'bg-red-50' %>">
+              <td class="py-1 font-mono text-xs"><%= c.grupo ? "#{t("etiquetas.tipos.#{c.grupo.tipo}")} #{c.grupo.codigo}" : t("salidas.suelto") %></td>
+              <td class="py-1"><%= c.producto&.nombre %></td>
+              <td class="py-1 text-right font-mono"><%= c.producto ? cantidad(c.esperado, c.producto) : c.esperado %> · <%= t("etiquetas.n_paquetes", count: c.paquetes) %></td>
+              <td class="py-1 text-right font-mono"><%= c.producto ? cantidad(c.recibido, c.producto) : c.recibido %> · <%= c.recibidos %></td>
+              <td class="py-1 text-right font-mono font-semibold"><%= c.completo? ? "—" : (c.producto ? cantidad(c.diferencia, c.producto) : c.diferencia) %></td>
+              <td class="py-1 font-mono text-xs"><%= c.faltan.join(", ") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
     <div class="card">
       <h2 class="mb-2 font-semibold"><%= t("salidas.reportar_roto") %></h2>
       <%= render "escaneo", url: reportar_salida_path(s), placeholder: t("salidas.codigo_paquete"), boton: t("salidas.reportar"), motivo: true %>
@@ -117,6 +135,11 @@
       <% end %>
     </div>
   </div>
+<% end %>
+
+<% if s.diferencias.present? %>
+  <div class="mb-4 rounded border-l-4 border-corbata-700 bg-red-50 p-3 text-sm whitespace-pre-line"><strong><%= t("salidas.diferencias_titulo") %></strong>
+<%= s.diferencias %></div>
 <% end %>
 
 <% if @pedidos&.any? %>

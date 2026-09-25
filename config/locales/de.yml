@@ -160,6 +160,7 @@ de:
       catalogo: Katalog
       reparto: Auslieferung
       gente: Personen
+      supervisar: Kontrollieren
     botones:
       inicio: Start
       ventas_por_producto: Verkäufe je Produkt
@@ -202,6 +203,7 @@ de:
       roles: Rollen
       sucursales: Filialen
       ticket: Ticket
+      supervision: Kontrolle
   acerca:
     titulo: Über Kobayashi
     lema: Kasse und Backoffice für die Zentrale und ihre Läden
@@ -387,6 +389,9 @@ de:
       texto: Dieser Betrieb nutzt es nicht. Wer Benutzer verwaltet, kann es unter Einstellungen › System einschalten.
     modulo:
       con_trabajo_abierto: '%{modulo} lässt sich nicht ausschalten: es gibt offene Arbeit; erst abschließen'
+    supervision:
+      cerrada: die Kontrolle ist geschlossen
+      ya_vista: '%{codigo} wurde schon gesehen'
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -444,6 +449,7 @@ de:
       movimiento: '%{tipo} über %{cantidad}'
       retiro: Abschöpfung von %{monto} aus Abschnitt %{folio}
       venta_linea: 'Preis gesenkt in %{folio}: %{producto} auf %{precio} (Katalog %{catalogo})'
+      salida: Wareneingang %{folio} in %{destino} mit Fehlmengen
   estados:
     pendiente: offen
     aprobada: freigegeben
@@ -994,6 +1000,15 @@ de:
       sobrante: '%{codigo} als Überschuss empfangen; geht zur Prüfung'
       recibida: Transfer %{folio} empfangen
       desarmada: '%{folio}: beim Empfang aufgelöst'
+      faltantes_al_recibir: |-
+        Fehlmengen beim Wareneingang %{folio}:
+        %{canto}
+    canto: '%{caja} (%{producto}) sagt %{esperado} %{unidad} in %{paquetes} Paketen; angekommen %{recibido} in %{recibidos}; es fehlen %{faltan} %{unidad}: %{codigos}'
+    canto_titulo: Was jede Kiste sagt gegenüber dem, was ankam
+    dice: Sagt
+    llego: Angekommen
+    codigos_faltan: Fehlende Codes
+    diferencias_titulo: Differenzen beim Wareneingang
   credito:
     tipos:
       contado: Bar (kein Kredit)
@@ -1580,3 +1595,35 @@ de:
       etiqueta: Etikett
       viaje: Fahrt
       conteo: Zählung
+  supervision:
+    titulo: Kontrolle
+    intro: 'Mit dem Telefon durch den Laden gehen und prüfen, was da ist: scannen oder Gewichte eingeben, jede Wiegung wird einem aktiven Etikett zugeordnet und sagt, ob es da ist oder nicht. Läuft über Tage und passt nie den Bestand an; dafür ist die Zählung da.'
+    abrir: Kontrolle beginnen
+    seguir: Weiter
+    abierta_desde: Kontrolle %{folio} offen seit %{fecha}
+    vistas_n: '%{n} Etiketten gesehen · %{sin_pareja} Wiegungen ohne Treffer'
+    cerradas: Geschlossen
+    vistas: Gesehen
+    no_vistas: Nicht gesehen
+    sin_pareja: Ohne Treffer
+    escanear: Scannen
+    ver: Gesehen
+    pesar: Gewicht eingeben
+    pesar_ayuda: 'Gib ein, was die Waage zeigt (oder was auf dem Etikett steht): gesucht wird ein aktives Kilo-Etikett mit genau diesem Gewicht, das noch niemand gesehen hat.'
+    cualquier_producto: beliebiges Produkt
+    buscar_pareja: Ist es da?
+    ultimas_vistas: Zuletzt gesehen
+    no_vistas_titulo: Aktive Etiketten, die niemand gesehen hat
+    todo_visto: Alles gesehen.
+    sin_pareja_titulo: Wiegungen ohne Treffer
+    sin_pareja_ayuda: 'Gewichte, die zu keinem aktiven Etikett passten: Ware ohne Etikett oder schon verkauftes Etikett.'
+    cerrar: Kontrolle schließen
+    confirmar_cerrar: Wird ohne Anpassung geschlossen. Die nächste beginnt bei null. Schließen?
+    como:
+      escaneo: Scan
+      pesada: Wiegung
+    avisos:
+      vistas: '%{n} Etiketten gesehen'
+      esta: 'Ist da: %{codigo} · %{producto}'
+      no_esta: 'Nicht da: kein aktives Etikett wiegt %{cantidad}'
+      cerrada: Kontrolle %{folio} geschlossen
