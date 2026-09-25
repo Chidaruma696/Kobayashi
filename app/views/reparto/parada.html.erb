@@ -73,7 +73,7 @@
         <%= f.submit t("reparto.no_entregado"), class: "rounded border border-red-400 px-3 py-2 text-red-700" %>
       <% end %>
     </div>
-    <% if @tipos.any? %>
+    <% if Modulo.activo?("retornables") && @tipos.any? %>
       <div class="card">
         <h2 class="mb-1 font-semibold"><%= t("viajes.canastillas") %></h2>
         <p class="mb-2 text-xs text-stone-600"><%= t("reparto.van") %>: <%= s.canastillas.includes(:tipo_canastilla).map { |c| "#{c.cantidad} #{c.tipo_canastilla}" }.join(", ").presence || t("salidas.ninguna") %>. <%= t("viajes.debe") %>: <%= @canastillas_cliente.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(", ").presence || t("comun.nada").delete(".") %>.</p>

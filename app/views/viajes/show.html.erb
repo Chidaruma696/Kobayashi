@@ -83,7 +83,7 @@
           <% v.gastos.each do |g| %><li><%= g.concepto %> · <%= pesos(g.monto_centavos) %> (<%= g.usuario %>)</li><% end %>
         </ul>
       <% end %>
-      <% if @tipos.any? %>
+      <% if Modulo.activo?("retornables") && @tipos.any? %>
         <h3 class="mt-4 text-sm font-semibold"><%= t("viajes.canastillas") %></h3>
         <table class="w-full text-sm">
           <% cargadas = v.canastillas_cargadas; a_bordo = v.canastillas_a_bordo %>
@@ -106,7 +106,7 @@
         <p class="mb-3 text-sm text-stone-600"><%= t("viajes.liquidar_ayuda") %></p>
         <%= form_with url: liquidar_viaje_path(v), class: "flex flex-wrap items-end gap-3 text-sm", data: { turbo_confirm: t("viajes.confirmar_liquidar", folio: v.folio) } do |f| %>
           <div><%= f.label :entregado, t("viajes.efectivo_entregado"), class: "block" %><%= f.number_field :entregado, step: "0.01", min: "0", value: v.efectivo_por_entregar_centavos / 100.0, required: true, class: "w-40 rounded border border-stone-300 px-2 py-2 text-right font-mono text-xl" %></div>
-          <% v.canastillas_a_bordo.each do |tipo_id, n| %>
+          <% (Modulo.activo?("retornables") ? v.canastillas_a_bordo : {}).each do |tipo_id, n| %>
             <div><%= label_tag "canastillas_#{tipo_id}", t("viajes.que_regresan", tipo: TipoCanastilla.find(tipo_id)), class: "block" %><%= number_field_tag "canastillas[#{tipo_id}]", n, min: 0, id: "canastillas_#{tipo_id}", class: "w-32 rounded border border-stone-300 px-2 py-2 text-right font-mono" %></div>
           <% end %>
           <%= f.submit t("viajes.liquidar"), class: "btn btn-success" %>

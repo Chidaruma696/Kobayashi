@@ -2,14 +2,17 @@
 # Caja, inventario, administración y ajustes van siempre; el resto depende del giro elegido al
 # arrancar y se puede cambiar después en Ajustes. Cada módulo es un conjunto aparte: sus tablas,
 # sus permisos, su pestaña. Rutas necesita pedidos y salidas (un reparto es una salida a un cliente
-# que pidió); retornables necesita compras (los envases son de un proveedor).
+# que pidió); retornables (envases que van y vienen: los del proveedor y las canastillas con clientes
+# y choferes) necesita al menos compras o rutas, y enseña la mitad que tenga encendida.
 module Modulo
   OPCIONALES = %w[compras retornables almacenes etiquetas pedidos salidas rutas conteos].freeze
-  DEPENDE = { "rutas" => %w[pedidos salidas], "retornables" => %w[compras] }.freeze
+  DEPENDE = { "rutas" => %w[pedidos salidas] }.freeze
+  # Necesita al menos uno de la lista encendido.
+  ALGUNO = { "retornables" => %w[compras rutas] }.freeze
   # Prefijos de permiso que cuelgan de cada módulo (los demás permisos van siempre).
-  PERMISOS = { "compras" => %w[compras], "retornables" => %w[retornables], "almacenes" => %w[almacenes],
+  PERMISOS = { "compras" => %w[compras], "retornables" => %w[retornables canastillas], "almacenes" => %w[almacenes],
                "etiquetas" => %w[etiquetas produccion], "pedidos" => %w[pedidos], "salidas" => %w[salidas],
-               "rutas" => %w[rutas cobranza canastillas], "conteos" => %w[conteos] }.freeze
+               "rutas" => %w[rutas cobranza], "conteos" => %w[conteos] }.freeze
   # Preset por giro; "todo" es el negocio para el que nació el sistema.
   GIROS = {
     "abarrotes" => %w[compras],
@@ -41,7 +44,12 @@ module Modulo
 
   # Lo que un módulo necesita encendido, y quiénes lo necesitan a él.
   def self.necesita(modulo) = DEPENDE.fetch(modulo.to_s, [])
+  def self.alguno(modulo) = ALGUNO.fetch(modulo.to_s, [])
   def self.dependientes(modulo) = DEPENDE.select { |_, base| base.include?(modulo.to_s) }.keys
+  # Quiénes tendrían a `modulo` como su última base encendida dentro de `activos`.
+  def self.dependientes_alguno(modulo, activos)
+    ALGUNO.select { |d, opciones| activos.include?(d) && opciones.include?(modulo.to_s) && (opciones & activos).empty? }.keys
+  end
 
   def self.nombre(modulo) = I18n.t("modulos.#{modulo}.nombre")
 
@@ -50,9 +58,12 @@ module Modulo
   def self.guardar!(lista, comprobar: true)
     nuevos = (Array(lista).map(&:to_s) & OPCIONALES)
     viejos = activos
-    (nuevos - viejos).each { |m| nuevos |= necesita(m) }
+    (nuevos - viejos).each do |m|
+      nuevos |= necesita(m)
+      nuevos |= [ alguno(m).first ] if alguno(m).any? && (alguno(m) & nuevos).empty?
+    end
     (viejos - nuevos).each do |m|
-      quienes = dependientes(m) & nuevos
+      quienes = (dependientes(m) & nuevos) | dependientes_alguno(m, nuevos)
       raise ArgumentError, I18n.t("errores.modulo.con_dependientes", modulo: nombre(m), dependientes: quienes.map { |d| nombre(d) }.join(", ")) if quienes.any?
       comprobar_apagable!(m) if comprobar
     end

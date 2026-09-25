@@ -17,12 +17,12 @@ Kobayashi es un solo sistema y una sola base de datos, partido en **módulos**. 
 | Módulo | Qué es | Tablas propias | Permisos | Pestaña | Necesita |
 |---|---|---|---|---|---|
 | **Compras** | Proveedores, recepción de mercancía (entrada con proveedor y remisión), factura del proveedor con renglones, cuentas por pagar, pago desde la gaveta. Sin costo en inventario. | proveedores, recepciones, recepcion_lineas, facturas_proveedor, factura_proveedor_lineas, movimientos_proveedor, pagos_proveedor | `compras.*` | Compras | — |
-| **Retornables** | Canastillas, tarimas y totes que el proveedor deja y se le deben: libro por proveedor, devoluciones, ajustes. La recepción los anota solo si este módulo está encendido. | envases_proveedor | `retornables.*` | Retornables | Compras |
+| **Retornables** | Lo que va y viene y alguien debe: canastillas con clientes y choferes (mitad que aparece con Rutas) y envases del proveedor (mitad que aparece con Compras). Dos libros solo-inserción, porque una deuda es nuestra y la otra de ellos. La recepción anota envases solo si este módulo está encendido. | envases_proveedor, movimientos_canastilla, tipos_canastilla | `retornables.*`, `canastillas.*` | Retornables | Compras o Rutas |
 | **Almacenes** | Sucursales tipo *almacén* (frigorífico o bodega externa: solo guardan a granel, sin caja, etiquetas ni conteos) y traspasos a granel entre sucursales sin escanear. | traspasos, traspaso_lineas (y el tipo `almacen` en sucursales) | `almacenes.*` | Almacenes | — |
 | **Etiquetas** | Etiquetas de identidad EAN-13 (paquete, caja, tarima), báscula, producción con merma. | etiquetas, producciones | `etiquetas.*`, `produccion.*` | Etiquetas | — |
 | **Pedidos** | Las tiendas y los clientes piden; la matriz surte renglón por renglón. | pedidos, pedido_lineas | `pedidos.*` | Pedidos | — |
 | **Salidas** | Traspasos escaneando entre sucursales, verificación por segunda persona, sello, envío, recepción paquete por paquete, supervisión. | salidas, salida_etiquetas, salida_lineas, supervisiones | `salidas.*` | Salidas | — |
-| **Rutas** | Reparto: viajes, chofer, entregas, rechazo, cobranza, crédito, canastillas de clientes, convenios, zonas. | viajes, paradas, movimientos_credito, movimientos_canastilla, tipos_canastilla, convenios, zonas, rutas, clientes | `rutas.*`, `cobranza.*`, `canastillas.*` | Rutas | Pedidos, Salidas |
+| **Rutas** | Reparto: viajes, chofer, entregas, rechazo, cobranza, crédito, convenios, zonas. | viajes, paradas, movimientos_credito, convenios, zonas, rutas, clientes | `rutas.*`, `cobranza.*` | Rutas | Pedidos, Salidas |
 | **Conteos** | Conteos físicos escaneando; el faltante se carga al responsable. | conteos, conteo_lineas | `conteos.*` | Conteos | — |
 
 ## Reglas transversales
@@ -37,7 +37,7 @@ Kobayashi es un solo sistema y una sola base de datos, partido en **módulos**. 
 
 ## Cómo se agrega un módulo
 
-1. Clave en `Modulo::OPCIONALES` (y en `DEPENDE` si cuelga de otro, en `GIROS` donde arranque encendido, en `comprobar_apagable!` si puede tener trabajo abierto).
+1. Clave en `Modulo::OPCIONALES` (y en `DEPENDE` si cuelga de otro, en `ALGUNO` si le basta con uno de varios, en `GIROS` donde arranque encendido, en `comprobar_apagable!` si puede tener trabajo abierto).
 2. Sus permisos con prefijo propio en `Permiso` y el prefijo en `Modulo::PERMISOS`; el rol supervisor suele llevar `prefijo.*`.
 3. `Ajuste::DEFAULTS["modulos.<clave>"] = "1"`.
 4. Sus controladores con `pestana :<clave>` y `modulo :<clave>`; su pestaña en `RibbonHelper::PESTANAS`.

@@ -2,7 +2,7 @@
 # Es otro libro que el de canastillas de clientes y choferes.
 class EnvasesController < ApplicationController
   pestana :retornables
-  modulo :retornables
+  modulo :retornables, :compras
 
   before_action { autorizar!("retornables.ver") }
 

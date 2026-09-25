@@ -91,6 +91,13 @@ class RepartoExtrasTest < ActionDispatch::IntegrationTest
 
     get canastillas_path
     assert_select "td", /Taquería/
+    assert_select "aside[data-lateral-target=panel] div", /Retornables/
+    Modulo.guardar!(Modulo::OPCIONALES - %w[retornables], comprobar: false)
+    get canastillas_path
+    assert_response :not_found, "las canastillas cuelgan de retornables"
+    get viaje_path(viaje)
+    assert_select "h3", { text: /Canastillas/, count: 0 }
+    Modulo.guardar!(Modulo::OPCIONALES, comprobar: false)
     post canastillas_devolucion_path, params: { cliente_id: @taqueria.id, tipo_canastilla_id: rejilla.id, cantidad: 1 }
     assert_equal({ rejilla.id => 1 }, Canastillas.saldo_cliente(@taqueria))
     post canastillas_ajuste_path, params: { cliente_id: @taqueria.id, tipo_canastilla_id: rejilla.id, cantidad: -1, motivo: "se perdonó" }

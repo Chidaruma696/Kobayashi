@@ -33,7 +33,8 @@ module RibbonHelper
       { id: :proveedores, botones: [ Boton.new(:proveedores, :proveedores_path, "compras.ver", "truck") ] }
     ] },
     { id: :retornables, grupos: [
-      { id: :envases, botones: [ Boton.new(:envases, :envases_path, "retornables.ver", "box2") ] }
+      { id: :de_clientes, modulo: "rutas", botones: [ Boton.new(:canastillas, :canastillas_path, "canastillas.ver", "basket") ] },
+      { id: :del_proveedor, modulo: "compras", botones: [ Boton.new(:envases, :envases_path, "retornables.ver", "box2") ] }
     ] },
     { id: :almacenes, grupos: [
       { id: :granel, botones: [
@@ -76,8 +77,7 @@ module RibbonHelper
       { id: :chofer, botones: [ Boton.new(:mi_ruta, :reparto_path, "rutas.repartir", "geo-alt") ] },
       { id: :oficina, botones: [
         Boton.new(:liquidar, :viajes_path, "rutas.liquidar", "cash-stack"),
-        Boton.new(:cobranza, :cobranza_path, "cobranza.ver", "journal-text"),
-        Boton.new(:canastillas, :canastillas_path, "canastillas.ver", "basket")
+        Boton.new(:cobranza, :cobranza_path, "cobranza.ver", "journal-text")
       ] }
     ] },
     { id: :conteos, grupos: [
@@ -105,7 +105,9 @@ module RibbonHelper
       { id: :reparto, modulo: "rutas", botones: [
         Boton.new(:clientes, :admin_clientes_path, "admin.catalogo", "people"),
         Boton.new(:rutas, :admin_rutas_path, "admin.catalogo", "signpost-split"),
-        Boton.new(:convenios, :admin_convenios_path, "admin.catalogo", "file-earmark-text"),
+        Boton.new(:convenios, :admin_convenios_path, "admin.catalogo", "file-earmark-text")
+      ] },
+      { id: :retornables, modulo: "retornables", botones: [
         Boton.new(:tipos_canastilla, :admin_tipos_canastilla_path, "admin.catalogo", "basket3")
       ] },
       { id: :gente, botones: [

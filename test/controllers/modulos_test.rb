@@ -46,12 +46,20 @@ class ModulosTest < ActionDispatch::IntegrationTest
     assert_match "Pedidos", e.message
     assert_match "Rutas", e.message
     assert Modulo.activo?("pedidos")
-    e = assert_raises(ArgumentError) { Modulo.guardar!(%w[retornables pedidos salidas rutas]) }
-    assert_match "Retornables", e.message
+    Modulo.guardar!(%w[retornables pedidos salidas rutas], comprobar: false)
+    assert Modulo.activo?("retornables"), "retornables vive con rutas aunque compras esté apagado"
+    e = assert_raises(ArgumentError) { Modulo.guardar!(%w[retornables pedidos salidas]) }
+    assert_match "Retornables", e.message, "sin compras ni rutas se queda sin base"
+    Modulo.guardar!([], comprobar: false)
+    Modulo.guardar!(%w[retornables], comprobar: false)
+    assert_equal %w[compras retornables], Modulo.activos, "encender retornables solo arrastra la primera base"
+    Modulo.guardar!(%w[compras retornables pedidos salidas rutas], comprobar: false)
     Modulo.guardar!(%w[pedidos salidas], comprobar: false)
     assert_equal %w[pedidos salidas], Modulo.activos, "apagar la base junto con quien la necesita sí pasa"
     get ajustes_seccion_path("modulos")
     assert_select "input[data-modulo=rutas][data-necesita='pedidos salidas']"
+    assert_select "input[data-modulo=retornables][data-alguno='compras rutas']"
+    assert_select "span", /Necesita al menos Compras \/ Rutas/
     assert_select "input[data-modulo=pedidos][data-dependientes=rutas]"
     assert_select "span", /Necesita Pedidos, Salidas y recepción/
     assert_select "span", /Lo necesita Rutas/

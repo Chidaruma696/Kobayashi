@@ -219,6 +219,9 @@ en:
       proveedores: Suppliers
       granel: Bulk
       envases: Containers
+      de_clientes: With customers and drivers
+      del_proveedor: From the supplier
+      retornables: Returnables
     botones:
       inicio: Home
       ventas_por_producto: Sales by product
@@ -1625,6 +1628,7 @@ en:
       ejemplo: 'Your first receipt would be:'
       despues: The other documents (closes, orders, dispatches…) get their factory letters; change them in Settings › Numbering.
   modulos:
+    necesita_alguno: Needs at least %{lista}
     necesita: Needs %{lista}
     lo_necesita: Needed by %{lista}
     etiquetas:
@@ -1638,7 +1642,7 @@ en:
       que: Transfers between branches by scanning, with verification and package-by-package receiving.
     rutas:
       nombre: Routes
-      que: Deliveries to customers with a driver, collections, credit, crates and agreements. Needs orders and transfers.
+      que: Deliveries to customers with a driver, collections, credit and agreements. Needs orders and transfers.
     conteos:
       nombre: Counts
       que: Physical counts by scanning; the shortage is charged to the responsible person.
@@ -1647,7 +1651,7 @@ en:
       que: Suppliers, goods receipt, supplier invoices, accounts payable and returnable containers.
     retornables:
       nombre: Returnables
-      que: 'Crates, pallets and totes the supplier leaves and is owed: ledger per supplier, returns and adjustments. Needs purchasing.'
+      que: 'What goes back and forth and someone owes: crates with customers and drivers (with routes) and supplier containers (with purchasing). Needs purchasing or routes.'
     almacenes:
       nombre: Warehouses
       que: External warehouses (cold store or depot that only holds bulk) and bulk transfers between branches without scanning.

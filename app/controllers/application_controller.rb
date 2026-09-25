@@ -8,9 +8,9 @@ class ApplicationController < ActionController::Base
   class_attribute :pestana_ribbon, default: :inicio
   def self.pestana(id) = self.pestana_ribbon = id
 
-  # Módulo opcional del que depende este controlador (ver Modulo); nil = siempre disponible.
-  class_attribute :modulo_requerido, default: nil
-  def self.modulo(clave) = self.modulo_requerido = clave.to_s
+  # Módulos opcionales de los que depende este controlador (ver Modulo); vacío = siempre disponible.
+  class_attribute :modulos_requeridos, default: []
+  def self.modulo(*claves) = self.modulos_requeridos = claves.map(&:to_s)
 
   before_action :exigir_instalacion, :exigir_sesion, :exigir_modulo
   around_action :con_idioma
@@ -51,8 +51,8 @@ class ApplicationController < ActionController::Base
 
   # Un módulo apagado no existe: sus pantallas lo dicen en vez de dar un 404 pelón.
   def exigir_modulo
-    return if modulo_requerido.nil? || Modulo.activo?(modulo_requerido)
-    render "errores/modulo_apagado", status: :not_found, locals: { modulo: modulo_requerido }
+    apagado = modulos_requeridos.find { |m| !Modulo.activo?(m) } or return
+    render "errores/modulo_apagado", status: :not_found, locals: { modulo: apagado }
   end
 
   def exigir_sesion

@@ -219,6 +219,9 @@ de:
       proveedores: Lieferanten
       granel: Lose Ware
       envases: Leergut
+      de_clientes: Bei Kunden und Fahrern
+      del_proveedor: Vom Lieferanten
+      retornables: Leergut
     botones:
       inicio: Start
       ventas_por_producto: Verkäufe je Produkt
@@ -1625,6 +1628,7 @@ de:
       ejemplo: 'Dein erster Bon wäre:'
       despues: Die übrigen Belege (Abschlüsse, Bestellungen, Ausgänge…) bekommen ihre Werksbuchstaben; änderbar in Einstellungen › Nummerierung.
   modulos:
+    necesita_alguno: Benötigt mindestens %{lista}
     necesita: Benötigt %{lista}
     lo_necesita: Benötigt von %{lista}
     etiquetas:
@@ -1638,7 +1642,7 @@ de:
       que: Transfers zwischen Filialen per Scan, mit Prüfung und Empfang Paket für Paket.
     rutas:
       nombre: Touren
-      que: Lieferung an Kunden mit Fahrer, Inkasso, Kredit, Körbe und Vereinbarungen. Braucht Bestellungen und Transfers.
+      que: Lieferung an Kunden mit Fahrer, Inkasso, Kredit und Vereinbarungen. Braucht Bestellungen und Transfers.
     conteos:
       nombre: Zählungen
       que: Inventur per Scan; der Fehlbestand wird dem Verantwortlichen belastet.
@@ -1647,7 +1651,7 @@ de:
       que: Lieferanten, Wareneingang, Lieferantenrechnungen, Verbindlichkeiten und Leergut.
     retornables:
       nombre: Leergut
-      que: 'Kisten, Paletten und Boxen, die der Lieferant dalässt und zurückbekommt: Konto je Lieferant, Rückgaben und Korrekturen. Braucht Einkauf.'
+      que: 'Was hin und her geht und jemand schuldet: Kisten bei Kunden und Fahrern (mit Touren) und Leergut des Lieferanten (mit Einkauf). Braucht Einkauf oder Touren.'
     almacenes:
       nombre: Lager
       que: Externe Lager (Kühlhaus oder Depot, nur lose Ware) und Umlagerungen lose zwischen Filialen ohne Scannen.

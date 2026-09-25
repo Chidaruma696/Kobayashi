@@ -219,6 +219,9 @@ es:
       proveedores: Proveedores
       granel: A granel
       envases: Envases
+      de_clientes: Con clientes y choferes
+      del_proveedor: Del proveedor
+      retornables: Retornables
     botones:
       inicio: Inicio
       ventas_por_producto: Ventas por producto
@@ -1625,6 +1628,7 @@ es:
       ejemplo: 'Tu primer ticket sería:'
       despues: El resto de los documentos (cortes, pedidos, salidas…) sale con su letra de fábrica; se cambia en Ajustes › Folios.
   modulos:
+    necesita_alguno: Necesita al menos %{lista}
     necesita: Necesita %{lista}
     lo_necesita: Lo necesita %{lista}
     etiquetas:
@@ -1638,7 +1642,7 @@ es:
       que: Traspasos entre sucursales escaneando, con verificación y recepción paquete por paquete.
     rutas:
       nombre: Rutas
-      que: Reparto a clientes con chofer, cobranza, crédito, canastillas y convenios. Necesita pedidos y salidas.
+      que: Reparto a clientes con chofer, cobranza, crédito y convenios. Necesita pedidos y salidas.
     conteos:
       nombre: Conteos
       que: Conteos físicos escaneando; el faltante se carga al responsable.
@@ -1647,7 +1651,7 @@ es:
       que: Proveedores, recepción de mercancía, facturas del proveedor, cuentas por pagar y envases.
     retornables:
       nombre: Retornables
-      que: 'Canastillas, tarimas y totes que el proveedor deja y se le deben: libro por proveedor, devoluciones y ajustes. Necesita compras.'
+      que: 'Lo que va y viene y alguien debe: canastillas con clientes y choferes (si hay rutas) y envases del proveedor (si hay compras). Necesita compras o rutas.'
     almacenes:
       nombre: Almacenes
       que: Almacenes externos (frigorífico o bodega que solo guarda a granel) y traspasos a granel entre sucursales sin escanear.
