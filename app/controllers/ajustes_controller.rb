@@ -3,7 +3,7 @@
 class AjustesController < ApplicationController
   pestana :ajustes
 
-  SECCIONES = %w[para_ti negocio folios modulos etiqueta caja].freeze
+  SECCIONES = %w[para_ti negocio folios modulos etiqueta caja compras].freeze
 
   def index
     @seccion = params[:seccion].presence_in(SECCIONES) || (params[:seccion] == "ticket" ? "negocio" : "para_ti")

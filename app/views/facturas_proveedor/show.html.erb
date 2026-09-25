@@ -12,7 +12,7 @@
 </div>
 <div class="grid gap-4 lg:grid-cols-2">
   <div class="card">
-    <h2 class="mb-2 font-semibold"><%= t("compras.facturado_vs_recibido") %></h2>
+    <h2 class="mb-2 font-semibold"><%= t("compras.facturado_vs_recibido") %> <% unless x.cancelada? %><% er = x.estado_recepcion %><span class="rounded px-2 py-0.5 text-xs font-semibold <%= { 'completa' => 'bg-green-100 text-green-800', 'parcial' => 'bg-amber-100 text-amber-800', 'sin_recepcion' => 'bg-red-100 text-red-800' }[er] %>"><%= t("compras.recepcion_estado.#{er}") %></span><% end %></h2>
     <p class="mb-2 text-xs text-stone-500"><%= t("compras.comparativo_ayuda") %></p>
     <% if @comparativo.empty? %>
       <p class="text-sm text-stone-500"><%= t("compras.sin_renglones_ni_recepciones") %></p>

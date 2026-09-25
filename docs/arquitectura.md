@@ -9,7 +9,7 @@ Kobayashi es un solo sistema y una sola base de datos, partido en **módulos**. 
 | **Caja** | Vender, ticket, gaveta, cortes, retiros, devoluciones, abonos. | ventas, venta_lineas, pagos, cortes, retiros, devoluciones, abonos | `caja.*` | Caja |
 | **Inventario** | Existencias por sucursal y producto, kardex, entradas y ajustes a mano. Es la única puerta para mover existencias (`Inventario.mover!`). | existencias, movimientos | `inventario.*` | Inventario |
 | **Administración** | Catálogos y gente: productos, códigos, promociones, precios por sucursal, usuarios, roles, sucursales. | productos, codigos_barras, promociones, precios, usuarios, roles, sucursales | `admin.*` | Admin |
-| **Ajustes** | Preferencias de cada persona (idioma, tema, densidad, letra) y del negocio (ticket, moneda, etiqueta, caja, módulos). Es otra cosa que Admin: Admin da de alta, Ajustes configura. | ajustes | `admin.usuarios` para lo del sistema | Inicio › Ajustes |
+| **Ajustes** | Preferencias de cada persona (idioma, tema, densidad, letra) y del negocio (ticket, moneda, folios, etiqueta, caja, compras, módulos). Es otra cosa que Admin: Admin da de alta, Ajustes configura. | ajustes | `admin.usuarios` para lo del sistema | Inicio › Ajustes |
 | **Revisión** | La bandeja de autorización diferida: lo que hubiera necesitado a un supervisor y pasó con motivo. | revisiones, cargos | `revisiones.*` | Inicio |
 
 ## Módulos

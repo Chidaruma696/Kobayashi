@@ -26,5 +26,13 @@ class FacturaProveedor < ApplicationRecord
   def pagada? = resta_centavos <= 0
   def vencida? = abierta? && !pagada? && vence.present? && vence < Date.current
 
+  # Cómo va lo recibido contra lo facturado: sin recepción ligada, parcial (algo falta por
+  # recibir) o completa. Sin renglones no hay qué comparar: cuenta como completa.
+  def estado_recepcion
+    return "completa" if lineas.empty?
+    return "sin_recepcion" if recepciones.none?(&:registrada?)
+    Compras.comparativo(self).any? { |c| %w[faltante sin_recibir].include?(c.estado) } ? "parcial" : "completa"
+  end
+
   def to_s = folio
 end

@@ -34,5 +34,23 @@
     </table>
     <button type="button" data-action="renglones#nuevo" class="btn btn-secondary mt-3">+ <%= t("pedidos.renglon") %></button>
   </div>
+  <% if @sueltas.any? %>
+    <div class="rounded-lg border border-stone-200 p-4">
+      <h2 class="mb-1 text-sm font-medium"><%= t("compras.recepciones_a_ligar") %></h2>
+      <p class="mb-2 text-xs text-stone-500"><%= t("compras.recepciones_a_ligar_ayuda") %></p>
+      <div class="grid gap-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
+        <% @sueltas.each do |r| %>
+          <label class="flex items-center gap-2"><%= check_box_tag "factura[recepcion_ids][]", r.id, false, id: "recepcion_#{r.id}" %> <span class="font-mono"><%= r.folio %></span> · <%= r.proveedor %> · <%= l r.fecha %><%= " · #{r.remision}" if r.remision.present? %></label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <% if @candado %>
+    <div>
+      <%= f.label :motivo, t("compras.motivo_exceso"), class: "block text-sm font-medium" %>
+      <%= f.text_field :motivo, class: "entrada max-w-xl" %>
+      <p class="mt-1 text-xs text-stone-500"><%= t("compras.candado_aviso") %></p>
+    </div>
+  <% end %>
   <%= f.submit t("compras.registrar_factura"), class: "btn btn-primary btn-lg" %>
 <% end %>

@@ -31,6 +31,8 @@ de:
     etiqueta_ayuda: Standardgröße und -texte des gedruckten Etiketts; jeder Rechner kann sie im Etikettierer feinjustieren.
     caja: Kasse
     caja_ayuda: Das Bargeldlimit der Kassenlade wird pro Filiale festgelegt.
+    candado_recibido_ayuda: Mit Sperre verlangt eine Rechnung mit mehr Menge als die verknüpften Wareneingänge einen Grund und geht mit dem bewerteten Überschuss zur Prüfung; wer die Berechtigung zum Überschreiten hat, erfasst sie ohne weiteres. Ohne Sperre wird nur die Differenz angezeigt.
+    compras_apagado: Das Einkaufsmodul ist aus; einschalten unter
     ir_sucursales: Filialen ansehen
     claves:
       negocio:
@@ -52,6 +54,8 @@ de:
         limite_gaveta: Ladenlimit für neue Filialen ($)
         denominaciones: Scheine und Münzen zum Zählen der Lade (durch Komma getrennt)
         tope_diferencia: Maximale Differenz beim Abschluss ($; 0 = ohne Grenze)
+      compras:
+        candado_recibido: Mehr als erhalten nicht ohne Grund abrechnen lassen
       ticket:
         lema: Slogan oder Zeile unter dem Namen
         rfc: Steuernummer (RFC, USt-IdNr. …)
@@ -92,6 +96,7 @@ de:
       etiqueta: Etikett
       caja: Kasse
       folios: Nummerierung
+      compras: Einkauf
     secciones_ayuda:
       para_ti: Gelten sofort bei der Auswahl; werden in deinem Benutzer gespeichert und gelten an jedem Gerät.
       negocio: Die Betriebsdaten, wie sie auf dem Ticket stehen, mit dem Ticket daneben genau so, wie es gedruckt wird. Gilt für alle Filialen.
@@ -99,6 +104,7 @@ de:
       etiqueta: Standardgröße und -texte des gedruckten Etiketts; jeder Arbeitsplatz kann sie im Etikettierer anpassen.
       caja: Kassenregeln für alle Filialen.
       folios: 'Wie Belege nummeriert werden: die Buchstaben vor der Nummer wählt der Betrieb, oder eine fortlaufende Nummer für alles. Die Buchstaben zu ändern setzt den Zähler nicht zurück; nummeriert wird je Filiale.'
+      compras: Einkaufsregeln für alle Filialen.
     folios:
       modos:
         por_documento: Ein Zähler je Beleg
@@ -471,6 +477,7 @@ de:
       folio_obligatorio: die Rechnungsnummer fehlt
       folio_repetido: Rechnung %{folio} dieses Lieferanten ist schon erfasst
       monto_cero: der Betrag muss größer als null sein
+      excede_recibido: 'es wird mehr abgerechnet als erhalten (%{detalle}): Grund angeben'
       factura_ya_cancelada: die Rechnung ist bereits storniert
       factura_con_pagos: 'die Rechnung hat Zahlungen: erst stornieren'
       pago_excede: die Zahlung übersteigt den Rest der Rechnung (%{resta})
@@ -549,6 +556,7 @@ de:
       movimiento: '%{tipo} über %{cantidad}'
       retiro: Abschöpfung von %{monto} aus Abschnitt %{folio}
       venta_linea: 'Preis gesenkt in %{folio}: %{producto} auf %{precio} (Katalog %{catalogo})'
+      factura_proveedor: 'Rechnung %{folio} von %{proveedor} mit mehr als erhalten'
       venta_linea_caducada: 'Abgelaufen verkauft in %{folio}: %{producto} (abgelaufen am %{fecha})'
       corte: 'Abschnitt %{folio} mit einer Differenz von %{diferencia} geschlossen'
       salida: Wareneingang %{folio} in %{destino} mit Fehlmengen
@@ -634,6 +642,7 @@ de:
     compras.recibir: Ware vom Lieferanten annehmen
     compras.facturar: Lieferantenrechnungen erfassen und stornieren
     compras.pagar: Lieferanten aus der Kasse bezahlen
+    compras.exceder: Mehr als erhalten abrechnen, ohne dass es zur Prüfung geht
     retornables.ver: Leergut sehen, das Lieferanten geschuldet wird
     almacenes.traspasar: Umlagerungen lose zwischen Filialen und Lagern
     retornables.mover: Leergut an Lieferanten zurückgeben und korrigieren
@@ -1869,6 +1878,15 @@ de:
     resta: Rest
     sin_facturas: Keine Rechnungen.
     facturado_vs_recibido: Berechnet vs. erhalten
+    recepcion: Wareneingang
+    recepcion_estado:
+      sin_recepcion: ohne Wareneingang
+      parcial: teilweise erhalten
+      completa: vollständig erhalten
+    recepciones_a_ligar: Wareneingänge, die diese Rechnung abdeckt
+    recepciones_a_ligar_ayuda: Wareneingänge ohne Rechnung dieses Lieferanten ankreuzen; sie werden beim Speichern verknüpft. Später auch aus der Rechnung möglich.
+    motivo_exceso: Grund, falls mehr als erhalten abgerechnet wird
+    candado_aviso: 'Sperre aktiv: hat eine Zeile mehr Menge als die angekreuzten Wareneingänge, ist ein Grund nötig und die Rechnung geht zur Prüfung.'
     comparativo_ayuda: 'Pro Produkt: was die Rechnung sagt und was in den verknüpften Wareneingängen ankam. Ein Hinweis, keine Sperre.'
     sin_renglones_ni_recepciones: 'Keine Positionen und keine verknüpften Wareneingänge: nichts zu vergleichen.'
     facturado: Berechnet

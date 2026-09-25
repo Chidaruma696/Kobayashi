@@ -33,6 +33,7 @@ module Permiso
     "compras.recibir" => "Recibir mercancía del proveedor",
     "compras.facturar" => "Capturar y cancelar facturas del proveedor",
     "compras.pagar" => "Pagar a proveedores desde la caja",
+    "compras.exceder" => "Facturar más de lo recibido sin que pase a revisión",
     "retornables.ver" => "Ver los envases que se deben al proveedor",
     "retornables.mover" => "Devolver y ajustar envases del proveedor",
     "almacenes.traspasar" => "Traspasos a granel entre sucursales y almacenes",

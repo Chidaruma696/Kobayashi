@@ -164,6 +164,17 @@ module Compras
     end
   end
 
+  # Renglones que facturan más de lo que traen las recepciones que se van a ligar (antes de guardar).
+  # lineas: [{ producto_id:, cantidad:, precio: }]; devuelve Comparado solo de lo que se pasa.
+  def self.excedente(lineas, recepciones)
+    facturado = lineas.group_by { |l| l[:producto_id].to_i }.transform_values { |ls| ls.sum { |l| BigDecimal(l[:cantidad].to_s) } }
+    recibido = RecepcionLinea.where(recepcion: recepciones).group(:producto_id).sum(:cantidad)
+    facturado.filter_map do |producto_id, cant|
+      rec = recibido[producto_id] || 0
+      Comparado.new(producto: Producto.find(producto_id), facturado: cant, recibido: rec) if cant - rec > BigDecimal("0.005")
+    end
+  end
+
   def self.comparativo(factura)
     facturado = factura.lineas.includes(:producto).group_by(&:producto).transform_values { |ls| ls.sum(&:cantidad) }
     recibido = RecepcionLinea.joins(:recepcion).where(recepciones: { factura_proveedor_id: factura.id, estado: "registrada" }).includes(:producto)
