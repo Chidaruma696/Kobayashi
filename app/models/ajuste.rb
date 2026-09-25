@@ -27,6 +27,7 @@ class Ajuste < ApplicationRecord
     "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
     "folios.modo" => "por_documento",   # o "unico": una sola numeración corrida para todo
     "folios.unico" => "F",
+    "folios.sucursal" => "0",            # "1" = el código de la sucursal va delante del folio
     **Folio::DOCUMENTOS.to_h { |doc, letra| [ "folios.#{doc}", letra ] },
     "modulos.compras" => "1",
     "modulos.retornables" => "1",
@@ -66,7 +67,7 @@ class Ajuste < ApplicationRecord
         next unless DEFAULTS.key?(clave)
         valor = valor.to_s.strip
         raise ArgumentError, I18n.t("errores.ajuste.entero", clave: clave) if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
-        raise ArgumentError, I18n.t("errores.ajuste.prefijo", clave: clave) if clave.start_with?("folios.") && clave != "folios.modo" && (valor = valor.upcase) !~ Folio::PREFIJO
+        raise ArgumentError, I18n.t("errores.ajuste.prefijo", clave: clave) if clave.start_with?("folios.") && !%w[folios.modo folios.sucursal].include?(clave) && (valor = valor.upcase) !~ Folio::PREFIJO
         raise ArgumentError, I18n.t("errores.ajuste.modo_folios") if clave == "folios.modo" && valor.present? && !Folio::MODOS.include?(valor)
         raise ArgumentError, I18n.t("errores.ajuste.logo") if clave == "ticket.logo" && valor.present? && (valor.length > LOGO_MAX || valor !~ %r{\Adata:image/(png|jpeg|gif|webp);base64,})
         registro = find_or_initialize_by(clave: clave)

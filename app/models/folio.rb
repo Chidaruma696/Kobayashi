@@ -24,19 +24,20 @@ class Folio < ApplicationRecord
     transaction do
       folio = find_or_create_by!(sucursal: sucursal, prefijo: contador)
       where(id: folio.id).update_all("ultimo = ultimo + 1")
-      formatear(prefijo_de(documento), folio.reload.ultimo)
+      formatear(prefijo_de(documento), folio.reload.ultimo, codigo: (sucursal.codigo if con_sucursal?))
     end
   end
 
   def self.unico? = Ajuste["folios.modo"] == "unico"
+  # El código de la sucursal va delante (MTZ-B-00001): la letra sale del nombre de la sucursal.
+  def self.con_sucursal? = Ajuste["folios.sucursal"] == "1"
 
   # El prefijo con el que sale el documento: el único si la numeración es corrida, si no el suyo.
   def self.prefijo_de(documento)
     Ajuste[unico? ? "folios.unico" : "folios.#{documento}"].to_s
   end
 
-  def self.formatear(prefijo, numero)
-    n = numero.to_s.rjust(5, "0")
-    prefijo.blank? ? n : "#{prefijo}-#{n}"
+  def self.formatear(prefijo, numero, codigo: nil)
+    [ codigo, prefijo, numero.to_s.rjust(5, "0") ].compact_blank.join("-")
   end
 end

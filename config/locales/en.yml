@@ -121,6 +121,7 @@ en:
         supervision: Supervision
         recepcion: Goods receipt
         traspaso: Bulk transfer
+      sucursal: Put the branch code in front
   comun:
     cerrar: Close
     guardar: Save
@@ -1521,6 +1522,7 @@ en:
       administrador: Administrator
       resumen: Review and create
       idioma: Language
+      folios: Numbering
     matriz_placeholder: the business name
     administrador_ayuda: The first user can do everything. You add the rest with their roles afterwards.
     contrasena_ayuda: At least 8 characters.
@@ -1530,6 +1532,20 @@ en:
     idioma_ayuda: Let's start with the language. You pick it now for this installation, but you can change it later in Settings, and every user you add picks their own.
     idioma_nota: Picking one reloads the screen in that language; that is why it is the first step, before typing anything.
     siempre_incluye: Register, inventory, settings and administration (always)
+    folios:
+      ayuda: How receipts and the other documents are numbered. It can be changed later in Settings › Numbering without restarting the count.
+      modo: One sequence per document, or one for everything?
+      letra: What goes before the number?
+      letras:
+        sucursal: The branch code
+        sucursal_ayuda: 'Taken from the branch code: MTZ-00001. Each branch tells itself apart.'
+        propia: My own letters
+        propia_ayuda: You pick the letters for receipts (B, NV, TK…). The rest in Settings.
+        ninguna: Nothing
+        ninguna_ayuda: 'Number only: 00001.'
+      venta: Letters for receipts
+      ejemplo: 'Your first receipt would be:'
+      despues: The other documents (closes, orders, dispatches…) get their factory letters; change them in Settings › Numbering.
   modulos:
     etiquetas:
       nombre: Labels and production

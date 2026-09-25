@@ -11,7 +11,7 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     get instalar_path
     assert_response :success
     assert_select "html[data-theme=claro]", true, "arranca en modo claro"
-    assert_select "section[data-pasos-target=paso]", 6, "va por pasos"
+    assert_select "section[data-pasos-target=paso]", 7, "va por pasos"
     assert_select "section:first-of-type a[href=?]", instalar_path(idioma: "de"), true, "el idioma es el primer paso"
     assert_select "input[name='instalacion[usuario]'][value=admin]"
     get instalar_path(idioma: "de")
@@ -19,12 +19,13 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     get instalar_path
     assert_select "html[lang=de]", true, "y se recuerda"
 
-    post instalar_path, params: { instalacion: { negocio: "Carnes Selectas", giro: "recauderia", sucursal: "Planta", codigo: "pl1", nombre: "Doña Rosa", usuario: "Rosa", password: "secreto123", idioma: "es", tema: "oscuro", letra: "grande" } }
+    post instalar_path, params: { instalacion: { negocio: "Carnes Selectas", giro: "recauderia", sucursal: "Planta", codigo: "pl1", nombre: "Doña Rosa", usuario: "Rosa", password: "secreto123", idioma: "es", tema: "oscuro", letra: "grande", folios_modo: "unico", folios_letra: "sucursal" } }
     assert_redirected_to root_path
     rosa = Usuario.find_by!(usuario: "rosa")
     assert_equal "Doña Rosa", rosa.nombre
     assert rosa.puede?("admin.usuarios"), "el primer usuario es administrador"
     assert_equal "PL1", rosa.sucursal.codigo
+    assert_equal "PL1-00001", Folio.siguiente!(rosa.sucursal, "venta"), "numeración única con el código de la sucursal delante"
     assert rosa.sucursal.matriz?
     assert_equal "Carnes Selectas", Ajuste["negocio.nombre"]
     assert_equal "es", rosa.idioma

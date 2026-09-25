@@ -121,6 +121,7 @@ de:
         supervision: Kontrolle
         recepcion: Wareneingang
         traspaso: Umlagerung lose
+      sucursal: Filialkürzel voranstellen
   comun:
     cerrar: Schließen
     guardar: Speichern
@@ -1521,6 +1522,7 @@ de:
       administrador: Administrator
       resumen: Prüfen und anlegen
       idioma: Sprache
+      folios: Nummerierung
     matriz_placeholder: der Betriebsname
     administrador_ayuda: Der erste Benutzer darf alles. Die übrigen legst du danach mit ihren Rollen an.
     contrasena_ayuda: Mindestens 8 Zeichen.
@@ -1530,6 +1532,20 @@ de:
     idioma_ayuda: Fangen wir mit der Sprache an. Du wählst sie jetzt für diese Installation, kannst sie aber später in den Einstellungen ändern, und jeder Benutzer, den du anlegst, wählt seine eigene.
     idioma_nota: Bei der Auswahl lädt die Seite in dieser Sprache neu; deshalb ist es der erste Schritt, bevor du etwas eintippst.
     siempre_incluye: Kasse, Bestand, Einstellungen und Verwaltung (immer)
+    folios:
+      ayuda: Wie Bons und die anderen Belege nummeriert werden. Später in Einstellungen › Nummerierung änderbar, ohne dass der Zähler neu beginnt.
+      modo: Ein Zähler je Beleg oder einer für alles?
+      letra: Was steht vor der Nummer?
+      letras:
+        sucursal: Das Filialkürzel
+        sucursal_ayuda: 'Aus dem Filialkürzel: MTZ-00001. Jede Filiale unterscheidet sich von selbst.'
+        propia: Eigene Buchstaben
+        propia_ayuda: Du wählst die Buchstaben der Bons (B, NV, TK…). Der Rest in den Einstellungen.
+        ninguna: Keine
+        ninguna_ayuda: 'Nur die Nummer: 00001.'
+      venta: Buchstaben der Bons
+      ejemplo: 'Dein erster Bon wäre:'
+      despues: Die übrigen Belege (Abschlüsse, Bestellungen, Ausgänge…) bekommen ihre Werksbuchstaben; änderbar in Einstellungen › Nummerierung.
   modulos:
     etiquetas:
       nombre: Etiketten und Produktion

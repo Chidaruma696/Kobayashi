@@ -11,7 +11,7 @@
     </div>
     <p class="text-sm opacity-90"><%= t("instalacion.intro") %></p>
     <ol class="flex flex-wrap gap-x-4 gap-y-1 text-sm lg:flex-col lg:gap-2">
-      <% %w[idioma apariencia negocio sucursal administrador resumen].each_with_index do |paso, i| %>
+      <% %w[idioma apariencia negocio sucursal folios administrador resumen].each_with_index do |paso, i| %>
         <li class="flex items-center gap-2" data-pasos-target="indicador">
           <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/60 font-mono text-xs"><%= i + 1 %></span>
           <span><%= t("instalacion.pasos.#{paso}") %></span>
@@ -110,7 +110,45 @@
         </div>
       </section>
 
-      <%# 5. Administrador %>
+      <%# 5. Folios: cómo se numeran los documentos %>
+      <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso" data-controller="folios-ejemplo">
+        <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.folios") %></h1>
+        <p class="text-stone-600"><%= t("instalacion.folios.ayuda") %></p>
+        <fieldset>
+          <legend class="mb-2 text-sm font-medium"><%= t("instalacion.folios.modo") %></legend>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <% Folio::MODOS.each do |m| %>
+              <label class="opcion items-start text-base">
+                <%= f.radio_button :folios_modo, m, checked: @datos[:folios_modo].to_s == m, class: "mt-1", data: { action: "folios-ejemplo#pintar" } %>
+                <span class="flex-1"><strong><%= t("ajustes.folios.modos.#{m}") %></strong><br><span class="text-sm font-normal text-stone-600"><%= t("ajustes.folios.modos.#{m}_ayuda") %></span></span>
+                <i class="bi bi-check-circle-fill opcion-check text-2xl"></i>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="mb-2 text-sm font-medium"><%= t("instalacion.folios.letra") %></legend>
+          <div class="grid gap-3 sm:grid-cols-3">
+            <% %w[sucursal propia ninguna].each do |l| %>
+              <label class="opcion items-start text-base">
+                <%= f.radio_button :folios_letra, l, checked: @datos[:folios_letra].to_s == l, class: "mt-1", data: { action: "folios-ejemplo#pintar" } %>
+                <span class="flex-1"><strong><%= t("instalacion.folios.letras.#{l}") %></strong><br><span class="text-sm font-normal text-stone-600"><%= t("instalacion.folios.letras.#{l}_ayuda") %></span></span>
+                <i class="bi bi-check-circle-fill opcion-check text-2xl"></i>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+        <div class="grid grid-cols-3 gap-3 items-end">
+          <div data-folios-ejemplo-target="propia">
+            <%= f.label :folios_venta, t("instalacion.folios.venta"), class: "block text-sm font-medium" %>
+            <%= f.text_field :folios_venta, value: @datos[:folios_venta], maxlength: 4, pattern: "[A-Za-z0-9]{0,4}", class: "mt-1 w-full rounded border border-stone-300 px-3 py-3 font-mono text-lg uppercase", data: { action: "input->folios-ejemplo#pintar" } %>
+          </div>
+          <p class="col-span-2 text-sm text-stone-600"><%= t("instalacion.folios.ejemplo") %> <strong class="font-mono text-lg" data-folios-ejemplo-target="ejemplo"></strong></p>
+        </div>
+        <p class="text-xs text-stone-500"><%= t("instalacion.folios.despues") %></p>
+      </section>
+
+      <%# 6. Administrador %>
       <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
         <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.administrador") %></h1>
         <p class="text-stone-600"><%= t("instalacion.administrador_ayuda") %></p>
@@ -131,7 +169,7 @@
         </div>
       </section>
 
-      <%# 6. Resumen %>
+      <%# 7. Resumen %>
       <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
         <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.resumen") %></h1>
         <p class="text-stone-600"><%= t("instalacion.resumen_ayuda") %></p>
@@ -140,6 +178,7 @@
           <dt class="text-stone-500"><%= t("instalacion.giro") %></dt><dd data-campo="giro"></dd>
           <dt class="text-stone-500"><%= t("instalacion.matriz") %></dt><dd data-campo="sucursal" data-vacio="<%= t("instalacion.matriz_placeholder") %>"></dd>
           <dt class="text-stone-500"><%= t("comun.codigo") %></dt><dd class="font-mono" data-campo="codigo" data-vacio="MTZ"></dd>
+          <dt class="text-stone-500"><%= t("instalacion.pasos.folios") %></dt><dd data-campo="folios_letra"></dd>
           <dt class="text-stone-500"><%= t("instalacion.pasos.administrador") %></dt><dd data-campo="nombre"></dd>
           <dt class="text-stone-500"><%= t("sesion.usuario") %></dt><dd class="font-mono" data-campo="usuario"></dd>
           <dt class="text-stone-500"><%= t("sesion.contrasena") %></dt><dd data-campo="password"></dd>

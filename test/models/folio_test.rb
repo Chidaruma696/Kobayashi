@@ -34,6 +34,14 @@ class FolioTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { Ajuste.guardar!("folios.venta" => "LARGO") }
   end
 
+  test "el código de la sucursal puede ir delante, y el asistente arma los ajustes según lo elegido" do
+    Ajuste.guardar!("folios.sucursal" => "1")
+    assert_equal "MTZ-B-00001", Folio.siguiente!(sucursales(:matriz), "venta")
+    assert_equal({ "folios.modo" => "por_documento", "folios.sucursal" => "0", "folios.venta" => "NV" }, Instalacion.ajustes_de_folios("por_documento", "propia", "nv"))
+    assert_equal "", Instalacion.ajustes_de_folios("unico", "ninguna", nil)["folios.unico"]
+    assert_equal({ "folios.modo" => "unico", "folios.sucursal" => "1", "folios.unico" => "" }, Instalacion.ajustes_de_folios("unico", "sucursal", "B"))
+  end
+
   test "con numeración única todos los documentos comparten la cuenta, por sucursal" do
     Ajuste.guardar!("folios.modo" => "unico", "folios.unico" => "F")
     assert_equal "F-00001", Folio.siguiente!(sucursales(:matriz), "venta")

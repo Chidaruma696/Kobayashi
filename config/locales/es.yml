@@ -121,6 +121,7 @@ es:
         supervision: Supervisión
         recepcion: Recepción de compra
         traspaso: Traspaso a granel
+      sucursal: Anteponer el código de la sucursal
   comun:
     cerrar: Cerrar
     guardar: Guardar
@@ -1521,6 +1522,7 @@ es:
       administrador: Administrador
       resumen: Revisar y crear
       idioma: Idioma
+      folios: Folios
     matriz_placeholder: el nombre del negocio
     administrador_ayuda: El primer usuario lo puede todo. Después das de alta a los demás con sus roles.
     contrasena_ayuda: Mínimo 8 caracteres.
@@ -1530,6 +1532,20 @@ es:
     idioma_ayuda: Empecemos por el idioma. Lo eliges ahora para esta instalación, pero lo puedes cambiar después en Ajustes, y cada usuario que des de alta elige el suyo.
     idioma_nota: Al elegir uno la pantalla se vuelve a cargar en ese idioma; por eso es el primer paso, antes de escribir nada.
     siempre_incluye: Caja, inventario, ajustes y administración (siempre)
+    folios:
+      ayuda: Cómo se numeran las notas de caja y los demás documentos. Se puede cambiar después en Ajustes › Folios sin que se reinicie la cuenta.
+      modo: ¿Una cuenta por documento o una sola para todo?
+      letra: ¿Qué letra va antes del número?
+      letras:
+        sucursal: La de la sucursal
+        sucursal_ayuda: 'Se toma del código de la sucursal: MTZ-00001. Cada sucursal se distingue sola.'
+        propia: La pongo yo
+        propia_ayuda: Tú eliges la letra de las notas de caja (B, NV, TK…). Las demás en Ajustes.
+        ninguna: Ninguna
+        ninguna_ayuda: 'Solo el número: 00001.'
+      venta: Letra de las notas de caja
+      ejemplo: 'Tu primer ticket sería:'
+      despues: El resto de los documentos (cortes, pedidos, salidas…) sale con su letra de fábrica; se cambia en Ajustes › Folios.
   modulos:
     etiquetas:
       nombre: Etiquetas y producción

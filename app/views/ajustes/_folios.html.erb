@@ -10,6 +10,7 @@
       </label>
     <% end %>
   </div>
+  <label class="flex items-center gap-2 text-sm"><%= f.check_box "ajuste[folios.sucursal]", { checked: @ajustes["folios.sucursal"] == "1" }, "1", "0" %> <%= t("ajustes.folios.sucursal") %> <span class="text-xs text-stone-500">(<%= Folio.formatear(@ajustes["folios.venta"], 42, codigo: sucursal_actual.codigo) %>)</span></label>
   <div class="campos-4">
     <label class="block text-sm"><%= t("ajustes.folios.unico") %>
       <%= f.text_field "ajuste[folios.unico]", value: @ajustes["folios.unico"], maxlength: 4, class: "entrada font-mono uppercase", placeholder: "F" %>
