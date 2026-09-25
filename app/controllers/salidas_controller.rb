@@ -22,7 +22,7 @@ class SalidasController < ApplicationController
     @pedido = pedido_abierto
     return if @pedido
 
-    @destinos = Sucursal.activas.where.not(id: sucursal_actual.id).order(:nombre)
+    @destinos = Sucursal.activas.con_caja.where.not(id: sucursal_actual.id).order(:nombre)
     @clientes = sucursal_actual.matriz? && Modulo.activo?("rutas") ? Cliente.activos.includes(:ruta).order(:nombre) : []
   end
 

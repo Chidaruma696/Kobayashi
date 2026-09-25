@@ -16,7 +16,7 @@ class ComprasControllerTest < ActionDispatch::IntegrationTest
     prov = Proveedor.find_by!(nombre: "Cátsup y más")
     assert_redirected_to proveedores_path
 
-    get producto_recepciones_path(q: "750100655901"), headers: { "Accept" => "application/json" }
+    get buscar_productos_path(q: "750100655901"), headers: { "Accept" => "application/json" }
     lista = JSON.parse(response.body)
     assert_equal [ productos(:catsup).id ], lista.map { |p| p["id"] }, "el código del proveedor resuelve el producto"
 

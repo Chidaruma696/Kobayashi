@@ -60,7 +60,11 @@ module RibbonHelper
         Boton.new(:nueva_salida, :new_salida_path, "salidas.surtir", "truck"),
         Boton.new(:en_curso, :salidas_path, "salidas.surtir", "list-ul")
       ] },
-      { id: :recibir, botones: [ Boton.new(:por_recibir, :recibir_salidas_path, "salidas.recibir", "inbox") ] }
+      { id: :recibir, botones: [ Boton.new(:por_recibir, :recibir_salidas_path, "salidas.recibir", "inbox") ] },
+      { id: :granel, botones: [
+        Boton.new(:traspaso_granel, :new_traspaso_path, "salidas.surtir", "boxes"),
+        Boton.new(:traspasos, :traspasos_path, "salidas.surtir", "list-ul")
+      ] }
     ] },
     { id: :rutas, grupos: [
       { id: :viajes, botones: [
@@ -120,7 +124,11 @@ module RibbonHelper
 
   # Una pestaña se ve si su módulo está encendido y alguno de sus grupos se ve.
   def pestanas_visibles
-    PESTANAS.select { |p| Modulo.activo?(p[:id]) && p[:grupos].any? { |g| grupo_visible?(g) } }
+    PESTANAS.select do |p|
+      # En un almacén externo no hay caja ni etiquetas: la mercancía solo se guarda a granel.
+      next false if %i[caja etiquetas conteos].include?(p[:id]) && sucursal_actual&.almacen?
+      Modulo.activo?(p[:id]) && p[:grupos].any? { |g| grupo_visible?(g) }
+    end
   end
 
   # Ajustes cuelga de Inicio en la cinta, pero es su propia pestaña activa: cae en Inicio.

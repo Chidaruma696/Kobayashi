@@ -178,6 +178,7 @@ en:
       supervisar: Supervise
       facturas: Invoices
       proveedores: Suppliers
+      granel: Bulk
     botones:
       inicio: Home
       ventas_por_producto: Sales by product
@@ -227,6 +228,8 @@ en:
       cuentas_por_pagar: Accounts payable
       proveedores: Suppliers
       envases: Containers
+      traspaso_granel: Bulk transfer
+      traspasos: Transfers
   acerca:
     titulo: About Kobayashi
     lema: Point of sale and back office for the headquarters and its shops
@@ -276,6 +279,7 @@ en:
       tarima_sin_producto: a pallet has no product
       sin_paquetes: 'no packages: all were written off'
       no_encontrada: label “%{codigo}” not found
+      en_almacen: '%{sucursal} is a warehouse: goods are only stored in bulk there, not labelled'
     produccion:
       ya_cerrada: the production run is already closed
     barcode:
@@ -316,11 +320,13 @@ en:
       cliente_obligatorio: required on a delivery
       destino_obligatorio: required
       destino_no_origen: cannot be the origin
+      destino_almacen: goods go to %{almacen} in bulk (bulk transfer), not by scanning a dispatch
     corte:
       ya_abierto: there is already an open register session at %{sucursal}
       cerrado: the register session is closed
       sin_efectivo: there is not that much cash in the drawer (%{monto})
       ya_cerrado: the register session is already closed
+      sin_caja_en_almacen: '%{sucursal} is a warehouse: there is no till there'
     caja:
       clave_ticket: the ticket key is missing
       sin_caja: 'no register open at %{sucursal}: open it with its float'
@@ -430,6 +436,11 @@ en:
       pago_ya_anulado: the payment is already void
       corte_cerrado: 'that payment''s till session is closed: the cash cannot go back to the drawer'
       envases_insuficientes: we do not owe that many %{envase} (balance %{saldo})
+    traspaso:
+      mismo_lugar: origin and destination are the same place
+      externo_solo_a_matriz: from %{almacen} goods only go to the headquarters; from there to the shops
+      ya_cancelado: the transfer is already cancelled
+      tiene_etiquetas: '%{producto} has live labels in %{sucursal}: send it with a scanned dispatch, or in bulk only to a warehouse'
   inicio:
     titulo: Home
     ventas: Sales
@@ -1450,6 +1461,8 @@ en:
     usuario_minusculas: Username (lowercase)
     nueva_contrasena: New password (empty = unchanged)
     convenio_resumen: '%{precio}/kg on %{lineas} up to %{cajas} boxes per week'
+    almacen: 'External warehouse (cold store or depot: bulk storage only)'
+    almacen_corto: warehouse
   instalacion:
     titulo: First run
     intro: The database is empty. Name the business and create the first administrator; sign in with it and set up the rest (products, branches, users).
@@ -1827,3 +1840,26 @@ en:
       retiro_pago: Payment to %{proveedor} %{folio}
       abono_pago: Payment %{folio} (%{forma})
       anulacion_pago: 'Payment voided: %{motivo}'
+  traspasos:
+    titulo: Bulk transfers
+    traspaso: Transfer
+    nuevo: Bulk transfer
+    ayuda: 'Kilos and boxes that change branch without scanning: what goes in and out of an external warehouse, and what carries no label.'
+    nuevo_ayuda: 'Leaves the origin and enters the destination right away. For labelled goods use a scanned dispatch: the label is their identity.'
+    de: From
+    a: To
+    registrar: Record transfer
+    ninguno: No transfers yet.
+    etiquetas_bajadas: Labels retired
+    cancelar: Cancel transfer
+    cancelar_ayuda: Goods go back to the origin if the destination still has them. Retired labels do not come back.
+    reglas: 'Rules: from an external warehouse goods only go to the headquarters. To an external warehouse labelled goods go back to bulk: their labels are retired with the transfer number as the reason.'
+    estados:
+      registrado: recorded
+      cancelado: cancelled
+    avisos:
+      registrado: 'Transfer %{folio} recorded: the goods are now in %{destino}'
+      cancelado: Transfer %{folio} cancelled
+      motivo: 'Transfer %{folio}: %{origen} → %{destino}'
+      cancelacion: 'Cancellation of %{folio}: %{motivo}'
+      al_granel: 'Transfer %{folio} to %{almacen}: back to bulk'

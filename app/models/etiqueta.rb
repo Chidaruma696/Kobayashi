@@ -26,6 +26,7 @@ class Etiqueta < ApplicationRecord
   validates :cantidad, numericality: { greater_than_or_equal_to: 0 }
   validate :contenido_coherente
   validate :contexto_obligatorio, on: :create
+  validate(on: :create) { errors.add(:sucursal, I18n.t("errores.etiqueta.en_almacen", sucursal: sucursal.nombre)) if sucursal && !sucursal.etiquetas? }
   validate :cabe_en_la_produccion, on: :create
   after_save :recalcular_renglon
 

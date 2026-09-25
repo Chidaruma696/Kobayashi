@@ -1,14 +1,20 @@
-<h1 class="mb-1 text-2xl font-bold"><%= t("compras.recibir_mercancia") %></h1>
-<p class="mb-4 text-sm text-stone-600"><%= t("compras.recibir_ayuda", sucursal: sucursal_actual) %></p>
-<%= form_with model: @recepcion, url: recepciones_path, class: "formulario", data: { controller: "renglones", renglones_url_value: buscar_productos_path } do |f| %>
+<h1 class="mb-1 text-2xl font-bold"><%= t("traspasos.nuevo") %></h1>
+<p class="mb-4 text-sm text-stone-600"><%= t("traspasos.nuevo_ayuda") %></p>
+<%= form_with model: @traspaso, url: traspasos_path, class: "formulario", data: { controller: "renglones", renglones_url_value: buscar_productos_path } do |f| %>
   <%= f.hidden_field :clave, value: @clave %>
   <div class="campos">
     <div>
-      <%= f.label :proveedor_id, t("compras.proveedor"), class: "block text-sm font-medium" %>
-      <%= f.collection_select :proveedor_id, @proveedores, :id, :nombre, { include_blank: "—" }, required: true, class: "entrada" %>
-      <% if @proveedores.empty? %><p class="mt-1 text-xs text-amber-700"><%= link_to t("compras.primero_proveedor"), new_proveedor_path, class: "enlace" %></p><% end %>
+      <%= f.label :sucursal_origen_id, t("traspasos.de"), class: "block text-sm font-medium" %>
+      <% if @origenes.size > 1 %>
+        <%= f.collection_select :sucursal_origen_id, @origenes, :id, ->(s) { "#{s.nombre}#{" · #{t("admin.almacen_corto")}" if s.almacen?}" }, {}, class: "entrada" %>
+      <% else %>
+        <p class="entrada bg-stone-50"><%= sucursal_actual %></p>
+      <% end %>
     </div>
-    <div><%= f.label :remision, t("compras.remision"), class: "block text-sm font-medium" %><%= f.text_field :remision, class: "entrada font-mono", placeholder: t("compras.remision_ayuda") %></div>
+    <div>
+      <%= f.label :sucursal_destino_id, t("traspasos.a"), class: "block text-sm font-medium" %>
+      <%= f.collection_select :sucursal_destino_id, @destinos, :id, ->(s) { "#{s.nombre}#{" · #{t("admin.almacen_corto")}" if s.almacen?}" }, { include_blank: "—" }, required: true, class: "entrada" %>
+    </div>
     <div><%= f.label :fecha, t("comun.fecha"), class: "block text-sm font-medium" %><%= f.date_field :fecha, class: "entrada" %></div>
     <div class="md:col-span-2 xl:col-span-3"><%= f.label :notas, t("comun.notas"), class: "block text-sm font-medium" %><%= f.text_field :notas, class: "entrada" %></div>
   </div>
@@ -33,14 +39,6 @@
     </table>
     <button type="button" data-action="renglones#nuevo" class="btn btn-secondary mt-3">+ <%= t("pedidos.renglon") %></button>
   </div>
-  <div class="rounded-lg border border-stone-200 p-4">
-    <h2 class="mb-1 font-semibold"><%= t("compras.envases.titulo") %></h2>
-    <p class="mb-3 text-xs text-stone-500"><%= t("compras.envases.recepcion_ayuda") %></p>
-    <div class="campos-4">
-      <div><%= f.label :canastillas, t("compras.envases.canastillas"), class: "block text-sm font-medium" %><%= f.number_field :canastillas, min: 0, placeholder: "0", class: "entrada font-mono" %></div>
-      <div><%= f.label :tarimas, t("compras.envases.tarimas"), class: "block text-sm font-medium" %><%= f.number_field :tarimas, min: 0, placeholder: "0", class: "entrada font-mono" %></div>
-      <div><%= f.label :totes, t("compras.envases.totes"), class: "block text-sm font-medium" %><%= f.number_field :totes, min: 0, placeholder: "0", class: "entrada font-mono" %></div>
-    </div>
-  </div>
-  <%= f.submit t("compras.registrar_entrada"), class: "btn btn-primary btn-lg" %>
+  <p class="text-xs text-stone-500"><%= t("traspasos.reglas") %></p>
+  <%= f.submit t("traspasos.registrar"), class: "btn btn-primary btn-lg" %>
 <% end %>

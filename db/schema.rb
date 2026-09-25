@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_120001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_130001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -739,7 +739,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_120001) do
     t.string "tipo", default: "tienda", null: false
     t.datetime "updated_at", null: false
     t.index ["codigo"], name: "index_sucursales_on_codigo", unique: true
-    t.check_constraint "tipo IN ('matriz', 'tienda')", name: "sucursales_tipo"
+    t.check_constraint "tipo IN ('matriz', 'tienda', 'almacen')", name: "sucursales_tipo"
   end
 
   create_table "supervision_etiquetas", force: :cascade do |t|
@@ -778,6 +778,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_120001) do
     t.string "nombre", null: false
     t.datetime "updated_at", null: false
     t.index ["nombre"], name: "index_tipos_canastilla_on_nombre", unique: true
+  end
+
+  create_table "traspaso_lineas", force: :cascade do |t|
+    t.integer "cajas", default: 0, null: false
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.integer "etiquetas_bajadas", default: 0, null: false
+    t.integer "producto_id", null: false
+    t.integer "traspaso_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_traspaso_lineas_on_producto_id"
+    t.index ["traspaso_id"], name: "index_traspaso_lineas_on_traspaso_id"
+  end
+
+  create_table "traspasos", force: :cascade do |t|
+    t.string "clave"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "registrado", null: false
+    t.date "fecha", null: false
+    t.string "folio", null: false
+    t.string "motivo_cancelacion"
+    t.string "notas"
+    t.integer "sucursal_destino_id", null: false
+    t.integer "sucursal_origen_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["sucursal_destino_id"], name: "index_traspasos_on_sucursal_destino_id"
+    t.index ["sucursal_origen_id", "clave"], name: "index_traspasos_on_sucursal_origen_id_and_clave", unique: true, where: "clave IS NOT NULL"
+    t.index ["sucursal_origen_id", "folio"], name: "index_traspasos_on_sucursal_origen_id_and_folio", unique: true
+    t.index ["sucursal_origen_id"], name: "index_traspasos_on_sucursal_origen_id"
+    t.index ["usuario_id"], name: "index_traspasos_on_usuario_id"
+    t.check_constraint "estado IN ('registrado', 'cancelado')", name: "traspasos_estado"
   end
 
   create_table "usuarios", force: :cascade do |t|
@@ -1022,6 +1054,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_120001) do
   add_foreign_key "supervision_etiquetas", "usuarios"
   add_foreign_key "supervisiones", "sucursales"
   add_foreign_key "supervisiones", "usuarios"
+  add_foreign_key "traspaso_lineas", "productos"
+  add_foreign_key "traspaso_lineas", "traspasos"
+  add_foreign_key "traspasos", "sucursales", column: "sucursal_destino_id"
+  add_foreign_key "traspasos", "sucursales", column: "sucursal_origen_id"
+  add_foreign_key "traspasos", "usuarios"
   add_foreign_key "usuarios", "roles"
   add_foreign_key "usuarios", "sucursales"
   add_foreign_key "venta_lineas", "convenios"

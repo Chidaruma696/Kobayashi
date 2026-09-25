@@ -178,6 +178,7 @@ es:
       supervisar: Supervisar
       facturas: Facturas
       proveedores: Proveedores
+      granel: A granel
     botones:
       inicio: Inicio
       ventas_por_producto: Ventas por producto
@@ -227,6 +228,8 @@ es:
       cuentas_por_pagar: Cuentas por pagar
       proveedores: Proveedores
       envases: Envases
+      traspaso_granel: Traspaso a granel
+      traspasos: Traspasos
   acerca:
     titulo: Acerca de Kobayashi
     lema: Punto de venta y trastienda para la matriz y sus tiendas
@@ -276,6 +279,7 @@ es:
       tarima_sin_producto: una tarima no lleva producto
       sin_paquetes: 'sin paquetes: se dieron de baja todos'
       no_encontrada: no se encontró la etiqueta «%{codigo}»
+      en_almacen: '%{sucursal} es un almacén: ahí la mercancía solo se guarda a granel, no se etiqueta'
     produccion:
       ya_cerrada: la producción ya está cerrada
     barcode:
@@ -316,11 +320,13 @@ es:
       cliente_obligatorio: obligatorio en un reparto
       destino_obligatorio: obligatoria
       destino_no_origen: no puede ser el origen
+      destino_almacen: a %{almacen} se manda a granel (traspaso a granel), no con salida escaneando
     corte:
       ya_abierto: ya hay un corte abierto en %{sucursal}
       cerrado: el corte está cerrado
       sin_efectivo: no hay tanto efectivo en la gaveta (%{monto})
       ya_cerrado: el corte ya está cerrado
+      sin_caja_en_almacen: '%{sucursal} es un almacén: ahí no hay caja'
     caja:
       clave_ticket: hace falta la clave del ticket
       sin_caja: 'no hay caja abierta en %{sucursal}: ábrela con su fondo'
@@ -430,6 +436,11 @@ es:
       pago_ya_anulado: el pago ya está anulado
       corte_cerrado: 'el corte de ese pago ya cerró: el efectivo no puede regresar a la gaveta'
       envases_insuficientes: no se le deben tantos %{envase} (saldo %{saldo})
+    traspaso:
+      mismo_lugar: origen y destino son el mismo lugar
+      externo_solo_a_matriz: de %{almacen} la mercancía solo va a la matriz; de ahí sale a las tiendas
+      ya_cancelado: el traspaso ya está cancelado
+      tiene_etiquetas: '%{producto} tiene etiquetas vivas en %{sucursal}: mándalo con una salida escaneando, o a granel solo a un almacén'
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -1450,6 +1461,8 @@ es:
     usuario_minusculas: Usuario (minúsculas)
     nueva_contrasena: Nueva contraseña (vacío = igual)
     convenio_resumen: '%{precio}/kg en %{lineas} hasta %{cajas} cajas por semana'
+    almacen: 'Almacén externo (frigorífico o bodega: solo guarda a granel)'
+    almacen_corto: almacén
   instalacion:
     titulo: Primer arranque
     intro: La base está vacía. Di cómo se llama el negocio y crea al primer administrador; con él entras y das de alta lo demás (productos, sucursales, usuarios).
@@ -1827,3 +1840,26 @@ es:
       retiro_pago: Pago a %{proveedor} %{folio}
       abono_pago: Pago %{folio} (%{forma})
       anulacion_pago: 'Pago anulado: %{motivo}'
+  traspasos:
+    titulo: Traspasos a granel
+    traspaso: Traspaso
+    nuevo: Traspaso a granel
+    ayuda: 'Kilos y cajas que cambian de sucursal sin escanear: lo que entra y sale de un almacén externo, y lo que no lleva etiqueta.'
+    nuevo_ayuda: 'Sale del origen y entra al destino en el momento. Para lo etiquetado usa una salida escaneando: la etiqueta es su identidad.'
+    de: De
+    a: A
+    registrar: Registrar traspaso
+    ninguno: Todavía no hay traspasos.
+    etiquetas_bajadas: Etiquetas bajadas
+    cancelar: Cancelar traspaso
+    cancelar_ayuda: La mercancía regresa al origen si el destino todavía la tiene. Las etiquetas dadas de baja no reviven.
+    reglas: 'Reglas: de un almacén externo la mercancía solo va a la matriz. A un almacén externo lo etiquetado vuelve al granel: sus etiquetas se dan de baja con el folio como motivo.'
+    estados:
+      registrado: registrado
+      cancelado: cancelado
+    avisos:
+      registrado: 'Traspaso %{folio} registrado: la mercancía ya está en %{destino}'
+      cancelado: Traspaso %{folio} cancelado
+      motivo: 'Traspaso %{folio}: %{origen} → %{destino}'
+      cancelacion: 'Cancelación de %{folio}: %{motivo}'
+      al_granel: 'Traspaso %{folio} a %{almacen}: vuelve al granel'

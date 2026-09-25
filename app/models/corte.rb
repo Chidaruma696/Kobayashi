@@ -24,6 +24,7 @@ class Corte < ApplicationRecord
 
   # Un corte abierto por sucursal.
   def self.abrir!(sucursal:, usuario:, fondo_centavos:)
+    raise ArgumentError, I18n.t("errores.corte.sin_caja_en_almacen", sucursal: sucursal.nombre) unless sucursal.caja?
     raise ArgumentError, I18n.t("errores.corte.ya_abierto", sucursal: sucursal.nombre) if abierto_en(sucursal)
     create!(sucursal: sucursal, usuario: usuario, fondo_centavos: fondo_centavos, abierto_en: Time.current)
   end

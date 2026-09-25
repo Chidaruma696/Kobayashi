@@ -416,6 +416,7 @@ class Salida < ApplicationRecord
     else
       errors.add(:sucursal_destino, I18n.t("errores.salida.destino_obligatorio")) if sucursal_destino.nil?
       errors.add(:sucursal_destino, I18n.t("errores.salida.destino_no_origen")) if sucursal_origen_id == sucursal_destino_id
+      errors.add(:sucursal_destino, I18n.t("errores.salida.destino_almacen", almacen: sucursal_destino.nombre)) if sucursal_destino&.almacen?
     end
   end
 

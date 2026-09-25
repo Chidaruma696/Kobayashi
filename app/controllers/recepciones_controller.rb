@@ -56,16 +56,4 @@ class RecepcionesController < ApplicationController
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to recepcion_path(recepcion), alert: e.message
   end
-
-  # Lo que se escaneó o tecleó: código del proveedor, PLU, clave o nombre (JSON, para el formulario).
-  def producto
-    q = params[:q].to_s.strip
-    escaneado = Escaneo.resolver(q)
-    productos = if escaneado&.producto && escaneado.producto.activo
-      [ escaneado.producto ]
-    else
-      Producto.activos.where("LOWER(nombre) LIKE :q OR LOWER(clave) LIKE :q", q: "%#{q.downcase}%").order(:nombre).limit(10)
-    end
-    render json: productos.map { |p| { id: p.id, nombre: p.nombre, unidad: p.unidad, cantidad: (escaneado&.etiqueta&.cantidad if escaneado&.producto == p) } }
-  end
 end

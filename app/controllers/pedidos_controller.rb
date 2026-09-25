@@ -78,7 +78,7 @@ class PedidosController < ApplicationController
   end
 
   def cargar_destinos
-    @destinos = sucursal_actual.matriz? ? Sucursal.activas.where.not(id: sucursal_actual.id).order(:nombre) : [ sucursal_actual ]
+    @destinos = sucursal_actual.matriz? ? Sucursal.activas.con_caja.where.not(id: sucursal_actual.id).order(:nombre) : [ sucursal_actual ]
     @clientes = sucursal_actual.matriz? ? Cliente.activos.includes(:ruta).order(:nombre) : []
   end
 

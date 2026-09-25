@@ -178,6 +178,7 @@ de:
       supervisar: Kontrollieren
       facturas: Rechnungen
       proveedores: Lieferanten
+      granel: Lose Ware
     botones:
       inicio: Start
       ventas_por_producto: Verkäufe je Produkt
@@ -227,6 +228,8 @@ de:
       cuentas_por_pagar: Verbindlichkeiten
       proveedores: Lieferanten
       envases: Leergut
+      traspaso_granel: Umlagerung lose
+      traspasos: Umlagerungen
   acerca:
     titulo: Über Kobayashi
     lema: Kasse und Backoffice für die Zentrale und ihre Läden
@@ -276,6 +279,7 @@ de:
       tarima_sin_producto: eine Palette hat kein Produkt
       sin_paquetes: 'keine Pakete: alle wurden abgeschrieben'
       no_encontrada: Etikett „%{codigo}“ nicht gefunden
+      en_almacen: '%{sucursal} ist ein Lager: dort wird Ware nur lose gelagert, nicht etikettiert'
     produccion:
       ya_cerrada: die Produktion ist bereits geschlossen
     barcode:
@@ -316,11 +320,13 @@ de:
       cliente_obligatorio: bei einer Lieferung Pflicht
       destino_obligatorio: Pflicht
       destino_no_origen: darf nicht der Ursprung sein
+      destino_almacen: nach %{almacen} geht Ware lose (Umlagerung lose), nicht per gescanntem Ausgang
     corte:
       ya_abierto: in %{sucursal} ist bereits ein Kassenabschnitt offen
       cerrado: der Kassenabschnitt ist geschlossen
       sin_efectivo: so viel Bargeld ist nicht in der Lade (%{monto})
       ya_cerrado: der Kassenabschnitt ist bereits geschlossen
+      sin_caja_en_almacen: '%{sucursal} ist ein Lager: dort gibt es keine Kasse'
     caja:
       clave_ticket: der Ticketschlüssel fehlt
       sin_caja: 'keine Kasse offen in %{sucursal}: mit Wechselgeld öffnen'
@@ -430,6 +436,11 @@ de:
       pago_ya_anulado: die Zahlung ist bereits storniert
       corte_cerrado: 'der Kassenabschluss dieser Zahlung ist geschlossen: das Bargeld kann nicht zurück in die Lade'
       envases_insuficientes: so viele %{envase} schulden wir nicht (Saldo %{saldo})
+    traspaso:
+      mismo_lugar: Herkunft und Ziel sind derselbe Ort
+      externo_solo_a_matriz: von %{almacen} geht Ware nur zur Zentrale; von dort in die Filialen
+      ya_cancelado: die Umlagerung ist bereits storniert
+      tiene_etiquetas: '%{producto} hat lebende Etiketten in %{sucursal}: per gescanntem Ausgang schicken, oder lose nur in ein Lager'
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -1450,6 +1461,8 @@ de:
     usuario_minusculas: Benutzername (Kleinbuchstaben)
     nueva_contrasena: Neues Passwort (leer = unverändert)
     convenio_resumen: '%{precio}/kg bei %{lineas} bis zu %{cajas} Kisten pro Woche'
+    almacen: 'Externes Lager (Kühlhaus oder Depot: nur lose Lagerung)'
+    almacen_corto: Lager
   instalacion:
     titulo: Erster Start
     intro: Die Datenbank ist leer. Gib dem Betrieb einen Namen und lege den ersten Administrator an; damit meldest du dich an und richtest den Rest ein (Produkte, Filialen, Benutzer).
@@ -1827,3 +1840,26 @@ de:
       retiro_pago: Zahlung an %{proveedor} %{folio}
       abono_pago: Zahlung %{folio} (%{forma})
       anulacion_pago: 'Zahlung storniert: %{motivo}'
+  traspasos:
+    titulo: Umlagerungen lose
+    traspaso: Umlagerung
+    nuevo: Umlagerung lose
+    ayuda: 'Kilos und Kisten, die ohne Scannen die Filiale wechseln: was in ein externes Lager geht und herauskommt, und was kein Etikett trägt.'
+    nuevo_ayuda: 'Verlässt die Herkunft und geht sofort ins Ziel. Etikettierte Ware per gescanntem Ausgang: das Etikett ist ihre Identität.'
+    de: Von
+    a: Nach
+    registrar: Umlagerung buchen
+    ninguno: Noch keine Umlagerungen.
+    etiquetas_bajadas: Etiketten ausgebucht
+    cancelar: Umlagerung stornieren
+    cancelar_ayuda: Die Ware geht zurück zur Herkunft, wenn das Ziel sie noch hat. Ausgebuchte Etiketten kommen nicht zurück.
+    reglas: 'Regeln: aus einem externen Lager geht Ware nur zur Zentrale. In ein externes Lager wird etikettierte Ware wieder lose: ihre Etiketten werden mit der Belegnummer als Grund ausgebucht.'
+    estados:
+      registrado: gebucht
+      cancelado: storniert
+    avisos:
+      registrado: 'Umlagerung %{folio} gebucht: die Ware ist jetzt in %{destino}'
+      cancelado: Umlagerung %{folio} storniert
+      motivo: 'Umlagerung %{folio}: %{origen} → %{destino}'
+      cancelacion: 'Storno von %{folio}: %{motivo}'
+      al_granel: 'Umlagerung %{folio} nach %{almacen}: wieder lose'

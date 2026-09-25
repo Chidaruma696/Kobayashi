@@ -1,5 +1,8 @@
 class Sucursal < ApplicationRecord
-  TIPOS = %w[matriz tienda].freeze
+  # matriz: donde se produce, se etiqueta y de donde sale todo. tienda: vende, todo con etiqueta.
+  # almacen: frigorífico o bodega externa donde la mercancía solo se guarda a granel: sin caja, sin
+  # etiquetas, sin conteos; entra y sale por traspasos a granel, y de ahí solo va a la matriz.
+  TIPOS = %w[matriz tienda almacen].freeze
 
   has_many :usuarios, dependent: :restrict_with_error
   has_many :folios, dependent: :destroy
@@ -25,6 +28,15 @@ class Sucursal < ApplicationRecord
   def matriz?
     tipo == "matriz"
   end
+
+  def almacen? = tipo == "almacen"
+
+  # Dónde la etiqueta significa algo (se genera, se cuenta, viaja) y dónde hay caja.
+  def etiquetas? = !almacen?
+  def caja? = !almacen?
+
+  scope :con_caja, -> { where.not(tipo: "almacen") }
+  scope :almacenes, -> { where(tipo: "almacen") }
 
   def limite_efectivo
     BigDecimal(limite_efectivo_centavos) / 100

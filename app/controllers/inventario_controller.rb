@@ -1,8 +1,21 @@
 class InventarioController < ApplicationController
   pestana :inventario
 
-  before_action { autorizar!("inventario.ver") }
-  before_action :cargar_sucursal
+  before_action(except: :buscar) { autorizar!("inventario.ver") }
+  before_action :cargar_sucursal, except: :buscar
+
+  # Lo que se escaneó o tecleó: código del proveedor, PLU, clave o nombre (JSON, para los
+  # formularios de renglones: recepción, factura, traspaso a granel).
+  def buscar
+    q = params[:q].to_s.strip
+    escaneado = Escaneo.resolver(q)
+    productos = if escaneado&.producto && escaneado.producto.activo
+      [ escaneado.producto ]
+    else
+      Producto.activos.where("LOWER(nombre) LIKE :q OR LOWER(clave) LIKE :q", q: "%#{q.downcase}%").order(:nombre).limit(10)
+    end
+    render json: productos.map { |p| { id: p.id, nombre: p.nombre, unidad: p.unidad, cantidad: (escaneado&.etiqueta&.cantidad if escaneado&.producto == p) } }
+  end
 
   def index
     @existencias = Existencia.where(sucursal: @sucursal).includes(:producto)

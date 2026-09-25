@@ -1,6 +1,6 @@
 <h1 class="mb-1 text-2xl font-bold"><%= t("compras.nueva_factura") %></h1>
 <p class="mb-4 text-sm text-stone-600"><%= t("compras.factura_ayuda") %></p>
-<%= form_with model: @factura, url: facturas_path, scope: :factura, class: "formulario", data: { controller: "renglones", renglones_url_value: producto_recepciones_path } do |f| %>
+<%= form_with model: @factura, url: facturas_path, scope: :factura, class: "formulario", data: { controller: "renglones", renglones_url_value: buscar_productos_path } do |f| %>
   <div class="campos">
     <div>
       <%= f.label :proveedor_id, t("compras.proveedor"), class: "block text-sm font-medium" %>
