@@ -46,6 +46,7 @@ de:
         barras: Höhe des Strichcodes (px)
         letra: Schriftgröße des Namens (px)
         leyenda: Beschriftung des Etiketts
+        aviso_caducidad: Ablaufwarnung (Tage im Voraus)
       caja:
         piso_precio: Preisuntergrenze (% des Listenpreises)
         limite_gaveta: Ladenlimit für neue Filialen ($)
@@ -488,6 +489,15 @@ de:
     transferencias: Überweisungen
     depositos: Einzahlungen
     inventario_valorizado: Bestandswert
+    caducidad: Ablauf
+    caducan_en: läuft innerhalb von %{dias} Tagen ab
+    caducadas_vivas:
+      one: 1 lebendes Paket bereits abgelaufen
+      other: '%{count} lebende Pakete bereits abgelaufen'
+    n_paquetes:
+      one: 1 Pkt
+      other: '%{count} Pkt'
+    sin_caducidad: Nichts läuft demnächst ab.
     lo_mas_vendido: Meistverkauft
     sin_ventas: Keine Verkäufe im Zeitraum.
     cortes_cerrados: Abgeschlossene Kassen
@@ -535,6 +545,7 @@ de:
       movimiento: '%{tipo} über %{cantidad}'
       retiro: Abschöpfung von %{monto} aus Abschnitt %{folio}
       venta_linea: 'Preis gesenkt in %{folio}: %{producto} auf %{precio} (Katalog %{catalogo})'
+      venta_linea_caducada: 'Abgelaufen verkauft in %{folio}: %{producto} (abgelaufen am %{fecha})'
       corte: 'Abschnitt %{folio} mit einer Differenz von %{diferencia} geschlossen'
       salida: Wareneingang %{folio} in %{destino} mit Fehlmengen
   estados:
@@ -679,6 +690,7 @@ de:
     renglon_reabierto: Zeile wieder geöffnet
   js:
     pedidos_por_surtir: Zu kommissionierende Bestellungen
+    caducado: ABGELAUFEN
     cargando: Lädt…
     sin_pedidos: Keine Bestellungen zu kommissionieren
     no_se_pudo: Nicht möglich
@@ -829,6 +841,7 @@ de:
       caja: Kisten
       tarima: Paletten
     mixta: gemischt
+    cad: MHD
     ultima: Letztes
     creada: Etikett %{codigo} erstellt
     dada_de_baja: '%{etiqueta} abgeschrieben'
@@ -975,6 +988,7 @@ de:
     avisos:
       abierta: Kasse geöffnet mit Wechselgeld %{fondo}
       bajo_precio: '%{producto} von %{de} auf %{a} gesenkt in %{folio}'
+      vendido_caducado: '%{producto} %{codigo} verkauft, abgelaufen am %{fecha}, in %{folio}'
       corte_cerrado: 'Abschnitt %{folio} geschlossen: Soll %{esperado}, gezählt %{contado}, Differenz %{diferencia}'
       retiro: Abschöpfung von %{monto} erfasst
       queda_por_revisar: ; geht zur Prüfung
@@ -1455,6 +1469,7 @@ de:
     linea: Linie
     kilo: Kilo
     peso_por_pieza_opcional: Gewicht je Stück (kg, optional)
+    dias_vida: Haltbarkeit (Tage; leer = läuft nicht ab)
     productos: Produkte
     nuevo_producto: Neues Produkt
     codigos: Codes

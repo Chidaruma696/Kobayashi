@@ -20,6 +20,19 @@ class EtiquetaTest < ActiveSupport::TestCase
     assert_equal 1, Barcode.decodificar_identidad(paquete(1, producto: productos(:catsup)).codigo)[:secuencia]
   end
 
+  test "el paquete nace con caducidad si el producto tiene días de vida; sin ellos, no caduca" do
+    assert_nil paquete.caduca_el
+    @pechuga.update!(dias_vida: 3)
+    e = paquete
+    assert_equal Date.current + 3, e.caduca_el
+    assert_not e.caducada?
+    assert e.caducada?(Date.current + 4)
+    assert_equal [ e ], Etiqueta.por_caducar(3).to_a
+    assert_empty Etiqueta.por_caducar(2)
+    assert_empty Etiqueta.caducadas
+    assert_equal [ e ], Etiqueta.caducadas(Date.current + 4).to_a
+  end
+
   test "un paquete exige producto y cantidad; una tarima no lleva producto" do
     assert_not Etiqueta.new(tipo: "paquete", sucursal: @matriz, usuario: @admin, cantidad: 0, producto: @pechuga).valid?
     assert_not Etiqueta.new(tipo: "paquete", sucursal: @matriz, usuario: @admin, cantidad: 1).valid?

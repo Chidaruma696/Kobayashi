@@ -22,6 +22,11 @@ class InicioController < ApplicationController
     @mermas = Produccion.where(sucursal: sucursales, estado: "cerrada", updated_at: @desde.beginning_of_day..@hasta.end_of_day).includes(:producto)
     @conteos = Conteo.where(sucursal: sucursales, estado: "cerrado", cerrado_en: @desde.beginning_of_day..@hasta.end_of_day).includes(:sucursal, :responsable)
     @valor_existencias = Existencia.where(sucursal: sucursales).joins(:producto).sum("existencias.cantidad * productos.precio_centavos").to_i
+    @dias_caducidad = Ajuste.entero("etiqueta.aviso_caducidad")
+    @caducan = Etiqueta.vivas.hojas.where(sucursal: sucursales).por_caducar(@dias_caducidad).joins(:producto)
+                       .group("productos.nombre", "productos.unidad").order(Arel.sql("MIN(caduca_el)"))
+                       .pluck("productos.nombre", "productos.unidad", Arel.sql("COUNT(*)"), Arel.sql("SUM(cantidad)"), Arel.sql("MIN(caduca_el)"))
+    @caducadas = Etiqueta.vivas.hojas.where(sucursal: sucursales).caducadas.count
   end
 
   def ventas

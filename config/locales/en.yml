@@ -46,6 +46,7 @@ en:
         barras: Barcode height (px)
         letra: Name font size (px)
         leyenda: Label caption
+        aviso_caducidad: Expiry warning (days ahead)
       caja:
         piso_precio: Price floor (% of list price)
         limite_gaveta: Drawer limit for new branches ($)
@@ -488,6 +489,15 @@ en:
     transferencias: Transfers
     depositos: Deposits
     inventario_valorizado: Inventory value
+    caducidad: Expiry
+    caducan_en: expires within %{dias} days
+    caducadas_vivas:
+      one: 1 live package already expired
+      other: '%{count} live packages already expired'
+    n_paquetes:
+      one: 1 pkg
+      other: '%{count} pkg'
+    sin_caducidad: Nothing about to expire.
     lo_mas_vendido: Top sellers
     sin_ventas: No sales in the range.
     cortes_cerrados: Closed cash-ups
@@ -535,6 +545,7 @@ en:
       movimiento: '%{tipo} of %{cantidad}'
       retiro: Cash drop of %{monto} from session %{folio}
       venta_linea: 'Price lowered on %{folio}: %{producto} to %{precio} (catalog %{catalogo})'
+      venta_linea_caducada: 'Sold expired on %{folio}: %{producto} (expired %{fecha})'
       corte: 'Session %{folio} closed with a difference of %{diferencia}'
       salida: Reception of %{folio} at %{destino} with shortages
   estados:
@@ -679,6 +690,7 @@ en:
     renglon_reabierto: Line reopened
   js:
     pedidos_por_surtir: Orders to fulfil
+    caducado: EXPIRED
     cargando: Loading…
     sin_pedidos: No orders to fulfil
     no_se_pudo: Could not do it
@@ -829,6 +841,7 @@ en:
       caja: boxes
       tarima: pallets
     mixta: mixed
+    cad: EXP.
     ultima: Last
     creada: Label %{codigo} created
     dada_de_baja: '%{etiqueta} written off'
@@ -975,6 +988,7 @@ en:
     avisos:
       abierta: Register opened with a float of %{fondo}
       bajo_precio: Lowered %{producto} from %{de} to %{a} on %{folio}
+      vendido_caducado: 'Sold %{producto} %{codigo}, expired on %{fecha}, on %{folio}'
       corte_cerrado: 'Session %{folio} closed: expected %{esperado}, counted %{contado}, difference %{diferencia}'
       retiro: Cash drop of %{monto} recorded
       queda_por_revisar: ; goes to review
@@ -1455,6 +1469,7 @@ en:
     linea: Line
     kilo: kilo
     peso_por_pieza_opcional: Weight per piece (kg, optional)
+    dias_vida: Shelf life (days; empty = never expires)
     productos: Products
     nuevo_producto: New product
     codigos: Codes

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_150001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_160001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -240,6 +240,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_150001) do
 
   create_table "etiquetas", force: :cascade do |t|
     t.integer "autorizado_por_id"
+    t.date "caduca_el"
     t.decimal "cantidad", precision: 12, scale: 3, default: "0.0", null: false
     t.string "codigo", limit: 13, null: false
     t.datetime "created_at", null: false
@@ -260,6 +261,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_150001) do
     t.index ["pedido_linea_id"], name: "index_etiquetas_on_pedido_linea_id"
     t.index ["produccion_id"], name: "index_etiquetas_on_produccion_id"
     t.index ["producto_id"], name: "index_etiquetas_on_producto_id"
+    t.index ["sucursal_id", "caduca_el"], name: "index_etiquetas_on_sucursal_id_and_caduca_el"
     t.index ["sucursal_id", "estado", "tipo"], name: "index_etiquetas_on_sucursal_id_and_estado_and_tipo"
     t.index ["sucursal_id"], name: "index_etiquetas_on_sucursal_id"
     t.index ["usuario_id"], name: "index_etiquetas_on_usuario_id"
@@ -514,6 +516,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_150001) do
     t.boolean "activo", default: true, null: false
     t.string "clave", null: false
     t.datetime "created_at", null: false
+    t.integer "dias_vida"
     t.string "linea"
     t.string "nombre", null: false
     t.decimal "peso_fijo", precision: 10, scale: 3

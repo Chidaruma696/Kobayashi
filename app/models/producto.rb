@@ -19,6 +19,8 @@ class Producto < ApplicationRecord
   validates :precio_centavos, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :plu, numericality: { only_integer: true, in: 1..99_999 }, uniqueness: true
   validates :peso_fijo, numericality: { greater_than: 0 }, allow_nil: true
+  # Días de vida desde que se etiqueta; vacío = no caduca.
+  validates :dias_vida, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
   scope :activos, -> { where(activo: true) }
 

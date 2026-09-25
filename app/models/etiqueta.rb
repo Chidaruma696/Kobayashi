@@ -19,6 +19,7 @@ class Etiqueta < ApplicationRecord
   has_many :salida_etiquetas, dependent: :restrict_with_error
 
   before_validation :asignar_codigo, on: :create
+  before_validation :asignar_caducidad, on: :create
 
   validates :tipo, inclusion: { in: TIPOS }
   validates :estado, inclusion: { in: ESTADOS }
@@ -35,8 +36,12 @@ class Etiqueta < ApplicationRecord
   # Lo que cuenta como mercancía: paquetes y cajas sin hijas (cajas de proveedor). Nunca tarimas.
   scope :hojas, -> { where(tipo: "paquete").or(where(tipo: "caja").where.not("EXISTS (SELECT 1 FROM etiquetas h WHERE h.padre_id = etiquetas.id)")) }
   scope :recientes, -> { order(created_at: :desc) }
+  scope :caducadas, ->(fecha = Date.current) { where(caduca_el: ...fecha) }
+  # Lo que caduca de hoy a `dias` días (incluido lo ya caducado).
+  scope :por_caducar, ->(dias, fecha = Date.current) { where(caduca_el: ..fecha + dias) }
 
   def paquete? = tipo == "paquete"
+  def caducada?(fecha = Date.current) = caduca_el.present? && caduca_el < fecha
   def caja? = tipo == "caja"
   def tarima? = tipo == "tarima"
   def viva? = estado == "viva"
@@ -138,6 +143,11 @@ class Etiqueta < ApplicationRecord
     end
   end
   private_class_method :agrupar!
+
+  # La etiqueta es el lote: nace con la fecha que le dan los días de vida del producto.
+  def asignar_caducidad
+    self.caduca_el ||= Date.current + producto.dias_vida if producto&.dias_vida
+  end
 
   def asignar_codigo
     return if codigo.present? || !TIPOS.include?(tipo)

@@ -11,7 +11,7 @@
   </div>
   <div class="pie">
     <% if registro %>
-      <span><%= l etiqueta.created_at.to_date, format: :short %><%= " · #{etiqueta.hijas.size} #{t("js.paq")}" if etiqueta.caja? && etiqueta.hijas.any? %></span>
+      <span><%= l etiqueta.created_at.to_date, format: :short %><%= " · #{etiqueta.hijas.size} #{t("js.paq")}" if etiqueta.caja? && etiqueta.hijas.any? %><%= " · #{t("etiquetas.cad")} #{l etiqueta.caduca_el, format: :short}" if etiqueta.caduca_el %></span>
       <span class="cantidad"><%= number_with_precision(etiqueta.cantidad, precision: etiqueta.producto&.decimales || 3) %> <%= etiqueta.producto&.unidad %></span>
     <% else %>
       <span></span>

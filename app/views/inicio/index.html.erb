@@ -37,6 +37,19 @@
     </table>
   </div>
   <% end %>
+  <% if Modulo.activo?("etiquetas") %>
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("inicio.caducidad") %> <span class="text-sm font-normal text-stone-500">· <%= t("inicio.caducan_en", dias: @dias_caducidad) %></span></h2>
+    <% if @caducadas.positive? %><p class="mb-2 rounded bg-red-50 px-2 py-1 text-sm font-semibold text-red-800"><%= t("inicio.caducadas_vivas", count: @caducadas) %></p><% end %>
+    <table class="w-full text-sm">
+      <% @caducan.each do |nombre, unidad, n, cant, fecha| %>
+        <% fecha = fecha.is_a?(String) ? Date.parse(fecha) : fecha %>
+        <tr class="border-t border-stone-100 <%= fecha < Date.current ? 'text-red-700' : '' %>"><td class="py-1"><%= nombre %></td><td class="py-1 text-right font-mono"><%= t("inicio.n_paquetes", count: n) %> · <%= number_with_precision(cant, precision: unidad == "pieza" ? 0 : 3) %> <%= Producto::UNIDADES_CORTAS.fetch(unidad, unidad) %></td><td class="py-1 text-right font-mono"><%= l fecha, format: :short %></td></tr>
+      <% end %>
+      <% if @caducan.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("inicio.sin_caducidad") %></td></tr><% end %>
+    </table>
+  </div>
+  <% end %>
   <% if Modulo.activo?("conteos") %>
   <div class="card">
     <h2 class="mb-2 font-semibold"><%= t("inicio.conteos") %></h2>

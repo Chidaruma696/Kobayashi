@@ -28,7 +28,8 @@ class AdminTest < ActionDispatch::IntegrationTest
   test "productos: crear, editar, códigos" do
     get admin_productos_path
     assert_select "td", /Pechuga/
-    post admin_productos_path, params: { producto: { clave: "ala", nombre: "Ala de pollo", linea: "Pollo", unidad: "kg", precio: "75.50", activo: "1" } }
+    post admin_productos_path, params: { producto: { clave: "ala", nombre: "Ala de pollo", linea: "Pollo", unidad: "kg", precio: "75.50", activo: "1", dias_vida: "5" } }
+    assert_equal 5, Producto.find_by!(clave: "ALA").dias_vida
     p = Producto.find_by!(clave: "ALA")
     assert_redirected_to edit_admin_producto_path(p)
     assert_equal 7_550, p.precio_centavos

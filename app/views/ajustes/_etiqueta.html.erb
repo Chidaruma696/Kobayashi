@@ -7,6 +7,9 @@
           <%= f.number_field "ajuste[#{clave}]", value: @ajustes[clave], min: 1, class: "entrada font-mono" %>
         </label>
       <% end %>
+      <label class="block text-sm"><%= t("ajustes.claves.etiqueta.aviso_caducidad") %>
+        <%= f.number_field "ajuste[etiqueta.aviso_caducidad]", value: @ajustes["etiqueta.aviso_caducidad"], min: 0, class: "entrada font-mono" %>
+      </label>
       <label class="block text-sm md:col-span-2 xl:col-span-4"><%= t("ajustes.claves.etiqueta.leyenda") %>
         <%= f.text_field "ajuste[etiqueta.leyenda]", value: @ajustes["etiqueta.leyenda"], class: "entrada" %>
       </label>

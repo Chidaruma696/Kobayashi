@@ -23,6 +23,7 @@ class Ajuste < ApplicationRecord
     "etiqueta.leyenda" => "",
     "etiqueta.barras" => "36",           # alto del código de barras, px
     "etiqueta.letra" => "14",
+    "etiqueta.aviso_caducidad" => "3",  # días: el tablero avisa lo que caduca de hoy a N días
     "caja.piso_precio" => "50",          # % del catálogo por debajo del cual no se vende ni con permiso
     "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
     "caja.denominaciones" => "1000,500,200,100,50,20,10,5,2,1,0.5", # billetes y monedas para contar la gaveta
@@ -40,7 +41,7 @@ class Ajuste < ApplicationRecord
     "modulos.rutas" => "1",
     "modulos.conteos" => "1"
   }.freeze
-  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta caja.tope_diferencia ticket.ancho].freeze
+  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra etiqueta.aviso_caducidad caja.piso_precio caja.limite_gaveta caja.tope_diferencia ticket.ancho].freeze
   DENOMINACIONES = /\A\d+(\.\d{1,2})?(,\d+(\.\d{1,2})?)*\z/
   LOGO_MAX = 400_000 # caracteres del data URL (~300 KB de imagen)
 

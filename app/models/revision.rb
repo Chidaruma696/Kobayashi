@@ -57,7 +57,12 @@ class Revision < ApplicationRecord
     when Salida then I18n.t("revisiones.desc.salida", folio: revisable.folio, destino: revisable.destino)
     when Retiro then I18n.t("revisiones.desc.retiro", monto: Dinero.pesos(revisable.monto_centavos), folio: revisable.corte.folio)
     when Corte then I18n.t("revisiones.desc.corte", folio: revisable.folio, diferencia: Dinero.pesos(revisable.diferencia_centavos))
-    when VentaLinea then I18n.t("revisiones.desc.venta_linea", folio: revisable.venta.folio, producto: revisable.producto.nombre, precio: Dinero.pesos(revisable.precio_centavos), catalogo: Dinero.pesos(revisable.catalogo_centavos))
+    when VentaLinea
+      if revisable.precio_centavos < revisable.catalogo_centavos
+        I18n.t("revisiones.desc.venta_linea", folio: revisable.venta.folio, producto: revisable.producto.nombre, precio: Dinero.pesos(revisable.precio_centavos), catalogo: Dinero.pesos(revisable.catalogo_centavos))
+      else
+        I18n.t("revisiones.desc.venta_linea_caducada", folio: revisable.venta.folio, producto: revisable.producto.nombre, fecha: I18n.l(revisable.etiqueta.caduca_el, format: :short))
+      end
     else "#{revisable_type} #{revisable_id}"
     end
   end

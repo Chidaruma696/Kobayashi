@@ -29,7 +29,8 @@ class CajaController < ApplicationController
       { tipo: pr.tipo, cantidad_minima: pr.cantidad_minima, precio_centavos: pr.precio_centavos, porcentaje: pr.porcentaje, nombre: pr.nombre }
     end
     render json: { etiqueta_id: r.etiqueta&.id, codigo: r.etiqueta&.codigo, producto_id: p.id, nombre: p.nombre, unidad: p.unidad,
-                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: catalogo, promociones: promos }
+                   decimales: p.decimales, cantidad: r.etiqueta&.cantidad, precio_centavos: catalogo, promociones: promos,
+                   caduca_el: r.etiqueta&.caduca_el, caducada: r.etiqueta&.caducada? || false }
   end
 
   def cobrar
@@ -42,6 +43,11 @@ class CajaController < ApplicationController
     venta.lineas.where(autorizado_por: nil).where("precio_centavos < catalogo_centavos").includes(:producto).each do |l|
       revisar_si_hace_falta(l, nil, motivo: t("caja.avisos.bajo_precio", producto: l.producto.nombre, de: Dinero.pesos(l.catalogo_centavos), a: Dinero.pesos(l.precio_centavos), folio: venta.folio),
                             valor_centavos: Dinero.importe(l.cantidad, l.catalogo_centavos - l.precio_centavos))
+    end
+    # Vendió un paquete caducado: se cobra igual y el renglón queda por revisar con su importe.
+    venta.lineas.joins(:etiqueta).where(etiquetas: { caduca_el: ...venta.fecha_negocio }).includes(:producto, :etiqueta).each do |l|
+      revisar_si_hace_falta(l, nil, motivo: t("caja.avisos.vendido_caducado", producto: l.producto.nombre, codigo: l.etiqueta.codigo, fecha: l(l.etiqueta.caduca_el, format: :short), folio: venta.folio),
+                            valor_centavos: l.importe_centavos)
     end
     render json: { url: caja_ticket_path(venta, imprimir: 1), folio: venta.folio, cambio: Dinero.pesos(venta.cambio_centavos) }
   rescue Caja::Error, JSON::ParserError, ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid => e

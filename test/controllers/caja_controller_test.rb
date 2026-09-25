@@ -107,6 +107,29 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, Revision.count
   end
 
+  test "un paquete caducado se avisa al escanear, se vende igual y queda por revisar; el tablero lo enseña" do
+    @etiqueta.update_columns(caduca_el: Date.current - 1)
+    get caja_escanear_path(codigo: @etiqueta.codigo), headers: { "Accept" => "application/json" }
+    assert_equal true, response.parsed_body["caducada"]
+    post caja_cobrar_path, params: { clave: "cad", lineas: [ { etiqueta_id: @etiqueta.id } ].to_json, pagos: [ { forma: "efectivo", monto_centavos: 30_000 } ].to_json }, headers: { "Accept" => "application/json" }
+    assert_response :ok
+    r = Revision.last
+    assert_equal Venta.find_by!(clave: "cad").lineas.first, r.revisable
+    assert_equal 25_800, r.valor_centavos, "2 kg × 129.00"
+    assert_match "Vendido caducado", r.descripcion
+    delete salir_path
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    otra = Etiqueta.create!(tipo: "paquete", producto: productos(:pechuga), cantidad: "1.000", sucursal: @tienda, usuario: usuarios(:admin), autorizado_por: usuarios(:admin), justificacion: "prueba", caduca_el: Date.current - 2)
+    Inventario.mover!(sucursal: @tienda, producto: productos(:pechuga), tipo: "entrada", cantidad: 1, usuario: usuarios(:admin))
+    get root_path(sucursal_id: @tienda.id)
+    assert_select "h2", /Caducidad/
+    assert_select "p", /1 paquete vivo ya caducado/
+    assert_select "td", /Pechuga de pollo/
+    otra.update_columns(caduca_el: Date.current + 30)
+    get root_path(sucursal_id: @tienda.id)
+    assert_select "td", /Nada por caducar/
+  end
+
   test "devolución solo con ticket o etiqueta" do
     venta = Caja.cobrar!(sucursal: @tienda, usuario: usuarios(:cajera), clave: "v1", lineas: [ { etiqueta_id: @etiqueta.id } ], pagos: [ { forma: "efectivo", monto_centavos: 30_000 } ])
     get caja_devolucion_path(codigo: "0000000000000")

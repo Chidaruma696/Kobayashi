@@ -46,6 +46,7 @@ es:
         barras: Alto del código (px)
         letra: Letra del nombre (px)
         leyenda: Leyenda de la etiqueta
+        aviso_caducidad: Avisar caducidad con (días)
       caja:
         piso_precio: Piso de precio (% del catálogo)
         limite_gaveta: Tope de gaveta para sucursales nuevas ($)
@@ -488,6 +489,15 @@ es:
     transferencias: Transferencias
     depositos: Depósitos
     inventario_valorizado: Inventario valorizado
+    caducidad: Caducidad
+    caducan_en: caduca de hoy a %{dias} días
+    caducadas_vivas:
+      one: 1 paquete vivo ya caducado
+      other: '%{count} paquetes vivos ya caducados'
+    n_paquetes:
+      one: 1 paq
+      other: '%{count} paq'
+    sin_caducidad: Nada por caducar.
     lo_mas_vendido: Lo más vendido
     sin_ventas: Sin ventas en el rango.
     cortes_cerrados: Cortes cerrados
@@ -535,6 +545,7 @@ es:
       movimiento: '%{tipo} de %{cantidad}'
       retiro: Retiro de %{monto} del corte %{folio}
       venta_linea: 'Precio bajado en %{folio}: %{producto} a %{precio} (catálogo %{catalogo})'
+      venta_linea_caducada: 'Vendido caducado en %{folio}: %{producto} (caducó el %{fecha})'
       corte: 'Corte %{folio} cerrado con diferencia de %{diferencia}'
       salida: Recepción de %{folio} en %{destino} con faltantes
   estados:
@@ -679,6 +690,7 @@ es:
     renglon_reabierto: Renglón reabierto
   js:
     pedidos_por_surtir: Pedidos por surtir
+    caducado: CADUCADO
     cargando: Cargando…
     sin_pedidos: No hay pedidos por surtir
     no_se_pudo: No se pudo
@@ -829,6 +841,7 @@ es:
       caja: cajas
       tarima: tarimas
     mixta: mixta
+    cad: CAD.
     ultima: Última
     creada: Etiqueta %{codigo} creada
     dada_de_baja: '%{etiqueta} dada de baja'
@@ -975,6 +988,7 @@ es:
     avisos:
       abierta: Caja abierta con fondo de %{fondo}
       bajo_precio: Bajó %{producto} de %{de} a %{a} en %{folio}
+      vendido_caducado: 'Vendió %{producto} %{codigo} caducado el %{fecha} en %{folio}'
       corte_cerrado: 'Corte %{folio} cerrado: esperado %{esperado}, contado %{contado}, diferencia %{diferencia}'
       retiro: Retiro de %{monto} registrado
       queda_por_revisar: ; queda por revisar
@@ -1455,6 +1469,7 @@ es:
     linea: Línea
     kilo: kilo
     peso_por_pieza_opcional: Peso por pieza (kg, opcional)
+    dias_vida: Días de vida (caducidad; vacío = no caduca)
     productos: Productos
     nuevo_producto: Nuevo producto
     codigos: Códigos

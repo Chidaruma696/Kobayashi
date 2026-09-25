@@ -57,7 +57,7 @@ export default class extends Controller {
   agregar(datos) {
     const l = { etiqueta_id: datos.etiqueta_id, codigo: datos.codigo, producto_id: datos.producto_id, nombre: datos.nombre,
                 unidad: datos.unidad, decimales: datos.decimales, cantidad: datos.cantidad,
-                catalogo: datos.precio_centavos, promociones: datos.promociones || [], manual: false }
+                catalogo: datos.precio_centavos, promociones: datos.promociones || [], manual: false, caducada: datos.caducada }
     l.precio = this.precioVigente(l)
     this.lineas.push(l)
     this.render()
@@ -105,7 +105,7 @@ export default class extends Controller {
     if (filas) {
       this.cuerpoTarget.innerHTML = this.lineas.map((l, i) => `
         <tr class="border-t border-stone-100 ${l.manual && l.precio < l.catalogo ? "bg-amber-50" : ""}">
-          <td class="px-3 py-2">${l.nombre}${l.codigo ? ` <span class="font-mono text-xs text-stone-500">${l.codigo}</span>` : ""}${l.promo ? ` <span class="rounded bg-emerald-100 px-1 text-xs text-emerald-800">${l.promo}</span>` : ""}</td>
+          <td class="px-3 py-2">${l.nombre}${l.codigo ? ` <span class="font-mono text-xs text-stone-500">${l.codigo}</span>` : ""}${l.promo ? ` <span class="rounded bg-emerald-100 px-1 text-xs text-emerald-800">${l.promo}</span>` : ""}${l.caducada ? ` <span class="rounded bg-red-100 px-1 text-xs font-semibold text-red-800">${T.caducado}</span>` : ""}</td>
           <td class="px-3 py-2 text-right font-mono">${l.etiqueta_id
             ? `${l.cantidad.toFixed(l.decimales)} ${l.unidad}`
             : `<input type="number" value="${l.cantidad}" step="${l.unidad === "pieza" ? "1" : "0.001"}" min="0" data-action="change->pos#cambiarCantidad" data-pos-indice-param="${i}" class="w-24 rounded border border-stone-300 px-1 text-right font-mono"> ${l.unidad}`}</td>
