@@ -1009,6 +1009,7 @@ en:
     llego: Arrived
     codigos_faltan: Missing codes
     diferencias_titulo: Differences on receiving
+    entrega_parcial_concepto: 'Delivery %{folio} (of %{de}: the rest came back with the rejected goods)'
   credito:
     tipos:
       contado: Cash (no credit)

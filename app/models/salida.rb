@@ -209,15 +209,30 @@ class Salida < ApplicationRecord
       if venta.saldo_centavos.positive?
         Caja.cobrar_en_ruta!(venta: venta, pagos: pagos, usuario: usuario, a_credito: a_credito)
         update!(estado: "entregada", recibido_en: Time.current)
+        # Lo rechazado se regresa con todo y canastilla: al cliente se le cargan solo las que se
+        # quedó, en proporción a las cajas que aceptó (issue #10).
+        proporcion = proporcion_entregada
         canastillas.includes(:tipo_canastilla).each do |c|
-          Canastillas.mover!(tipo: "entrega", tipo_canastilla: c.tipo_canastilla, cantidad: c.cantidad, sucursal: sucursal_origen, usuario: usuario,
-                             cliente: cliente, chofer: viaje&.chofer, viaje: viaje, concepto: I18n.t("salidas.entrega_concepto", folio: folio))
+          entregadas = (c.cantidad * proporcion).round
+          next unless entregadas.positive?
+          Canastillas.mover!(tipo: "entrega", tipo_canastilla: c.tipo_canastilla, cantidad: entregadas, sucursal: sucursal_origen, usuario: usuario,
+                             cliente: cliente, chofer: viaje&.chofer, viaje: viaje,
+                             concepto: entregadas == c.cantidad ? I18n.t("salidas.entrega_concepto", folio: folio) : I18n.t("salidas.entrega_parcial_concepto", folio: folio, de: c.cantidad))
         end
       else
         update!(estado: "rechazada", recibido_en: Time.current)
       end
     end
     self
+  end
+
+  # Qué parte de las cajas de la salida se quedó el cliente (1 = todo). Sirve para las canastillas.
+  def proporcion_entregada
+    cajas = cajas_por_hoja
+    total = cajas.values.sum
+    return BigDecimal("1") if total.zero?
+    entregadas = salida_etiquetas.where(estado: "recibida").sum { |f| cajas[f.etiqueta_id] || 0 }
+    entregadas / total
   end
 
   # Cobro en oficina de una nota por cobrar (reparto suelto, sin viaje): el dinero entra a la caja abierta.

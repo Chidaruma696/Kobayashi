@@ -26,8 +26,8 @@ En mostrador todo es de contado, punto. En la ruta el cliente sí tiene crédito
 ## La báscula desde el navegador
 Web Serial con Kana (mi librería). Vendorizada dentro del repo para no depender de npm en la planta.
 
-## Canastillas en un rechazo parcial (pendiente)
-Hoy, si el cliente rechaza parte de la mercancía, las canastillas anotadas se dan por entregadas igual, salvo que el chofer registre devolución. No me convence del todo; lo dejo así hasta ver qué pasa en una ruta real.
+## Canastillas en un rechazo parcial: se regresan con la mercancía (decidido 25 sept 2026)
+Estuvo pendiente hasta ver la calle. La regla real es simple: lo que el cliente rechaza se regresa al camión con todo y canastilla. Así que al cerrar la parada al cliente se le cargan las canastillas en proporción a las cajas que sí se quedó (rechazó 2 de 5 cajas → se le cargan 3 de 5 canastillas, redondeando), y el resto sigue a bordo. Nada de preguntarle al chofer ni de depender de que registre una devolución.
 
 ## La caja entra sola a la salida (24 sept 2026)
 Etiquetar contra el pedido y luego volver a escanear cada caja para meterla a la salida era doble trabajo, y en el sistema anterior el armado incremental del traspaso era lo que hacía rápido el surtido. Así que la caja que nace de un renglón cae en la salida que se está armando para ese destino (o la abre). El escaneo de quien carga el camión se queda: ese es el control, no el del surtidor.

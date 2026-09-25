@@ -63,3 +63,37 @@ class RepartoTest < ActiveSupport::TestCase
     assert_equal "sellada", salida.reload.estado
   end
 end
+
+class CanastillasEnRechazoTest < ActiveSupport::TestCase
+  setup do
+    @matriz = sucursales(:matriz)
+    @admin = usuarios(:admin)
+    @super = usuarios(:supervisora)
+    @cliente = clientes(:taqueria)
+    Corte.abrir!(sucursal: @matriz, usuario: @admin, fondo_centavos: 100_000)
+    Inventario.mover!(sucursal: @matriz, producto: productos(:catsup), tipo: "entrada", cantidad: 50, usuario: @admin)
+    pedido = Pedido.create!(sucursal_origen: @matriz, cliente: @cliente, usuario: @admin, lineas_attributes: [ { producto_id: productos(:catsup).id, cantidad: 40 } ])
+    @cajas = 4.times.map { Etiqueta.create!(tipo: "caja", producto: productos(:catsup), cantidad: 10, sucursal: @matriz, usuario: @admin, pedido_linea: pedido.lineas.first) }
+    @roja = TipoCanastilla.create!(nombre: "Roja", color: "#c00")
+    @salida = Salida.nueva!(origen: @matriz, destino: @cliente, usuario: @admin)
+    @cajas.each { |c| @salida.agregar!(c) }
+    @salida.fijar_canastillas!(@roja, 4)
+    @cajas.each { |c| @salida.verificar!(c, usuario: @super) }
+    @salida.sellar!(usuario: @super)
+    @salida.enviar!(usuario: @admin)
+  end
+
+  test "rechazar la mitad de las cajas regresa la mitad de las canastillas con la mercancía" do
+    @salida.reload.entregar!(@cajas[0].reload, usuario: @admin)
+    @salida.entregar!(@cajas[1].reload, usuario: @admin)
+    @salida.cerrar_parada!(usuario: @admin, motivo_rechazo: "no quiso dos cajas", pagos: [ { forma: "efectivo", monto_centavos: 2 * 10 * 4_200 } ])
+    assert_equal "entregada", @salida.reload.estado
+    assert_equal({ @roja.id => 2 }, @cliente.saldo_canastillas, "se le cargan 2 de las 4: las otras dos volvieron con las cajas rechazadas")
+  end
+
+  test "si se queda con todo se le cargan todas" do
+    @cajas.each { |c| @salida.reload.entregar!(c.reload, usuario: @admin) }
+    @salida.cerrar_parada!(usuario: @admin, pagos: [ { forma: "efectivo", monto_centavos: 40 * 4_200 } ])
+    assert_equal({ @roja.id => 4 }, @cliente.saldo_canastillas)
+  end
+end

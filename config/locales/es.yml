@@ -1009,6 +1009,7 @@ es:
     llego: Llegó
     codigos_faltan: Códigos que faltan
     diferencias_titulo: Diferencias al recibir
+    entrega_parcial_concepto: 'Entrega %{folio} (de %{de}: el resto volvió con lo rechazado)'
   credito:
     tipos:
       contado: Contado (sin crédito)

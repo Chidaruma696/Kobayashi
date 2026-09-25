@@ -1009,6 +1009,7 @@ de:
     llego: Angekommen
     codigos_faltan: Fehlende Codes
     diferencias_titulo: Differenzen beim Wareneingang
+    entrega_parcial_concepto: 'Lieferung %{folio} (von %{de}: der Rest kam mit der abgelehnten Ware zurück)'
   credito:
     tipos:
       contado: Bar (kein Kredit)
