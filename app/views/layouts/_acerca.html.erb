@@ -21,6 +21,7 @@
     <p class="mt-1"><%= t("acerca.tecnologia") %></p>
   </div>
   <div class="flex flex-wrap items-center justify-end gap-2 border-t border-stone-200 px-6 py-3">
+    <button type="button" class="btn btn-secondary btn-sm hidden" data-pwa-target="boton" data-action="pwa#instalar"><i class="bi bi-download"></i> <%= t("acerca.instalar") %></button>
     <%= link_to t("acerca.codigo"), "https://github.com/Chidaruma696/Kobayashi", target: "_blank", rel: "noopener", class: "btn btn-secondary btn-sm" %>
     <%= link_to t("acerca.reportar"), "https://github.com/Chidaruma696/Kobayashi/issues/new", target: "_blank", rel: "noopener", class: "btn btn-secondary btn-sm" %>
     <button type="button" class="btn btn-primary btn-sm" data-action="dialogo#cerrar"><%= t("comun.cerrar") %></button>

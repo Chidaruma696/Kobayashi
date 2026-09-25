@@ -211,6 +211,7 @@ en:
     codigo: Code on GitHub
     reportar: Report a problem
     pwa_descripcion: Point of sale, labeler and back office, by modules.
+    instalar: Install the app
   sesion:
     usuario: User
     contrasena: Password
@@ -698,6 +699,9 @@ en:
       metro: m
     ticket:
       logo_grande: The logo is over 300 KB; use a smaller image.
+    pwa:
+      version_nueva: A new version of Kobayashi is ready.
+      recargar: Reload
   etiquetas:
     etiqueta: Label
     etiquetar: Label

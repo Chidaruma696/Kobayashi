@@ -211,6 +211,7 @@ es:
     codigo: Código en GitHub
     reportar: Reportar un problema
     pwa_descripcion: Punto de venta, etiquetador y trastienda por módulos.
+    instalar: Instalar la app
   sesion:
     usuario: Usuario
     contrasena: Contraseña
@@ -698,6 +699,9 @@ es:
       metro: m
     ticket:
       logo_grande: El logo pesa más de 300 KB; usa una imagen más chica.
+    pwa:
+      version_nueva: Hay una versión nueva de Kobayashi.
+      recargar: Recargar
   etiquetas:
     etiqueta: Etiqueta
     etiquetar: Etiquetar

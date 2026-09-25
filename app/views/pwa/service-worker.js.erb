@@ -1,7 +1,8 @@
 // Service worker de Kobayashi. Hoy hace lo mínimo para que la app se pueda instalar y para que los
 // archivos estáticos (CSS, JS, fuentes, iconos) salgan de la caché: la app sigue necesitando el
 // servidor para todo lo demás. Si no hay red y se pide una página, se enseña /offline.html.
-const CACHE = "kobayashi-v1"
+// La caché lleva el commit: cada versión nueva estrena caché y tira la vieja al activarse.
+const CACHE = "kobayashi-<%= Kobayashi::COMMIT %>"
 const OFFLINE = "/offline.html"
 
 self.addEventListener("install", (event) => {

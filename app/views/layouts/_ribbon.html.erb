@@ -79,6 +79,9 @@
     <button type="button" class="flex w-full items-center gap-3 rounded-md px-2 py-2 text-stone-800 hover:bg-white" data-action="lateral#cerrar dialogo#abrir">
       <i class="bi bi-info-circle w-5 text-center text-lg leading-none text-stone-600"></i><span><%= t("acerca.titulo") %></span>
     </button>
+    <button type="button" class="hidden w-full items-center gap-3 rounded-md px-2 py-2 text-stone-800 hover:bg-white [&:not(.hidden)]:flex" data-pwa-target="boton" data-action="lateral#cerrar pwa#instalar">
+      <i class="bi bi-download w-5 text-center text-lg leading-none text-stone-600"></i><span><%= t("acerca.instalar") %></span>
+    </button>
     <%= button_to salir_path, method: :delete, class: "flex w-full items-center gap-3 rounded-md px-2 py-2 text-corbata-700 hover:bg-white" do %>
       <i class="bi bi-box-arrow-left w-5 text-center text-lg leading-none"></i><span><%= t("cinta.salir") %></span>
     <% end %>

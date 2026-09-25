@@ -211,6 +211,7 @@ de:
     codigo: Code auf GitHub
     reportar: Problem melden
     pwa_descripcion: Kasse, Etikettierer und Verwaltung, nach Modulen.
+    instalar: App installieren
   sesion:
     usuario: Benutzer
     contrasena: Passwort
@@ -698,6 +699,9 @@ de:
       metro: m
     ticket:
       logo_grande: Das Logo ist größer als 300 KB; nimm ein kleineres Bild.
+    pwa:
+      version_nueva: Eine neue Version von Kobayashi ist bereit.
+      recargar: Neu laden
   etiquetas:
     etiqueta: Etikett
     etiquetar: Etikettieren

@@ -10,7 +10,7 @@ class PwaTest < ActionDispatch::IntegrationTest
     assert datos["icons"].any? { |i| i["purpose"] == "maskable" }
     get pwa_service_worker_path(format: :js)
     assert_response :success
-    assert_match "kobayashi-v1", response.body
+    assert_match "kobayashi-#{Kobayashi::COMMIT}", response.body
     get entrar_path
     assert_select "link[rel=manifest]"
     assert_select "meta[name=theme-color][content='#dd8082']"
