@@ -75,6 +75,8 @@ es:
       zoom_mas: Acercar
       zoom_menos: Alejar
       zoom_ajustar: Ajustar al ancho
+      imprimir_prueba: Imprimir prueba
+      imprimir_prueba_ayuda: Manda esta muestra a la impresora, tal cual, para probar papel y ancho
   comun:
     cerrar: Cerrar
     guardar: Guardar

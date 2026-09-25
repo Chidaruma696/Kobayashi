@@ -75,6 +75,8 @@ en:
       zoom_mas: Zoom in
       zoom_menos: Zoom out
       zoom_ajustar: Fit to width
+      imprimir_prueba: Print test
+      imprimir_prueba_ayuda: Sends this sample to the printer as is, to test paper and width
   comun:
     cerrar: Close
     guardar: Save

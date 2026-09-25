@@ -75,6 +75,8 @@ de:
       zoom_mas: Vergrößern
       zoom_menos: Verkleinern
       zoom_ajustar: An Breite anpassen
+      imprimir_prueba: Testdruck
+      imprimir_prueba_ayuda: Schickt diese Vorschau so wie sie ist an den Drucker, um Papier und Breite zu prüfen
   comun:
     cerrar: Schließen
     guardar: Speichern

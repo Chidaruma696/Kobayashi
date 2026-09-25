@@ -8,6 +8,9 @@ export default class extends Controller {
   get doc() { return this.marcoTarget.contentDocument }
 
   // Zoom de la vista previa: el papel se ve al tamaño que se quiera; al abrir, ajustado al ancho.
+  // Imprime la muestra tal cual se ve: sirve para probar la impresora y el ancho del papel.
+  imprimir() { this.marcoTarget.contentWindow?.print() }
+
   zoomMas() { this.ponerZoom((this.factor || 1) + 0.25) }
   zoomMenos() { this.ponerZoom((this.factor || 1) - 0.25) }
   zoomAjustar() {
