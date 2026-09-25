@@ -110,7 +110,8 @@ class ComprasControllerTest < ActionDispatch::IntegrationTest
 
     Modulo.guardar!(Modulo::OPCIONALES - %w[retornables almacenes], comprobar: false)
     get root_path
-    assert_select "aside[data-lateral-target=panel] div", { text: /Retornables/, count: 0 }
+    assert_select "aside[data-lateral-target=panel] a[href=?]", envases_path, count: 0
+    assert_select "aside[data-lateral-target=panel] a[href=?]", canastillas_path, count: 0
     assert_select "aside[data-lateral-target=panel] div", { text: /Almacenes/, count: 0 }
     assert_select "aside[data-lateral-target=panel] div", /Compras/
     get new_recepcion_path

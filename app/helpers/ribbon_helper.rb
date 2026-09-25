@@ -32,10 +32,6 @@ module RibbonHelper
       ] },
       { id: :proveedores, botones: [ Boton.new(:proveedores, :proveedores_path, "compras.ver", "truck") ] }
     ] },
-    { id: :retornables, grupos: [
-      { id: :de_clientes, modulo: "rutas", botones: [ Boton.new(:canastillas, :canastillas_path, "canastillas.ver", "basket") ] },
-      { id: :del_proveedor, modulo: "compras", botones: [ Boton.new(:envases, :envases_path, "retornables.ver", "box2") ] }
-    ] },
     { id: :almacenes, grupos: [
       { id: :granel, botones: [
         Boton.new(:traspaso_granel, :new_traspaso_path, "almacenes.traspasar", "boxes"),
@@ -95,7 +91,10 @@ module RibbonHelper
       ] },
       { id: :capturar, botones: [
         Boton.new(:entrada_ajuste, :nuevo_movimiento_inventario_path, "inventario.ajustar", "pencil")
-      ] }
+      ] },
+      # Retornables vive aquí: es inventario que va y viene. Cada mitad sale con su módulo base.
+      { id: :de_clientes, modulo: %w[retornables rutas], botones: [ Boton.new(:canastillas, :canastillas_path, "canastillas.ver", "basket") ] },
+      { id: :del_proveedor, modulo: %w[retornables compras], botones: [ Boton.new(:envases, :envases_path, "retornables.ver", "box2") ] }
     ] },
     { id: :admin, grupos: [
       { id: :catalogo, botones: [
@@ -122,8 +121,9 @@ module RibbonHelper
     boton.permiso.nil? || puede?(boton.permiso)
   end
 
+  # Un grupo puede colgar de uno o varios módulos (retornables dentro de Inventario cuelga de dos).
   def grupo_visible?(grupo)
-    (grupo[:modulo].nil? || Modulo.activo?(grupo[:modulo])) && grupo[:botones].any? { |b| boton_visible?(b) }
+    Array(grupo[:modulo]).all? { |m| Modulo.activo?(m) } && grupo[:botones].any? { |b| boton_visible?(b) }
   end
 
   # Una pestaña se ve si su módulo está encendido y alguno de sus grupos se ve.

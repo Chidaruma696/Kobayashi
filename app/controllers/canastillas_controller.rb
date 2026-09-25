@@ -1,6 +1,6 @@
 # Canastillas: qué debe cada cliente y qué trae cada chofer, por tipo; devoluciones en oficina y ajustes.
 class CanastillasController < ApplicationController
-  pestana :retornables
+  pestana :inventario
   modulo :retornables, :rutas
 
   before_action { autorizar!("canastillas.ver") }

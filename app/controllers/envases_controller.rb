@@ -1,7 +1,7 @@
 # Envases del proveedor (canastilla, tarima, tote): qué le debemos a cada uno, devoluciones y ajustes.
 # Es otro libro que el de canastillas de clientes y choferes.
 class EnvasesController < ApplicationController
-  pestana :retornables
+  pestana :inventario
   modulo :retornables, :compras
 
   before_action { autorizar!("retornables.ver") }

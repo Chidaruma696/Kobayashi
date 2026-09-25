@@ -91,7 +91,7 @@ class RepartoExtrasTest < ActionDispatch::IntegrationTest
 
     get canastillas_path
     assert_select "td", /Taquería/
-    assert_select "aside[data-lateral-target=panel] div", /Retornables/
+    assert_select "aside[data-lateral-target=panel] a[href=?]", canastillas_path, { minimum: 1 }, "canastillas vive en la pestaña Inventario"
     Modulo.guardar!(Modulo::OPCIONALES - %w[retornables], comprobar: false)
     get canastillas_path
     assert_response :not_found, "las canastillas cuelgan de retornables"
