@@ -30,9 +30,9 @@ class ModulosTest < ActionDispatch::IntegrationTest
     assert_select "optgroup[label=?]", I18n.t("salidas.clientes_de_ruta"), count: 0
   end
 
-  test "un abarrote solo tiene caja, inventario y administración; rutas enciende pedidos y salidas" do
+  test "un abarrote tiene caja, inventario, compras y administración; rutas enciende pedidos y salidas" do
     Modulo.aplicar_giro!("abarrotes")
-    assert_equal [], Modulo.activos
+    assert_equal %w[compras], Modulo.activos
     get root_path
     assert_select "aside[data-lateral-target=panel] div", /Caja/
     assert_select "aside[data-lateral-target=panel] div", { text: /Etiquetas|Pedidos|Salidas|Rutas|Conteos/, count: 0 }

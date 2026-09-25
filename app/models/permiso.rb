@@ -28,6 +28,10 @@ module Permiso
     "conteos.cargos" => "Cobrar o perdonar cargos",
     "reportes.ver" => "Ver el tablero y los reportes",
     "revisiones.resolver" => "Revisar lo que se hizo sin autorización (aprobar, observar, cargar)",
+    "compras.ver" => "Ver proveedores, cuentas por pagar y envases",
+    "compras.recibir" => "Recibir mercancía del proveedor",
+    "compras.facturar" => "Capturar y cancelar facturas del proveedor",
+    "compras.pagar" => "Pagar a proveedores desde la caja",
     "admin.catalogo" => "Administrar productos y códigos",
     "admin.usuarios" => "Administrar usuarios, roles y sucursales"
   }.freeze

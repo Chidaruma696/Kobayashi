@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_120001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -216,6 +216,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
     t.index ["venta_id"], name: "index_devoluciones_on_venta_id"
   end
 
+  create_table "envases_proveedor", force: :cascade do |t|
+    t.integer "cantidad", null: false
+    t.string "concepto"
+    t.datetime "created_at", null: false
+    t.string "envase", null: false
+    t.date "fecha", null: false
+    t.integer "proveedor_id", null: false
+    t.integer "recepcion_id"
+    t.integer "saldo", null: false
+    t.integer "signo", null: false
+    t.integer "sucursal_id", null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["proveedor_id"], name: "index_envases_proveedor_on_proveedor_id"
+    t.index ["recepcion_id"], name: "index_envases_proveedor_on_recepcion_id"
+    t.index ["sucursal_id"], name: "index_envases_proveedor_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_envases_proveedor_on_usuario_id"
+    t.check_constraint "envase IN ('canastilla', 'tarima', 'tote')", name: "envases_proveedor_envase"
+  end
+
   create_table "etiquetas", force: :cascade do |t|
     t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, default: "0.0", null: false
@@ -256,6 +277,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
     t.index ["sucursal_id", "producto_id"], name: "index_existencias_on_sucursal_id_and_producto_id", unique: true
     t.index ["sucursal_id"], name: "index_existencias_on_sucursal_id"
     t.check_constraint "cantidad >= 0", name: "existencias_no_negativas"
+  end
+
+  create_table "factura_proveedor_lineas", force: :cascade do |t|
+    t.integer "cajas", default: 0, null: false
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.integer "factura_proveedor_id", null: false
+    t.integer "importe_centavos", null: false
+    t.integer "precio_centavos", null: false
+    t.integer "producto_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["factura_proveedor_id"], name: "index_factura_proveedor_lineas_on_factura_proveedor_id"
+    t.index ["producto_id"], name: "index_factura_proveedor_lineas_on_producto_id"
+  end
+
+  create_table "facturas_proveedor", force: :cascade do |t|
+    t.string "concepto"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "abierta", null: false
+    t.date "fecha", null: false
+    t.string "folio", null: false
+    t.integer "monto_centavos", default: 0, null: false
+    t.string "motivo_cancelacion"
+    t.integer "proveedor_id", null: false
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.date "vence"
+    t.index ["proveedor_id", "folio"], name: "index_facturas_proveedor_on_proveedor_id_and_folio", unique: true
+    t.index ["proveedor_id"], name: "index_facturas_proveedor_on_proveedor_id"
+    t.index ["sucursal_id"], name: "index_facturas_proveedor_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_facturas_proveedor_on_usuario_id"
+    t.check_constraint "estado IN ('abierta', 'cancelada')", name: "facturas_proveedor_estado"
   end
 
   create_table "folios", force: :cascade do |t|
@@ -334,6 +388,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
     t.check_constraint "tipo IN ('cargo', 'abono', 'devolucion', 'ajuste')", name: "movimientos_credito_tipo"
   end
 
+  create_table "movimientos_proveedor", force: :cascade do |t|
+    t.string "concepto"
+    t.datetime "created_at", null: false
+    t.integer "delta_centavos", null: false
+    t.integer "factura_proveedor_id"
+    t.date "fecha", null: false
+    t.integer "monto_centavos", null: false
+    t.integer "pago_proveedor_id"
+    t.integer "proveedor_id", null: false
+    t.integer "saldo_centavos", null: false
+    t.integer "sucursal_id", null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["factura_proveedor_id"], name: "index_movimientos_proveedor_on_factura_proveedor_id"
+    t.index ["pago_proveedor_id"], name: "index_movimientos_proveedor_on_pago_proveedor_id"
+    t.index ["proveedor_id"], name: "index_movimientos_proveedor_on_proveedor_id"
+    t.index ["sucursal_id"], name: "index_movimientos_proveedor_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_movimientos_proveedor_on_usuario_id"
+    t.check_constraint "tipo IN ('cargo', 'abono', 'ajuste')", name: "movimientos_proveedor_tipo"
+  end
+
   create_table "pagos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "forma", null: false
@@ -343,6 +419,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
     t.index ["venta_id"], name: "index_pagos_on_venta_id"
     t.check_constraint "forma IN ('efectivo', 'transferencia', 'deposito')", name: "pagos_forma"
     t.check_constraint "monto_centavos > 0", name: "pagos_monto"
+  end
+
+  create_table "pagos_proveedor", force: :cascade do |t|
+    t.integer "anulado_por_id"
+    t.integer "corte_id"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "vigente", null: false
+    t.integer "factura_proveedor_id"
+    t.string "forma", default: "efectivo", null: false
+    t.integer "monto_centavos", null: false
+    t.string "motivo_anulacion"
+    t.integer "proveedor_id", null: false
+    t.string "referencia"
+    t.integer "retiro_id"
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["anulado_por_id"], name: "index_pagos_proveedor_on_anulado_por_id"
+    t.index ["corte_id"], name: "index_pagos_proveedor_on_corte_id"
+    t.index ["factura_proveedor_id"], name: "index_pagos_proveedor_on_factura_proveedor_id"
+    t.index ["proveedor_id"], name: "index_pagos_proveedor_on_proveedor_id"
+    t.index ["retiro_id"], name: "index_pagos_proveedor_on_retiro_id"
+    t.index ["sucursal_id"], name: "index_pagos_proveedor_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_pagos_proveedor_on_usuario_id"
+    t.check_constraint "estado IN ('vigente', 'anulado')", name: "pagos_proveedor_estado"
   end
 
   create_table "pedido_lineas", force: :cascade do |t|
@@ -443,6 +544,56 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
     t.index ["producto_id"], name: "index_promociones_on_producto_id"
     t.index ["sucursal_id"], name: "index_promociones_on_sucursal_id"
     t.check_constraint "tipo IN ('precio', 'porcentaje', 'por_cantidad')", name: "promociones_tipo"
+  end
+
+  create_table "proveedores", force: :cascade do |t|
+    t.boolean "activo", default: true, null: false
+    t.string "contacto"
+    t.datetime "created_at", null: false
+    t.integer "dias_credito", default: 0, null: false
+    t.string "nombre", null: false
+    t.string "notas"
+    t.string "rfc"
+    t.string "telefono"
+    t.datetime "updated_at", null: false
+    t.index ["nombre"], name: "index_proveedores_on_nombre", unique: true
+  end
+
+  create_table "recepcion_lineas", force: :cascade do |t|
+    t.integer "cajas", default: 0, null: false
+    t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.datetime "created_at", null: false
+    t.integer "producto_id", null: false
+    t.integer "recepcion_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id"], name: "index_recepcion_lineas_on_producto_id"
+    t.index ["recepcion_id"], name: "index_recepcion_lineas_on_recepcion_id"
+  end
+
+  create_table "recepciones", force: :cascade do |t|
+    t.integer "canastillas", default: 0, null: false
+    t.string "clave"
+    t.datetime "created_at", null: false
+    t.string "estado", default: "registrada", null: false
+    t.integer "factura_proveedor_id"
+    t.date "fecha", null: false
+    t.string "folio", null: false
+    t.string "motivo_cancelacion"
+    t.string "notas"
+    t.integer "proveedor_id", null: false
+    t.string "remision"
+    t.integer "sucursal_id", null: false
+    t.integer "tarimas", default: 0, null: false
+    t.integer "totes", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["factura_proveedor_id"], name: "index_recepciones_on_factura_proveedor_id"
+    t.index ["proveedor_id"], name: "index_recepciones_on_proveedor_id"
+    t.index ["sucursal_id", "clave"], name: "index_recepciones_on_sucursal_id_and_clave", unique: true, where: "clave IS NOT NULL"
+    t.index ["sucursal_id", "folio"], name: "index_recepciones_on_sucursal_id_and_folio", unique: true
+    t.index ["sucursal_id"], name: "index_recepciones_on_sucursal_id"
+    t.index ["usuario_id"], name: "index_recepciones_on_usuario_id"
+    t.check_constraint "estado IN ('registrada', 'cancelada')", name: "recepciones_estado"
   end
 
   create_table "retiros", force: :cascade do |t|
@@ -778,6 +929,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
   add_foreign_key "devoluciones", "sucursales"
   add_foreign_key "devoluciones", "usuarios"
   add_foreign_key "devoluciones", "ventas"
+  add_foreign_key "envases_proveedor", "proveedores"
+  add_foreign_key "envases_proveedor", "recepciones"
+  add_foreign_key "envases_proveedor", "sucursales"
+  add_foreign_key "envases_proveedor", "usuarios"
   add_foreign_key "etiquetas", "etiquetas", column: "padre_id"
   add_foreign_key "etiquetas", "pedido_lineas"
   add_foreign_key "etiquetas", "producciones"
@@ -787,6 +942,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
   add_foreign_key "etiquetas", "usuarios", column: "autorizado_por_id"
   add_foreign_key "existencias", "productos"
   add_foreign_key "existencias", "sucursales"
+  add_foreign_key "factura_proveedor_lineas", "facturas_proveedor", column: "factura_proveedor_id"
+  add_foreign_key "factura_proveedor_lineas", "productos"
+  add_foreign_key "facturas_proveedor", "proveedores"
+  add_foreign_key "facturas_proveedor", "sucursales"
+  add_foreign_key "facturas_proveedor", "usuarios"
   add_foreign_key "folios", "sucursales"
   add_foreign_key "movimientos", "etiquetas"
   add_foreign_key "movimientos", "productos"
@@ -800,7 +960,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
   add_foreign_key "movimientos_canastillas", "viajes"
   add_foreign_key "movimientos_credito", "clientes"
   add_foreign_key "movimientos_credito", "usuarios"
+  add_foreign_key "movimientos_proveedor", "facturas_proveedor", column: "factura_proveedor_id"
+  add_foreign_key "movimientos_proveedor", "pagos_proveedor", column: "pago_proveedor_id"
+  add_foreign_key "movimientos_proveedor", "proveedores"
+  add_foreign_key "movimientos_proveedor", "sucursales"
+  add_foreign_key "movimientos_proveedor", "usuarios"
   add_foreign_key "pagos", "ventas"
+  add_foreign_key "pagos_proveedor", "cortes"
+  add_foreign_key "pagos_proveedor", "facturas_proveedor", column: "factura_proveedor_id"
+  add_foreign_key "pagos_proveedor", "proveedores"
+  add_foreign_key "pagos_proveedor", "retiros"
+  add_foreign_key "pagos_proveedor", "sucursales"
+  add_foreign_key "pagos_proveedor", "usuarios"
+  add_foreign_key "pagos_proveedor", "usuarios", column: "anulado_por_id"
   add_foreign_key "pedido_lineas", "pedidos"
   add_foreign_key "pedido_lineas", "productos"
   add_foreign_key "pedidos", "clientes"
@@ -814,6 +986,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_110001) do
   add_foreign_key "producciones", "usuarios"
   add_foreign_key "promociones", "productos"
   add_foreign_key "promociones", "sucursales"
+  add_foreign_key "recepcion_lineas", "productos"
+  add_foreign_key "recepcion_lineas", "recepciones"
+  add_foreign_key "recepciones", "facturas_proveedor", column: "factura_proveedor_id"
+  add_foreign_key "recepciones", "proveedores"
+  add_foreign_key "recepciones", "sucursales"
+  add_foreign_key "recepciones", "usuarios"
   add_foreign_key "retiros", "cortes"
   add_foreign_key "retiros", "usuarios"
   add_foreign_key "retiros", "usuarios", column: "autorizado_por_id"

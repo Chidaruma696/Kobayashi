@@ -21,6 +21,20 @@ module RibbonHelper
       ] },
       { id: :corte, botones: [ Boton.new(:corte, :caja_corte_path, "caja.abrir", "cash-stack") ] }
     ] },
+    { id: :compras, grupos: [
+      { id: :recibir, botones: [
+        Boton.new(:recibir, :new_recepcion_path, "compras.recibir", "box-arrow-in-down"),
+        Boton.new(:recepciones, :recepciones_path, "compras.ver", "list-ul")
+      ] },
+      { id: :facturas, botones: [
+        Boton.new(:nueva_factura, :new_factura_path, "compras.facturar", "file-earmark-plus"),
+        Boton.new(:cuentas_por_pagar, :cuentas_path, "compras.ver", "wallet2")
+      ] },
+      { id: :proveedores, botones: [
+        Boton.new(:proveedores, :proveedores_path, "compras.ver", "truck"),
+        Boton.new(:envases, :envases_path, "compras.ver", "box2")
+      ] }
+    ] },
     { id: :pedidos, grupos: [
       { id: :pedir, botones: [
         Boton.new(:nuevo_pedido, :new_pedido_path, "pedidos.solicitar", "plus-lg"),

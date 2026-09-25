@@ -38,15 +38,16 @@ One system, one database, and **modules that turn on or off per business**. Regi
 
 | Type of business | Modules that start on |
 |---|---|
-| **Grocery / retail store** | register, inventory, administration. Products by piece with the supplier's barcode. |
+| **Grocery / retail store** | register, inventory, administration and **purchasing**. Products by piece with the supplier's barcode. |
 | **Greengrocer / produce** | the above plus **labels and production**: weigh on the scale, print identity labels, production runs with shrinkage. |
-| **Distributor** | orders, transfers between branches, **delivery routes** (driver, collections, credit, crates, agreements) and counts, without the labeler. |
+| **Distributor** | purchasing, orders, transfers between branches, **delivery routes** (driver, collections, credit, crates, agreements) and counts, without the labeler. |
 | **Plant with stores and delivery** | everything. |
 
 Where labels are on, every package, box and pallet carries an **EAN-13 identity barcode**: the code names the row in the database, the weight lives in the database, never inside the code. A module that is off disappears from the ribbon, from the roles and from its screens; its data stays, and it cannot be turned off while it has open work.
 
 | Module | What it does | Rule it enforces |
 |---|---|---|
+| **Purchasing** | Suppliers, goods receipt by scanning the supplier's barcode (stock goes in, crates/pallets/totes are noted), the supplier's invoice entered afterwards with its lines, accounts payable with due dates, and payments that leave the open drawer as a withdrawal. Invoiced vs received, per product, side by side. | The invoice is the only thing that creates debt and the only place a purchase price lives; stock never carries cost. One payment path: cash comes out of the drawer, the ledger is append-only, voiding compensates. No purchase orders. |
 | **Orders** | A shop or a route customer asks for goods; the headquarters fulfils line by line. | Fulfilled quantity is always the sum of the labels linked to the line, never a stored counter. |
 | **Production** | Raw product goes in, labelled cuts come out, the difference is waste. | Nothing comes out that did not go in. Production has nothing to do with orders: it is an input and its outputs. |
 | **Labels** | Package, box and pallet with identity barcodes, printed at 55×45 mm. | No free labelling: every label comes from an order line, a production run, or a recorded authorisation. |

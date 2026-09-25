@@ -152,6 +152,7 @@ es:
       inventario: Inventario
       admin: Admin
       ajustes: Ajustes
+      compras: Compras
     grupos:
       ver: Ver
       revisar: Revisar
@@ -175,6 +176,8 @@ es:
       reparto: Reparto
       gente: Gente
       supervisar: Supervisar
+      facturas: Facturas
+      proveedores: Proveedores
     botones:
       inicio: Inicio
       ventas_por_producto: Ventas por producto
@@ -218,6 +221,12 @@ es:
       sucursales: Sucursales
       ticket: Ticket
       supervision: Supervisión
+      recibir: Recibir
+      recepciones: Recepciones
+      nueva_factura: Nueva factura
+      cuentas_por_pagar: Cuentas por pagar
+      proveedores: Proveedores
+      envases: Envases
   acerca:
     titulo: Acerca de Kobayashi
     lema: Punto de venta y trastienda para la matriz y sus tiendas
@@ -406,6 +415,21 @@ es:
     supervision:
       cerrada: la supervisión está cerrada
       ya_vista: '%{codigo} ya estaba vista'
+    compras:
+      factura_de_otro: esa factura es de otro proveedor
+      factura_cancelada: esa factura está cancelada
+      sin_renglones: 'no hay renglones: escanea o elige al menos un producto'
+      recepcion_cancelada: la recepción ya está cancelada
+      folio_obligatorio: hace falta el folio de la factura
+      folio_repetido: la factura %{folio} de este proveedor ya está capturada
+      monto_cero: el monto debe ser mayor que cero
+      factura_ya_cancelada: la factura ya está cancelada
+      factura_con_pagos: 'la factura tiene pagos: anúlalos antes de cancelarla'
+      pago_excede: el pago pasa de lo que resta de la factura (%{resta})
+      anticipo_excede: el pago pasa de lo que se le debe (%{saldo}); liga una factura si es anticipo
+      pago_ya_anulado: el pago ya está anulado
+      corte_cerrado: 'el corte de ese pago ya cerró: el efectivo no puede regresar a la gaveta'
+      envases_insuficientes: no se le deben tantos %{envase} (saldo %{saldo})
   inicio:
     titulo: Inicio
     ventas: Ventas
@@ -541,6 +565,10 @@ es:
     revisiones.resolver: Revisar lo que se hizo sin autorización (aprobar, observar, cargar)
     admin.catalogo: Administrar productos y códigos
     admin.usuarios: Administrar usuarios, roles y sucursales
+    compras.ver: Ver proveedores, cuentas por pagar y envases
+    compras.recibir: Recibir mercancía del proveedor
+    compras.facturar: Capturar y cancelar facturas del proveedor
+    compras.pagar: Pagar a proveedores desde la caja
   pedidos:
     pedido: Pedido
     pedidos: Pedidos
@@ -725,6 +753,7 @@ es:
     pwa:
       version_nueva: Hay una versión nueva de Kobayashi.
       recargar: Recargar
+    no_encontrado: No se encontró
   etiquetas:
     etiqueta: Etiqueta
     etiquetar: Etiquetar
@@ -1469,19 +1498,22 @@ es:
     conteos:
       nombre: Conteos
       que: Conteos físicos escaneando; el faltante se carga al responsable.
+    compras:
+      nombre: Compras
+      que: Proveedores, recepción de mercancía, facturas del proveedor, cuentas por pagar y envases.
   giros:
     abarrotes:
       nombre: Abarrotes / tienda
-      que: solo caja, inventario y administración; productos por pieza con el código del proveedor.
+      que: caja, inventario, compras y administración; productos por pieza con el código del proveedor.
     recauderia:
       nombre: Recaudería / frutería
       que: lo anterior más etiquetas y producción, para pesar y etiquetar.
     distribuidora:
       nombre: Distribuidora
-      que: pedidos, salidas, rutas de reparto y conteos, sin etiquetadora.
+      que: compras, pedidos, salidas, rutas de reparto y conteos, sin etiquetadora.
     todo:
       nombre: Planta con tiendas y reparto (todo)
-      que: 'todos los módulos: etiquetas, pedidos, salidas, rutas y conteos.'
+      que: 'todos los módulos: compras, etiquetas, pedidos, salidas, rutas y conteos.'
   unidades:
     kg: Kilo
     pieza: Pieza
@@ -1596,6 +1628,14 @@ es:
       ajuste:
         clave: Clave
         valor: Valor
+      proveedor:
+        nombre: Nombre
+        rfc: RFC / identificación fiscal
+        contacto: Contacto
+        telefono: Teléfono
+        dias_credito: Días de crédito
+        notas: Notas
+        activo: Activo
     models:
       producto: Producto
       usuario: Usuario
@@ -1612,6 +1652,9 @@ es:
       etiqueta: Etiqueta
       viaje: Viaje
       conteo: Conteo
+      proveedor: Proveedor
+      recepcion: Recepción
+      factura_proveedor: Factura del proveedor
   supervision:
     titulo: Supervisión
     intro: 'Para caminar la tienda con el teléfono y comprobar qué hay: escanea o captura pesos, cada pesada se empareja con una etiqueta viva y dice si está o no está. Se acumula días y nunca ajusta el inventario; para eso está el conteo.'
@@ -1644,3 +1687,143 @@ es:
       esta: 'Está: %{codigo} · %{producto}'
       no_esta: 'No está: ninguna etiqueta viva pesa %{cantidad}'
       cerrada: Supervisión %{folio} cerrada
+  compras:
+    proveedores: Proveedores
+    proveedor: Proveedor
+    nuevo_proveedor: Nuevo proveedor
+    proveedores_ayuda: Quién nos surte. El saldo es lo que le debemos según sus facturas y pagos.
+    sin_proveedores: Todavía no hay proveedores.
+    contacto: Contacto
+    telefono: Teléfono
+    rfc: RFC
+    dias_credito: Días de crédito
+    dias_credito_ayuda: 0 = de contado. Con días, las facturas vencen fecha + días.
+    saldo: Saldo
+    cuenta: Cuenta
+    inactivo: inactivo
+    primero_proveedor: Primero da de alta un proveedor
+    recepciones: Recepciones
+    recepcion: Recepción
+    recibir: Recibir
+    recibir_mercancia: Recibir mercancía
+    recepciones_ayuda: Lo que ha entrado del proveedor a %{sucursal}. Cada recepción es una entrada al inventario.
+    recibir_ayuda: Escanea el código del proveedor o elige el producto, anota cuánto llegó y entra al inventario de %{sucursal}. La factura se liga después, cuando llegue.
+    remision: Remisión
+    remision_ayuda: folio del papel que trae el chofer
+    escanear: Escanear
+    escanear_ayuda: código del proveedor, PLU, clave o nombre + Enter
+    cajas: Cajas
+    registrar_entrada: Registrar entrada
+    renglones: Renglones
+    sin_factura: sin factura
+    sin_factura_aun: Aún no se liga a una factura.
+    sin_recepciones: Todavía no hay recepciones.
+    ninguna: — ninguna —
+    ligar: Ligar
+    desligar: Desligar
+    capturar_factura: Capturar la factura
+    cancelar_recepcion: Cancelar recepción
+    cancelar_recepcion_ayuda: La mercancía sale del inventario y los envases se descuentan. Solo si la recepción se capturó mal.
+    confirmar_cancelar: ¿Cancelar %{folio}?
+    facturas: Facturas
+    factura: Factura
+    nueva_factura: Nueva factura
+    factura_ayuda: La factura del proveedor es lo que crea la deuda. Con renglones el monto se calcula solo; sin renglones (flete, hielo) teclea el monto.
+    folio_proveedor: Folio del proveedor
+    folio_proveedor_ayuda: el que trae impreso
+    vence: Vence
+    vence_ayuda: Vacío = fecha + días de crédito del proveedor.
+    monto_sin_renglones: Monto (sin renglones)
+    monto_sin_renglones_ayuda: Solo cuenta si no capturas renglones.
+    concepto: Concepto
+    precio_compra: Precio
+    registrar_factura: Registrar factura
+    todos_los_proveedores: Todos los proveedores
+    pagado: Pagado
+    resta: Resta
+    sin_facturas: No hay facturas.
+    facturado_vs_recibido: Facturado contra recibido
+    comparativo_ayuda: 'Por producto: lo que dice la factura y lo que entró en las recepciones ligadas. Es un aviso, no un candado.'
+    sin_renglones_ni_recepciones: 'Sin renglones ni recepciones ligadas: nada que comparar.'
+    facturado: Facturado
+    recibido: Recibido
+    diferencia: Diferencia
+    recepciones_ligadas: Recepciones ligadas
+    ninguna_recepcion: Ninguna recepción ligada todavía.
+    recepciones_sueltas: Recepciones de este proveedor sin factura
+    pagos: Pagos
+    sin_pagos: Sin pagos.
+    cancelar_factura: Cancelar factura
+    cancelar_factura_ayuda: La deuda se revierte y las recepciones quedan sueltas. No se puede con pagos vigentes.
+    cuentas_por_pagar: Cuentas por pagar
+    cuentas_ayuda: Lo que se debe a cada proveedor y qué facturas vencen. El pago en efectivo sale de la gaveta abierta como retiro.
+    debemos: Debemos
+    vencidas: Vencidas
+    vencen_esta_semana: Vencen esta semana
+    n_facturas:
+      one: 1 factura
+      other: '%{count} facturas'
+    por_proveedor: Por proveedor
+    sin_deuda: No se debe nada.
+    vencimientos: Vencimientos
+    nada_vence: Nada vencido ni por vencer esta semana.
+    pagar: Pagar
+    pago_sale_de_caja: El efectivo sale de la gaveta abierta de %{sucursal} como retiro; transferencia y depósito no tocan la caja.
+    pago_sin_caja: 'No hay caja abierta en %{sucursal}: solo se puede pagar por transferencia o depósito.'
+    a_cuenta: a cuenta (sin factura)
+    forma: Forma
+    referencia: Referencia
+    registrar_pago: Registrar pago
+    facturas_abiertas: Facturas abiertas
+    sin_facturas_abiertas: Nada pendiente.
+    anular: Anular
+    confirmar_anular: ¿Anular el pago de %{monto}?
+    libro: Libro del proveedor
+    movimientos:
+      cargo: cargo
+      abono: abono
+      ajuste: ajuste
+    estados:
+      registrada: registrada
+      cancelada: cancelada
+      abierta: abierta
+      pagada: pagada
+      vencida: vencida
+    envases:
+      titulo: Envases del proveedor
+      ayuda: Canastillas, tarimas y totes que el proveedor nos deja y le debemos. Es otro libro que el de canastillas de clientes y choferes.
+      envase: Envase
+      canastilla: canastilla
+      tarima: tarima
+      tote: tote
+      canastillas: Canastillas
+      tarimas: Tarimas
+      totes: Totes
+      recepcion_ayuda: Lo que trae el proveedor y se queda aquí; se le debe hasta devolverlo.
+      debemos: Le debemos
+      nada: No se debe ningún envase.
+      mover: Devolver o ajustar
+      mover_ayuda: 'Devolución: se los regresamos. Entrada: nos dejó sin recepción. Ajuste: con signo y motivo.'
+      tipos:
+        entrada: entrada
+        devolucion: devolución
+        ajuste: ajuste
+    avisos:
+      proveedor_creado: Proveedor %{nombre} creado
+      proveedor_guardado: Proveedor %{nombre} guardado
+      recibida: 'Recepción %{folio} registrada: la mercancía ya está en el inventario'
+      recepcion_cancelada: Recepción %{folio} cancelada
+      ligada: Ligada a la factura %{folio}
+      desligada: Recepción sin factura
+      facturada: Factura %{folio} por %{monto} registrada
+      factura_cancelada: Factura %{folio} cancelada
+      pagado: Pago de %{monto} a %{proveedor} registrado; saldo %{saldo}
+      pago_anulado: Pago de %{monto} anulado
+      envases_movidos: Envases registrados
+      entrada_motivo: Recepción %{folio} de %{proveedor}
+      cancelacion_motivo: 'Cancelación de %{folio}: %{motivo}'
+      cargo_factura: Factura %{folio}
+      cancelacion_factura: 'Cancelación de la factura %{folio}: %{motivo}'
+      retiro_pago: Pago a %{proveedor} %{folio}
+      abono_pago: Pago %{folio} (%{forma})
+      anulacion_pago: 'Pago anulado: %{motivo}'

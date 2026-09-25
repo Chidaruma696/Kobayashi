@@ -2,6 +2,15 @@
 
 Lo que cambia entre versiones, en corto. Las razones largas viven en `docs/decisiones.md`.
 
+## Sin publicar
+
+- **Módulo Compras** (se enciende en abarrotes, recaudería, distribuidora y todo): proveedores; recepción de mercancía escaneando el código del proveedor, con remisión, folio RC por sucursal y los envases que deja (canastilla, tarima, tote); factura del proveedor con renglones (el precio de compra solo vive ahí, el monto se deriva) o solo monto, vencimiento por días de crédito, ligada a sus recepciones y comparativo facturado contra recibido por producto; cuentas por pagar con vencidas y por vencer; pago desde la gaveta abierta (retiro) o por transferencia/depósito, ligado a factura o a cuenta, con anulación que compensa; libro de deuda y libro de envases solo-inserción. Cierra #22.
+- **Ajustes** con barra lateral por secciones (Para ti, Negocio y ticket, Módulos, Etiqueta, Caja); el diseñador de ticket vive dentro.
+- **Canastillas**: saldo por ruta; en rechazo parcial se cargan en proporción a lo que el cliente se quedó.
+- **PWA instalable** con aviso de versión nueva; semi sin conexión queda como #21.
+- **Letra chica** y modo compacto que compacta también la cinta; cinta fija al desplazarse; báscula en caja solo si hay productos por kilo.
+- **Recepción**: canto por caja al recibir, diferencias en la bandeja de revisión y supervisiones con folio SV.
+
 ## 0.2.0 · 24 de septiembre de 2026
 
 El sistema deja de ser solo para la planta de carne y se vuelve un punto de venta y etiquetador por módulos para negocios pequeños.

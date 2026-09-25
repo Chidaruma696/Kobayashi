@@ -152,6 +152,7 @@ de:
       inventario: Bestand
       admin: Verwaltung
       ajustes: Einstellungen
+      compras: Einkauf
     grupos:
       ver: Ansehen
       revisar: Prüfen
@@ -175,6 +176,8 @@ de:
       reparto: Auslieferung
       gente: Personen
       supervisar: Kontrollieren
+      facturas: Rechnungen
+      proveedores: Lieferanten
     botones:
       inicio: Start
       ventas_por_producto: Verkäufe je Produkt
@@ -218,6 +221,12 @@ de:
       sucursales: Filialen
       ticket: Ticket
       supervision: Kontrolle
+      recibir: Annehmen
+      recepciones: Wareneingänge
+      nueva_factura: Neue Rechnung
+      cuentas_por_pagar: Verbindlichkeiten
+      proveedores: Lieferanten
+      envases: Leergut
   acerca:
     titulo: Über Kobayashi
     lema: Kasse und Backoffice für die Zentrale und ihre Läden
@@ -406,6 +415,21 @@ de:
     supervision:
       cerrada: die Kontrolle ist geschlossen
       ya_vista: '%{codigo} wurde schon gesehen'
+    compras:
+      factura_de_otro: diese Rechnung gehört zu einem anderen Lieferanten
+      factura_cancelada: diese Rechnung ist storniert
+      sin_renglones: 'keine Positionen: mindestens ein Produkt scannen oder wählen'
+      recepcion_cancelada: der Wareneingang ist bereits storniert
+      folio_obligatorio: die Rechnungsnummer fehlt
+      folio_repetido: Rechnung %{folio} dieses Lieferanten ist schon erfasst
+      monto_cero: der Betrag muss größer als null sein
+      factura_ya_cancelada: die Rechnung ist bereits storniert
+      factura_con_pagos: 'die Rechnung hat Zahlungen: erst stornieren'
+      pago_excede: die Zahlung übersteigt den Rest der Rechnung (%{resta})
+      anticipo_excede: die Zahlung übersteigt die Schuld (%{saldo}); bei Anzahlung eine Rechnung verknüpfen
+      pago_ya_anulado: die Zahlung ist bereits storniert
+      corte_cerrado: 'der Kassenabschluss dieser Zahlung ist geschlossen: das Bargeld kann nicht zurück in die Lade'
+      envases_insuficientes: so viele %{envase} schulden wir nicht (Saldo %{saldo})
   inicio:
     titulo: Start
     ventas: Verkäufe
@@ -541,6 +565,10 @@ de:
     revisiones.resolver: Prüfen, was ohne Freigabe geschah (freigeben, beanstanden, belasten)
     admin.catalogo: Produkte und Codes verwalten
     admin.usuarios: Benutzer, Rollen und Filialen verwalten
+    compras.ver: Lieferanten, Verbindlichkeiten und Leergut sehen
+    compras.recibir: Ware vom Lieferanten annehmen
+    compras.facturar: Lieferantenrechnungen erfassen und stornieren
+    compras.pagar: Lieferanten aus der Kasse bezahlen
   pedidos:
     pedido: Bestellung
     pedidos: Bestellungen
@@ -725,6 +753,7 @@ de:
     pwa:
       version_nueva: Eine neue Version von Kobayashi ist bereit.
       recargar: Neu laden
+    no_encontrado: Nicht gefunden
   etiquetas:
     etiqueta: Etikett
     etiquetar: Etikettieren
@@ -1469,19 +1498,22 @@ de:
     conteos:
       nombre: Zählungen
       que: Inventur per Scan; der Fehlbestand wird dem Verantwortlichen belastet.
+    compras:
+      nombre: Einkauf
+      que: Lieferanten, Wareneingang, Lieferantenrechnungen, Verbindlichkeiten und Leergut.
   giros:
     abarrotes:
       nombre: Lebensmittelladen / Einzelhandel
-      que: nur Kasse, Bestand und Verwaltung; Stückprodukte mit Lieferantencode.
+      que: Kasse, Bestand, Einkauf und Verwaltung; Stückware mit dem Barcode des Lieferanten.
     recauderia:
       nombre: Obst und Gemüse
       que: dazu Etiketten und Produktion, zum Wiegen und Etikettieren.
     distribuidora:
       nombre: Großhändler
-      que: Bestellungen, Transfers, Liefertouren und Zählungen, ohne Etikettierer.
+      que: Einkauf, Bestellungen, Ausgänge, Liefertouren und Zählungen, ohne Etikettierer.
     todo:
       nombre: Betrieb mit Läden und Lieferung (alles)
-      que: 'alle Module: Etiketten, Bestellungen, Transfers, Touren und Zählungen.'
+      que: 'alle Module: Einkauf, Etiketten, Bestellungen, Ausgänge, Touren und Zählungen.'
   unidades:
     kg: Kilo
     pieza: Stück
@@ -1596,6 +1628,14 @@ de:
       ajuste:
         clave: Schlüssel
         valor: Wert
+      proveedor:
+        nombre: Name
+        rfc: Steuernummer
+        contacto: Kontakt
+        telefono: Telefon
+        dias_credito: Zahlungsziel (Tage)
+        notas: Notizen
+        activo: Aktiv
     models:
       producto: Produkt
       usuario: Benutzer
@@ -1612,6 +1652,9 @@ de:
       etiqueta: Etikett
       viaje: Fahrt
       conteo: Zählung
+      proveedor: Lieferant
+      recepcion: Wareneingang
+      factura_proveedor: Lieferantenrechnung
   supervision:
     titulo: Kontrolle
     intro: 'Mit dem Telefon durch den Laden gehen und prüfen, was da ist: scannen oder Gewichte eingeben, jede Wiegung wird einem aktiven Etikett zugeordnet und sagt, ob es da ist oder nicht. Läuft über Tage und passt nie den Bestand an; dafür ist die Zählung da.'
@@ -1644,3 +1687,143 @@ de:
       esta: 'Ist da: %{codigo} · %{producto}'
       no_esta: 'Nicht da: kein aktives Etikett wiegt %{cantidad}'
       cerrada: Kontrolle %{folio} geschlossen
+  compras:
+    proveedores: Lieferanten
+    proveedor: Lieferant
+    nuevo_proveedor: Neuer Lieferant
+    proveedores_ayuda: Wer uns beliefert. Der Saldo ist, was wir laut Rechnungen und Zahlungen schulden.
+    sin_proveedores: Noch keine Lieferanten.
+    contacto: Kontakt
+    telefono: Telefon
+    rfc: Steuernummer
+    dias_credito: Zahlungsziel
+    dias_credito_ayuda: 0 = bar. Mit Tagen sind Rechnungen am Datum + Tage fällig.
+    saldo: Saldo
+    cuenta: Konto
+    inactivo: inaktiv
+    primero_proveedor: Zuerst einen Lieferanten anlegen
+    recepciones: Wareneingänge
+    recepcion: Wareneingang
+    recibir: Annehmen
+    recibir_mercancia: Ware annehmen
+    recepciones_ayuda: Was vom Lieferanten in %{sucursal} eingegangen ist. Jeder Wareneingang ist eine Bestandsbuchung.
+    recibir_ayuda: Barcode des Lieferanten scannen oder Produkt wählen, Menge eintragen, und es geht in den Bestand von %{sucursal}. Die Rechnung wird später verknüpft, wenn sie kommt.
+    remision: Lieferschein
+    remision_ayuda: Nummer auf dem Papier des Fahrers
+    escanear: Scannen
+    escanear_ayuda: Lieferanten-Barcode, PLU, Kürzel oder Name + Enter
+    cajas: Kisten
+    registrar_entrada: Eingang buchen
+    renglones: Positionen
+    sin_factura: ohne Rechnung
+    sin_factura_aun: Noch keiner Rechnung zugeordnet.
+    sin_recepciones: Noch keine Wareneingänge.
+    ninguna: — keine —
+    ligar: Verknüpfen
+    desligar: Lösen
+    capturar_factura: Rechnung erfassen
+    cancelar_recepcion: Wareneingang stornieren
+    cancelar_recepcion_ayuda: Die Ware verlässt den Bestand und das Leergut wird abgezogen. Nur bei Fehleingabe.
+    confirmar_cancelar: '%{folio} stornieren?'
+    facturas: Rechnungen
+    factura: Rechnung
+    nueva_factura: Neue Rechnung
+    factura_ayuda: Die Lieferantenrechnung erzeugt die Schuld. Mit Positionen wird der Betrag berechnet; ohne (Fracht, Eis) den Betrag eintippen.
+    folio_proveedor: Rechnungsnummer des Lieferanten
+    folio_proveedor_ayuda: wie aufgedruckt
+    vence: Fällig
+    vence_ayuda: Leer = Datum + Zahlungsziel des Lieferanten.
+    monto_sin_renglones: Betrag (ohne Positionen)
+    monto_sin_renglones_ayuda: Zählt nur ohne Positionen.
+    concepto: Bezeichnung
+    precio_compra: Preis
+    registrar_factura: Rechnung buchen
+    todos_los_proveedores: Alle Lieferanten
+    pagado: Bezahlt
+    resta: Rest
+    sin_facturas: Keine Rechnungen.
+    facturado_vs_recibido: Berechnet vs. erhalten
+    comparativo_ayuda: 'Pro Produkt: was die Rechnung sagt und was in den verknüpften Wareneingängen ankam. Ein Hinweis, keine Sperre.'
+    sin_renglones_ni_recepciones: 'Keine Positionen und keine verknüpften Wareneingänge: nichts zu vergleichen.'
+    facturado: Berechnet
+    recibido: Erhalten
+    diferencia: Differenz
+    recepciones_ligadas: Verknüpfte Wareneingänge
+    ninguna_recepcion: Noch kein Wareneingang verknüpft.
+    recepciones_sueltas: Wareneingänge dieses Lieferanten ohne Rechnung
+    pagos: Zahlungen
+    sin_pagos: Keine Zahlungen.
+    cancelar_factura: Rechnung stornieren
+    cancelar_factura_ayuda: Die Schuld wird zurückgebucht und die Wareneingänge gelöst. Nicht möglich mit gültigen Zahlungen.
+    cuentas_por_pagar: Verbindlichkeiten
+    cuentas_ayuda: Was jedem Lieferanten geschuldet wird und welche Rechnungen fällig sind. Barzahlungen verlassen die offene Lade als Entnahme.
+    debemos: Wir schulden
+    vencidas: Überfällig
+    vencen_esta_semana: Diese Woche fällig
+    n_facturas:
+      one: 1 Rechnung
+      other: '%{count} Rechnungen'
+    por_proveedor: Nach Lieferant
+    sin_deuda: Nichts geschuldet.
+    vencimientos: Fälligkeiten
+    nada_vence: Nichts überfällig oder diese Woche fällig.
+    pagar: Bezahlen
+    pago_sale_de_caja: Bargeld verlässt die offene Lade von %{sucursal} als Entnahme; Überweisung und Einzahlung berühren die Kasse nicht.
+    pago_sin_caja: 'Keine Kasse offen in %{sucursal}: nur Überweisung oder Einzahlung möglich.'
+    a_cuenta: auf Konto (ohne Rechnung)
+    forma: Zahlungsart
+    referencia: Referenz
+    registrar_pago: Zahlung buchen
+    facturas_abiertas: Offene Rechnungen
+    sin_facturas_abiertas: Nichts offen.
+    anular: Stornieren
+    confirmar_anular: Zahlung über %{monto} stornieren?
+    libro: Lieferantenkonto
+    movimientos:
+      cargo: Belastung
+      abono: Zahlung
+      ajuste: Korrektur
+    estados:
+      registrada: gebucht
+      cancelada: storniert
+      abierta: offen
+      pagada: bezahlt
+      vencida: überfällig
+    envases:
+      titulo: Leergut des Lieferanten
+      ayuda: Kisten, Paletten und Boxen, die der Lieferant dalässt und die wir zurückschulden. Ein eigenes Buch, getrennt vom Kisten-Konto der Kunden und Fahrer.
+      envase: Leergut
+      canastilla: Kiste
+      tarima: Palette
+      tote: Box
+      canastillas: Kisten
+      tarimas: Paletten
+      totes: Boxen
+      recepcion_ayuda: Was der Lieferant bringt und hier bleibt; geschuldet bis zur Rückgabe.
+      debemos: Wir schulden
+      nada: Kein Leergut geschuldet.
+      mover: Zurückgeben oder korrigieren
+      mover_ayuda: 'Rückgabe: wir geben es zurück. Eingang: ohne Wareneingang dagelassen. Korrektur: mit Vorzeichen und Grund.'
+      tipos:
+        entrada: Eingang
+        devolucion: Rückgabe
+        ajuste: Korrektur
+    avisos:
+      proveedor_creado: Lieferant %{nombre} angelegt
+      proveedor_guardado: Lieferant %{nombre} gespeichert
+      recibida: 'Wareneingang %{folio} gebucht: die Ware ist im Bestand'
+      recepcion_cancelada: Wareneingang %{folio} storniert
+      ligada: Mit Rechnung %{folio} verknüpft
+      desligada: Wareneingang ohne Rechnung
+      facturada: Rechnung %{folio} über %{monto} gebucht
+      factura_cancelada: Rechnung %{folio} storniert
+      pagado: Zahlung über %{monto} an %{proveedor} gebucht; Saldo %{saldo}
+      pago_anulado: Zahlung über %{monto} storniert
+      envases_movidos: Leergut gebucht
+      entrada_motivo: Wareneingang %{folio} von %{proveedor}
+      cancelacion_motivo: 'Storno von %{folio}: %{motivo}'
+      cargo_factura: Rechnung %{folio}
+      cancelacion_factura: 'Storno der Rechnung %{folio}: %{motivo}'
+      retiro_pago: Zahlung an %{proveedor} %{folio}
+      abono_pago: Zahlung %{folio} (%{forma})
+      anulacion_pago: 'Zahlung storniert: %{motivo}'

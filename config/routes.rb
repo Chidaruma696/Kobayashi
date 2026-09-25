@@ -37,6 +37,21 @@ Rails.application.routes.draw do
   get "inventario/movimiento/nuevo", to: "inventario#nuevo_movimiento", as: :nuevo_movimiento_inventario
   post "inventario/movimiento", to: "inventario#crear_movimiento", as: :movimientos_inventario
 
+  # Compras: proveedores, recepción, facturas, cuentas por pagar y envases del proveedor
+  resources :proveedores, except: %i[show destroy]
+  resources :recepciones, only: %i[index new create show] do
+    collection { get :producto }
+    member { post :cancelar; patch :factura }
+  end
+  resources :facturas, controller: "facturas_proveedor", only: %i[index new create show] do
+    member { post :cancelar }
+  end
+  get "cuentas", to: "cuentas#index", as: :cuentas
+  get "cuentas/:id", to: "cuentas#show", as: :cuenta
+  post "cuentas/:id/pagar", to: "cuentas#pagar", as: :pagar_cuenta
+  post "pagos/:id/anular", to: "cuentas#anular_pago", as: :anular_pago
+  get "envases", to: "envases#index", as: :envases
+  post "envases", to: "envases#mover"
   resources :pedidos, only: %i[index new create show] do
     collection { get :pendientes }
     member do

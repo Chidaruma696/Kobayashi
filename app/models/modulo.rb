@@ -2,16 +2,16 @@
 # siempre; el resto depende del giro elegido al arrancar y se puede cambiar después en Ajustes.
 # Rutas necesita pedidos y salidas (un reparto es una salida a un cliente que pidió).
 module Modulo
-  OPCIONALES = %w[etiquetas pedidos salidas rutas conteos].freeze
+  OPCIONALES = %w[compras etiquetas pedidos salidas rutas conteos].freeze
   DEPENDE = { "rutas" => %w[pedidos salidas] }.freeze
   # Prefijos de permiso que cuelgan de cada módulo (los demás permisos van siempre).
-  PERMISOS = { "etiquetas" => %w[etiquetas produccion], "pedidos" => %w[pedidos], "salidas" => %w[salidas],
+  PERMISOS = { "compras" => %w[compras], "etiquetas" => %w[etiquetas produccion], "pedidos" => %w[pedidos], "salidas" => %w[salidas],
                "rutas" => %w[rutas cobranza canastillas], "conteos" => %w[conteos] }.freeze
   # Preset por giro; "todo" es el negocio para el que nació el sistema.
   GIROS = {
-    "abarrotes" => [],
-    "recauderia" => %w[etiquetas],
-    "distribuidora" => %w[pedidos salidas rutas conteos],
+    "abarrotes" => %w[compras],
+    "recauderia" => %w[compras etiquetas],
+    "distribuidora" => %w[compras pedidos salidas rutas conteos],
     "todo" => OPCIONALES
   }.freeze
 

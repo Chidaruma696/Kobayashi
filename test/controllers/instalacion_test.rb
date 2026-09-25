@@ -29,7 +29,7 @@ class InstalacionTest < ActionDispatch::IntegrationTest
     assert_equal "Carnes Selectas", Ajuste["negocio.nombre"]
     assert_equal "es", rosa.idioma
     assert_equal %w[oscuro grande normal], [ rosa.tema, rosa.letra, rosa.densidad ], "la apariencia elegida se queda en el usuario"
-    assert_equal %w[etiquetas], Modulo.activos, "el giro deja encendido solo lo suyo"
+    assert_equal %w[compras etiquetas], Modulo.activos, "el giro deja encendido solo lo suyo"
 
     follow_redirect!
     assert_response :success, "queda con la sesión iniciada"

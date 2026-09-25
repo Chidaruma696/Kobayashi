@@ -7,7 +7,7 @@ class Rol < ApplicationRecord
     "cajero" => [ "caja.vender", "caja.abrir", "caja.retirar", "caja.devolver", "inventario.ver", "pedidos.solicitar", "salidas.recibir", "salidas.surtir", "salidas.verificar" ],
     "etiquetador" => [ "etiquetas.crear", "produccion.abrir", "pedidos.surtir", "inventario.ver", "salidas.surtir", "salidas.recibir" ],
     "chofer" => [ "rutas.repartir", "pedidos.solicitar" ],
-    "supervisor" => [ "caja.*", "inventario.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "rutas.*", "cobranza.*", "canastillas.*", "conteos.*", "reportes.ver", "revisiones.resolver" ]
+    "supervisor" => [ "caja.*", "inventario.*", "compras.*", "etiquetas.*", "pedidos.*", "produccion.*", "salidas.*", "rutas.*", "cobranza.*", "canastillas.*", "conteos.*", "reportes.ver", "revisiones.resolver" ]
   }.freeze
 
   validates :nombre, presence: true, uniqueness: true

@@ -1,0 +1,39 @@
+<h1 class="mb-1 text-2xl font-bold"><%= t("compras.envases.titulo") %></h1>
+<p class="mb-4 text-sm text-stone-600"><%= t("compras.envases.ayuda") %></p>
+<div class="mb-4 grid gap-4 lg:grid-cols-2">
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("compras.envases.debemos") %></h2>
+    <table class="w-full text-sm">
+      <% @saldos.each do |p, s| %>
+        <tr class="border-t border-stone-100"><td class="py-1"><%= p.nombre %></td><td class="py-1 text-right font-mono"><%= s.map { |e, n| "#{n} #{t("compras.envases.#{e}")}" }.join(" · ") %></td></tr>
+      <% end %>
+      <% if @saldos.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("compras.envases.nada") %></td></tr><% end %>
+    </table>
+  </div>
+  <% if puede?("compras.recibir") %>
+    <div class="card">
+      <h2 class="mb-2 font-semibold"><%= t("compras.envases.mover") %></h2>
+      <p class="mb-2 text-xs text-stone-500"><%= t("compras.envases.mover_ayuda") %></p>
+      <%= form_with url: envases_path, class: "campos-4 text-sm" do |f| %>
+        <div><%= f.select :proveedor_id, @proveedores.map { |p| [ p.nombre, p.id ] }, {}, class: "entrada mt-0" %></div>
+        <div><%= f.select :envase, EnvaseProveedor::ENVASES.map { |e| [ t("compras.envases.#{e}"), e ] }, {}, class: "entrada mt-0" %></div>
+        <div><%= f.select :tipo, %w[devolucion entrada ajuste].map { |x| [ t("compras.envases.tipos.#{x}"), x ] }, {}, class: "entrada mt-0" %></div>
+        <div><%= f.number_field :cantidad, placeholder: "±#{t("comun.cantidad").downcase}", required: true, class: "entrada mt-0 font-mono" %></div>
+        <div class="md:col-span-2 xl:col-span-3"><%= f.text_field :motivo, placeholder: t("comun.motivo").downcase, class: "entrada mt-0" %></div>
+        <div><%= f.submit t("comun.guardar"), class: "btn btn-primary" %></div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<h2 class="mb-2 font-semibold"><%= t("canastillas.ultimos_movimientos") %></h2>
+<table class="tabla">
+  <thead><tr><th><%= t("comun.fecha") %></th><th><%= t("compras.proveedor") %></th><th><%= t("salidas.tipo") %></th><th><%= t("compras.envases.envase") %></th><th class="text-right">±</th><th class="text-right"><%= t("compras.saldo") %></th><th><%= t("canastillas.concepto") %></th></tr></thead>
+  <tbody>
+    <% @movimientos.each do |m| %>
+      <tr><td class="px-3 py-1 whitespace-nowrap"><%= l m.fecha %></td><td class="px-3 py-1"><%= m.proveedor %></td><td class="px-3 py-1"><%= t("compras.envases.tipos.#{m.tipo}") %></td><td class="px-3 py-1"><%= t("compras.envases.#{m.envase}") %></td>
+        <td class="px-3 py-1 text-right font-mono"><%= "#{m.signo.positive? ? "+" : "−"}#{m.cantidad}" %></td><td class="px-3 py-1 text-right font-mono"><%= m.saldo %></td>
+        <td class="px-3 py-1 text-stone-600"><%= m.recepcion ? link_to(m.recepcion.folio, recepcion_path(m.recepcion), class: "chip-folio") : m.concepto %> <span class="text-xs">(<%= m.usuario %>)</span></td></tr>
+    <% end %>
+    <% if @movimientos.empty? %><tr><td colspan="7" class="px-3 py-6 text-center text-stone-500"><%= t("inventario.sin_movimientos") %></td></tr><% end %>
+  </tbody>
+</table>

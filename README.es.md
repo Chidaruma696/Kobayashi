@@ -38,15 +38,16 @@ Un solo sistema, una sola base, y **módulos que se encienden o apagan por negoc
 
 | Giro | Módulos que arrancan encendidos |
 |---|---|
-| **Abarrotes / tienda** | caja, inventario, administración. Productos por pieza con el código del proveedor. |
+| **Abarrotes / tienda** | caja, inventario, administración y **compras**. Productos por pieza con el código del proveedor. |
 | **Recaudería / frutería** | lo anterior más **etiquetas y producción**: pesar en la báscula, imprimir etiquetas de identidad, producción con merma. |
-| **Distribuidora** | pedidos, salidas entre sucursales, **rutas de reparto** (chofer, cobranza, crédito, canastillas, convenios) y conteos, sin etiquetadora. |
+| **Distribuidora** | compras, pedidos, salidas entre sucursales, **rutas de reparto** (chofer, cobranza, crédito, canastillas, convenios) y conteos, sin etiquetadora. |
 | **Planta con tiendas y reparto** | todo. |
 
 Donde hay etiquetas, cada paquete, caja y tarima lleva un **EAN-13 de identidad**: el código nombra la fila en la base; el peso vive en la base, nunca dentro del código. Un módulo apagado desaparece de la cinta, de los roles y de sus pantallas; sus datos se quedan, y no se apaga mientras tenga trabajo abierto.
 
 | Módulo | Qué hace | Regla que impone |
 |---|---|---|
+| **Compras** | Proveedores, recepción de mercancía escaneando el código del proveedor (entra al inventario y se anotan canastillas, tarimas y totes), la factura del proveedor capturada después con sus renglones, cuentas por pagar con vencimientos, y pagos que salen de la gaveta abierta como retiro. Facturado contra recibido, por producto, lado a lado. | La factura es lo único que crea deuda y el único sitio donde vive el precio de compra; el inventario nunca lleva costo. Un solo camino de pago: el efectivo sale de la gaveta, el libro solo se agrega, anular compensa. Sin órdenes de compra. |
 | **Pedidos** | Una tienda o un cliente de ruta pide; la matriz surte renglón por renglón. | Lo surtido es siempre la suma de las etiquetas ligadas al renglón, nunca un contador guardado. |
 | **Producción** | Entra producto en bruto, salen cortes etiquetados, la diferencia es merma. | No sale más de lo que entró. La producción no tiene nada que ver con los pedidos: es una entrada y sus salidas. |
 | **Etiquetas** | Paquete, caja y tarima con barcode de identidad, impresas a 55×45 mm. | Nada de etiquetar suelto: toda etiqueta nace de un renglón, una producción o una autorización registrada. |
