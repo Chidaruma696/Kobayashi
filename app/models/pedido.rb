@@ -20,6 +20,21 @@ class Pedido < ApplicationRecord
 
   def abierto? = %w[solicitado surtiendo].include?(estado)
 
+  # Lo que a una sucursal le falta según sus mínimos: [[producto, cantidad]] para llegar al máximo,
+  # descontando lo que ya pidió y sigue pendiente. Es una sugerencia; el pedido se edita después.
+  def self.sugerido(sucursal)
+    pendiente = PedidoLinea.joins(:pedido).where(pedidos: { sucursal_destino_id: sucursal.id, estado: %w[solicitado surtiendo] }, estado: "pendiente")
+                           .includes(:etiquetas).group_by(&:producto_id).transform_values { |ls| ls.sum(&:faltante) }
+    MinimoSucursal.where(sucursal: sucursal).includes(:producto).filter_map do |m|
+      next unless m.producto.activo?
+      existencia = Existencia.de(sucursal, m.producto) + pendiente.fetch(m.producto_id, 0)
+      next if existencia >= m.minimo
+      falta = m.tope - existencia
+      falta = falta.ceil if !m.producto.fraccionable?
+      [ m.producto, falta.round(3) ] if falta.positive?
+    end.sort_by { |p, _| p.nombre }
+  end
+
   def destino
     cliente || sucursal_destino
   end

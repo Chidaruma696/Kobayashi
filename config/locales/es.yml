@@ -290,6 +290,8 @@ es:
       titulo: Sin permiso
       texto_html: Tu rol no incluye %{clave}. Pide a alguien con permiso que lo haga o que te autorice.
     hace_falta_motivo: hace falta el motivo
+    minimo:
+      maximo_menor: el máximo no puede ser menor que el mínimo
     pedido:
       solo_abierto: solo se cancela un pedido abierto
       ya_surtido: ya tiene etiquetas surtidas; no se puede cancelar
@@ -676,6 +678,9 @@ es:
     confirmar_cancelar: ¿Cancelar el pedido %{folio}?
     nuevo: Nuevo pedido
     nuevo_a_matriz: Nuevo pedido a la matriz
+    sugerido_aviso:
+      one: 1 renglón sugerido por los mínimos de la sucursal; quítalo o cámbialo antes de enviar.
+      other: '%{count} renglones sugeridos por los mínimos de la sucursal; quítalos o cámbialos antes de enviar.'
     tiendas: Tiendas
     clientes_de_ruta: Clientes de ruta
     enviar_pedido: Enviar pedido
@@ -1472,6 +1477,10 @@ es:
     sin_convenios: Sin convenios.
     precio_por_sucursal: Precio por sucursal
     precio_por_sucursal_ayuda: Vacío = hereda el precio general (%{precio}). Se guarda con el botón %{boton} del producto.
+    minimos_por_sucursal: Mínimo y máximo por sucursal
+    minimos_ayuda: Por debajo del mínimo, el pedido nuevo de esa sucursal trae lo que falta para llegar al máximo. Vacío = sin sugerencia. Se guarda con el botón %{boton} del producto.
+    minimo: Mínimo
+    maximo: Máximo
     general: general
     codigos_proveedor: Códigos del proveedor
     escanea_o_teclea_codigo: escanea o teclea el código

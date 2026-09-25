@@ -290,6 +290,8 @@ de:
       titulo: Keine Berechtigung
       texto_html: Deine Rolle enthält %{clave} nicht. Bitte jemanden mit Berechtigung, es zu tun oder dich freizugeben.
     hace_falta_motivo: ein Grund ist nötig
+    minimo:
+      maximo_menor: das Maximum darf nicht unter dem Minimum liegen
     pedido:
       solo_abierto: nur eine offene Bestellung kann storniert werden
       ya_surtido: sie hat schon kommissionierte Etiketten; sie kann nicht storniert werden
@@ -676,6 +678,9 @@ de:
     confirmar_cancelar: Bestellung %{folio} stornieren?
     nuevo: Neue Bestellung
     nuevo_a_matriz: Neue Bestellung an die Zentrale
+    sugerido_aviso:
+      one: 1 Zeile aus den Filialminima vorgeschlagen; vor dem Senden entfernen oder ändern.
+      other: '%{count} Zeilen aus den Filialminima vorgeschlagen; vor dem Senden entfernen oder ändern.'
     tiendas: Läden
     clientes_de_ruta: Tourkunden
     enviar_pedido: Bestellung senden
@@ -1472,6 +1477,10 @@ de:
     sin_convenios: Keine Vereinbarungen.
     precio_por_sucursal: Preis je Filiale
     precio_por_sucursal_ayuda: Leer = erbt den allgemeinen Preis (%{precio}). Wird mit der Schaltfläche %{boton} des Produkts gespeichert.
+    minimos_por_sucursal: Minimum und Maximum je Filiale
+    minimos_ayuda: Unter dem Minimum enthält die neue Bestellung dieser Filiale, was bis zum Maximum fehlt. Leer = kein Vorschlag. Wird mit der Schaltfläche %{boton} des Produkts gespeichert.
+    minimo: Minimum
+    maximo: Maximum
     general: allgemein
     codigos_proveedor: Lieferantencodes
     escanea_o_teclea_codigo: Code scannen oder eintippen

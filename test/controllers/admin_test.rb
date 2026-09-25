@@ -29,9 +29,21 @@ class AdminTest < ActionDispatch::IntegrationTest
     get admin_productos_path
     assert_select "td", /Pechuga/
     post admin_productos_path, params: { producto: { clave: "ala", nombre: "Ala de pollo", linea: "Pollo", unidad: "kg", precio: "75.50", activo: "1", dias_vida: "5" } }
+    assert_redirected_to edit_admin_producto_path(Producto.find_by!(clave: "ALA"))
     assert_equal 5, Producto.find_by!(clave: "ALA").dias_vida
+    tienda = sucursales(:tienda)
+    patch admin_producto_path(productos(:catsup)), params: { producto: { nombre: "Cátsup 1 kg" }, minimos: { tienda.id => { minimo: "20", maximo: "30" } } }
+    assert_equal [ BigDecimal("20"), BigDecimal("30") ], productos(:catsup).minimos_sucursal.find_by!(sucursal: tienda).then { |m| [ m.minimo, m.maximo ] }
+    get edit_admin_producto_path(productos(:catsup))
+    assert_select "input[name='minimos[#{tienda.id}][maximo]'][value='30.0']"
+    delete salir_path
+    post entrar_path, params: { usuario: "cajera", password: "secreto1" }
+    get new_pedido_path
+    assert_select "p", /1 renglón sugerido/
+    assert_select "input[name='pedido[lineas_attributes][0][cantidad]'][value='20']", { count: 1 }, "30 menos las 10 que ya pidió y siguen pendientes"
+    delete salir_path
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
     p = Producto.find_by!(clave: "ALA")
-    assert_redirected_to edit_admin_producto_path(p)
     assert_equal 7_550, p.precio_centavos
     assert_operator p.plu, :>=, 90_000
     post admin_producto_codigos_path(p), params: { codigo: "750 1234 567890" }

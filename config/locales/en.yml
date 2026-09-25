@@ -290,6 +290,8 @@ en:
       titulo: No permission
       texto_html: Your role does not include %{clave}. Ask someone with permission to do it or to authorise you.
     hace_falta_motivo: a reason is required
+    minimo:
+      maximo_menor: the maximum cannot be below the minimum
     pedido:
       solo_abierto: only an open order can be cancelled
       ya_surtido: it already has fulfilled labels; it cannot be cancelled
@@ -676,6 +678,9 @@ en:
     confirmar_cancelar: Cancel order %{folio}?
     nuevo: New order
     nuevo_a_matriz: New order to headquarters
+    sugerido_aviso:
+      one: 1 line suggested by the branch minimums; remove or change it before sending.
+      other: '%{count} lines suggested by the branch minimums; remove or change them before sending.'
     tiendas: Shops
     clientes_de_ruta: Route customers
     enviar_pedido: Send order
@@ -1472,6 +1477,10 @@ en:
     sin_convenios: No agreements.
     precio_por_sucursal: Price per branch
     precio_por_sucursal_ayuda: Empty = inherits the general price (%{precio}). Saved with the product's %{boton} button.
+    minimos_por_sucursal: Minimum and maximum per branch
+    minimos_ayuda: "Below the minimum, that branch's new order comes prefilled with what is needed to reach the maximum. Empty = no suggestion. Saved with the product's %{boton} button."
+    minimo: Minimum
+    maximo: Maximum
     general: general
     codigos_proveedor: Supplier codes
     escanea_o_teclea_codigo: scan or type the code

@@ -39,10 +39,13 @@ class PedidosController < ApplicationController
     render layout: "ticket"
   end
 
+  # Una tienda arranca con lo que le falta según sus mínimos (si tiene); la matriz, en blanco.
   def new
     autorizar!("pedidos.solicitar")
     @pedido = Pedido.new(sucursal_destino: sucursal_actual)
-    @pedido.lineas.build
+    @sugerido = sucursal_actual.matriz? ? [] : Pedido.sugerido(sucursal_actual)
+    @sugerido.each { |producto, cantidad| @pedido.lineas.build(producto: producto, cantidad: cantidad) }
+    @pedido.lineas.build if @sugerido.empty?
     cargar_destinos
   end
 

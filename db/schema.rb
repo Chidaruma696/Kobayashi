@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_170001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_180001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -323,6 +323,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_170001) do
     t.datetime "updated_at", null: false
     t.index ["sucursal_id", "prefijo"], name: "index_folios_on_sucursal_id_and_prefijo", unique: true
     t.index ["sucursal_id"], name: "index_folios_on_sucursal_id"
+  end
+
+  create_table "minimos_sucursal", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "maximo", precision: 12, scale: 3
+    t.decimal "minimo", precision: 12, scale: 3, default: "0.0", null: false
+    t.integer "producto_id", null: false
+    t.integer "sucursal_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["producto_id", "sucursal_id"], name: "index_minimos_sucursal_on_producto_id_and_sucursal_id", unique: true
+    t.index ["producto_id"], name: "index_minimos_sucursal_on_producto_id"
+    t.index ["sucursal_id"], name: "index_minimos_sucursal_on_sucursal_id"
   end
 
   create_table "movimientos", force: :cascade do |t|
@@ -986,6 +998,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_170001) do
   add_foreign_key "facturas_proveedor", "sucursales"
   add_foreign_key "facturas_proveedor", "usuarios"
   add_foreign_key "folios", "sucursales"
+  add_foreign_key "minimos_sucursal", "productos"
+  add_foreign_key "minimos_sucursal", "sucursales"
   add_foreign_key "movimientos", "etiquetas"
   add_foreign_key "movimientos", "productos"
   add_foreign_key "movimientos", "sucursales"

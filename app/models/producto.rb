@@ -9,6 +9,7 @@ class Producto < ApplicationRecord
   has_many :etiquetas, dependent: :restrict_with_error
   has_many :pedido_lineas, dependent: :restrict_with_error
   has_many :precios_sucursal, class_name: "PrecioSucursal", dependent: :destroy
+  has_many :minimos_sucursal, class_name: "MinimoSucursal", dependent: :destroy
   has_many :promociones, dependent: :destroy
 
   before_validation :asignar_plu, on: :create
@@ -56,6 +57,15 @@ class Producto < ApplicationRecord
       precios_sucursal.where(sucursal: sucursal).destroy_all
     else
       precios_sucursal.find_or_initialize_by(sucursal: sucursal).update!(precio_centavos: Dinero.centavos(pesos))
+    end
+  end
+
+  # Fija (o quita, si los dos van vacíos) el mínimo y máximo de una sucursal.
+  def fijar_minimo!(sucursal, minimo, maximo)
+    if minimo.blank? && maximo.blank?
+      minimos_sucursal.where(sucursal: sucursal).destroy_all
+    else
+      minimos_sucursal.find_or_initialize_by(sucursal: sucursal).update!(minimo: minimo.presence || 0, maximo: maximo.presence)
     end
   end
 

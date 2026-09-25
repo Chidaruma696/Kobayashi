@@ -13,6 +13,21 @@
       <% end %>
     </table>
   </div>
+  <% if Modulo.activo?("pedidos") %>
+  <div class="card p-6">
+    <h2 class="mb-2 font-semibold"><%= t("admin.minimos_por_sucursal") %></h2>
+    <p class="mb-2 text-sm text-stone-600"><%= t("admin.minimos_ayuda", boton: t("comun.guardar")) %></p>
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-stone-500"><th></th><th class="py-1 text-right"><%= t("admin.minimo") %></th><th class="py-1 text-right"><%= t("admin.maximo") %></th></tr></thead>
+      <% Sucursal.activas.con_caja.order(:nombre).each do |s| %>
+        <% m = @producto.minimos_sucursal.find { |x| x.sucursal_id == s.id } %>
+        <tr class="border-t border-stone-100"><td class="py-1"><%= s.nombre %></td>
+          <td class="py-1 text-right"><input type="number" step="<%= @producto.fraccionable? ? '0.001' : '1' %>" min="0" name="minimos[<%= s.id %>][minimo]" form="form_producto" value="<%= m&.minimo&.to_s("F") %>" class="w-28 rounded border border-stone-300 px-2 py-1 text-right font-mono"></td>
+          <td class="py-1 text-right"><input type="number" step="<%= @producto.fraccionable? ? '0.001' : '1' %>" min="0" name="minimos[<%= s.id %>][maximo]" form="form_producto" value="<%= m&.maximo&.to_s("F") %>" class="w-28 rounded border border-stone-300 px-2 py-1 text-right font-mono"></td></tr>
+      <% end %>
+    </table>
+  </div>
+  <% end %>
   <div class="card p-6">
     <h2 class="mb-2 font-semibold"><%= t("admin.codigos_proveedor") %></h2>
     <ul class="mb-3 text-sm">

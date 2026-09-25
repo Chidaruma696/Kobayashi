@@ -28,6 +28,7 @@ module Admin
       end
       Producto.transaction do
         params.fetch(:precios, {}).each { |sucursal_id, pesos| @producto.fijar_precio!(Sucursal.find(sucursal_id), pesos) } if @producto.valid?
+        params.fetch(:minimos, {}).each { |sucursal_id, m| @producto.fijar_minimo!(Sucursal.find(sucursal_id), m[:minimo], m[:maximo]) } if @producto.valid?
         guardar(@producto, admin_productos_path, t("admin.avisos.guardado", que: t("admin.modelos.producto")))
       end
     end

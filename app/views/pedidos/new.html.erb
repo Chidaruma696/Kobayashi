@@ -15,6 +15,7 @@
     </div>
   </div>
   <div class="rounded-lg border border-stone-200 p-4">
+    <% if @sugerido.present? %><p class="mb-2 rounded bg-marca-50 px-3 py-2 text-sm"><%= t("pedidos.sugerido_aviso", count: @sugerido.size) %></p><% end %>
     <table class="w-full text-sm">
       <thead><tr class="text-left text-stone-500"><th class="py-1"><%= t("comun.producto") %></th><th class="w-48 py-1"><%= t("comun.cantidad") %></th><th class="w-10"></th></tr></thead>
       <tbody data-lineas-target="cuerpo">
