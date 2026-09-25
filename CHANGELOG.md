@@ -4,6 +4,7 @@ Lo que cambia entre versiones, en corto. Las razones largas viven en `docs/decis
 
 ## Sin publicar
 
+- **Módulos con dependencias a la vista**: en Ajustes › Módulos cada interruptor dice qué necesita y quién lo necesita; encender uno marca sus bases y apagar una base desmarca a los que cuelgan de ella. Si aun así llega apagada una base que otro encendido necesita, se rechaza nombrándolo. Cierra #30.
 - **Compras: estado de recepción y candado**: cada factura enseña si está sin recepción, recibida parcial o completa (lista y ficha), y al capturarla se marcan las recepciones que cubre. Con el candado de Ajustes › Compras, facturar más cantidad que las recepciones ligadas exige motivo y la factura queda por revisar con el exceso valuado; quien tiene `compras.exceder` la registra sin más. Cierra #29.
 - **Conteos parciales y cíclicos**: un conteo puede ser de todo o solo de una línea o de unos productos; en el parcial solo se ajusta lo elegido y escanear algo de fuera se rechaza. Cada sucursal puede decir cada cuántos días toca contar (Admin › Sucursales) y el tablero y la pestaña Conteos avisan cuando el último conteo cerrado ya es más viejo. Cierra #28.
 - **Pedido sugerido**: mínimo y máximo por producto y sucursal (Admin › Productos, junto a los precios por sucursal). Cuando lo que hay más lo que ya pidió y sigue pendiente baja del mínimo, el pedido nuevo de la tienda llega precargado con lo que falta para llegar al máximo; se quita o se cambia antes de enviar. Cierra #27.

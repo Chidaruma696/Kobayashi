@@ -466,6 +466,7 @@ en:
       texto: This business does not use it. Whoever manages users can turn it on in Settings › System.
     modulo:
       con_trabajo_abierto: 'cannot turn off %{modulo}: there is open work; close it first'
+      con_dependientes: 'cannot turn off %{modulo}: %{dependientes} needs it; turn that off too or leave it on'
     supervision:
       cerrada: the supervision is closed
       ya_vista: '%{codigo} was already seen'
@@ -1612,6 +1613,8 @@ en:
       ejemplo: 'Your first receipt would be:'
       despues: The other documents (closes, orders, dispatches…) get their factory letters; change them in Settings › Numbering.
   modulos:
+    necesita: Needs %{lista}
+    lo_necesita: Needed by %{lista}
     etiquetas:
       nombre: Labels and production
       que: Weigh and label packages, boxes and pallets with identity barcodes; production runs with shrinkage.

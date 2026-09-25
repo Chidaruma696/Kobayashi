@@ -40,6 +40,30 @@ class ModulosTest < ActionDispatch::IntegrationTest
     assert_equal %w[pedidos salidas rutas], Modulo.activos
   end
 
+  test "apagar una base que otro necesita se rechaza nombrándolo; la pantalla enseña qué necesita cada uno" do
+    Modulo.guardar!(%w[compras retornables pedidos salidas rutas], comprobar: false)
+    e = assert_raises(ArgumentError) { Modulo.guardar!(%w[compras retornables salidas rutas]) }
+    assert_match "Pedidos", e.message
+    assert_match "Rutas", e.message
+    assert Modulo.activo?("pedidos")
+    e = assert_raises(ArgumentError) { Modulo.guardar!(%w[retornables pedidos salidas rutas]) }
+    assert_match "Retornables", e.message
+    Modulo.guardar!(%w[pedidos salidas], comprobar: false)
+    assert_equal %w[pedidos salidas], Modulo.activos, "apagar la base junto con quien la necesita sí pasa"
+    get ajustes_seccion_path("modulos")
+    assert_select "input[data-modulo=rutas][data-necesita='pedidos salidas']"
+    assert_select "input[data-modulo=pedidos][data-dependientes=rutas]"
+    assert_select "span", /Necesita Pedidos, Salidas y recepción/
+    assert_select "span", /Lo necesita Rutas/
+    patch ajustes_sistema_path, params: { modulos: %w[compras rutas], volver: "modulos" }
+    Current.modulos = nil # lo memorizado en el hilo del test no ve lo que guardó la petición
+    assert_equal %w[compras pedidos salidas rutas], Modulo.activos, "encender rutas arrastra pedidos y salidas"
+    patch ajustes_sistema_path, params: { modulos: %w[compras pedidos rutas], volver: "modulos" }
+    assert_match "Salidas", flash[:alert]
+    Current.modulos = nil
+    assert Modulo.activo?("salidas")
+  end
+
   test "no se apaga un módulo con trabajo abierto" do
     assert Pedido.abiertos.exists?, "el fixture trae un pedido abierto"
     e = assert_raises(ArgumentError) { Modulo.guardar!(%w[etiquetas salidas conteos]) }

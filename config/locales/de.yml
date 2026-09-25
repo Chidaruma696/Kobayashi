@@ -466,6 +466,7 @@ de:
       texto: Dieser Betrieb nutzt es nicht. Wer Benutzer verwaltet, kann es unter Einstellungen › System einschalten.
     modulo:
       con_trabajo_abierto: '%{modulo} lässt sich nicht ausschalten: es gibt offene Arbeit; erst abschließen'
+      con_dependientes: '%{modulo} lässt sich nicht ausschalten: %{dependientes} benötigt es; ebenfalls ausschalten oder eingeschaltet lassen'
     supervision:
       cerrada: die Kontrolle ist geschlossen
       ya_vista: '%{codigo} wurde schon gesehen'
@@ -1612,6 +1613,8 @@ de:
       ejemplo: 'Dein erster Bon wäre:'
       despues: Die übrigen Belege (Abschlüsse, Bestellungen, Ausgänge…) bekommen ihre Werksbuchstaben; änderbar in Einstellungen › Nummerierung.
   modulos:
+    necesita: Benötigt %{lista}
+    lo_necesita: Benötigt von %{lista}
     etiquetas:
       nombre: Etiketten und Produktion
       que: Pakete, Kisten und Paletten wiegen und mit Identitätscode etikettieren; Produktion mit Schwund.

@@ -466,6 +466,7 @@ es:
       texto: Este negocio no lo usa. Quien administra usuarios puede encenderlo en Ajustes › Sistema.
     modulo:
       con_trabajo_abierto: 'no se puede apagar %{modulo}: hay trabajo abierto; ciérralo primero'
+      con_dependientes: 'no se puede apagar %{modulo}: lo necesita %{dependientes}; apágalo también o déjalo encendido'
     supervision:
       cerrada: la supervisión está cerrada
       ya_vista: '%{codigo} ya estaba vista'
@@ -1612,6 +1613,8 @@ es:
       ejemplo: 'Tu primer ticket sería:'
       despues: El resto de los documentos (cortes, pedidos, salidas…) sale con su letra de fábrica; se cambia en Ajustes › Folios.
   modulos:
+    necesita: Necesita %{lista}
+    lo_necesita: Lo necesita %{lista}
     etiquetas:
       nombre: Etiquetas y producción
       que: Pesar y etiquetar paquetes, cajas y tarimas con código de identidad; producción con merma.

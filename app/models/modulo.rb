@@ -39,11 +39,23 @@ module Modulo
     guardar!(GIROS.fetch(giro.to_s, OPCIONALES), comprobar: false)
   end
 
-  # Enciende los de la lista y apaga el resto. Apagar algo con trabajo abierto se rechaza.
+  # Lo que un módulo necesita encendido, y quiénes lo necesitan a él.
+  def self.necesita(modulo) = DEPENDE.fetch(modulo.to_s, [])
+  def self.dependientes(modulo) = DEPENDE.select { |_, base| base.include?(modulo.to_s) }.keys
+
+  def self.nombre(modulo) = I18n.t("modulos.#{modulo}.nombre")
+
+  # Enciende los de la lista y apaga el resto. Encender arrastra lo que necesita; apagar una base
+  # que otro encendido necesita se rechaza nombrándolo, y apagar algo con trabajo abierto también.
   def self.guardar!(lista, comprobar: true)
     nuevos = (Array(lista).map(&:to_s) & OPCIONALES)
-    DEPENDE.each { |m, base| nuevos |= base if nuevos.include?(m) }
-    (activos - nuevos).each { |m| comprobar_apagable!(m) } if comprobar
+    viejos = activos
+    (nuevos - viejos).each { |m| nuevos |= necesita(m) }
+    (viejos - nuevos).each do |m|
+      quienes = dependientes(m) & nuevos
+      raise ArgumentError, I18n.t("errores.modulo.con_dependientes", modulo: nombre(m), dependientes: quienes.map { |d| nombre(d) }.join(", ")) if quienes.any?
+      comprobar_apagable!(m) if comprobar
+    end
     Ajuste.guardar!(OPCIONALES.to_h { |m| [ "modulos.#{m}", nuevos.include?(m) ? "1" : "0" ] })
     Current.modulos = nil
   end
