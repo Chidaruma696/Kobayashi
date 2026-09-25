@@ -80,6 +80,20 @@ de:
       imprimir_prueba: Testdruck
       imprimir_prueba_ayuda: Schickt diese Vorschau so wie sie ist an den Drucker, um Papier und Breite zu prüfen
     moneda_ayuda: 'Das Symbol steht im ganzen System und auf dem Ticket vor jedem Betrag ($, €, Q, S/…). Keine Umrechnung: eine Währung je Installation.'
+    moneda: Währung
+    etiqueta_apagada: Das Etikettenmodul ist aus; einschalten unter
+    secciones:
+      para_ti: Für dich
+      negocio: Betrieb und Ticket
+      modulos: Module
+      etiqueta: Etikett
+      caja: Kasse
+    secciones_ayuda:
+      para_ti: Gelten sofort bei der Auswahl; werden in deinem Benutzer gespeichert und gelten an jedem Gerät.
+      negocio: Die Betriebsdaten, wie sie auf dem Ticket stehen, mit dem Ticket daneben genau so, wie es gedruckt wird. Gilt für alle Filialen.
+      modulos: Was aus ist, verschwindet aus dem Menüband, den Rollen und seinen Seiten; die Daten bleiben. Ein Modul mit offener Arbeit lässt sich nicht ausschalten.
+      etiqueta: Standardgröße und -texte des gedruckten Etiketts; jeder Arbeitsplatz kann sie im Etikettierer anpassen.
+      caja: Kassenregeln für alle Filialen.
   comun:
     cerrar: Schließen
     guardar: Speichern

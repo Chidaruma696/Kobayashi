@@ -1,0 +1,14 @@
+<%= form_with url: ajustes_sistema_path, method: :patch, class: "formulario" do |f| %>
+  <%= hidden_field_tag :volver, "modulos" %>
+  <%= hidden_field_tag "modulos[]", "" %>
+  <div class="grid gap-3 md:grid-cols-2">
+    <% Modulo::OPCIONALES.each do |m| %>
+      <label class="opcion items-start text-base">
+        <%= check_box_tag "modulos[]", m, Modulo.activo?(m), id: "modulo_#{m}", class: "mt-1.5" %>
+        <span><%= t("modulos.#{m}.nombre") %><br><span class="text-sm font-normal text-stone-600"><%= t("modulos.#{m}.que") %></span></span>
+        <i class="bi bi-check-circle-fill opcion-check"></i>
+      </label>
+    <% end %>
+  </div>
+  <%= f.submit t("ajustes.guardar"), class: "btn btn-primary btn-lg" %>
+<% end %>

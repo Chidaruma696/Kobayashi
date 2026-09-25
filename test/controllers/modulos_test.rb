@@ -11,7 +11,7 @@ class ModulosTest < ActionDispatch::IntegrationTest
 
   test "apagar rutas la quita de la cinta, del catálogo, de los roles y sus pantallas lo dicen" do
     patch ajustes_sistema_path, params: { modulos: [ "etiquetas", "pedidos", "salidas", "conteos" ] }
-    assert_redirected_to ajustes_path
+    assert_redirected_to ajustes_seccion_path("modulos")
     assert_not Modulo.activo?("rutas")
     assert Modulo.activo?("etiquetas")
 

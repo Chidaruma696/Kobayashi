@@ -5,8 +5,8 @@ Rails.application.routes.draw do
     get "/", action: :index
     patch "preferencias", action: :preferencias, as: :preferencias
     patch "sistema", action: :sistema, as: :sistema
-    get "ticket", action: :ticket, as: :ticket
-    patch "ticket", action: :guardar_ticket
+    patch "ticket", action: :guardar_ticket, as: :ticket
+    get ":seccion", action: :index, as: :seccion, constraints: { seccion: /para_ti|negocio|modulos|etiqueta|caja|ticket/ }
   end
   resources :revisiones, only: %i[index] do
     member { post :resolver }

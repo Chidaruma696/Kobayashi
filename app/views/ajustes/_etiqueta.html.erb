@@ -1,0 +1,18 @@
+<% if Modulo.activo?("etiquetas") %>
+  <%= form_with url: ajustes_sistema_path, method: :patch, class: "formulario" do |f| %>
+    <%= hidden_field_tag :volver, "etiqueta" %>
+    <div class="campos-4">
+      <% %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra].each do |clave| %>
+        <label class="block text-sm"><%= t("ajustes.claves.#{clave}") %>
+          <%= f.number_field "ajuste[#{clave}]", value: @ajustes[clave], min: 1, class: "entrada font-mono" %>
+        </label>
+      <% end %>
+      <label class="block text-sm md:col-span-2 xl:col-span-4"><%= t("ajustes.claves.etiqueta.leyenda") %>
+        <%= f.text_field "ajuste[etiqueta.leyenda]", value: @ajustes["etiqueta.leyenda"], class: "entrada" %>
+      </label>
+    </div>
+    <%= f.submit t("ajustes.guardar"), class: "btn btn-primary btn-lg" %>
+  <% end %>
+<% else %>
+  <p class="rounded bg-amber-50 p-4 text-sm"><%= t("ajustes.etiqueta_apagada") %> <%= link_to t("ajustes.secciones.modulos"), ajustes_seccion_path("modulos"), class: "enlace" %></p>
+<% end %>

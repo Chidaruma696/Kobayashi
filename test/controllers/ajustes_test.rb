@@ -26,7 +26,7 @@ class AjustesTest < ActionDispatch::IntegrationTest
   test "el administrador cambia lo del sistema y se nota en el ticket, la etiqueta y el piso de precio" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
     patch ajustes_sistema_path, params: { ajuste: { "negocio.nombre" => "Carnes Selectas", "negocio.pie_ticket" => "Vuelva pronto", "etiqueta.ancho" => "80", "etiqueta.alto" => "40", "caja.piso_precio" => "80" } }
-    assert_redirected_to ajustes_path
+    assert_redirected_to ajustes_seccion_path("modulos")
     assert_equal "Carnes Selectas", Ajuste["negocio.nombre"]
     assert_equal 80, Ajuste.entero("etiqueta.ancho")
     assert_equal "55", Ajuste::DEFAULTS["etiqueta.ancho"], "el default no cambia"
@@ -57,7 +57,7 @@ class MonedaTest < ActionDispatch::IntegrationTest
     assert_equal "−Q0.50", Dinero.pesos(-50)
     get caja_path
     assert_match 'window.MONEDA = {"simbolo":"Q","codigo":"GTQ"}', response.body
-    get ajustes_ticket_path
+    get ajustes_seccion_path("negocio")
     assert_select "iframe[srcdoc*='Q214.50']"
     patch ajustes_sistema_path, params: { ajuste: { "negocio.moneda" => "", "negocio.simbolo" => "" } }
     Current.reset

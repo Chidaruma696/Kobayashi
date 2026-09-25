@@ -80,6 +80,20 @@ es:
       imprimir_prueba: Imprimir prueba
       imprimir_prueba_ayuda: Manda esta muestra a la impresora, tal cual, para probar papel y ancho
     moneda_ayuda: 'El símbolo va pegado a la cifra en todo el sistema y en el ticket ($, €, Q, S/…). Sin conversiones: una sola moneda por instalación.'
+    moneda: Moneda
+    etiqueta_apagada: El módulo de etiquetas está apagado; enciéndelo en
+    secciones:
+      para_ti: Para ti
+      negocio: Negocio y ticket
+      modulos: Módulos
+      etiqueta: Etiqueta
+      caja: Caja
+    secciones_ayuda:
+      para_ti: Se aplican al momento al elegir; se guardan en tu usuario y te siguen en cualquier equipo.
+      negocio: Los datos del negocio como salen en el ticket, con el ticket al lado tal cual va a imprimirse. Vale para todas las sucursales.
+      modulos: Lo apagado desaparece de la cinta, de los roles y de sus pantallas; los datos se quedan. No se apaga un módulo con trabajo abierto.
+      etiqueta: Tamaño y textos por defecto de la etiqueta impresa; cada equipo puede afinarlos en la etiquetadora.
+      caja: Reglas de la caja para todas las sucursales.
   comun:
     cerrar: Cerrar
     guardar: Guardar

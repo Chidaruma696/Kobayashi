@@ -80,6 +80,20 @@ en:
       imprimir_prueba: Print test
       imprimir_prueba_ayuda: Sends this sample to the printer as is, to test paper and width
     moneda_ayuda: 'The symbol goes next to every amount in the system and on the ticket ($, €, Q, S/…). No conversions: one currency per installation.'
+    moneda: Currency
+    etiqueta_apagada: The labels module is off; turn it on in
+    secciones:
+      para_ti: For you
+      negocio: Business and ticket
+      modulos: Modules
+      etiqueta: Label
+      caja: Register
+    secciones_ayuda:
+      para_ti: Applied the moment you pick one; saved on your user, they follow you to any computer.
+      negocio: The business details as they appear on the ticket, with the ticket next to it exactly as it will print. Applies to every branch.
+      modulos: What is off disappears from the ribbon, the roles and its screens; the data stays. A module with open work cannot be turned off.
+      etiqueta: Default size and texts of the printed label; each station can fine-tune them in the labeler.
+      caja: Register rules for every branch.
   comun:
     cerrar: Close
     guardar: Save
