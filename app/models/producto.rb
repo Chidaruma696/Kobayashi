@@ -21,6 +21,8 @@ class Producto < ApplicationRecord
   validates :peso_fijo, numericality: { greater_than: 0 }, allow_nil: true
   # Días de vida desde que se etiqueta; vacío = no caduca.
   validates :dias_vida, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  # Merma que se espera (%) cuando este producto entra a una producción; vacío = sin alerta.
+  validates :merma_esperada, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
 
   scope :activos, -> { where(activo: true) }
 
@@ -55,6 +57,13 @@ class Producto < ApplicationRecord
     else
       precios_sucursal.find_or_initialize_by(sucursal: sucursal).update!(precio_centavos: Dinero.centavos(pesos))
     end
+  end
+
+  # Último precio de compra por unidad: el del renglón más reciente en una factura de proveedor
+  # abierta. Es lo único que sabe el sistema de costos; el inventario no lleva ninguno.
+  def ultimo_costo_centavos
+    FacturaProveedorLinea.joins(:factura).where(producto_id: id, facturas_proveedor: { estado: "abierta" })
+                         .order("facturas_proveedor.fecha DESC, factura_proveedor_lineas.id DESC").pick(:precio_centavos)
   end
 
   # Decimales con los que se captura la cantidad: fracciones a 3, piezas enteras.

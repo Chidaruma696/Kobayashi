@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_160001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_170001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -496,6 +496,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_160001) do
 
   create_table "producciones", force: :cascade do |t|
     t.decimal "cantidad", precision: 12, scale: 3, null: false
+    t.integer "costo_centavos"
     t.datetime "created_at", null: false
     t.string "estado", default: "abierta", null: false
     t.string "folio", null: false
@@ -518,6 +519,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_160001) do
     t.datetime "created_at", null: false
     t.integer "dias_vida"
     t.string "linea"
+    t.decimal "merma_esperada", precision: 5, scale: 2
     t.string "nombre", null: false
     t.decimal "peso_fijo", precision: 10, scale: 3
     t.integer "plu", null: false

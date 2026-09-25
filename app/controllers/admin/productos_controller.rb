@@ -39,7 +39,7 @@ module Admin
     end
 
     def permitidos
-      p = params.require(:producto).permit(:clave, :nombre, :linea, :unidad, :precio, :peso_fijo, :dias_vida, :plu, :activo)
+      p = params.require(:producto).permit(:clave, :nombre, :linea, :unidad, :precio, :peso_fijo, :dias_vida, :merma_esperada, :plu, :activo)
       p[:clave] = p[:clave].to_s.strip.upcase if p.key?(:clave)
       p[:peso_fijo] = nil if p.key?(:peso_fijo) && p[:peso_fijo].blank?
       p[:plu] = nil if p.key?(:plu) && p[:plu].blank?

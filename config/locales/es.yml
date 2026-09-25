@@ -925,6 +925,16 @@ es:
     confirmar_cerrar: ¿Cerrar? La diferencia (%{cantidad}) queda como merma.
     abierta_aviso: 'Producción %{folio} abierta: entraron %{cantidad} de %{producto}'
     cerrada_aviso: 'Producción cerrada: merma %{merma}'
+    merma_excedida: 'Merma de %{pct} % en %{folio}: se esperaba hasta %{esperada} %'
+    merma_por_revisar: '; la merma se pasó de lo esperado y queda por revisar'
+    esperada: 'se espera hasta %{pct} %'
+    costo_entrada: Costo de entrada
+    costo_ayuda: 'al último precio de compra; se reparte entre las salidas según lo que valen a precio de venta, la merma no se lleva nada.'
+    sin_costo: 'Sin costo de entrada: el producto no viene en ninguna factura de proveedor.'
+    valor_salidas: Valor de las salidas
+    costo_asignado: Costo asignado
+    costo_unitario: Costo por unidad
+    margen: Margen
   caja:
     nueva_venta: Nueva venta
     corte_de_caja: Corte de caja
@@ -1469,6 +1479,7 @@ es:
     linea: Línea
     kilo: kilo
     peso_por_pieza_opcional: Peso por pieza (kg, opcional)
+    merma_esperada: Merma esperada al producirlo (%; vacío = sin alerta)
     dias_vida: Días de vida (caducidad; vacío = no caduca)
     productos: Productos
     nuevo_producto: Nuevo producto

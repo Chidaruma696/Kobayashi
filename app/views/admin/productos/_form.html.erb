@@ -11,6 +11,9 @@
     <%= render "admin/campo", f: f, campo: :precio, etiqueta: t("comun.precio"), tipo: :number_field, opciones: { step: "0.01", min: 0 } %>
     <%= render "admin/campo", f: f, campo: :peso_fijo, etiqueta: t("admin.peso_por_pieza_opcional"), tipo: :number_field, opciones: { step: "0.001", min: 0 } %>
     <%= render "admin/campo", f: f, campo: :dias_vida, etiqueta: t("admin.dias_vida"), tipo: :number_field, opciones: { step: "1", min: 1 } %>
+    <% if Modulo.activo?("etiquetas") %>
+      <%= render "admin/campo", f: f, campo: :merma_esperada, etiqueta: t("admin.merma_esperada"), tipo: :number_field, opciones: { step: "0.1", min: 0, max: 100 } %>
+    <% end %>
   </div>
   <div class="flex flex-wrap items-center gap-4">
     <%= f.submit @producto.new_record? ? t("comun.crear") : t("comun.guardar"), class: "btn btn-primary btn-lg" %>

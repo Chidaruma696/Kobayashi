@@ -45,11 +45,19 @@ class PedidosFlujoTest < ActionDispatch::IntegrationTest
     post etiquetas_path, params: { produccion_id: produccion.id, producto_id: productos(:pechuga).id, tipo: "paquete", cantidad: "13" }
     assert_match "más de lo que entró", flash[:alert]
 
+    pollo.update!(merma_esperada: 10)
     post cerrar_produccion_path(produccion)
     assert_redirected_to produccion_path(produccion)
+    assert_match "queda por revisar", flash[:notice], "12 de 20 es 60 % de merma y se esperaba 10 %"
+    r = Revision.last
+    assert_equal produccion, r.revisable
+    assert_match "60.0 %", r.motivo
+    assert_equal 60_000, r.valor_centavos, "10 kg de exceso × 60.00"
     assert_equal BigDecimal("12"), produccion.reload.merma
     assert_equal BigDecimal("8"), Existencia.de(sucursales(:matriz), productos(:pechuga))
     get produccion_path(produccion)
+    assert_match "Sin costo de entrada", response.body
+    assert_match "se espera hasta 10", response.body
     assert_select "span", /cerrada/
   end
 

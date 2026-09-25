@@ -31,7 +31,7 @@
     <h2 class="mb-2 font-semibold"><%= t("inicio.mermas") %></h2>
     <table class="w-full text-sm">
       <% @mermas.each do |p| %>
-        <tr class="border-t border-stone-100"><td class="py-1 font-mono"><%= p.folio %></td><td class="py-1"><%= p.producto.nombre %></td><td class="py-1 text-right font-mono"><%= number_with_precision(p.merma, precision: 3) %> <%= t("comun.de") %> <%= number_with_precision(p.cantidad, precision: 3) %> (<%= p.cantidad.zero? ? 0 : (p.merma / p.cantidad * 100).round(1) %> %)</td></tr>
+        <tr class="border-t border-stone-100 <%= 'text-red-700' if p.merma_excedida? %>"><td class="py-1 font-mono"><%= p.folio %></td><td class="py-1"><%= p.producto.nombre %></td><td class="py-1 text-right font-mono"><%= number_with_precision(p.merma, precision: 3) %> <%= t("comun.de") %> <%= number_with_precision(p.cantidad, precision: 3) %> (<%= p.merma_pct %> %)</td></tr>
       <% end %>
       <% if @mermas.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("inicio.sin_producciones") %></td></tr><% end %>
     </table>

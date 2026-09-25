@@ -925,6 +925,16 @@ de:
     confirmar_cerrar: Schließen? Die Differenz (%{cantidad}) wird als Schwund gebucht.
     abierta_aviso: 'Produktion %{folio} geöffnet: %{cantidad} von %{producto} eingegangen'
     cerrada_aviso: 'Produktion geschlossen: Schwund %{merma}'
+    merma_excedida: 'Schwund von %{pct} % in %{folio}: erwartet waren bis zu %{esperada} %'
+    merma_por_revisar: '; der Schwund liegt über dem Erwarteten und geht zur Prüfung'
+    esperada: 'bis zu %{pct} % erwartet'
+    costo_entrada: Einsatzkosten
+    costo_ayuda: 'zum letzten Einkaufspreis; auf die Ausgänge nach ihrem Verkaufswert verteilt, der Schwund bekommt nichts.'
+    sin_costo: 'Keine Einsatzkosten: das Produkt steht auf keiner Lieferantenrechnung.'
+    valor_salidas: Wert der Ausgänge
+    costo_asignado: Zugeordnete Kosten
+    costo_unitario: Kosten je Einheit
+    margen: Marge
   caja:
     nueva_venta: Neuer Verkauf
     corte_de_caja: Kassenabschnitt
@@ -1469,6 +1479,7 @@ de:
     linea: Linie
     kilo: Kilo
     peso_por_pieza_opcional: Gewicht je Stück (kg, optional)
+    merma_esperada: Erwarteter Schwund bei Verarbeitung (%; leer = keine Warnung)
     dias_vida: Haltbarkeit (Tage; leer = läuft nicht ab)
     productos: Produkte
     nuevo_producto: Neues Produkt

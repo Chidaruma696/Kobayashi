@@ -925,6 +925,16 @@ en:
     confirmar_cerrar: Close? The difference (%{cantidad}) is recorded as shrinkage.
     abierta_aviso: 'Production run %{folio} opened: %{cantidad} of %{producto} came in'
     cerrada_aviso: 'Production run closed: shrinkage %{merma}'
+    merma_excedida: 'Shrinkage of %{pct} % on %{folio}: up to %{esperada} % was expected'
+    merma_por_revisar: '; shrinkage exceeded what was expected and goes to review'
+    esperada: 'up to %{pct} % expected'
+    costo_entrada: Input cost
+    costo_ayuda: 'at the last purchase price; split among the outputs by their sale value, shrinkage takes none.'
+    sin_costo: 'No input cost: the product is not on any supplier invoice.'
+    valor_salidas: Output value
+    costo_asignado: Assigned cost
+    costo_unitario: Cost per unit
+    margen: Margin
   caja:
     nueva_venta: New sale
     corte_de_caja: Register session
@@ -1469,6 +1479,7 @@ en:
     linea: Line
     kilo: kilo
     peso_por_pieza_opcional: Weight per piece (kg, optional)
+    merma_esperada: Expected shrinkage when processed (%; empty = no alert)
     dias_vida: Shelf life (days; empty = never expires)
     productos: Products
     nuevo_producto: New product

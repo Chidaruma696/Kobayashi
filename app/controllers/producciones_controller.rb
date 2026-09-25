@@ -25,12 +25,21 @@ class ProduccionesController < ApplicationController
   def show
     @produccion = Produccion.where(sucursal: sucursal_actual).includes(:producto).find(params[:id])
     @salidas = @produccion.salidas
+    @reparto = @produccion.reparto.index_by { |f| f[:producto] }
   end
 
+  # Cerrar es cerrar; si la merma se pasó de lo que el producto espera, queda por revisar con el
+  # exceso valuado a precio de catálogo. Es un aviso que no frena a nadie.
   def cerrar
     produccion = Produccion.where(sucursal: sucursal_actual).find(params[:id])
     produccion.cerrar!(usuario: usuario_actual)
-    redirect_to produccion_path(produccion), notice: t("produccion.cerrada_aviso", merma: "#{produccion.merma.to_s("F")} #{produccion.producto.unidad}")
+    aviso = t("produccion.cerrada_aviso", merma: "#{produccion.merma.to_s("F")} #{produccion.producto.unidad}")
+    if produccion.merma_excedida?
+      motivo = t("produccion.merma_excedida", pct: produccion.merma_pct, esperada: produccion.producto.merma_esperada.to_s("F"), folio: produccion.folio)
+      revisar_si_hace_falta(produccion, nil, motivo: motivo, valor_centavos: Revision.valor(produccion.exceso_merma, produccion.producto, sucursal_actual))
+      aviso += t("produccion.merma_por_revisar")
+    end
+    redirect_to produccion_path(produccion), notice: aviso
   rescue ArgumentError => e
     redirect_to produccion_path(params[:id]), alert: e.message
   end
