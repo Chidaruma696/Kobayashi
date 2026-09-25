@@ -222,12 +222,12 @@ class EtiquetadoraTest < ActionDispatch::IntegrationTest
 
   test "imprimir varias etiquetas con el tamaño elegido y copias de un código de proveedor" do
     ids = 2.times.map { Etiqueta.create!(tipo: "paquete", producto: productos(:pechuga), cantidad: 1, sucursal: sucursales(:matriz), usuario: usuarios(:admin), pedido_linea: pedido_lineas(:pechuga_5)).id }
-    get imprimir_etiquetas_path(ids: ids.join(","), ancho: 80, alto: 40, leyenda: "Select Meat")
+    get imprimir_etiquetas_path(ids: ids.join(","), ancho: 80, alto: 40, leyenda: "Elma Meat")
     assert_response :ok
     assert_select ".etiqueta", 2
     assert_select "svg", 2
     assert_match "size: 80mm 40mm", response.body
-    assert_match "Select Meat", response.body
+    assert_match "Elma Meat", response.body
     get imprimir_etiquetas_path(codigo: "750100012345", n: 3, nombre: "Cátsup")
     assert_select ".etiqueta", 3
     assert_select "svg", 3
