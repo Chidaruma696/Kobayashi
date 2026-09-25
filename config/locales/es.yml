@@ -1452,3 +1452,128 @@ es:
     pieza: Pieza
     litro: Litro
     metro: Metro
+  activerecord:
+    attributes:
+      producto:
+        clave: Clave
+        nombre: Nombre
+        linea: Línea
+        unidad: Unidad
+        precio: Precio
+        precio_centavos: Precio
+        peso_fijo: Peso por pieza
+        plu: PLU
+        activo: Activo
+        codigo: Código
+      usuario:
+        nombre: Nombre
+        usuario: Usuario
+        password: Contraseña
+        rol: Rol
+        sucursal: Sucursal
+        idioma: Idioma
+        tema: Tema
+        densidad: Densidad
+        letra: Tamaño de letra
+        activo: Activo
+      cliente:
+        nombre: Nombre
+        telefono: Teléfono
+        direccion: Dirección
+        ruta: Ruta
+        zona: Zona
+        orden: Orden
+        credito: Tipo de crédito
+        limite_credito: Límite de crédito
+        limite_credito_centavos: Límite de crédito
+        dia_corte: Día de corte
+        notas: Notas
+        activo: Activo
+      ruta:
+        nombre: Nombre
+        chofer: Chofer
+        activa: Activa
+        zonas: Zonas
+      zona:
+        nombre: Nombre
+        orden: Orden
+      sucursal:
+        codigo: Código
+        nombre: Nombre
+        tipo: Tipo
+        limite_efectivo: Efectivo máximo en gaveta
+        limite_efectivo_centavos: Efectivo máximo en gaveta
+        activa: Activa
+      promocion:
+        nombre: Nombre
+        producto: Producto
+        sucursal: Sucursal
+        tipo: Regla
+        precio: Precio
+        precio_centavos: Precio
+        porcentaje: Descuento %
+        cantidad_minima: Cantidad mínima
+        desde: Desde
+        hasta: Hasta
+        activa: Activa
+      convenio:
+        cliente: Cliente
+        lineas: Líneas de producto
+        excluir: Excluir
+        precio: Precio por kg
+        precio_centavos: Precio por kg
+        tope_cajas: Tope semanal
+        notas: Notas
+        activo: Activo
+      tipo_canastilla:
+        nombre: Nombre
+        color: Color
+        activo: Activo
+      rol:
+        nombre: Nombre
+        permisos: Permisos
+      pedido:
+        destino: Destino
+        sucursal_destino: Tienda
+        cliente: Cliente
+        notas: Notas
+        lineas: Renglones
+      pedido_linea:
+        producto: Producto
+        cantidad: Cantidad
+      salida:
+        sucursal_destino: Destino
+        cliente: Cliente
+        motivo: Motivo
+      etiqueta:
+        producto: Producto
+        cantidad: Cantidad
+        codigo: Código
+      codigo_barras:
+        codigo: Código
+      viaje:
+        ruta: Ruta
+        chofer: Chofer
+        fecha: Fecha
+        notas: Notas
+      conteo:
+        responsable: Responsable
+      ajuste:
+        clave: Clave
+        valor: Valor
+    models:
+      producto: Producto
+      usuario: Usuario
+      cliente: Cliente
+      ruta: Ruta
+      zona: Zona
+      sucursal: Sucursal
+      promocion: Promoción
+      convenio: Convenio
+      tipo_canastilla: Tipo de canastilla
+      rol: Rol
+      pedido: Pedido
+      salida: Salida
+      etiqueta: Etiqueta
+      viaje: Viaje
+      conteo: Conteo

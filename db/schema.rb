@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_24_150001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_100001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -391,20 +391,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_150001) do
   end
 
   create_table "producciones", force: :cascade do |t|
-    t.integer "autorizado_por_id"
     t.decimal "cantidad", precision: 12, scale: 3, null: false
     t.datetime "created_at", null: false
     t.string "estado", default: "abierta", null: false
     t.string "folio", null: false
-    t.string "justificacion"
     t.decimal "merma", precision: 12, scale: 3
-    t.integer "pedido_id"
     t.integer "producto_id", null: false
     t.integer "sucursal_id", null: false
     t.datetime "updated_at", null: false
     t.integer "usuario_id", null: false
-    t.index ["autorizado_por_id"], name: "index_producciones_on_autorizado_por_id"
-    t.index ["pedido_id"], name: "index_producciones_on_pedido_id"
     t.index ["producto_id"], name: "index_producciones_on_producto_id"
     t.index ["sucursal_id", "folio"], name: "index_producciones_on_sucursal_y_folio", unique: true
     t.index ["sucursal_id"], name: "index_producciones_on_sucursal_id"
@@ -612,7 +607,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_150001) do
     t.string "letra", default: "normal", null: false
     t.string "nombre", null: false
     t.string "password_digest", null: false
-    t.string "pin_digest"
     t.integer "rol_id", null: false
     t.integer "sucursal_id", null: false
     t.string "tema", default: "claro", null: false
@@ -785,11 +779,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_24_150001) do
   add_foreign_key "pedidos", "usuarios"
   add_foreign_key "precios_sucursal", "productos"
   add_foreign_key "precios_sucursal", "sucursales"
-  add_foreign_key "producciones", "pedidos"
   add_foreign_key "producciones", "productos"
   add_foreign_key "producciones", "sucursales"
   add_foreign_key "producciones", "usuarios"
-  add_foreign_key "producciones", "usuarios", column: "autorizado_por_id"
   add_foreign_key "promociones", "productos"
   add_foreign_key "promociones", "sucursales"
   add_foreign_key "retiros", "cortes"

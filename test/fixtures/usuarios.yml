@@ -1,12 +1,10 @@
 DEFAULTS: &defaults
   password_digest: <%= BCrypt::Password.create("secreto1", cost: 4) %>
-  pin_digest: <%= BCrypt::Password.create("4321", cost: 4) %>
   activo: true
 
 admin:
   idioma: es
   <<: *defaults
-  pin_digest: <%= BCrypt::Password.create("9999", cost: 4) %>
   nombre: Administrador
   usuario: admin
   rol: administrador

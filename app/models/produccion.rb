@@ -1,7 +1,6 @@
 # Entra un producto en una cantidad y salen las etiquetas que se crean bajo la producción.
 # Nunca sale más de lo que entró; la diferencia al cerrar es la merma. Eso es todo: no va contra
-# un pedido ni pide motivo. (Las columnas pedido_id, autorizado_por y justificacion quedan en la
-# tabla de cuando sí; ya no se usan.)
+# un pedido ni pide motivo.
 class Produccion < ApplicationRecord
   self.table_name = "producciones"
 

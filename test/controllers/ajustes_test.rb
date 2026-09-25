@@ -18,7 +18,7 @@ class AjustesTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select "h1", "Einstellungen"
     patch ajustes_preferencias_path, params: { usuario: { idioma: "xx" } }
-    assert_match "Idioma", flash[:alert]
+    assert_match "Sprache", flash[:alert]
     patch ajustes_sistema_path, params: { ajuste: { "negocio.nombre" => "X" } }
     assert_response :forbidden
   end

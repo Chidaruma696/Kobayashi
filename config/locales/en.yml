@@ -1452,3 +1452,128 @@ en:
     pieza: Piece
     litro: Litre
     metro: Metre
+  activerecord:
+    attributes:
+      producto:
+        clave: Key
+        nombre: Name
+        linea: Line
+        unidad: Unit
+        precio: Price
+        precio_centavos: Price
+        peso_fijo: Weight per piece
+        plu: PLU
+        activo: Active
+        codigo: Code
+      usuario:
+        nombre: Name
+        usuario: Username
+        password: Password
+        rol: Role
+        sucursal: Branch
+        idioma: Language
+        tema: Theme
+        densidad: Density
+        letra: Font size
+        activo: Active
+      cliente:
+        nombre: Name
+        telefono: Phone
+        direccion: Address
+        ruta: Route
+        zona: Zone
+        orden: Order
+        credito: Credit type
+        limite_credito: Credit limit
+        limite_credito_centavos: Credit limit
+        dia_corte: Cutoff day
+        notas: Notes
+        activo: Active
+      ruta:
+        nombre: Name
+        chofer: Driver
+        activa: Active
+        zonas: Zones
+      zona:
+        nombre: Name
+        orden: Order
+      sucursal:
+        codigo: Code
+        nombre: Name
+        tipo: Type
+        limite_efectivo: Cash limit in drawer
+        limite_efectivo_centavos: Cash limit in drawer
+        activa: Active
+      promocion:
+        nombre: Name
+        producto: Product
+        sucursal: Branch
+        tipo: Rule
+        precio: Price
+        precio_centavos: Price
+        porcentaje: Discount %
+        cantidad_minima: Minimum quantity
+        desde: From
+        hasta: To
+        activa: Active
+      convenio:
+        cliente: Customer
+        lineas: Product lines
+        excluir: Exclude
+        precio: Price per kg
+        precio_centavos: Price per kg
+        tope_cajas: Weekly cap
+        notas: Notes
+        activo: Active
+      tipo_canastilla:
+        nombre: Name
+        color: Color
+        activo: Active
+      rol:
+        nombre: Name
+        permisos: Permissions
+      pedido:
+        destino: Destination
+        sucursal_destino: Store
+        cliente: Customer
+        notas: Notes
+        lineas: Lines
+      pedido_linea:
+        producto: Product
+        cantidad: Quantity
+      salida:
+        sucursal_destino: Destination
+        cliente: Customer
+        motivo: Reason
+      etiqueta:
+        producto: Product
+        cantidad: Quantity
+        codigo: Code
+      codigo_barras:
+        codigo: Code
+      viaje:
+        ruta: Route
+        chofer: Driver
+        fecha: Date
+        notas: Notes
+      conteo:
+        responsable: Responsible
+      ajuste:
+        clave: Key
+        valor: Value
+    models:
+      producto: Product
+      usuario: User
+      cliente: Customer
+      ruta: Route
+      zona: Zone
+      sucursal: Branch
+      promocion: Promotion
+      convenio: Agreement
+      tipo_canastilla: Crate type
+      rol: Role
+      pedido: Order
+      salida: Transfer
+      etiqueta: Label
+      viaje: Trip
+      conteo: Count
