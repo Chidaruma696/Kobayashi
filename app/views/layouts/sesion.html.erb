@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>Kobayashi</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#dd8082">
+    <link rel="manifest" href="<%= pwa_manifest_path(format: :json) %>">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <%= csrf_meta_tags %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>

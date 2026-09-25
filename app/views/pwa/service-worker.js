@@ -1,26 +1,28 @@
-// Add a service worker for processing Web Push notifications:
-//
-// self.addEventListener("push", async (event) => {
-//   const { title, options } = await event.data.json()
-//   event.waitUntil(self.registration.showNotification(title, options))
-// })
-//
-// self.addEventListener("notificationclick", function(event) {
-//   event.notification.close()
-//   event.waitUntil(
-//     clients.matchAll({ type: "window" }).then((clientList) => {
-//       for (let i = 0; i < clientList.length; i++) {
-//         let client = clientList[i]
-//         let clientPath = (new URL(client.url)).pathname
-//
-//         if (clientPath == event.notification.data.path && "focus" in client) {
-//           return client.focus()
-//         }
-//       }
-//
-//       if (clients.openWindow) {
-//         return clients.openWindow(event.notification.data.path)
-//       }
-//     })
-//   )
-// })
+// Service worker de Kobayashi. Hoy hace lo mínimo para que la app se pueda instalar y para que los
+// archivos estáticos (CSS, JS, fuentes, iconos) salgan de la caché: la app sigue necesitando el
+// servidor para todo lo demás. Si no hay red y se pide una página, se enseña /offline.html.
+const CACHE = "kobayashi-v1"
+const OFFLINE = "/offline.html"
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE).then((c) => c.add(OFFLINE)).then(() => self.skipWaiting()))
+})
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(caches.keys().then((claves) => Promise.all(claves.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()))
+})
+
+self.addEventListener("fetch", (event) => {
+  const { request } = event
+  if (request.method !== "GET") return
+  const url = new URL(request.url)
+  // Assets con huella en el nombre: no cambian nunca, de la caché primero.
+  if (url.pathname.startsWith("/assets/") || /\.(png|ico|woff2?)$/.test(url.pathname)) {
+    event.respondWith(caches.open(CACHE).then(async (c) => (await c.match(request)) || fetch(request).then((r) => { if (r.ok) c.put(request, r.clone()); return r })))
+    return
+  }
+  // Páginas: siempre a la red; sin red, la página de "sin conexión".
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).catch(() => caches.match(OFFLINE)))
+  }
+})

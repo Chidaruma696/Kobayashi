@@ -4,6 +4,9 @@ import "controllers"
 
 // Turbo cambia el <body> pero no toca los atributos de <html>, y ahí viven el idioma, el tema,
 // la densidad y la letra del usuario: se copian del documento nuevo en cada render.
+// PWA: con el service worker registrado, el navegador ofrece instalar Kobayashi como app.
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/service-worker", { scope: "/" }).catch(() => {})
+
 // Lo que se pega debajo de la cinta (banner del pedido, vista previa del ticket) necesita saber cuánto mide.
 const medirCinta = () => document.documentElement.style.setProperty("--cinta-alto", `${document.getElementById("cinta")?.offsetHeight || 0}px`)
 document.addEventListener("turbo:load", medirCinta)

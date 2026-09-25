@@ -210,6 +210,7 @@ es:
     tecnologia: 'Báscula por Web Serial vía Kana. Hecho con Rails, Hotwire y Tailwind. Código abierto bajo licencia Apache 2.0: úsalo con crédito a Chidaruma696.'
     codigo: Código en GitHub
     reportar: Reportar un problema
+    pwa_descripcion: Punto de venta, etiquetador y trastienda por módulos.
   sesion:
     usuario: Usuario
     contrasena: Contraseña

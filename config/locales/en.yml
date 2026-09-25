@@ -210,6 +210,7 @@ en:
     tecnologia: 'Scale over Web Serial via Kana. Built with Rails, Hotwire and Tailwind. Open source under the Apache 2.0 license: use it with credit to Chidaruma696.'
     codigo: Code on GitHub
     reportar: Report a problem
+    pwa_descripcion: Point of sale, labeler and back office, by modules.
   sesion:
     usuario: User
     contrasena: Password

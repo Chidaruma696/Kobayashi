@@ -1,22 +1,17 @@
 {
   "name": "Kobayashi",
-  "icons": [
-    {
-      "src": "/icon.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "/icon.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "maskable"
-    }
-  ],
+  "short_name": "Kobayashi",
+  "description": "<%= t("acerca.pwa_descripcion") %>",
+  "lang": "<%= I18n.locale %>",
   "start_url": "/",
-  "display": "standalone",
   "scope": "/",
-  "description": "Kobayashi.",
-  "theme_color": "red",
-  "background_color": "red"
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#dd8082",
+  "background_color": "#f7f5ee",
+  "icons": [
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "/icon-maskable-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
 }

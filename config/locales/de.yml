@@ -210,6 +210,7 @@ de:
     tecnologia: 'Waage über Web Serial mit Kana. Gebaut mit Rails, Hotwire und Tailwind. Open Source unter der Apache-2.0-Lizenz: nutze es mit Nennung von Chidaruma696.'
     codigo: Code auf GitHub
     reportar: Problem melden
+    pwa_descripcion: Kasse, Etikettierer und Verwaltung, nach Modulen.
   sesion:
     usuario: Benutzer
     contrasena: Passwort
