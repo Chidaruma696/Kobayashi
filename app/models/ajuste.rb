@@ -25,6 +25,8 @@ class Ajuste < ApplicationRecord
     "etiqueta.letra" => "14",
     "caja.piso_precio" => "50",          # % del catálogo por debajo del cual no se vende ni con permiso
     "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
+    "caja.denominaciones" => "1000,500,200,100,50,20,10,5,2,1,0.5", # billetes y monedas para contar la gaveta
+    "caja.tope_diferencia" => "0",       # pesos; si |contado − esperado| lo pasa, el cierre pide motivo. 0 = sin tope
     "folios.modo" => "por_documento",   # o "unico": una sola numeración corrida para todo
     "folios.unico" => "F",
     "folios.sucursal" => "0",            # "1" = el código de la sucursal va delante del folio
@@ -38,7 +40,8 @@ class Ajuste < ApplicationRecord
     "modulos.rutas" => "1",
     "modulos.conteos" => "1"
   }.freeze
-  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta ticket.ancho].freeze
+  ENTEROS = %w[etiqueta.ancho etiqueta.alto etiqueta.barras etiqueta.letra caja.piso_precio caja.limite_gaveta caja.tope_diferencia ticket.ancho].freeze
+  DENOMINACIONES = /\A\d+(\.\d{1,2})?(,\d+(\.\d{1,2})?)*\z/
   LOGO_MAX = 400_000 # caracteres del data URL (~300 KB de imagen)
 
   validates :clave, presence: true, uniqueness: true, inclusion: { in: DEFAULTS.keys }
@@ -69,6 +72,7 @@ class Ajuste < ApplicationRecord
         raise ArgumentError, I18n.t("errores.ajuste.entero", clave: clave) if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
         raise ArgumentError, I18n.t("errores.ajuste.prefijo", clave: clave) if clave.start_with?("folios.") && !%w[folios.modo folios.sucursal].include?(clave) && (valor = valor.upcase) !~ Folio::PREFIJO
         raise ArgumentError, I18n.t("errores.ajuste.modo_folios") if clave == "folios.modo" && valor.present? && !Folio::MODOS.include?(valor)
+        raise ArgumentError, I18n.t("errores.ajuste.denominaciones") if clave == "caja.denominaciones" && valor.present? && (valor = valor.delete(" ")) !~ DENOMINACIONES
         raise ArgumentError, I18n.t("errores.ajuste.logo") if clave == "ticket.logo" && valor.present? && (valor.length > LOGO_MAX || valor !~ %r{\Adata:image/(png|jpeg|gif|webp);base64,})
         registro = find_or_initialize_by(clave: clave)
         valor.blank? && !SIN_PREFIJO.include?(clave) ? registro.destroy : registro.update!(valor: valor)

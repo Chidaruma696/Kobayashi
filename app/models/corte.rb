@@ -8,6 +8,9 @@ class Corte < ApplicationRecord
   has_many :devoluciones, dependent: :restrict_with_error
   has_many :abonos, dependent: :restrict_with_error
 
+  # { centavos => cuántos } de cómo se contó la gaveta al cerrar; vacío si solo se tecleó el total.
+  serialize :desglose, coder: JSON
+
   before_validation :asignar_folio, on: :create
 
   validates :folio, presence: true, uniqueness: { scope: :sucursal_id }
@@ -20,6 +23,22 @@ class Corte < ApplicationRecord
 
   def self.abierto_en(sucursal)
     abiertos.find_by(sucursal: sucursal)
+  end
+
+  # Billetes y monedas con que se cuenta la gaveta, en centavos y de mayor a menor (Ajustes › Caja).
+  def self.denominaciones
+    Ajuste["caja.denominaciones"].delete(" ").split(",").map { |d| Dinero.centavos(d) }.select(&:positive?).uniq.sort.reverse
+  end
+
+  # Diferencia (contado − esperado) a partir de la cual el cierre pide motivo; 0 = sin tope.
+  def self.tope_diferencia_centavos
+    Ajuste.entero("caja.tope_diferencia") * 100
+  end
+
+  # Suma de un desglose { centavos => cuántos }; lo que no es denominación válida se ignora.
+  def self.sumar(desglose)
+    validas = denominaciones
+    desglose.to_h.sum { |valor, cuantos| validas.include?(valor.to_i) ? valor.to_i * cuantos.to_i : 0 }
   end
 
   # Un corte abierto por sucursal.
@@ -72,11 +91,26 @@ class Corte < ApplicationRecord
     retiros.create!(monto_centavos: monto, motivo: motivo, usuario: usuario, autorizado_por: autorizado_por)
   end
 
-  def cerrar!(contado_centavos:, usuario:)
+  # Cierra contando: con el desglose por denominación (y el total sale de ahí) o con el total tecleado.
+  def cerrar!(contado_centavos: nil, usuario:, desglose: nil)
     raise ArgumentError, I18n.t("errores.corte.ya_cerrado") unless abierto?
+    validas = self.class.denominaciones
+    limpio = desglose.to_h.to_h { |v, c| [ v.to_i, c.to_i ] }.select { |v, c| validas.include?(v) && c.positive? }
+    contado = limpio.any? ? self.class.sumar(limpio) : contado_centavos.to_i
     esperado = efectivo_esperado_centavos
-    update!(estado: "cerrado", contado_centavos: contado_centavos.to_i, esperado_centavos: esperado,
-            diferencia_centavos: contado_centavos.to_i - esperado, cerrado_en: Time.current, cerrado_por: usuario)
+    update!(estado: "cerrado", contado_centavos: contado, esperado_centavos: esperado, desglose: limpio.presence,
+            diferencia_centavos: contado - esperado, cerrado_en: Time.current, cerrado_por: usuario)
+  end
+
+  # ¿La diferencia del cierre se pasa del tope del negocio?
+  def self.excede_tope?(diferencia_centavos)
+    tope = tope_diferencia_centavos
+    tope.positive? && diferencia_centavos.abs > tope
+  end
+
+  # "3 × $500, 8 × $100", para enseñar cómo se contó.
+  def desglose_texto
+    (desglose || {}).sort_by { |v, _| -v.to_i }.map { |v, c| "#{c} × #{Dinero.pesos(v.to_i)}" }.join(", ")
   end
 
   def to_s

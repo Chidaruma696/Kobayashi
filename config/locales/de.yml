@@ -49,6 +49,8 @@ de:
       caja:
         piso_precio: Preisuntergrenze (% des Listenpreises)
         limite_gaveta: Ladenlimit für neue Filialen ($)
+        denominaciones: Scheine und Münzen zum Zählen der Lade (durch Komma getrennt)
+        tope_diferencia: Maximale Differenz beim Abschluss ($; 0 = ohne Grenze)
       ticket:
         lema: Slogan oder Zeile unter dem Namen
         rfc: Steuernummer (RFC, USt-IdNr. …)
@@ -357,6 +359,7 @@ de:
       cerrado: der Kassenabschnitt ist geschlossen
       sin_efectivo: so viel Bargeld ist nicht in der Lade (%{monto})
       ya_cerrado: der Kassenabschnitt ist bereits geschlossen
+      diferencia_sin_motivo: 'die Differenz (%{diferencia}) übersteigt die Grenze (%{tope}): Grund angeben'
       sin_caja_en_almacen: '%{sucursal} ist ein Lager: dort gibt es keine Kasse'
     caja:
       clave_ticket: der Ticketschlüssel fehlt
@@ -436,6 +439,7 @@ de:
       logo: das Logo muss ein PNG-, JPG- oder WebP-Bild unter 300 KB sein
       prefijo: '%{clave}: das Präfix hat bis zu 4 Buchstaben oder Ziffern, ohne Bindestrich'
       modo_folios: unbekannter Nummerierungsmodus
+      denominaciones: Stückelungen durch Komma getrennt, z. B. 500,200,100,50,20,10,5,2,1,0.5
     movimiento:
       tipo_desconocido: 'unbekannte Bewegungsart: %{tipo}'
     canastillas:
@@ -531,6 +535,7 @@ de:
       movimiento: '%{tipo} über %{cantidad}'
       retiro: Abschöpfung von %{monto} aus Abschnitt %{folio}
       venta_linea: 'Preis gesenkt in %{folio}: %{producto} auf %{precio} (Katalog %{catalogo})'
+      corte: 'Abschnitt %{folio} mit einer Differenz von %{diferencia} geschlossen'
       salida: Wareneingang %{folio} in %{destino} mit Fehlmengen
   estados:
     pendiente: offen
@@ -583,6 +588,7 @@ de:
     caja.vender: An der Kasse verkaufen
     caja.abrir: Kasse öffnen und abschließen
     caja.retirar: Bargeld in den Tresor legen
+    caja.diferencia: Abschluss mit einer Differenz über der Grenze
     caja.bajar_precio: Preis unter Liste freigeben
     caja.devolver: Kundenrückgaben annehmen
     etiquetas.crear: Pakete, Kisten und Paletten etikettieren (auf Bestellung oder Produktion)
@@ -925,9 +931,12 @@ de:
     retiro_por_revisar: Die Abschöpfung wird erfasst und geht zur Prüfung.
     retirar: Abschöpfen
     cerrar_corte: Abschnitt schließen
-    cerrar_corte_ayuda: Zähle das Bargeld in der Lade (mit Wechselgeld) und trage es ein. Das System speichert den Sollbetrag und die Differenz.
+    cerrar_corte_ayuda: Zähle, wie viele Scheine und Münzen von jeder Sorte da sind (mit Wechselgeld) oder gib die Summe ein. Das System speichert Soll, Aufschlüsselung und Differenz.
     confirmar_cerrar_corte: Abschnitt %{folio} schließen?
     efectivo_contado: Gezähltes Bargeld
+    suma: Summe
+    tope_diferencia_aviso: Die Differenz übersteigt %{monto}.
+    motivo_diferencia: Grund der Differenz
     cortes_cerrados: Geschlossene Abschnitte
     abierto: Geöffnet
     cerrado: Geschlossen

@@ -25,9 +25,13 @@ class AjustesTest < ActionDispatch::IntegrationTest
 
   test "el administrador cambia lo del sistema y se nota en el ticket, la etiqueta y el piso de precio" do
     post entrar_path, params: { usuario: "admin", password: "secreto1" }
-    patch ajustes_sistema_path, params: { ajuste: { "negocio.nombre" => "Carnes Selectas", "negocio.pie_ticket" => "Vuelva pronto", "etiqueta.ancho" => "80", "etiqueta.alto" => "40", "caja.piso_precio" => "80" } }
+    patch ajustes_sistema_path, params: { ajuste: { "negocio.nombre" => "Carnes Selectas", "negocio.pie_ticket" => "Vuelva pronto", "etiqueta.ancho" => "80", "etiqueta.alto" => "40", "caja.piso_precio" => "80", "caja.denominaciones" => "100, 50, 20", "caja.tope_diferencia" => "25" } }
     assert_redirected_to ajustes_seccion_path("modulos")
     assert_equal "Carnes Selectas", Ajuste["negocio.nombre"]
+    assert_equal [ 10_000, 5_000, 2_000 ], Corte.denominaciones
+    assert_equal 2_500, Corte.tope_diferencia_centavos
+    patch ajustes_sistema_path, params: { ajuste: { "caja.denominaciones" => "cien" }, volver: "caja" }
+    assert_match "separadas por coma", flash[:alert]
     assert_equal 80, Ajuste.entero("etiqueta.ancho")
     assert_equal "55", Ajuste::DEFAULTS["etiqueta.ancho"], "el default no cambia"
     get imprimir_etiquetas_path(codigo: "750100012345", n: 1, nombre: "Cátsup")

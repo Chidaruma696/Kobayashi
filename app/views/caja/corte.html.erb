@@ -25,11 +25,27 @@
         </ul>
       <% end %>
     </div>
-    <div class="card">
+    <div class="card" data-controller="gaveta" data-gaveta-esperado-value="<%= @corte.efectivo_esperado_centavos %>" data-gaveta-tope-value="<%= Corte.tope_diferencia_centavos %>" data-gaveta-simbolo-value="<%= Ajuste.simbolo %>">
       <h2 class="mb-2 font-semibold"><%= t("caja.cerrar_corte") %></h2>
       <p class="mb-2 text-sm text-stone-600"><%= t("caja.cerrar_corte_ayuda") %></p>
-      <%= form_with url: caja_cerrar_path, class: "flex items-end gap-3 text-sm", data: { turbo_confirm: t("caja.confirmar_cerrar_corte", folio: @corte.folio) } do |f| %>
-        <div><%= f.label :contado, t("caja.efectivo_contado"), class: "block" %><%= f.number_field :contado, step: "0.01", min: 0, required: true, class: "rounded border border-stone-300 px-3 py-2 font-mono" %></div>
+      <%= form_with url: caja_cerrar_path, class: "space-y-3 text-sm", data: { turbo_confirm: t("caja.confirmar_cerrar_corte", folio: @corte.folio) } do |f| %>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3">
+          <% Corte.denominaciones.each do |valor| %>
+            <label class="flex items-center justify-between gap-2"><span class="font-mono text-stone-700"><%= pesos(valor) %></span>
+              <%= number_field_tag "denominacion[#{valor}]", nil, min: 0, step: 1, inputmode: "numeric", class: "w-20 rounded border border-stone-300 px-2 py-1 text-right font-mono", data: { gaveta_target: "cantidad", valor: valor, action: "input->gaveta#sumar" } %></label>
+          <% end %>
+        </div>
+        <div class="flex flex-wrap items-end gap-4 border-t border-stone-100 pt-3">
+          <div><%= f.label :contado, t("caja.efectivo_contado"), class: "block" %><%= f.number_field :contado, step: "0.01", min: 0, required: true, class: "rounded border border-stone-300 px-3 py-2 font-mono", data: { gaveta_target: "contado", action: "input->gaveta#tecleado" } %></div>
+          <div><div class="text-xs uppercase text-stone-500"><%= t("caja.suma") %></div><div class="font-mono text-lg" data-gaveta-target="suma"><%= pesos(0) %></div></div>
+          <div><div class="text-xs uppercase text-stone-500"><%= t("caja.diferencia") %></div><div class="font-mono text-lg" data-gaveta-target="diferencia"><%= pesos(-@corte.efectivo_esperado_centavos) %></div></div>
+        </div>
+        <% if Corte.tope_diferencia_centavos.positive? %>
+          <div class="hidden" data-gaveta-target="motivo">
+            <p class="mb-1 text-xs text-amber-700"><%= t("caja.tope_diferencia_aviso", monto: pesos(Corte.tope_diferencia_centavos)) %><%= " " + t("caja.retiro_por_revisar") unless puede?("caja.diferencia") %></p>
+            <%= f.text_field :motivo, placeholder: t("caja.motivo_diferencia"), class: "w-full rounded border border-stone-300 px-3 py-2" %>
+          </div>
+        <% end %>
         <%= f.submit t("caja.cerrar_corte"), class: "btn btn-danger" %>
       <% end %>
     </div>
@@ -47,7 +63,7 @@
           <td class="px-3 py-2"><%= l(c.cerrado_en, format: :short) if c.cerrado_en %></td>
           <td class="px-3 py-2"><%= c.usuario %></td>
           <td class="px-3 py-2 text-right font-mono"><%= pesos(c.esperado_centavos) %></td>
-          <td class="px-3 py-2 text-right font-mono"><%= pesos(c.contado_centavos) %></td>
+          <td class="px-3 py-2 text-right font-mono" title="<%= c.desglose_texto %>"><%= pesos(c.contado_centavos) %></td>
           <td class="px-3 py-2 text-right font-mono <%= c.diferencia_centavos.to_i.negative? ? 'text-red-700' : 'text-green-700' %>"><%= pesos(c.diferencia_centavos) %></td>
         </tr>
       <% end %>

@@ -4,6 +4,7 @@ module Permiso
     "caja.vender" => "Vender en caja",
     "caja.abrir" => "Abrir y cerrar caja",
     "caja.retirar" => "Retirar efectivo a caja fuerte",
+    "caja.diferencia" => "Cerrar el corte con una diferencia mayor al tope",
     "caja.bajar_precio" => "Autorizar un precio por debajo del catálogo",
     "caja.devolver" => "Recibir devoluciones de clientes",
     "etiquetas.crear" => "Etiquetar paquetes, cajas y tarimas (sobre pedido o producción)",

@@ -49,6 +49,8 @@ es:
       caja:
         piso_precio: Piso de precio (% del catálogo)
         limite_gaveta: Tope de gaveta para sucursales nuevas ($)
+        denominaciones: Billetes y monedas para contar la gaveta (separados por coma)
+        tope_diferencia: Tope de diferencia al cerrar el corte ($; 0 = sin tope)
       ticket:
         lema: Lema o renglón bajo el nombre
         rfc: Identificación fiscal (RFC, NIT…)
@@ -357,6 +359,7 @@ es:
       cerrado: el corte está cerrado
       sin_efectivo: no hay tanto efectivo en la gaveta (%{monto})
       ya_cerrado: el corte ya está cerrado
+      diferencia_sin_motivo: 'la diferencia (%{diferencia}) pasa del tope (%{tope}): escribe el motivo'
       sin_caja_en_almacen: '%{sucursal} es un almacén: ahí no hay caja'
     caja:
       clave_ticket: hace falta la clave del ticket
@@ -436,6 +439,7 @@ es:
       logo: el logo debe ser una imagen PNG, JPG o WebP de menos de 300 KB
       prefijo: '%{clave}: el prefijo lleva hasta 4 letras o números, sin guion'
       modo_folios: modo de numeración desconocido
+      denominaciones: las denominaciones van separadas por coma, por ejemplo 500,200,100,50,20,10,5,2,1,0.5
     movimiento:
       tipo_desconocido: 'tipo de movimiento desconocido: %{tipo}'
     canastillas:
@@ -531,6 +535,7 @@ es:
       movimiento: '%{tipo} de %{cantidad}'
       retiro: Retiro de %{monto} del corte %{folio}
       venta_linea: 'Precio bajado en %{folio}: %{producto} a %{precio} (catálogo %{catalogo})'
+      corte: 'Corte %{folio} cerrado con diferencia de %{diferencia}'
       salida: Recepción de %{folio} en %{destino} con faltantes
   estados:
     pendiente: pendiente
@@ -583,6 +588,7 @@ es:
     caja.vender: Vender en caja
     caja.abrir: Abrir y cerrar caja
     caja.retirar: Retirar efectivo a caja fuerte
+    caja.diferencia: Cerrar el corte con una diferencia mayor al tope
     caja.bajar_precio: Autorizar un precio por debajo del catálogo
     caja.devolver: Recibir devoluciones de clientes
     etiquetas.crear: Etiquetar paquetes, cajas y tarimas (sobre pedido o producción)
@@ -925,9 +931,12 @@ es:
     retiro_por_revisar: El retiro se registra y queda por revisar.
     retirar: Retirar
     cerrar_corte: Cerrar corte
-    cerrar_corte_ayuda: Cuenta el efectivo de la gaveta (con el fondo) y escríbelo. El sistema guarda lo esperado y la diferencia.
+    cerrar_corte_ayuda: Cuenta cuántos billetes y monedas hay de cada uno (con el fondo) o escribe el total. El sistema guarda lo esperado, el desglose y la diferencia.
     confirmar_cerrar_corte: ¿Cerrar el corte %{folio}?
     efectivo_contado: Efectivo contado
+    suma: Suma
+    tope_diferencia_aviso: La diferencia pasa de %{monto}.
+    motivo_diferencia: Motivo de la diferencia
     cortes_cerrados: Cortes cerrados
     abierto: Abierto
     cerrado: Cerrado

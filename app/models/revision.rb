@@ -56,6 +56,7 @@ class Revision < ApplicationRecord
     when Movimiento then I18n.t("revisiones.desc.movimiento", tipo: revisable.nombre_tipo, cantidad: cantidad_de(revisable))
     when Salida then I18n.t("revisiones.desc.salida", folio: revisable.folio, destino: revisable.destino)
     when Retiro then I18n.t("revisiones.desc.retiro", monto: Dinero.pesos(revisable.monto_centavos), folio: revisable.corte.folio)
+    when Corte then I18n.t("revisiones.desc.corte", folio: revisable.folio, diferencia: Dinero.pesos(revisable.diferencia_centavos))
     when VentaLinea then I18n.t("revisiones.desc.venta_linea", folio: revisable.venta.folio, producto: revisable.producto.nombre, precio: Dinero.pesos(revisable.precio_centavos), catalogo: Dinero.pesos(revisable.catalogo_centavos))
     else "#{revisable_type} #{revisable_id}"
     end

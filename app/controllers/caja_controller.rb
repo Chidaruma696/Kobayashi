@@ -73,12 +73,23 @@ class CajaController < ApplicationController
     redirect_to caja_corte_path, alert: e.message
   end
 
+  # Se cuenta por billetes y monedas (denominacion[centavos] = cuántos) o se teclea el total. Si la
+  # diferencia se pasa del tope y quien cierra no tiene caja.diferencia, hace falta motivo y cae a revisión.
   def cerrar
     autorizar!("caja.abrir")
     raise ArgumentError, t("errores.caja.sin_caja_simple") unless @corte
-    @corte.cerrar!(contado_centavos: Dinero.centavos(params[:contado]), usuario: usuario_actual)
-    redirect_to caja_corte_path, notice: t("caja.avisos.corte_cerrado", folio: @corte.folio, esperado: Dinero.pesos(@corte.esperado_centavos), contado: Dinero.pesos(@corte.contado_centavos), diferencia: Dinero.pesos(@corte.diferencia_centavos))
-  rescue ArgumentError => e
+    desglose = params.fetch(:denominacion, {}).to_unsafe_h.select { |_, c| c.to_i.positive? }
+    contado = desglose.any? ? Corte.sumar(desglose) : Dinero.centavos(params[:contado])
+    diferencia = contado - @corte.efectivo_esperado_centavos
+    autoriza = Corte.excede_tope?(diferencia) ? autorizador_o_revision("caja.diferencia") : usuario_actual
+    if autoriza.nil? && params[:motivo].blank?
+      raise ArgumentError, t("errores.corte.diferencia_sin_motivo", diferencia: Dinero.pesos(diferencia), tope: Dinero.pesos(Corte.tope_diferencia_centavos))
+    end
+    @corte.cerrar!(contado_centavos: contado, usuario: usuario_actual, desglose: desglose)
+    revisar_si_hace_falta(@corte, autoriza, motivo: params[:motivo], valor_centavos: diferencia.abs)
+    aviso = t("caja.avisos.corte_cerrado", folio: @corte.folio, esperado: Dinero.pesos(@corte.esperado_centavos), contado: Dinero.pesos(@corte.contado_centavos), diferencia: Dinero.pesos(@corte.diferencia_centavos))
+    redirect_to caja_corte_path, notice: aviso + (autoriza ? "" : t("caja.avisos.queda_por_revisar"))
+  rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to caja_corte_path, alert: e.message
   end
 

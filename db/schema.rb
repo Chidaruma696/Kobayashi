@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_140001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_150001) do
   create_table "abonos", force: :cascade do |t|
     t.integer "cliente_id", null: false
     t.integer "corte_id"
@@ -170,6 +170,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_140001) do
     t.integer "cerrado_por_id"
     t.integer "contado_centavos"
     t.datetime "created_at", null: false
+    t.text "desglose"
     t.integer "diferencia_centavos"
     t.integer "esperado_centavos"
     t.string "estado", default: "abierto", null: false

@@ -73,6 +73,40 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", /#{corte.folio}/
   end
 
+  test "cerrar contando billetes; con tope, una diferencia grande pide motivo y queda por revisar" do
+    corte = cortes(:tienda_abierto)
+    get caja_corte_path
+    assert_select "input[name='denominacion[50000]']"
+    assert_select "[data-gaveta-target=motivo]", { count: 0 }, "sin tope no hay motivo que pedir"
+    Ajuste.guardar!("caja.tope_diferencia" => "50")
+    get caja_corte_path
+    assert_select "[data-gaveta-target=motivo]"
+    post caja_cerrar_path, params: { denominacion: { "20000" => "1", "10000" => "2" } }
+    assert_match "pasa del tope", flash[:alert], "la cajera no tiene caja.diferencia y no dio motivo"
+    assert corte.reload.abierto?
+    post caja_cerrar_path, params: { denominacion: { "20000" => "1", "10000" => "2" }, motivo: "faltó un billete" }
+    assert_redirected_to caja_corte_path
+    assert_match "queda por revisar", flash[:notice]
+    assert_equal 40_000, corte.reload.contado_centavos
+    assert_equal(-10_000, corte.diferencia_centavos)
+    assert_equal({ "20000" => 1, "10000" => 2 }, corte.desglose)
+    r = Revision.last
+    assert_equal corte, r.revisable
+    assert_equal 10_000, r.valor_centavos
+    assert_match corte.folio, r.descripcion
+    get caja_corte_path
+    assert_select "td[title='1 × $200.00, 2 × $100.00']"
+  end
+
+  test "cerrar con el total tecleado y con diferencia dentro del tope no pide nada" do
+    Ajuste.guardar!("caja.tope_diferencia" => "50")
+    post caja_cerrar_path, params: { contado: "480.00" }
+    assert_redirected_to caja_corte_path
+    assert_no_match "por revisar", flash[:notice]
+    assert_equal(-2_000, cortes(:tienda_abierto).reload.diferencia_centavos)
+    assert_equal 0, Revision.count
+  end
+
   test "devolución solo con ticket o etiqueta" do
     venta = Caja.cobrar!(sucursal: @tienda, usuario: usuarios(:cajera), clave: "v1", lineas: [ { etiqueta_id: @etiqueta.id } ], pagos: [ { forma: "efectivo", monto_centavos: 30_000 } ])
     get caja_devolucion_path(codigo: "0000000000000")
