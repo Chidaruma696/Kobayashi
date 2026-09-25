@@ -94,9 +94,28 @@ class CajaController < ApplicationController
     @corte.cerrar!(contado_centavos: contado, usuario: usuario_actual, desglose: desglose)
     revisar_si_hace_falta(@corte, autoriza, motivo: params[:motivo], valor_centavos: diferencia.abs)
     aviso = t("caja.avisos.corte_cerrado", folio: @corte.folio, esperado: Dinero.pesos(@corte.esperado_centavos), contado: Dinero.pesos(@corte.contado_centavos), diferencia: Dinero.pesos(@corte.diferencia_centavos))
-    redirect_to caja_corte_path, notice: aviso + (autoriza ? "" : t("caja.avisos.queda_por_revisar"))
+    redirect_to caja_resumen_path(@corte), notice: aviso + (autoriza ? "" : t("caja.avisos.queda_por_revisar"))
   rescue ArgumentError, ActiveRecord::RecordInvalid => e
     redirect_to caja_corte_path, alert: e.message
+  end
+
+  # El resumen del día de un corte: lo que pasó por la caja y alrededor, en hoja de 80 mm para
+  # imprimir o compartir. Sale solo al cerrar y queda en la lista de cortes.
+  def resumen
+    raise SinPermiso, "caja.abrir" unless puede?("caja.abrir") || puede?("reportes.ver")
+    @c = Corte.where(sucursal: sucursal_actual).includes(:usuario, :cerrado_por, retiros: :usuario).find(params[:id])
+    ventas = @c.ventas_cobradas
+    @tickets = ventas.count
+    @total = ventas.sum(:total_centavos)
+    @por_forma = Pago.where(venta: ventas).group(:forma).sum(:monto_centavos)
+    @top = VentaLinea.where(venta: ventas).joins(:producto).group("productos.nombre", "productos.unidad")
+                     .order(Arel.sql("SUM(importe_centavos) DESC")).limit(10).pluck("productos.nombre", "productos.unidad", Arel.sql("SUM(cantidad)"), Arel.sql("SUM(importe_centavos)"))
+    ventana = @c.abierto_en..(@c.cerrado_en || Time.current)
+    @mermas = Modulo.activo?("etiquetas") ? Produccion.where(sucursal: sucursal_actual, estado: "cerrada", updated_at: ventana).includes(:producto) : []
+    @revisiones = Revision.where(sucursal: sucursal_actual, created_at: ventana).includes(:usuario)
+    @cargos = Cargo.where(sucursal: sucursal_actual, created_at: ventana).includes(:usuario)
+    @titulo = "#{t("caja.resumen")} #{@c.folio}"
+    render layout: "ticket"
   end
 
   def retirar

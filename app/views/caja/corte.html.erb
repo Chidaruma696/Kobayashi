@@ -2,6 +2,7 @@
 <% if @corte.nil? %>
   <%= render "sin_caja" %>
 <% else %>
+  <p class="mb-2 text-sm"><%= link_to t("caja.ver_resumen_abierto"), caja_resumen_path(@corte), target: "_blank", class: "enlace" %></p>
   <div class="grid gap-4 sm:grid-cols-4">
     <% [ [ t("caja.fondo"), @corte.fondo_centavos ], [ t("caja.ventas"), @corte.total_ventas_centavos ], [ t("caja.efectivo_de_ventas"), @corte.efectivo_ventas_centavos ], [ t("caja.devoluciones"), -@corte.devoluciones_centavos ], [ t("caja.retiros"), -@corte.retiros_centavos ], [ t("caja.en_gaveta"), @corte.efectivo_esperado_centavos ] ].each do |nombre, monto| %>
       <div class="card"><div class="text-xs uppercase text-stone-500"><%= nombre %></div><div class="font-mono text-2xl"><%= pesos(monto) %></div></div>
@@ -54,7 +55,7 @@
 <% if @cortes.any? %>
   <h2 class="mb-2 mt-8 font-semibold"><%= t("caja.cortes_cerrados") %></h2>
   <table class="tabla">
-    <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.folio") %></th><th class="px-3 py-2"><%= t("caja.abierto") %></th><th class="px-3 py-2"><%= t("caja.cerrado") %></th><th class="px-3 py-2"><%= t("caja.cajero") %></th><th class="px-3 py-2 text-right"><%= t("caja.esperado") %></th><th class="px-3 py-2 text-right"><%= t("caja.contado") %></th><th class="px-3 py-2 text-right"><%= t("caja.diferencia") %></th></tr></thead>
+    <thead class="bg-stone-200 text-left"><tr><th class="px-3 py-2"><%= t("comun.folio") %></th><th class="px-3 py-2"><%= t("caja.abierto") %></th><th class="px-3 py-2"><%= t("caja.cerrado") %></th><th class="px-3 py-2"><%= t("caja.cajero") %></th><th class="px-3 py-2 text-right"><%= t("caja.esperado") %></th><th class="px-3 py-2 text-right"><%= t("caja.contado") %></th><th class="px-3 py-2 text-right"><%= t("caja.diferencia") %></th><th></th></tr></thead>
     <tbody>
       <% @cortes.each do |c| %>
         <tr class="border-t border-stone-100">
@@ -65,6 +66,7 @@
           <td class="px-3 py-2 text-right font-mono"><%= pesos(c.esperado_centavos) %></td>
           <td class="px-3 py-2 text-right font-mono" title="<%= c.desglose_texto %>"><%= pesos(c.contado_centavos) %></td>
           <td class="px-3 py-2 text-right font-mono <%= c.diferencia_centavos.to_i.negative? ? 'text-red-700' : 'text-green-700' %>"><%= pesos(c.diferencia_centavos) %></td>
+          <td class="px-3 py-2 text-right"><%= link_to t("caja.ver_resumen"), caja_resumen_path(c), target: "_blank", class: "btn btn-secondary btn-sm" %></td>
         </tr>
       <% end %>
     </tbody>

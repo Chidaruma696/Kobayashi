@@ -978,6 +978,18 @@ en:
     tope_diferencia_aviso: The difference exceeds %{monto}.
     motivo_diferencia: Reason for the difference
     cortes_cerrados: Closed sessions
+    resumen: Day summary
+    ver_resumen: Summary
+    ver_resumen_abierto: See the day summary so far
+    compartir: Share
+    copiado: Summary copied
+    abonos: Cash payments received
+    cargos: Charges
+    en_total: in total
+    por_revisar_n:
+      one: 1 pending review
+      other: '%{count} pending reviews'
+    resumen_texto: 'Session %{folio} · %{sucursal} · sales %{ventas} (%{tickets}) · in drawer %{efectivo} · difference %{diferencia}'
     abierto: Opened
     cerrado: Closed
     cajero: Cashier

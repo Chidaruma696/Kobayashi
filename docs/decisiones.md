@@ -117,3 +117,6 @@ Odoo tiene la política por producto de facturar sobre lo pedido o sobre lo reci
 
 ## Apagar una base no apaga en silencio a quien la necesita (25 sept 2026)
 El manifiesto de Odoo declara dependencias y al desinstalar avisa qué se va con ello. Aquí `DEPENDE` ya existía, pero solo por debajo: al guardar, la base de un dependiente encendido se volvía a encender sola, sin decir nada, y el que apagaba Pedidos se quedaba con Pedidos encendido sin saber por qué. Ahora encender arrastra lo que necesita (eso era razonable y se queda) y apagar una base con dependientes encendidos se rechaza diciendo quién la necesita; la pantalla lo enseña y marca o desmarca en cadena antes de mandar. Nada se apaga en cascada por el servidor: apagar de más sin decirlo es peor que negarse.
+
+## El resumen del día es una hoja, no un correo (25 sept 2026)
+El digest de Odoo manda KPIs por correo con periodicidad. Aquí el dueño de una tienda de barrio no lee correos: quiere el papel al cerrar o el mensaje en el teléfono. Así que el resumen del corte es la misma hoja de 80 mm de los tickets, sale sola al cerrar, se imprime y se comparte con lo que tenga el teléfono (Web Share; si no hay, se copia al portapapeles). Correo o WhatsApp automático, si un día hace falta, van encima de esto y probablemente en lo de pago (es trabajo continuo mío), no en el núcleo.

@@ -978,6 +978,18 @@ de:
     tope_diferencia_aviso: Die Differenz übersteigt %{monto}.
     motivo_diferencia: Grund der Differenz
     cortes_cerrados: Geschlossene Abschnitte
+    resumen: Tagesübersicht
+    ver_resumen: Übersicht
+    ver_resumen_abierto: Tagesübersicht bis jetzt ansehen
+    compartir: Teilen
+    copiado: Übersicht kopiert
+    abonos: Bar erhaltene Anzahlungen
+    cargos: Belastungen
+    en_total: insgesamt
+    por_revisar_n:
+      one: 1 offene Prüfung
+      other: '%{count} offene Prüfungen'
+    resumen_texto: 'Abschnitt %{folio} · %{sucursal} · Umsatz %{ventas} (%{tickets}) · in der Lade %{efectivo} · Differenz %{diferencia}'
     abierto: Geöffnet
     cerrado: Geschlossen
     cajero: Kassierer

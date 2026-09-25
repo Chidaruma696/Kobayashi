@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     post "corte/abrir", action: :abrir, as: :abrir
     post "corte/cerrar", action: :cerrar, as: :cerrar
     post "corte/retirar", action: :retirar, as: :retirar
+    get "corte/:id/resumen", action: :resumen, as: :resumen
     get "devolucion", action: :devolucion
     post "devolucion", action: :devolver, as: :devolver
   end

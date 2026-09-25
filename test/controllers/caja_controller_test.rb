@@ -67,10 +67,16 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     assert_equal 20_000, corte.retiros.sum(:monto_centavos)
     assert_equal 2, Revision.count, "cada retiro sin permiso queda por revisar"
     post caja_cerrar_path, params: { contado: "300.00" }
-    assert_redirected_to caja_corte_path
+    assert_redirected_to caja_resumen_path(corte)
     assert_equal 0, corte.reload.diferencia_centavos
+    follow_redirect!
+    assert_select "div.centro", /#{corte.folio}/
+    assert_match "Retiros", response.body
+    assert_match "caja fuerte", response.body
+    assert_match "2 pendientes por revisar", response.body
     get caja_corte_path
     assert_select "td", /#{corte.folio}/
+    assert_select "a[href=?]", caja_resumen_path(corte)
   end
 
   test "cerrar contando billetes; con tope, una diferencia grande pide motivo y queda por revisar" do
@@ -85,7 +91,7 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
     assert_match "pasa del tope", flash[:alert], "la cajera no tiene caja.diferencia y no dio motivo"
     assert corte.reload.abierto?
     post caja_cerrar_path, params: { denominacion: { "20000" => "1", "10000" => "2" }, motivo: "faltó un billete" }
-    assert_redirected_to caja_corte_path
+    assert_redirected_to caja_resumen_path(corte)
     assert_match "queda por revisar", flash[:notice]
     assert_equal 40_000, corte.reload.contado_centavos
     assert_equal(-10_000, corte.diferencia_centavos)
@@ -101,7 +107,7 @@ class CajaControllerTest < ActionDispatch::IntegrationTest
   test "cerrar con el total tecleado y con diferencia dentro del tope no pide nada" do
     Ajuste.guardar!("caja.tope_diferencia" => "50")
     post caja_cerrar_path, params: { contado: "480.00" }
-    assert_redirected_to caja_corte_path
+    assert_redirected_to caja_resumen_path(cortes(:tienda_abierto))
     assert_no_match "por revisar", flash[:notice]
     assert_equal(-2_000, cortes(:tienda_abierto).reload.diferencia_centavos)
     assert_equal 0, Revision.count

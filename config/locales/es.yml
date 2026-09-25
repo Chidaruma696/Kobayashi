@@ -978,6 +978,18 @@ es:
     tope_diferencia_aviso: La diferencia pasa de %{monto}.
     motivo_diferencia: Motivo de la diferencia
     cortes_cerrados: Cortes cerrados
+    resumen: Resumen del día
+    ver_resumen: Resumen
+    ver_resumen_abierto: Ver el resumen del día hasta ahora
+    compartir: Compartir
+    copiado: Resumen copiado
+    abonos: Abonos en efectivo
+    cargos: Cargos
+    en_total: en total
+    por_revisar_n:
+      one: 1 pendiente por revisar
+      other: '%{count} pendientes por revisar'
+    resumen_texto: 'Corte %{folio} · %{sucursal} · ventas %{ventas} (%{tickets}) · en gaveta %{efectivo} · diferencia %{diferencia}'
     abierto: Abierto
     cerrado: Cerrado
     cajero: Cajero
