@@ -153,6 +153,8 @@ de:
       admin: Verwaltung
       ajustes: Einstellungen
       compras: Einkauf
+      retornables: Leergut
+      almacenes: Lager
     grupos:
       ver: Ansehen
       revisar: Prüfen
@@ -179,6 +181,7 @@ de:
       facturas: Rechnungen
       proveedores: Lieferanten
       granel: Lose Ware
+      envases: Leergut
     botones:
       inicio: Start
       ventas_por_producto: Verkäufe je Produkt
@@ -580,6 +583,9 @@ de:
     compras.recibir: Ware vom Lieferanten annehmen
     compras.facturar: Lieferantenrechnungen erfassen und stornieren
     compras.pagar: Lieferanten aus der Kasse bezahlen
+    retornables.ver: Leergut sehen, das Lieferanten geschuldet wird
+    almacenes.traspasar: Umlagerungen lose zwischen Filialen und Lagern
+    retornables.mover: Leergut an Lieferanten zurückgeben und korrigieren
   pedidos:
     pedido: Bestellung
     pedidos: Bestellungen
@@ -1514,6 +1520,12 @@ de:
     compras:
       nombre: Einkauf
       que: Lieferanten, Wareneingang, Lieferantenrechnungen, Verbindlichkeiten und Leergut.
+    retornables:
+      nombre: Leergut
+      que: 'Kisten, Paletten und Boxen, die der Lieferant dalässt und zurückbekommt: Konto je Lieferant, Rückgaben und Korrekturen. Braucht Einkauf.'
+    almacenes:
+      nombre: Lager
+      que: Externe Lager (Kühlhaus oder Depot, nur lose Ware) und Umlagerungen lose zwischen Filialen ohne Scannen.
   giros:
     abarrotes:
       nombre: Lebensmittelladen / Einzelhandel
@@ -1523,10 +1535,10 @@ de:
       que: dazu Etiketten und Produktion, zum Wiegen und Etikettieren.
     distribuidora:
       nombre: Großhändler
-      que: Einkauf, Bestellungen, Ausgänge, Liefertouren und Zählungen, ohne Etikettierer.
+      que: Einkauf, Leergut, Lager, Bestellungen, Ausgänge, Liefertouren und Zählungen, ohne Etikettierer.
     todo:
       nombre: Betrieb mit Läden und Lieferung (alles)
-      que: 'alle Module: Einkauf, Etiketten, Bestellungen, Ausgänge, Touren und Zählungen.'
+      que: 'alle Module: Einkauf, Leergut, Lager, Etiketten, Bestellungen, Ausgänge, Touren und Zählungen.'
   unidades:
     kg: Kilo
     pieza: Stück

@@ -23,6 +23,8 @@ class Ajuste < ApplicationRecord
     "caja.piso_precio" => "50",          # % del catálogo por debajo del cual no se vende ni con permiso
     "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
     "modulos.compras" => "1",
+    "modulos.retornables" => "1",
+    "modulos.almacenes" => "1",
     "modulos.etiquetas" => "1",          # módulos opcionales: "1" encendido, "0" apagado (ver Modulo)
     "modulos.pedidos" => "1",
     "modulos.salidas" => "1",

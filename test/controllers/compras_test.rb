@@ -56,11 +56,25 @@ class ComprasControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "con el módulo apagado sus pantallas lo dicen y desaparece de la cinta" do
-    Modulo.guardar!(Modulo::OPCIONALES - [ "compras" ], comprobar: false)
+    Modulo.guardar!(Modulo::OPCIONALES - %w[compras retornables], comprobar: false)
     get root_path
     assert_select "aside[data-lateral-target=panel] div", { text: /Compras/, count: 0 }
     get proveedores_path
     assert_response :not_found
+    get envases_path
+    assert_response :not_found, "retornables cuelga de compras"
+
+    Modulo.guardar!(Modulo::OPCIONALES - %w[retornables almacenes], comprobar: false)
+    get root_path
+    assert_select "aside[data-lateral-target=panel] div", { text: /Retornables/, count: 0 }
+    assert_select "aside[data-lateral-target=panel] div", { text: /Almacenes/, count: 0 }
+    assert_select "aside[data-lateral-target=panel] div", /Compras/
+    get new_recepcion_path
+    assert_select "h2", { text: /Envases/, count: 0 }
+    get new_traspaso_path
+    assert_response :not_found
+    get new_admin_sucursal_path
+    assert_select "option", { text: /Almacén/, count: 0 }
   ensure
     Modulo.guardar!(Modulo::OPCIONALES, comprobar: false)
   end

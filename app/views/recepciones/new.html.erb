@@ -33,6 +33,7 @@
     </table>
     <button type="button" data-action="renglones#nuevo" class="btn btn-secondary mt-3">+ <%= t("pedidos.renglon") %></button>
   </div>
+  <% if Modulo.activo?("retornables") %>
   <div class="rounded-lg border border-stone-200 p-4">
     <h2 class="mb-1 font-semibold"><%= t("compras.envases.titulo") %></h2>
     <p class="mb-3 text-xs text-stone-500"><%= t("compras.envases.recepcion_ayuda") %></p>
@@ -42,5 +43,6 @@
       <div><%= f.label :totes, t("compras.envases.totes"), class: "block text-sm font-medium" %><%= f.number_field :totes, min: 0, placeholder: "0", class: "entrada font-mono" %></div>
     </div>
   </div>
+  <% end %>
   <%= f.submit t("compras.registrar_entrada"), class: "btn btn-primary btn-lg" %>
 <% end %>

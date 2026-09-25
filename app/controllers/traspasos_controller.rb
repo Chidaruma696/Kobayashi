@@ -1,10 +1,10 @@
 # Traspasos a granel: kilos y cajas de una sucursal a otra sin escanear. Es la puerta de los
 # almacenes externos (frigorífico ajeno) y de lo que no lleva etiqueta.
 class TraspasosController < ApplicationController
-  pestana :salidas
-  modulo :salidas
+  pestana :almacenes
+  modulo :almacenes
 
-  before_action { autorizar!("salidas.surtir") }
+  before_action { autorizar!("almacenes.traspasar") }
 
   def index
     @traspasos = Traspaso.where("sucursal_origen_id = :s OR sucursal_destino_id = :s", s: sucursal_actual.id)

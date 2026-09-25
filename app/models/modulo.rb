@@ -1,17 +1,20 @@
-# Módulos que se encienden o apagan por negocio. Caja, inventario, administración y ajustes van
-# siempre; el resto depende del giro elegido al arrancar y se puede cambiar después en Ajustes.
-# Rutas necesita pedidos y salidas (un reparto es una salida a un cliente que pidió).
+# Módulos que se encienden o apagan por negocio (el mapa completo está en docs/arquitectura.md).
+# Caja, inventario, administración y ajustes van siempre; el resto depende del giro elegido al
+# arrancar y se puede cambiar después en Ajustes. Cada módulo es un conjunto aparte: sus tablas,
+# sus permisos, su pestaña. Rutas necesita pedidos y salidas (un reparto es una salida a un cliente
+# que pidió); retornables necesita compras (los envases son de un proveedor).
 module Modulo
-  OPCIONALES = %w[compras etiquetas pedidos salidas rutas conteos].freeze
-  DEPENDE = { "rutas" => %w[pedidos salidas] }.freeze
+  OPCIONALES = %w[compras retornables almacenes etiquetas pedidos salidas rutas conteos].freeze
+  DEPENDE = { "rutas" => %w[pedidos salidas], "retornables" => %w[compras] }.freeze
   # Prefijos de permiso que cuelgan de cada módulo (los demás permisos van siempre).
-  PERMISOS = { "compras" => %w[compras], "etiquetas" => %w[etiquetas produccion], "pedidos" => %w[pedidos], "salidas" => %w[salidas],
+  PERMISOS = { "compras" => %w[compras], "retornables" => %w[retornables], "almacenes" => %w[almacenes],
+               "etiquetas" => %w[etiquetas produccion], "pedidos" => %w[pedidos], "salidas" => %w[salidas],
                "rutas" => %w[rutas cobranza canastillas], "conteos" => %w[conteos] }.freeze
   # Preset por giro; "todo" es el negocio para el que nació el sistema.
   GIROS = {
     "abarrotes" => %w[compras],
     "recauderia" => %w[compras etiquetas],
-    "distribuidora" => %w[compras pedidos salidas rutas conteos],
+    "distribuidora" => %w[compras retornables almacenes pedidos salidas rutas conteos],
     "todo" => OPCIONALES
   }.freeze
 
@@ -52,6 +55,7 @@ module Modulo
     when "pedidos" then Pedido.abiertos.exists?
     when "etiquetas" then Produccion.abiertas.exists?
     when "conteos" then Conteo.abiertos.exists?
+    when "almacenes" then Sucursal.activas.almacenes.exists?
     end
     raise ArgumentError, I18n.t("errores.modulo.con_trabajo_abierto", modulo: I18n.t("modulos.#{modulo}.nombre")) if abierto
   end

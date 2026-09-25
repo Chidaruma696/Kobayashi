@@ -24,8 +24,9 @@ module Compras
         Inventario.mover!(sucursal: sucursal, producto: producto, tipo: "entrada", cantidad: linea.cantidad, usuario: usuario, referencia: recepcion,
                           motivo: I18n.t("compras.avisos.entrada_motivo", folio: recepcion.folio, proveedor: proveedor.nombre), fecha: fecha)
       end
+      # Los envases son del módulo Retornables: sin él, la recepción no los anota.
       { "canastilla" => canastillas, "tarima" => tarimas, "tote" => totes }.each do |envase, n|
-        next unless n.to_i.positive?
+        next unless n.to_i.positive? && Modulo.activo?("retornables")
         mover_envases!(proveedor: proveedor, sucursal: sucursal, usuario: usuario, envase: envase, tipo: "entrada", cantidad: n.to_i,
                        recepcion: recepcion, concepto: recepcion.folio, fecha: fecha)
       end

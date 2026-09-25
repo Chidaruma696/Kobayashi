@@ -12,12 +12,6 @@
           <% end %>
         </li>
       <% end %>
-      <% if puede?("admin.usuarios") %>
-        <li class="mt-3 hidden px-3 text-[11px] font-bold uppercase tracking-wide text-stone-500 lg:block"><%= t("cinta.pestanas.admin") %></li>
-        <% { usuarios: [ admin_usuarios_path, "person" ], roles: [ admin_roles_path, "key" ], sucursales: [ admin_sucursales_path, "shop" ] }.each do |clave, (ruta, icono)| %>
-          <li><%= link_to ruta, class: "flex items-center gap-3 rounded-md px-3 py-2 text-sm whitespace-nowrap text-stone-700 hover:bg-white" do %><i class="bi bi-<%= icono %> w-5 text-center text-lg leading-none text-stone-500"></i><span><%= t("cinta.botones.#{clave}") %></span><% end %></li>
-        <% end %>
-      <% end %>
     </ul>
   </nav>
   <section class="min-w-0">

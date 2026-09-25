@@ -10,7 +10,7 @@
       <% if @saldos.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("compras.envases.nada") %></td></tr><% end %>
     </table>
   </div>
-  <% if puede?("compras.recibir") %>
+  <% if puede?("retornables.mover") %>
     <div class="card">
       <h2 class="mb-2 font-semibold"><%= t("compras.envases.mover") %></h2>
       <p class="mb-2 text-xs text-stone-500"><%= t("compras.envases.mover_ayuda") %></p>

@@ -153,6 +153,8 @@ en:
       admin: Admin
       ajustes: Settings
       compras: Purchasing
+      retornables: Returnables
+      almacenes: Warehouses
     grupos:
       ver: View
       revisar: Review
@@ -179,6 +181,7 @@ en:
       facturas: Invoices
       proveedores: Suppliers
       granel: Bulk
+      envases: Containers
     botones:
       inicio: Home
       ventas_por_producto: Sales by product
@@ -580,6 +583,9 @@ en:
     compras.recibir: Receive goods from suppliers
     compras.facturar: Enter and cancel supplier invoices
     compras.pagar: Pay suppliers from the till
+    retornables.ver: View containers owed to suppliers
+    retornables.mover: Return and adjust supplier containers
+    almacenes.traspasar: Bulk transfers between branches and warehouses
   pedidos:
     pedido: Order
     pedidos: Orders
@@ -1514,6 +1520,12 @@ en:
     compras:
       nombre: Purchasing
       que: Suppliers, goods receipt, supplier invoices, accounts payable and returnable containers.
+    retornables:
+      nombre: Returnables
+      que: 'Crates, pallets and totes the supplier leaves and is owed: ledger per supplier, returns and adjustments. Needs purchasing.'
+    almacenes:
+      nombre: Warehouses
+      que: External warehouses (cold store or depot that only holds bulk) and bulk transfers between branches without scanning.
   giros:
     abarrotes:
       nombre: Grocery / retail store
@@ -1523,10 +1535,10 @@ en:
       que: the above plus labels and production, to weigh and label.
     distribuidora:
       nombre: Distributor
-      que: purchasing, orders, dispatches, delivery routes and counts, without the labeler.
+      que: purchasing, returnables, warehouses, orders, dispatches, delivery routes and counts, without the labeler.
     todo:
       nombre: Plant with stores and delivery (everything)
-      que: 'every module: purchasing, labels, orders, dispatches, routes and counts.'
+      que: 'every module: purchasing, returnables, warehouses, labels, orders, dispatches, routes and counts.'
   unidades:
     kg: Kilo
     pieza: Piece

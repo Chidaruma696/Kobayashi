@@ -1,10 +1,10 @@
 # Envases del proveedor (canastilla, tarima, tote): qué le debemos a cada uno, devoluciones y ajustes.
 # Es otro libro que el de canastillas de clientes y choferes.
 class EnvasesController < ApplicationController
-  pestana :compras
-  modulo :compras
+  pestana :retornables
+  modulo :retornables
 
-  before_action { autorizar!("compras.ver") }
+  before_action { autorizar!("retornables.ver") }
 
   def index
     @saldos = Proveedor.order(:nombre).map { |p| [ p, p.saldo_envases ] }.reject { |_, s| s.empty? }
@@ -13,7 +13,7 @@ class EnvasesController < ApplicationController
   end
 
   def mover
-    autorizar!("compras.recibir")
+    autorizar!("retornables.mover")
     proveedor = Proveedor.find(params[:proveedor_id])
     tipo = params[:tipo].to_s
     signo = tipo == "ajuste" ? (params[:cantidad].to_i.negative? ? -1 : 1) : nil

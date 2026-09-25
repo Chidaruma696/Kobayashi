@@ -25,6 +25,6 @@ class TraspasosControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select "aside[data-lateral-target=panel] div", { text: /Caja/, count: 0 }
     assert_select "aside[data-lateral-target=panel] div", { text: /Etiquetas/, count: 0 }
-    assert_select "aside[data-lateral-target=panel] div", /Salidas/
+    assert_select "aside[data-lateral-target=panel] div", /Almacenes/
   end
 end

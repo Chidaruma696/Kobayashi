@@ -30,9 +30,15 @@ module RibbonHelper
         Boton.new(:nueva_factura, :new_factura_path, "compras.facturar", "file-earmark-plus"),
         Boton.new(:cuentas_por_pagar, :cuentas_path, "compras.ver", "wallet2")
       ] },
-      { id: :proveedores, botones: [
-        Boton.new(:proveedores, :proveedores_path, "compras.ver", "truck"),
-        Boton.new(:envases, :envases_path, "compras.ver", "box2")
+      { id: :proveedores, botones: [ Boton.new(:proveedores, :proveedores_path, "compras.ver", "truck") ] }
+    ] },
+    { id: :retornables, grupos: [
+      { id: :envases, botones: [ Boton.new(:envases, :envases_path, "retornables.ver", "box2") ] }
+    ] },
+    { id: :almacenes, grupos: [
+      { id: :granel, botones: [
+        Boton.new(:traspaso_granel, :new_traspaso_path, "almacenes.traspasar", "boxes"),
+        Boton.new(:traspasos, :traspasos_path, "almacenes.traspasar", "list-ul")
       ] }
     ] },
     { id: :pedidos, grupos: [
@@ -60,11 +66,7 @@ module RibbonHelper
         Boton.new(:nueva_salida, :new_salida_path, "salidas.surtir", "truck"),
         Boton.new(:en_curso, :salidas_path, "salidas.surtir", "list-ul")
       ] },
-      { id: :recibir, botones: [ Boton.new(:por_recibir, :recibir_salidas_path, "salidas.recibir", "inbox") ] },
-      { id: :granel, botones: [
-        Boton.new(:traspaso_granel, :new_traspaso_path, "salidas.surtir", "boxes"),
-        Boton.new(:traspasos, :traspasos_path, "salidas.surtir", "list-ul")
-      ] }
+      { id: :recibir, botones: [ Boton.new(:por_recibir, :recibir_salidas_path, "salidas.recibir", "inbox") ] }
     ] },
     { id: :rutas, grupos: [
       { id: :viajes, botones: [

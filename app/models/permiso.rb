@@ -32,6 +32,9 @@ module Permiso
     "compras.recibir" => "Recibir mercancía del proveedor",
     "compras.facturar" => "Capturar y cancelar facturas del proveedor",
     "compras.pagar" => "Pagar a proveedores desde la caja",
+    "retornables.ver" => "Ver los envases que se deben al proveedor",
+    "retornables.mover" => "Devolver y ajustar envases del proveedor",
+    "almacenes.traspasar" => "Traspasos a granel entre sucursales y almacenes",
     "admin.catalogo" => "Administrar productos y códigos",
     "admin.usuarios" => "Administrar usuarios, roles y sucursales"
   }.freeze

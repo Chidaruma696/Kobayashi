@@ -153,6 +153,8 @@ es:
       admin: Admin
       ajustes: Ajustes
       compras: Compras
+      retornables: Retornables
+      almacenes: Almacenes
     grupos:
       ver: Ver
       revisar: Revisar
@@ -179,6 +181,7 @@ es:
       facturas: Facturas
       proveedores: Proveedores
       granel: A granel
+      envases: Envases
     botones:
       inicio: Inicio
       ventas_por_producto: Ventas por producto
@@ -580,6 +583,9 @@ es:
     compras.recibir: Recibir mercancía del proveedor
     compras.facturar: Capturar y cancelar facturas del proveedor
     compras.pagar: Pagar a proveedores desde la caja
+    retornables.ver: Ver los envases que se deben al proveedor
+    retornables.mover: Devolver y ajustar envases del proveedor
+    almacenes.traspasar: Traspasos a granel entre sucursales y almacenes
   pedidos:
     pedido: Pedido
     pedidos: Pedidos
@@ -1514,6 +1520,12 @@ es:
     compras:
       nombre: Compras
       que: Proveedores, recepción de mercancía, facturas del proveedor, cuentas por pagar y envases.
+    retornables:
+      nombre: Retornables
+      que: 'Canastillas, tarimas y totes que el proveedor deja y se le deben: libro por proveedor, devoluciones y ajustes. Necesita compras.'
+    almacenes:
+      nombre: Almacenes
+      que: Almacenes externos (frigorífico o bodega que solo guarda a granel) y traspasos a granel entre sucursales sin escanear.
   giros:
     abarrotes:
       nombre: Abarrotes / tienda
@@ -1523,10 +1535,10 @@ es:
       que: lo anterior más etiquetas y producción, para pesar y etiquetar.
     distribuidora:
       nombre: Distribuidora
-      que: compras, pedidos, salidas, rutas de reparto y conteos, sin etiquetadora.
+      que: compras, retornables, almacenes, pedidos, salidas, rutas de reparto y conteos, sin etiquetadora.
     todo:
       nombre: Planta con tiendas y reparto (todo)
-      que: 'todos los módulos: compras, etiquetas, pedidos, salidas, rutas y conteos.'
+      que: 'todos los módulos: compras, retornables, almacenes, etiquetas, pedidos, salidas, rutas y conteos.'
   unidades:
     kg: Kilo
     pieza: Pieza
