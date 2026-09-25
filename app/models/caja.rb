@@ -23,7 +23,7 @@ module Caja
       cambio = pagos_ok.sum { |p| p[:monto_centavos] } - total
 
       venta = Venta.create!(sucursal: sucursal, corte: corte, usuario: usuario, clave: clave,
-                            folio: Folio.siguiente!(sucursal, "B"), codigo: codigo_ticket(sucursal),
+                            folio: Folio.siguiente!(sucursal, "venta"), codigo: codigo_ticket(sucursal),
                             total_centavos: total, cambio_centavos: cambio, fecha_negocio: Date.current)
       preparadas.each do |l|
         linea = venta.lineas.create!(l)
@@ -54,7 +54,7 @@ module Caja
       preparadas.each { |l| l.delete(:cajas) }
       total = preparadas.sum { |l| l[:importe_centavos] }
       venta = Venta.create!(sucursal: sucursal, corte: corte, usuario: usuario, cliente: salida.cliente, clave: "reparto:#{salida.id}",
-                            folio: Folio.siguiente!(sucursal, "B"), codigo: codigo_ticket(sucursal), estado: "por_cobrar",
+                            folio: Folio.siguiente!(sucursal, "venta"), codigo: codigo_ticket(sucursal), estado: "por_cobrar",
                             total_centavos: total, cambio_centavos: 0, fecha_negocio: Date.current)
       preparadas.each do |l|
         linea = venta.lineas.create!(l)

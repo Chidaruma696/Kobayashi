@@ -88,6 +88,6 @@ class Traspaso < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal_origen, "TG") if sucursal_origen
+    self.folio ||= Folio.siguiente!(sucursal_origen, "traspaso") if sucursal_origen
   end
 end

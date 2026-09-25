@@ -66,6 +66,7 @@ Where labels are on, every package, box and pallet carries an **EAN-13 identity 
 | **Counts** | The supervisor scans everything; the count wins. | Stock is adjusted, unseen labels die, and the shortage is charged to the cashier. |
 | **Prices** | List price, per-shop overrides, promotions (special price, percentage, volume). | The register applies the cheapest valid rule by itself; a promotion never raises a price. |
 | **Deferred authorization** | Anything that would need a supervisor (free labelling, a line without a label, a stock adjustment, a cash withdrawal, a price cut) goes through with a reason when nobody is around, and lands in a review tray. | The flow never stops; the supervisor approves or flags each one at the end of the day, and a flagged one can be charged to whoever did it. Whoever has the permission does it in their own name and skips the tray. There are no PINs. |
+| **Numbering** | Every document (sale, close, order, dispatch, receipt…) is numbered per branch, and the prefix is the business's choice: its own letters per document, none, or one running sequence for everything. | The counter goes by document, not by letter: changing the prefix never restarts the count. |
 | **Dashboard & admin** | Sales, tickets, payment mix, closes, waste, counts, valued stock, CSV by product; products, users, roles, shops, customers, routes. | Permissions by key, ribbon tabs appear only for what the user may do. |
 
 <br/>

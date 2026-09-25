@@ -1,6 +1,9 @@
 # Ajustes del sistema, clave/valor, con sus valores de fábrica. Lo que no está guardado vale el
 # default; `Ajuste[clave]` devuelve siempre algo.
 class Ajuste < ApplicationRecord
+  # Claves donde el vacío se guarda tal cual en vez de volver al valor de fábrica.
+  SIN_PREFIJO = Folio::DOCUMENTOS.keys.map { |d| "folios.#{d}" }.push("folios.unico").freeze
+
   DEFAULTS = {
     "negocio.nombre" => "",              # vacío = el nombre de la sucursal
     "negocio.direccion" => "",
@@ -22,6 +25,9 @@ class Ajuste < ApplicationRecord
     "etiqueta.letra" => "14",
     "caja.piso_precio" => "50",          # % del catálogo por debajo del cual no se vende ni con permiso
     "caja.limite_gaveta" => "3000",      # pesos, para sucursales nuevas
+    "folios.modo" => "por_documento",   # o "unico": una sola numeración corrida para todo
+    "folios.unico" => "F",
+    **Folio::DOCUMENTOS.to_h { |doc, letra| [ "folios.#{doc}", letra ] },
     "modulos.compras" => "1",
     "modulos.retornables" => "1",
     "modulos.almacenes" => "1",
@@ -44,6 +50,8 @@ class Ajuste < ApplicationRecord
 
   def self.[](clave)
     valor = find_by(clave: clave)&.valor
+    # Un prefijo de folio vacío es un valor legítimo (solo el número); en lo demás, vacío = de fábrica.
+    return valor if !valor.nil? && SIN_PREFIJO.include?(clave)
     valor.presence || DEFAULTS.fetch(clave)
   end
 
@@ -58,9 +66,11 @@ class Ajuste < ApplicationRecord
         next unless DEFAULTS.key?(clave)
         valor = valor.to_s.strip
         raise ArgumentError, I18n.t("errores.ajuste.entero", clave: clave) if ENTEROS.include?(clave) && valor.present? && valor !~ /\A\d+\z/
+        raise ArgumentError, I18n.t("errores.ajuste.prefijo", clave: clave) if clave.start_with?("folios.") && clave != "folios.modo" && (valor = valor.upcase) !~ Folio::PREFIJO
+        raise ArgumentError, I18n.t("errores.ajuste.modo_folios") if clave == "folios.modo" && valor.present? && !Folio::MODOS.include?(valor)
         raise ArgumentError, I18n.t("errores.ajuste.logo") if clave == "ticket.logo" && valor.present? && (valor.length > LOGO_MAX || valor !~ %r{\Adata:image/(png|jpeg|gif|webp);base64,})
         registro = find_or_initialize_by(clave: clave)
-        valor.blank? ? registro.destroy : registro.update!(valor: valor)
+        valor.blank? && !SIN_PREFIJO.include?(clave) ? registro.destroy : registro.update!(valor: valor)
       end
     end
     Current.simbolo = nil

@@ -175,6 +175,6 @@ class Viaje < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "V") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "viaje") if sucursal
   end
 end

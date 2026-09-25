@@ -88,12 +88,39 @@ en:
       modulos: Modules
       etiqueta: Label
       caja: Register
+      folios: Numbering
     secciones_ayuda:
       para_ti: Applied the moment you pick one; saved on your user, they follow you to any computer.
       negocio: The business details as they appear on the ticket, with the ticket next to it exactly as it will print. Applies to every branch.
       modulos: What is off disappears from the ribbon, the roles and its screens; the data stays. A module with open work cannot be turned off.
       etiqueta: Default size and texts of the printed label; each station can fine-tune them in the labeler.
       caja: Register rules for every branch.
+      folios: 'How documents are numbered: the business picks the letters before the number, or one running sequence for everything. Changing the letters does not restart the count; numbering is per branch.'
+    folios:
+      modos:
+        por_documento: One sequence per document
+        por_documento_ayuda: 'Each document has its own numbering and prefix: B-00001 for sales, C-00001 for till closes…'
+        unico: One running sequence
+        unico_ayuda: 'Every document shares the same count and prefix: F-00001 sale, F-00002 close, F-00003 order…'
+      unico: Prefix of the single sequence
+      ejemplo: 'Example: %{folio}'
+      por_documento: Prefix per document
+      ayuda: Up to 4 letters or digits; empty = number only. Only used when numbering is per document.
+      documentos:
+        venta: Sale (receipt)
+        corte: Till close
+        devolucion: Return
+        abono: Payment on account
+        pedido: Order
+        salida: Dispatch
+        salida_devolucion: Return dispatch
+        reparto: Delivery note
+        viaje: Route trip
+        produccion: Production run
+        conteo: Count
+        supervision: Supervision
+        recepcion: Goods receipt
+        traspaso: Bulk transfer
   comun:
     cerrar: Close
     guardar: Save
@@ -406,6 +433,8 @@ en:
     ajuste:
       entero: '%{clave}: must be a whole number'
       logo: the logo must be a PNG, JPG or WebP image under 300 KB
+      prefijo: '%{clave}: the prefix takes up to 4 letters or digits, no hyphen'
+      modo_folios: unknown numbering mode
     movimiento:
       tipo_desconocido: 'unknown movement type: %{tipo}'
     canastillas:

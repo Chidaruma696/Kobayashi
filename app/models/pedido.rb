@@ -51,7 +51,7 @@ class Pedido < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal_origen, "P") if sucursal_origen
+    self.folio ||= Folio.siguiente!(sucursal_origen, "pedido") if sucursal_origen
   end
 
   def un_solo_destino

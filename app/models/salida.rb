@@ -407,7 +407,7 @@ class Salida < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal_origen, { "devolucion" => "DV", "reparto" => "R" }.fetch(tipo, "S")) if sucursal_origen
+    self.folio ||= Folio.siguiente!(sucursal_origen, { "devolucion" => "salida_devolucion", "reparto" => "reparto" }.fetch(tipo, "salida")) if sucursal_origen
   end
 
   def destino_coherente

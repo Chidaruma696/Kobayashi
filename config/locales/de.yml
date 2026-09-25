@@ -88,12 +88,39 @@ de:
       modulos: Module
       etiqueta: Etikett
       caja: Kasse
+      folios: Nummerierung
     secciones_ayuda:
       para_ti: Gelten sofort bei der Auswahl; werden in deinem Benutzer gespeichert und gelten an jedem Gerät.
       negocio: Die Betriebsdaten, wie sie auf dem Ticket stehen, mit dem Ticket daneben genau so, wie es gedruckt wird. Gilt für alle Filialen.
       modulos: Was aus ist, verschwindet aus dem Menüband, den Rollen und seinen Seiten; die Daten bleiben. Ein Modul mit offener Arbeit lässt sich nicht ausschalten.
       etiqueta: Standardgröße und -texte des gedruckten Etiketts; jeder Arbeitsplatz kann sie im Etikettierer anpassen.
       caja: Kassenregeln für alle Filialen.
+      folios: 'Wie Belege nummeriert werden: die Buchstaben vor der Nummer wählt der Betrieb, oder eine fortlaufende Nummer für alles. Die Buchstaben zu ändern setzt den Zähler nicht zurück; nummeriert wird je Filiale.'
+    folios:
+      modos:
+        por_documento: Ein Zähler je Beleg
+        por_documento_ayuda: 'Jeder Beleg hat eigene Nummerierung und eigenes Präfix: B-00001 für Verkäufe, C-00001 für Kassenabschlüsse…'
+        unico: Eine fortlaufende Nummer
+        unico_ayuda: 'Alle Belege teilen sich Zähler und Präfix: F-00001 Verkauf, F-00002 Abschluss, F-00003 Bestellung…'
+      unico: Präfix der fortlaufenden Nummer
+      ejemplo: 'Beispiel: %{folio}'
+      por_documento: Präfix je Beleg
+      ayuda: Bis zu 4 Buchstaben oder Ziffern; leer = nur die Nummer. Gilt nur bei Nummerierung je Beleg.
+      documentos:
+        venta: Verkauf (Bon)
+        corte: Kassenabschluss
+        devolucion: Rückgabe
+        abono: Anzahlung
+        pedido: Bestellung
+        salida: Ausgang
+        salida_devolucion: Rückgabe-Ausgang
+        reparto: Lieferschein
+        viaje: Tour
+        produccion: Produktion
+        conteo: Zählung
+        supervision: Kontrolle
+        recepcion: Wareneingang
+        traspaso: Umlagerung lose
   comun:
     cerrar: Schließen
     guardar: Speichern
@@ -406,6 +433,8 @@ de:
     ajuste:
       entero: '%{clave}: muss eine ganze Zahl sein'
       logo: das Logo muss ein PNG-, JPG- oder WebP-Bild unter 300 KB sein
+      prefijo: '%{clave}: das Präfix hat bis zu 4 Buchstaben oder Ziffern, ohne Bindestrich'
+      modo_folios: unbekannter Nummerierungsmodus
     movimiento:
       tipo_desconocido: 'unbekannte Bewegungsart: %{tipo}'
     canastillas:

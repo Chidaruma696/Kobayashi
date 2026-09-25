@@ -66,6 +66,6 @@ class Produccion < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "PR") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "produccion") if sucursal
   end
 end

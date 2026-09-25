@@ -19,6 +19,6 @@ class Devolucion < ApplicationRecord
 
   def asignar_folio
     self.sucursal ||= corte&.sucursal || venta&.sucursal
-    self.folio ||= Folio.siguiente!(sucursal, "D") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "devolucion") if sucursal
   end
 end

@@ -68,6 +68,6 @@ class Supervision < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "SV") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "supervision") if sucursal
   end
 end

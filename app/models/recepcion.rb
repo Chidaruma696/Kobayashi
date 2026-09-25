@@ -29,6 +29,6 @@ class Recepcion < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "RC") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "recepcion") if sucursal
   end
 end

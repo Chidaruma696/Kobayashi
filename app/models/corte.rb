@@ -86,6 +86,6 @@ class Corte < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "C") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "corte") if sucursal
   end
 end

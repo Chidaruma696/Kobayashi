@@ -35,6 +35,6 @@ class Abono < ApplicationRecord
   private
 
   def asignar_folio
-    self.folio ||= Folio.siguiente!(sucursal, "A") if sucursal
+    self.folio ||= Folio.siguiente!(sucursal, "abono") if sucursal
   end
 end

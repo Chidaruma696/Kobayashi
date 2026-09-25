@@ -66,6 +66,7 @@ Donde hay etiquetas, cada paquete, caja y tarima lleva un **EAN-13 de identidad*
 | **Conteos** | El supervisor escanea todo; el conteo manda. | Se ajusta el stock, las etiquetas no vistas mueren y el faltante se carga al cajero. |
 | **Precios** | Precio de lista, precio por sucursal, promociones (especial, porcentaje, por cantidad). | La caja aplica sola la regla más barata vigente; una promoción nunca sube el precio. |
 | **Autorización diferida** | Lo que necesitaría a un supervisor (etiquetar sin pedido, un renglón sin etiqueta, un ajuste de inventario, un retiro de efectivo, bajar un precio) se hace igual con su motivo cuando no hay nadie, y cae en una bandeja de revisión. | El flujo nunca se frena; el supervisor aprueba u observa cada una al final del día, y lo observado se le puede cargar a quien lo hizo. Quien tiene el permiso lo hace a su nombre y no pasa por la bandeja. No hay PIN. |
+| **Folios** | Cada documento (venta, corte, pedido, salida, recepción…) se numera por sucursal, y el prefijo lo elige el negocio: sus letras por documento, ninguna, o una sola numeración corrida para todo. | El contador va por documento, no por letra: cambiar el prefijo nunca reinicia la cuenta. |
 | **Inicio (tablero) y admin** | Ventas, tickets, formas de pago, cortes, mermas, conteos, inventario valorizado, CSV por producto; productos, usuarios, roles, sucursales, clientes, rutas. | Permisos por clave; las pestañas de la cinta aparecen solo para lo que el usuario puede hacer. |
 
 <br/>
