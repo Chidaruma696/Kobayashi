@@ -29,7 +29,7 @@ export default class extends Controller {
       // Kilo, litro o metro: se teclea la cantidad (la báscula solo sirve para kilos)
       this.pendienteProducto = datos
       this.pendienteNombreTarget.textContent = `${datos.nombre} (${T.unidades[datos.unidad] || datos.unidad})`
-      this.pendienteCantidadTarget.value = this.pesoTarget.value || ""
+      this.pendienteCantidadTarget.value = (this.hasPesoTarget && this.pesoTarget.value) || ""
       this.pendienteTarget.classList.remove("hidden")
       this.pendienteCantidadTarget.focus()
     } else {
@@ -38,7 +38,7 @@ export default class extends Controller {
     }
   }
 
-  usarBascula() { this.pendienteCantidadTarget.value = this.pesoTarget.value }
+  usarBascula() { if (this.hasPesoTarget) this.pendienteCantidadTarget.value = this.pesoTarget.value }
 
   confirmarPendiente(event) {
     event?.preventDefault()

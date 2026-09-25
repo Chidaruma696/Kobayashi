@@ -8,18 +8,20 @@
     <div class="lg:col-span-2">
       <div class="mb-3 flex gap-3">
         <input data-pos-target="codigo" data-action="keydown.enter->pos#escanear" autofocus autocomplete="off" placeholder="<%= t("caja.escanea_o_teclea") %>" class="flex-1 rounded border border-stone-300 px-3 py-3 font-mono text-lg">
+        <% if @con_bascula %>
         <div data-controller="bascula" data-bascula-auto-value="false" class="flex items-center gap-2 rounded bg-white px-3 shadow-sm">
           <span class="text-xs text-stone-500" data-bascula-target="estado"><%= t("caja.bascula") %></span>
           <span class="font-mono text-2xl" data-bascula-target="peso">0.000</span>
           <input type="hidden" data-bascula-target="cantidad" data-pos-target="peso">
           <button type="button" data-action="bascula#conectar" class="btn btn-secondary btn-xs"><%= t("caja.conectar") %></button>
         </div>
+        <% end %>
       </div>
       <div id="aviso" data-pos-target="aviso" class="mb-2 empty:hidden rounded bg-red-50 px-3 py-2 text-sm text-red-800"></div>
       <div data-pos-target="pendiente" class="mb-2 hidden rounded bg-blue-50 p-3 text-sm">
         <span data-pos-target="pendienteNombre" class="font-semibold"></span> ·
         <%= t("comun.cantidad").downcase %> <input data-pos-target="pendienteCantidad" data-action="keydown.enter->pos#confirmarPendiente" type="number" step="0.001" min="0.001" class="w-28 rounded border border-stone-300 px-2 py-1 font-mono">
-        <button type="button" data-action="pos#usarBascula" class="badge"><%= t("caja.usar_bascula") %></button>
+        <% if @con_bascula %><button type="button" data-action="pos#usarBascula" class="badge"><%= t("caja.usar_bascula") %></button><% end %>
         <button type="button" data-action="pos#confirmarPendiente" class="btn btn-primary btn-xs"><%= t("etiquetas.agregar").downcase %></button>
         <button type="button" data-action="pos#cancelarPendiente" class="px-2 py-1 text-stone-500"><%= t("comun.cancelar").downcase %></button>
       </div>

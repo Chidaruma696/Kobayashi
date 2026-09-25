@@ -7,6 +7,8 @@ class CajaController < ApplicationController
   def index
     autorizar!("caja.vender")
     @clave = SecureRandom.uuid
+    # La báscula solo tiene sentido si hay algo que se venda por kilo.
+    @con_bascula = Producto.activos.where(unidad: "kg").exists?
   end
 
   # Qué es lo que se escaneó o tecleó, para el ticket (JSON).
