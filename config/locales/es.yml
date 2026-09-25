@@ -38,6 +38,8 @@ es:
         direccion: Dirección
         telefono: Teléfono
         pie_ticket: Pie del ticket
+        moneda: Moneda (código ISO)
+        simbolo: Símbolo
       etiqueta:
         ancho: Ancho (mm)
         alto: Alto (mm)
@@ -77,6 +79,7 @@ es:
       zoom_ajustar: Ajustar al ancho
       imprimir_prueba: Imprimir prueba
       imprimir_prueba_ayuda: Manda esta muestra a la impresora, tal cual, para probar papel y ancho
+    moneda_ayuda: 'El símbolo va pegado a la cifra en todo el sistema y en el ticket ($, €, Q, S/…). Sin conversiones: una sola moneda por instalación.'
   comun:
     cerrar: Cerrar
     guardar: Guardar

@@ -38,6 +38,8 @@ en:
         direccion: Address
         telefono: Phone
         pie_ticket: Receipt footer
+        moneda: Currency (ISO code)
+        simbolo: Symbol
       etiqueta:
         ancho: Width (mm)
         alto: Height (mm)
@@ -77,6 +79,7 @@ en:
       zoom_ajustar: Fit to width
       imprimir_prueba: Print test
       imprimir_prueba_ayuda: Sends this sample to the printer as is, to test paper and width
+    moneda_ayuda: 'The symbol goes next to every amount in the system and on the ticket ($, €, Q, S/…). No conversions: one currency per installation.'
   comun:
     cerrar: Close
     guardar: Save

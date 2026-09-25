@@ -46,3 +46,21 @@ class AjustesTest < ActionDispatch::IntegrationTest
     assert_match "80 %", e.message
   end
 end
+
+class MonedaTest < ActionDispatch::IntegrationTest
+  test "el símbolo de la moneda lo pone el negocio y sale en servidor, caja y ticket" do
+    assert_equal "$1,234.50", Dinero.pesos(123_450)
+    post entrar_path, params: { usuario: "admin", password: "secreto1" }
+    patch ajustes_sistema_path, params: { ajuste: { "negocio.moneda" => "GTQ", "negocio.simbolo" => "Q" } }
+    Current.reset # en los tests cada petición trae su propio Current y al terminar se restaura el del test
+    assert_equal "Q1,234.50", Dinero.pesos(123_450)
+    assert_equal "−Q0.50", Dinero.pesos(-50)
+    get caja_path
+    assert_match 'window.MONEDA = {"simbolo":"Q","codigo":"GTQ"}', response.body
+    get ajustes_ticket_path
+    assert_select "iframe[srcdoc*='Q214.50']"
+    patch ajustes_sistema_path, params: { ajuste: { "negocio.moneda" => "", "negocio.simbolo" => "" } }
+    Current.reset
+    assert_equal "$1.00", Dinero.pesos(100), "vacío vuelve al peso"
+  end
+end

@@ -97,7 +97,8 @@ export default class extends Controller {
 
   importe(l) { return Math.round(l.cantidad * l.precio) }
   totalCentavos() { return this.lineas.reduce((s, l) => s + this.importe(l), 0) }
-  pesos(c) { return (c / 100).toLocaleString("es-MX", { style: "currency", currency: "MXN" }) }
+  // Mismo formato que Dinero.pesos en el servidor: símbolo del negocio, miles con coma, dos decimales.
+  pesos(c) { const n = Math.abs(c) / 100; return `${c < 0 ? "−" : ""}${window.MONEDA?.simbolo ?? "$"}${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` }
   centavos(input) { return Math.round(Number(input.value || 0) * 100) }
 
   render(filas = true) {

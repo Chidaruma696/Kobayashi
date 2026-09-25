@@ -6,6 +6,8 @@ class Ajuste < ApplicationRecord
     "negocio.direccion" => "",
     "negocio.telefono" => "",
     "negocio.pie_ticket" => "¡Gracias por su compra!",
+    "negocio.moneda" => "MXN",           # código ISO, sale en reportes y exportaciones
+    "negocio.simbolo" => "$",            # lo que va pegado a la cifra: $, €, Q, S/…
     "ticket.logo" => "",                 # imagen en data URL (PNG/JPG chico), arriba del ticket
     "ticket.lema" => "",                 # renglón bajo el nombre
     "ticket.rfc" => "",                  # identificación fiscal
@@ -31,6 +33,9 @@ class Ajuste < ApplicationRecord
 
   validates :clave, presence: true, uniqueness: true, inclusion: { in: DEFAULTS.keys }
 
+  # Símbolo de la moneda, una consulta por petición.
+  def self.simbolo = (Current.simbolo ||= self["negocio.simbolo"])
+
   # Ancho imprimible del ticket en mm según el papel (80 → 72, 58 → 48).
   def self.ancho_ticket_mm = entero("ticket.ancho") == 58 ? 48 : 72
 
@@ -55,6 +60,7 @@ class Ajuste < ApplicationRecord
         valor.blank? ? registro.destroy : registro.update!(valor: valor)
       end
     end
+    Current.simbolo = nil
   end
 
   def self.todos

@@ -38,6 +38,8 @@ de:
         direccion: Adresse
         telefono: Telefon
         pie_ticket: Fußzeile des Kassenbons
+        moneda: Währung (ISO-Code)
+        simbolo: Symbol
       etiqueta:
         ancho: Breite (mm)
         alto: Höhe (mm)
@@ -77,6 +79,7 @@ de:
       zoom_ajustar: An Breite anpassen
       imprimir_prueba: Testdruck
       imprimir_prueba_ayuda: Schickt diese Vorschau so wie sie ist an den Drucker, um Papier und Breite zu prüfen
+    moneda_ayuda: 'Das Symbol steht im ganzen System und auf dem Ticket vor jedem Betrag ($, €, Q, S/…). Keine Umrechnung: eine Währung je Installation.'
   comun:
     cerrar: Schließen
     guardar: Speichern

@@ -60,6 +60,15 @@
       <div class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.caja") %></h3>
         <div class="grid grid-cols-2 gap-3">
+          <label class="block text-sm"><%= t("ajustes.claves.negocio.moneda") %>
+            <%= f.text_field "ajuste[negocio.moneda]", value: @ajustes["negocio.moneda"], maxlength: 3, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono uppercase" %>
+          </label>
+          <label class="block text-sm"><%= t("ajustes.claves.negocio.simbolo") %>
+            <%= f.text_field "ajuste[negocio.simbolo]", value: @ajustes["negocio.simbolo"], maxlength: 4, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
+          </label>
+        </div>
+        <p class="text-xs text-stone-500"><%= t("ajustes.moneda_ayuda") %></p>
+        <div class="grid grid-cols-2 gap-3">
           <label class="block text-sm"><%= t("ajustes.claves.caja.piso_precio") %>
             <%= f.number_field "ajuste[caja.piso_precio]", value: @ajustes["caja.piso_precio"], min: 0, max: 100, class: "mt-1 w-full rounded border border-stone-300 px-3 py-2 font-mono" %>
           </label>
