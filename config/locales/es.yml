@@ -72,6 +72,9 @@ es:
       muestra:
         producto_kg: Producto por kilo
         producto_pieza: Producto por pieza
+      zoom_mas: Acercar
+      zoom_menos: Alejar
+      zoom_ajustar: Ajustar al ancho
   comun:
     cerrar: Cerrar
     guardar: Guardar

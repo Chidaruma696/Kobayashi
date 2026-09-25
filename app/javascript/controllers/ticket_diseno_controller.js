@@ -3,9 +3,25 @@ import { Controller } from "@hotwired/stimulus"
 // Diseño del ticket: lo que se escribe a la izquierda se ve al momento en la vista previa de la
 // derecha (el ticket real dentro de un iframe, con sus mismos estilos).
 export default class extends Controller {
-  static targets = ["marco", "logo", "logoMini", "logoNada"]
+  static targets = ["marco", "logo", "logoMini", "logoNada", "zoom"]
 
   get doc() { return this.marcoTarget.contentDocument }
+
+  // Zoom de la vista previa: el papel se ve al tamaño que se quiera; al abrir, ajustado al ancho.
+  zoomMas() { this.ponerZoom((this.factor || 1) + 0.25) }
+  zoomMenos() { this.ponerZoom((this.factor || 1) - 0.25) }
+  zoomAjustar() {
+    const papel = this.nodo("papel")
+    if (!papel) return
+    const disponible = this.marcoTarget.clientWidth - 24
+    this.ponerZoom(Math.floor((disponible / papel.offsetWidth) * 20) / 20)
+  }
+  ponerZoom(factor) {
+    this.factor = Math.min(Math.max(factor, 0.5), 4)
+    const papel = this.nodo("papel")
+    if (papel) papel.style.zoom = this.factor
+    if (this.hasZoomTarget) this.zoomTarget.textContent = `${Math.round(this.factor * 100)} %`
+  }
 
   nodo(clave) { return this.doc?.querySelector(`[data-ticket="${clave}"]`) }
 
@@ -25,6 +41,7 @@ export default class extends Controller {
     const mm = e.target.value === "58" ? 48 : 72
     const papel = this.nodo("papel")
     if (papel) papel.style.width = `${mm}mm`
+    this.zoomAjustar()
   }
 
   logo(e) {

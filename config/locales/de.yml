@@ -72,6 +72,9 @@ de:
       muestra:
         producto_kg: Produkt nach Kilo
         producto_pieza: Produkt nach Stück
+      zoom_mas: Vergrößern
+      zoom_menos: Verkleinern
+      zoom_ajustar: An Breite anpassen
   comun:
     cerrar: Schließen
     guardar: Speichern

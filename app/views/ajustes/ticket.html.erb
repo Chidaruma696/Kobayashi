@@ -1,6 +1,6 @@
 <h1 class="mb-1 text-2xl font-bold"><%= t("ajustes.ticket.titulo") %></h1>
 <p class="mb-4 text-sm text-stone-600"><%= t("ajustes.ticket.intro") %></p>
-<div class="grid gap-6 lg:grid-cols-[1fr_auto]" data-controller="ticket-diseno">
+<div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,560px)]" data-controller="ticket-diseno">
   <%= form_with url: ajustes_ticket_path, method: :patch, class: "card space-y-5", data: { turbo: false } do |f| %>
     <div class="space-y-3">
       <h2 class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.ticket.encabezado") %></h2>
@@ -48,8 +48,15 @@
   <% end %>
 
   <div class="lg:sticky lg:top-4 lg:self-start">
-    <div class="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.ticket.vista_previa") %></div>
+    <div class="mb-2 flex items-center justify-between gap-2">
+      <span class="text-xs font-bold uppercase tracking-wide text-stone-500"><%= t("ajustes.ticket.vista_previa") %></span>
+      <span class="flex items-center gap-1">
+        <button type="button" class="btn btn-secondary btn-sm" data-action="ticket-diseno#zoomMenos" title="<%= t("ajustes.ticket.zoom_menos") %>"><i class="bi bi-zoom-out"></i></button>
+        <button type="button" class="btn btn-ghost btn-sm w-16 font-mono" data-action="ticket-diseno#zoomAjustar" data-ticket-diseno-target="zoom" title="<%= t("ajustes.ticket.zoom_ajustar") %>">100 %</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="ticket-diseno#zoomMas" title="<%= t("ajustes.ticket.zoom_mas") %>"><i class="bi bi-zoom-in"></i></button>
+      </span>
+    </div>
     <%# La vista previa es el ticket de verdad, con su misma hoja de estilos, dentro de un iframe %>
-    <iframe title="<%= t("ajustes.ticket.vista_previa") %>" class="h-[720px] w-[360px] rounded border border-stone-300 bg-stone-200" srcdoc="<%= ERB::Util.html_escape(render(template: "ajustes/ticket_previa", layout: "layouts/ticket", formats: [ :html ]).to_str) %>" data-ticket-diseno-target="marco"></iframe>
+    <iframe title="<%= t("ajustes.ticket.vista_previa") %>" class="h-[80vh] min-h-[600px] w-full rounded border border-stone-300 bg-stone-200" data-action="load->ticket-diseno#zoomAjustar" srcdoc="<%= ERB::Util.html_escape(render(template: "ajustes/ticket_previa", layout: "layouts/ticket", formats: [ :html ]).to_str) %>" data-ticket-diseno-target="marco"></iframe>
   </div>
 </div>

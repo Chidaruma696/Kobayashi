@@ -72,6 +72,9 @@ en:
       muestra:
         producto_kg: Product by kilo
         producto_pieza: Product by piece
+      zoom_mas: Zoom in
+      zoom_menos: Zoom out
+      zoom_ajustar: Fit to width
   comun:
     cerrar: Close
     guardar: Save
