@@ -1192,6 +1192,8 @@ es:
     avisos:
       devolucion: Devolución registrada
       ajuste: Ajuste registrado
+    por_ruta: Por ruta
+    por_ruta_ayuda: Lo que deben entre todos los clientes de cada ruta.
   cobranza:
     cobranza: Cobranza
     cobranza_de_ruta: Cobranza de ruta

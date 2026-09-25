@@ -1192,6 +1192,8 @@ en:
     avisos:
       devolucion: Return recorded
       ajuste: Adjustment recorded
+    por_ruta: By route
+    por_ruta_ayuda: What all the customers of each route owe between them.
   cobranza:
     cobranza: Collections
     cobranza_de_ruta: Route collections

@@ -1,4 +1,5 @@
-# Saldos de canastillas por tipo: lo que debe cada cliente y lo que trae cada chofer.
+# Saldos de canastillas por tipo, por tres caminos: lo que debe cada cliente, lo que trae cada
+# chofer (todo lo que lleva a bordo), y lo que debe cada ruta (la suma de sus clientes).
 module Canastillas
   def self.saldo_cliente(cliente)
     MovimientoCanastilla.where(cliente: cliente).group(:tipo_canastilla_id).sum(:cantidad_cliente).reject { |_, v| v.zero? }
@@ -12,6 +13,12 @@ module Canastillas
   def self.saldos_clientes
     MovimientoCanastilla.where.not(cliente_id: nil).group(:cliente_id, :tipo_canastilla_id).sum(:cantidad_cliente)
                         .each_with_object({}) { |((c, t), v), h| (h[c] ||= {})[t] = v unless v.zero? }
+  end
+
+  # { ruta_id (nil = sin ruta) => { tipo_id => saldo } }: lo que deben entre todos los clientes de cada ruta.
+  def self.saldos_rutas
+    MovimientoCanastilla.joins(:cliente).group("clientes.ruta_id", :tipo_canastilla_id).sum(:cantidad_cliente)
+                        .each_with_object({}) { |((r, t), v), h| (h[r] ||= {})[t] = v unless v.zero? }
   end
 
   def self.saldos_choferes

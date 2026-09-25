@@ -8,6 +8,7 @@ class CanastillasController < ApplicationController
   def index
     @tipos = TipoCanastilla.activos.to_a
     @clientes = Canastillas.saldos_clientes.map { |id, saldos| [ Cliente.find(id), saldos ] }.sort_by { |c, _| c.nombre }
+    @rutas = Canastillas.saldos_rutas.map { |id, saldos| [ (id && Ruta.find(id)), saldos ] }.sort_by { |r, _| r ? r.nombre : "~" }
     @choferes = Canastillas.saldos_choferes.map { |id, saldos| [ Usuario.find(id), saldos ] }.sort_by { |u, _| u.nombre }
     @movimientos = MovimientoCanastilla.includes(:cliente, :chofer, :tipo_canastilla, :usuario, :viaje).order(created_at: :desc).limit(50)
     @todos_clientes = Cliente.activos.order(:nombre)

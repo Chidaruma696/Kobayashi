@@ -1,6 +1,6 @@
 <h1 class="mb-4 text-2xl font-bold"><%= t("viajes.canastillas") %></h1>
 <p class="mb-4 text-sm text-stone-600"><%= t("canastillas.intro") %></p>
-<div class="mb-4 grid gap-4 md:grid-cols-2">
+<div class="mb-4 grid gap-4 md:grid-cols-3">
   <div class="card">
     <h2 class="mb-2 font-semibold"><%= t("canastillas.clientes_deben") %></h2>
     <table class="w-full text-sm">
@@ -19,6 +19,17 @@
           <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
       <% end %>
       <% if @choferes.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("canastillas.todo_en_bodega") %></td></tr><% end %>
+    </table>
+  </div>
+  <div class="card">
+    <h2 class="mb-2 font-semibold"><%= t("canastillas.por_ruta") %></h2>
+    <p class="mb-2 text-xs text-stone-500"><%= t("canastillas.por_ruta_ayuda") %></p>
+    <table class="w-full text-sm">
+      <% @rutas.each do |r, saldos| %>
+        <tr class="border-t border-stone-100"><td class="py-1"><%= r || t("admin.sin_ruta") %></td>
+          <td class="py-1 text-right font-mono"><%= saldos.map { |t, n| "#{n} #{@tipos.find { |x| x.id == t } || TipoCanastilla.find(t)}" }.join(" · ") %></td></tr>
+      <% end %>
+      <% if @rutas.empty? %><tr><td class="py-3 text-center text-stone-500"><%= t("canastillas.nadie_debe") %></td></tr><% end %>
     </table>
   </div>
 </div>

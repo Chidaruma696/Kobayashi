@@ -1192,6 +1192,8 @@ de:
     avisos:
       devolucion: Rückgabe erfasst
       ajuste: Korrektur erfasst
+    por_ruta: Je Tour
+    por_ruta_ayuda: Was alle Kunden einer Tour zusammen schulden.
   cobranza:
     cobranza: Inkasso
     cobranza_de_ruta: Tour-Inkasso
