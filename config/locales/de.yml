@@ -23,6 +23,7 @@ de:
     letra_opciones:
       normal: Normal
       grande: Groß
+      chica: Klein
     sistema: System
     negocio: Geschäft
     negocio_ayuda: Steht im Kopf und Fuß des Kassenbons. Bleibt der Name leer, wird der Name der Filiale verwendet.

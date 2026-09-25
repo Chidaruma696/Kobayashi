@@ -132,4 +132,11 @@
 
 /* Densidad y tamaño de letra, por usuario. Todo el espaciado de Tailwind sale de --spacing. */
 :root[data-densidad="compacta"] { --spacing: 0.2rem; }
+:root[data-letra="chica"] { font-size: 14px; }
 :root[data-letra="grande"] { font-size: 18px; }
+
+/* En compacto la cinta se aplana: icono chico con el texto a la derecha, sin la etiqueta del grupo. */
+:root[data-densidad="compacta"] .cinta-boton { flex-direction: row; width: auto; gap: 0.375rem; padding: 0.25rem 0.5rem; text-align: left; }
+:root[data-densidad="compacta"] .cinta-boton i { font-size: 1rem; line-height: 1.25rem; }
+:root[data-densidad="compacta"] .cinta-grupo { display: none; }
+:root[data-densidad="compacta"] .cinta-botones { gap: 0.125rem; }

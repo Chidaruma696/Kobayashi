@@ -45,7 +45,7 @@
       <section class="hidden max-w-2xl space-y-6" data-pasos-target="paso">
         <h1 class="text-3xl font-bold"><%= t("instalacion.pasos.apariencia") %></h1>
         <p class="text-stone-600"><%= t("instalacion.apariencia_ayuda") %></p>
-        <% iconos = { "sistema" => "circle-half", "claro" => "sun", "oscuro" => "moon-stars", "normal" => "fonts", "grande" => "zoom-in", "compacta" => "arrows-collapse" } %>
+        <% iconos = { "sistema" => "circle-half", "claro" => "sun", "oscuro" => "moon-stars", "chica" => "zoom-out", "normal" => "fonts", "grande" => "zoom-in", "compacta" => "arrows-collapse" } %>
         <% { tema: Usuario::TEMAS, letra: Usuario::LETRAS, densidad: Usuario::DENSIDADES }.each do |campo, valores| %>
           <fieldset>
             <legend class="mb-2 text-sm font-medium"><%= t("ajustes.#{campo}") %></legend>

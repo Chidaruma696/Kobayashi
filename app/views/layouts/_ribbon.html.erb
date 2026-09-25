@@ -31,16 +31,16 @@
       <% botones = g[:botones].select { |b| boton_visible?(b) } %>
       <% next if botones.empty? %>
       <div class="flex flex-col items-center border-r border-stone-300 pr-6 last:border-0">
-        <div class="flex gap-1">
+        <div class="cinta-botones flex gap-1">
           <% botones.each do |b| %>
             <% ruta = send(b.ruta) %>
-            <%= link_to ruta, class: "flex w-20 flex-col items-center rounded-md px-1 py-1 text-center text-xs text-stone-700 transition-colors hover:bg-white hover:text-marca-900 #{'bg-white text-marca-900 shadow-sm ring-1 ring-marca-200' if current_page?(ruta)}" do %>
+            <%= link_to ruta, class: "cinta-boton flex w-20 flex-col items-center rounded-md px-1 py-1 text-center text-xs text-stone-700 transition-colors hover:bg-white hover:text-marca-900 #{'bg-white text-marca-900 shadow-sm ring-1 ring-marca-200' if current_page?(ruta)}" do %>
               <i class="bi bi-<%= b.icono %> text-2xl leading-8"></i>
               <span class="leading-tight"><%= t("cinta.botones.#{b.clave}") %></span>
             <% end %>
           <% end %>
         </div>
-        <span class="mt-1 text-[10px] uppercase tracking-wide text-stone-500"><%= t("cinta.grupos.#{g[:id]}") %></span>
+        <span class="cinta-grupo mt-1 text-[10px] uppercase tracking-wide text-stone-500"><%= t("cinta.grupos.#{g[:id]}") %></span>
       </div>
     <% end %>
   </div>

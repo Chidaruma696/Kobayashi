@@ -23,6 +23,7 @@ en:
     letra_opciones:
       normal: Normal
       grande: Large
+      chica: Small
     sistema: System
     negocio: Business
     negocio_ayuda: Printed on the receipt header and footer. Leave the name empty to use the branch name.

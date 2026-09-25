@@ -7,7 +7,7 @@ class Usuario < ApplicationRecord
   IDIOMAS = %w[es en de].freeze
   TEMAS = %w[sistema claro oscuro].freeze
   DENSIDADES = %w[normal compacta].freeze
-  LETRAS = %w[normal grande].freeze
+  LETRAS = %w[chica normal grande].freeze
 
   validates :nombre, presence: true
   validates :idioma, inclusion: { in: IDIOMAS }

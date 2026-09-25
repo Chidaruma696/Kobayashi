@@ -23,6 +23,7 @@ es:
     letra_opciones:
       normal: Normal
       grande: Grande
+      chica: Chica
     sistema: Sistema
     negocio: Negocio
     negocio_ayuda: Lo que se imprime en el encabezado y el pie del ticket. Si el nombre va vacío, se usa el de la sucursal.
